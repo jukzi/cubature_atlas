@@ -15,4 +15,6 @@ The programs that produced and certified the rules, as published on the original
 | `symsearch.py` | Orbit search (triangle, tetrahedron) |
 | `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
 
+`cubature_search.py` (version 3) produced the cube rules CA-C3-21-486 … CA-C3-30-1324. It searches in a chosen subgroup of the cube group (Oh, Td, Th, O, T, …): orbit elimination, large-neighbourhood search with simulated annealing, a rank-ILP target structure, and warm starts from stored rules (`--refine T --sources dir`). Run `python3 cubature_search.py --help` for the options; the module docstring describes the method and lists the literature.
+
 The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.
