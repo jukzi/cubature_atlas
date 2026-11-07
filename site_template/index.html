@@ -201,6 +201,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
       <div class="slider" style="margin-bottom:8px"><label for="deg2" class="eyebrow" data-i="degree"></label> <b id="deg2out" style="font:600 15px var(--f-mono);margin-left:8px"></b>
         <input type="range" id="deg2" min="1" max="30" value="9"></div>
       <svg id="exchart" class="ch" viewBox="0 0 560 360" role="img"></svg>
+      <div class="btns" style="margin:4px 0 8px"><button class="btn" id="b-sub" aria-pressed="true" data-i="subBtn"></button></div>
       <div class="exread" id="exread"></div>
     </div>
   </div>
@@ -5293,10 +5294,113 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
   var lgp=vp(logs);if(lgp.length)el('polyline',{points:lgp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var('+SERCOL[selk]+')','stroke-width':2.5,'stroke-dasharray':sdash,'stroke-linejoin':'round'},svg);
   logs.forEach(function(l2,i){if(l2==null)return;var hollow=res.rows[i].err/ev<1e-16||l2<=FLOOR;symEl(svg,selk,X(i+1),Y(l2),i+1===st.n?5:3.2,hollow);});
   for(var n2=1;n2<=MX();n2++){(function(nn){var rc=el('rect',{x:X(nn)-pw/(2*(MX()-1)),y:m.t,width:pw/(MX()-1),height:ph,fill:'transparent',style:'cursor:pointer'},svg);rc.onclick=function(){setDeg(nn);};})(n2);}
+  subGeom(svg,X,Y,logs,nl);
   var row=res.rows[st.n-1],exv=res.ex.val;
   $('#exread').innerHTML=[[sci2(exv),t('exact')+' ('+(res.ex.src==='A'?t('exactA'):t('exactR'))+')'],[row.ok?fmt(row.N):'–',t('nodes')],[row.ok?sci2(row.q):'–',t('Q')],[!row.ok?'–':(row.err===0?'0':sci(row.err)),t('absErr')],[row.ok&&Math.abs(exv)>0?sci(row.err/Math.abs(exv)):'–',t('relErr')]]
     .map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
 function sci2(x){return dec(x,12);}
+
+/* ---------- Abbildung D: U-Boot ---------- */
+/* A small submarine dives along the error curve of figure D.
+   Where the curve reaches the dashed rounding bound it explodes, then a new one starts. */
+var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+  key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],last:0,raf:0,vis:true,g:null};
+function subGeom(svg,X,Y,logs,nl){
+  /* Path along the curve up to the first point where the error meets the rounding bound. */
+  var pts=[],hit=false,prev=-1,i;
+  for(i=0;i<logs.length;i++){
+    if(logs[i]==null)continue;
+    var d=nl[i]==null?null:logs[i]-nl[i];
+    if(d!=null&&d<=0){
+      if(prev<0){pts.push([X(i+1),Y(logs[i])]);}
+      else{
+        var dp=logs[prev]-nl[prev],f=dp/(dp-d),lp=logs[prev]+f*(logs[i]-logs[prev]);
+        pts.push([X(prev+1)+f*(X(i+1)-X(prev+1)),Y(lp)]);}
+      hit=true;break;}
+    pts.push([X(i+1),Y(logs[i])]);
+    if(d!=null)prev=i;}
+  var key=st.dom+'|'+st.fn+'|'+st.src,len=0;
+  for(i=1;i<pts.length;i++)len+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+  if(key!==SUB.key){SUB.key=key;SUB.s=0;SUB.ang=0;SUB.phase='dive';SUB.parts=[];SUB.bub=[];}
+  SUB.path=pts;SUB.len=len;SUB.hit=hit;
+  if(SUB.s>len)SUB.s=len;
+  SUB.g=el('g',{'pointer-events':'none'},svg);
+  subFrame();subStart();}
+function subAt(s){
+  /* Position and slope angle at arc length s. */
+  var P=SUB.path,i;
+  if(P.length<2)return P.length?{x:P[0][0],y:P[0][1],a:0}:null;
+  for(i=1;i<P.length;i++){
+    var dx=P[i][0]-P[i-1][0],dy=P[i][1]-P[i-1][1],l=Math.hypot(dx,dy);
+    if(s<=l||i===P.length-1){var f=l>0?Math.min(1,s/l):0;return {x:P[i-1][0]+f*dx,y:P[i-1][1]+f*dy,a:Math.atan2(dy,dx)};}
+    s-=l;}
+  return null;}
+function subBoat(g,p,tm){
+  /* Hull, tower, periscope and a turning propeller, nose to the right. */
+  var b=el('g',{transform:'translate('+p.x.toFixed(1)+','+p.y.toFixed(1)+') rotate('+(p.a*180/Math.PI).toFixed(1)+')'},g);
+  el('ellipse',{cx:0,cy:-7,rx:15,ry:5.5,fill:'#e9b52a',stroke:'var(--ink)','stroke-width':1.2},b);
+  el('rect',{x:-5,y:-15.5,width:8,height:5.5,rx:1.5,fill:'#e9b52a',stroke:'var(--ink)','stroke-width':1.2},b);
+  el('path',{d:'M0 -15.5 V-20 H4',fill:'none',stroke:'var(--ink)','stroke-width':1.2},b);
+  el('circle',{cx:6,cy:-7,r:1.6,fill:'#7fc6e8',stroke:'var(--ink)','stroke-width':.8},b);
+  el('circle',{cx:-1,cy:-7,r:1.6,fill:'#7fc6e8',stroke:'var(--ink)','stroke-width':.8},b);
+  var pr=Math.abs(Math.sin(tm/60))*4+1;
+  el('ellipse',{cx:-16.5,cy:-7,rx:1.2,ry:pr,fill:'var(--ink)'},b);}
+function subBoom(p){
+  /* Debris, sparks and smoke at the impact point. */
+  var i,cols=['#ffd23f','#ff8c1a','#e8402a','#e9b52a'];
+  SUB.parts=[];
+  for(i=0;i<34;i++){
+    var a=Math.random()*2*Math.PI,v=40+Math.random()*170;
+    SUB.parts.push({x:p.x,y:p.y-7,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,r:1.2+Math.random()*2.6,c:cols[i%4],k:'spark'});}
+  for(i=0;i<7;i++){
+    var a2=Math.random()*2*Math.PI;
+    SUB.parts.push({x:p.x+Math.cos(a2)*6,y:p.y-7+Math.sin(a2)*6,vx:Math.cos(a2)*18,vy:-10-Math.random()*12,r:3+Math.random()*2.5,c:'#8a8f98',k:'smoke'});}}
+function subFrame(){
+  var g=SUB.g;if(!g)return;
+  while(g.firstChild)g.removeChild(g.firstChild);
+  if(!SUB.on||SUB.path.length<1)return;
+  var tm=performance.now(),i;
+  SUB.bub.forEach(function(b){el('circle',{cx:b.x.toFixed(1),cy:b.y.toFixed(1),r:b.r,fill:'none',stroke:'#7fc6e8','stroke-width':1,opacity:Math.max(0,1-b.t/1.4).toFixed(2)},g);});
+  if(SUB.phase==='dive'){var p=subAt(SUB.s);if(p){p.a=SUB.ang;subBoat(g,p,tm);}}
+  else if(SUB.phase==='boom'){
+    var e=SUB.tp,q=subAt(SUB.len);
+    if(q&&e<.5){
+      el('circle',{cx:q.x,cy:q.y-7,r:(8+e*90).toFixed(1),fill:'#ffd23f',opacity:(.85*(1-e/.5)).toFixed(2)},g);
+      el('circle',{cx:q.x,cy:q.y-7,r:(4+e*45).toFixed(1),fill:'#fff6c8',opacity:(1-e/.5).toFixed(2)},g);}
+    SUB.parts.forEach(function(o){
+      var life=o.k==='smoke'?1.8:1.5,op=Math.max(0,1-e/life);
+      if(op<=0)return;
+      el('circle',{cx:o.x.toFixed(1),cy:o.y.toFixed(1),r:(o.k==='smoke'?o.r*(1+e*1.1):o.r).toFixed(1),fill:o.c,opacity:(o.k==='smoke'?.35*op:op).toFixed(2)},g);});
+    if(q&&e<1.2){var tx=el('text',{x:q.x,y:q.y-26-e*14,'text-anchor':'middle',style:'font-weight:700;fill:#e8402a',opacity:Math.max(0,1-e/1.2).toFixed(2)},g);tx.textContent='BOOM!';}}}
+function subStep(dt){
+  var SPEED=95,i;
+  for(i=SUB.bub.length-1;i>=0;i--){var b=SUB.bub[i];b.t+=dt;b.y-=22*dt;b.x+=Math.sin(b.t*6+b.ph)*6*dt;if(b.t>1.4)SUB.bub.splice(i,1);}
+  if(SUB.phase==='dive'){
+    SUB.s+=SPEED*dt;
+    var pa=subAt(Math.min(SUB.s+10,SUB.len));
+    if(pa){var ta=Math.max(-.6,Math.min(.6,pa.a));SUB.ang+=(ta-SUB.ang)*Math.min(1,dt*5);}
+    if(Math.random()<dt*7){var p=subAt(SUB.s);if(p){var c=Math.cos(SUB.ang),s=Math.sin(SUB.ang);SUB.bub.push({x:p.x-17*c+7*s,y:p.y-17*s-7*c,r:1+Math.random()*1.8,t:0,ph:Math.random()*6});}}
+    if(SUB.s>=SUB.len){
+      SUB.s=SUB.len;SUB.tp=0;
+      if(SUB.hit){SUB.phase='boom';subBoom(subAt(SUB.len));}
+      else SUB.phase='rest';}}
+  else if(SUB.phase==='boom'){
+    SUB.tp+=dt;
+    SUB.parts.forEach(function(o){o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.k==='spark'){o.vy+=260*dt;o.vx*=1-1.5*dt;}else{o.vx*=1-2*dt;}});
+    if(SUB.tp>2.6){SUB.phase='dive';SUB.s=0;SUB.ang=0;SUB.parts=[];}}
+  else{SUB.tp+=dt;if(SUB.tp>1.5){SUB.phase='dive';SUB.s=0;SUB.ang=0;}}}
+function subLoop(tm){
+  SUB.raf=0;
+  if(!SUB.on||!SUB.vis||document.hidden){SUB.last=0;return;}
+  var dt=SUB.last?Math.min(.05,(tm-SUB.last)/1000):0;
+  SUB.last=tm;subStep(dt);subFrame();
+  SUB.raf=requestAnimationFrame(subLoop);}
+function subStart(){if(!SUB.raf&&SUB.on&&SUB.vis&&!document.hidden){SUB.last=0;SUB.raf=requestAnimationFrame(subLoop);}}
+(function(){
+  var b=$('#b-sub');b.setAttribute('aria-pressed',SUB.on);
+  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];subStart();}else subFrame();};
+  document.addEventListener('visibilitychange',subStart);
+  if(window.IntersectionObserver)new IntersectionObserver(function(es){SUB.vis=es[0].isIntersecting;subStart();}).observe($('#exchart'));})();
 
 /* ---------- Zertifikat ---------- */
 function certTable(){$('#tcap2').textContent=t('tabW')+' 2: '+t('tab2')+' – '+DOM[st.dom].lab[LANG];var c=CERT[st.dom],th=$('#certtbl thead'),tb=$('#certtbl tbody'),cols=t('certCols');
