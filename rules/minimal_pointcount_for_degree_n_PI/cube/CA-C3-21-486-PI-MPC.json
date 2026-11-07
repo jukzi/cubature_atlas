@@ -10,7 +10,7 @@
   "method": "numerical search with symmetry reduction (group Td): orbit elimination from tensor Gauss-Legendre rules, warm starts from rules of higher degree and from Oh rules, large-neighbourhood search with simulated annealing targeted at a rank-ILP orbit structure; certified in the symmetry-reduced system",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "verified",
-  "locked": false,
+  "locked": true,
   "residual_reported": 1e-15,
   "certificate": {"N": 486, "M": 120, "p": 120, "res": 1.3823951599359255e-14, "sigma": 0.058470333022087755, "h": 1.920764901765481e-07, "rad": 1.8113922235065693e-13, "cert": true, "inside": true},
   "symmetry": "Td",

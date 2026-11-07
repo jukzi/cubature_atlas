@@ -10,7 +10,7 @@
   "method": "Gauss-Legendre rule, closed formula (numpy.polynomial.legendre.leggauss)",
   "author": "closed formula",
   "status": "verified",
-  "locked": false,
+  "locked": true,
   "residual_reported": 0.0,
   "certificate": {"N": 3, "M": 3, "p": 3, "res": 1.7683300019607288e-15, "sigma": 1.214419716985756, "h": 4.218452568678707e-14, "rad": 1.0931296957255273e-15, "cert": true, "inside": true},
   "exact_degree": 5,

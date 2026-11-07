@@ -10,7 +10,7 @@
   "method": "numerical search with symmetry reduction (full symmetry group Oh or Td), certified in the symmetry-reduced system",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "verified",
-  "locked": false,
+  "locked": true,
   "residual_reported": 1e-15,
   "certificate": {"N": 1177, "M": 249, "p": 254, "res": 4.529709940470639e-14, "sigma": 0.06257925138270024, "h": 2.741768848650145e-07, "rad": 3.3091208016729093e-14, "cert": true, "inside": false},
   "symmetry": "full (Oh/Td)",
