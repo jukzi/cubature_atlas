@@ -190,7 +190,8 @@
     "dom_tetra": "1f633715f6faf3e7",
     "dom_cube": "b72a5cde2587a852",
     "linkLicense": "e5abf54b685a7c87",
-    "rpLicLit": "67d6b4e2b087c11a"
+    "rpLicLit": "67d6b4e2b087c11a",
+    "linkDoi": "544a0457778abe39"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -405,5 +406,6 @@
   "dom_tetra": "Tetraeder",
   "dom_cube": "Würfel",
   "linkLicense": "Lizenz: CC BY 4.0",
-  "rpLicLit": "Aus der zitierten Veröffentlichung zum Vergleich übernommen; nicht von der CC-BY-4.0-Lizenz des Atlas erfasst, es gelten die ursprünglichen Bedingungen."
+  "rpLicLit": "Aus der zitierten Veröffentlichung zum Vergleich übernommen; nicht von der CC-BY-4.0-Lizenz des Atlas erfasst, es gelten die ursprünglichen Bedingungen.",
+  "linkDoi": "DOI 10.5281/zenodo.24037245"
 }

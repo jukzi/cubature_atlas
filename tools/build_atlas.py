@@ -29,6 +29,7 @@ RULES = os.path.join(ROOT, "rules")
 SITE = os.path.join(ROOT, "site")
 BASE_URL = "https://jukzi.github.io/cubature_atlas/"
 REPO_URL = "https://github.com/jukzi/cubature_atlas"
+CONCEPT_DOI = "10.5281/zenodo.24037245"
 MAXN = 30
 
 DOMAINS = ["interval", "triangle", "square", "tetra", "cube"]
@@ -484,8 +485,8 @@ def rule_page(r, fam, best, lang, t):
         lic = html.escape(t["rpLicLit"])
     else:
         lic = '<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">%s</a>' % html.escape(t["linkLicense"])
-    cite = "Cubature Atlas, rule %s (%s, %s, degree %d, %d nodes), %s%s" % (
-        r["id"], fam["name"]["en"], r["domain"], r["degree"], r["points"], BASE_URL, rule_url(r, "en"))
+    cite = "Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/%s, rule %s (%s, %s, degree %d, %d nodes), %s%s" % (
+        CONCEPT_DOI, r["id"], fam["name"]["en"], r["domain"], r["degree"], r["points"], BASE_URL, rule_url(r, "en"))
     title = "%s – %s %s, %s %d, %d %s" % (r["id"], t["title"], dname, t["rpDegree"], r["degree"], r["points"], t["nodes"])
     alt_en = BASE_URL + rule_url(r, "en")
     alt_de = BASE_URL + rule_url(r, "de")

@@ -212,5 +212,6 @@
   "dom_tetra": "Tetrahedron",
   "dom_cube": "Cube",
   "linkLicense": "License: CC BY 4.0",
-  "rpLicLit": "Reproduced from the cited publication for comparison; not covered by the CC BY 4.0 license of the atlas, the original terms apply."
+  "rpLicLit": "Reproduced from the cited publication for comparison; not covered by the CC BY 4.0 license of the atlas, the original terms apply.",
+  "linkDoi": "DOI 10.5281/zenodo.24037245"
 }
