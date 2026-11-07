@@ -5288,10 +5288,10 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
   for(var n=1;n<=MX();n++)if(n===1||n%5===0){var t2=el('text',{x:X(n),y:H-18,'text-anchor':'middle'},svg);t2.textContent=n;}
   var at=el('text',{x:m.l+pw/2,y:H-3,'text-anchor':'middle'},svg);at.textContent=t('degree')+'  ·  '+t('relErr');
   el('line',{x1:X(st.n),x2:X(st.n),y1:m.t,y2:m.t+ph,'class':'sel'},svg);
-  var nlp=vp(nl);if(nlp.length){el('polygon',{points:nlp.map(function(p){return p.join(',');}).join(' ')+' '+nlp[nlp.length-1][0]+','+Y(-16)+' '+nlp[0][0]+','+Y(-16),fill:'var(--s-abz)','fill-opacity':.14,stroke:'none'},svg);
+  var ng=el('g',{},svg);var nlp=vp(nl);if(nlp.length){el('polygon',{points:nlp.map(function(p){return p.join(',');}).join(' ')+' '+nlp[nlp.length-1][0]+','+Y(-16)+' '+nlp[0][0]+','+Y(-16),fill:'var(--s-abz)','fill-opacity':.14,stroke:'none'},ng);
   el('polyline',{points:nlp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2,'stroke-dasharray':'7 4'},svg);}
-  nl.forEach(function(l2,i){if(l2!=null)symEl(svg,'noise',X(i+1),Y(l2),2.8,false);});legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'7 4',label:t('noiseLbl')}],W-m.r-8,m.t+14,true);
-  var lgp=vp(logs);if(lgp.length)el('polyline',{points:lgp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var('+SERCOL[selk]+')','stroke-width':2.5,'stroke-dasharray':sdash,'stroke-linejoin':'round'},svg);
+  nl.forEach(function(l2,i){if(l2!=null)symEl(ng,'noise',X(i+1),Y(l2),2.8,false);});SUB.ng=ng;legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'7 4',label:t('noiseLbl')}],W-m.r-8,m.t+14,true);
+  var lgp=vp(logs);SUB.cl=null;if(lgp.length)SUB.cl=el('polyline',{points:lgp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var('+SERCOL[selk]+')','stroke-width':2.5,'stroke-dasharray':sdash,'stroke-linejoin':'round'},svg);
   logs.forEach(function(l2,i){if(l2==null)return;var hollow=res.rows[i].err/ev<1e-16||l2<=FLOOR;symEl(svg,selk,X(i+1),Y(l2),i+1===st.n?5:3.2,hollow);});
   for(var n2=1;n2<=MX();n2++){(function(nn){var rc=el('rect',{x:X(nn)-pw/(2*(MX()-1)),y:m.t,width:pw/(MX()-1),height:ph,fill:'transparent',style:'cursor:pointer'},svg);rc.onclick=function(){setDeg(nn);};})(n2);}
   subGeom(svg,X,Y,logs,nl);
@@ -5304,7 +5304,7 @@ function sci2(x){return dec(x,12);}
 /* A drill bores down the error curve of figure D.
    Where the curve reaches the dashed rounding bound fireworks go up, then a new drill starts. */
 var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),
-  key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],last:0,raf:0,vis:true,g:null};
+  key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],sw:[],dash:0,last:0,raf:0,vis:true,g:null};
 function subGeom(svg,X,Y,logs,nl){
   /* Path along the curve up to the first point where the error meets the rounding bound. */
   var pts=[],hit=false,prev=-1,i;
@@ -5356,7 +5356,9 @@ function subFrame(){
   if(!SUB.on||SUB.path.length<1)return;
   var tm=performance.now(),i;
   SUB.bub.forEach(function(b){el('rect',{x:(b.x-b.r/2).toFixed(1),y:(b.y-b.r/2).toFixed(1),width:b.r,height:b.r,fill:'#a07a4a',opacity:Math.max(0,1-b.t/1.0).toFixed(2)},g);});
+  SUB.sw.forEach(function(d){var op=Math.max(0,1-d.t/1.2);el('path',{d:'M0 -4 C2.5 -1 3 1 0 3 C-3 1 -2.5 -1 0 -4 Z',transform:'translate('+d.x.toFixed(1)+','+d.y.toFixed(1)+') rotate('+(Math.atan2(d.vy,d.vx)*180/Math.PI+90).toFixed(0)+') scale(1.7)',fill:'#6ec6ff',stroke:'#2f7fd1','stroke-width':.6,opacity:op.toFixed(2)},g);});
   if(SUB.phase==='dive'){var p=subAt(SUB.s);if(p){p.a=SUB.ang;subBoat(g,p,tm);}}
+  else if(SUB.phase==='rest'){var pr=subAt(SUB.len);if(pr){pr.a=SUB.ang;pr.x+=(Math.random()-.5)*2.4;pr.y+=(Math.random()-.5)*2.4;subBoat(g,pr,tm*2.5);}}
   else if(SUB.phase==='boom'){
     var e=SUB.tp;
     SUB.parts.forEach(function(o){
@@ -5367,6 +5369,15 @@ function subFrame(){
       el('circle',{cx:o.x.toFixed(1),cy:o.y.toFixed(1),r:o.r,fill:o.c,opacity:op.toFixed(2)},g);});}}
 function subStep(dt){
   var SPEED=80,i;
+  for(i=SUB.sw.length-1;i>=0;i--){var w=SUB.sw[i];w.t+=dt;w.x+=w.vx*dt;w.y+=w.vy*dt;w.vy+=320*dt;if(w.t>1.2)SUB.sw.splice(i,1);}
+  SUB.dash+=dt*28;
+  if(SUB.cl&&SUB.cl.getAttribute('stroke-dasharray'))SUB.cl.setAttribute('stroke-dashoffset',(-SUB.dash).toFixed(1));
+  if(SUB.ng){
+    /* The bound trembles by about one pixel, more when the drill comes close. */
+    var amp=.6;
+    if(SUB.phase==='dive'&&SUB.hit){var rem=SUB.len-SUB.s;amp=.6+3*Math.max(0,1-rem/120);}
+    if(SUB.phase==='boom')amp=0;
+    SUB.ng.setAttribute('transform','translate(0,'+((Math.random()-.5)*2*amp).toFixed(2)+')');}
   for(i=SUB.bub.length-1;i>=0;i--){var b=SUB.bub[i];b.t+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=300*dt;if(b.t>1.0)SUB.bub.splice(i,1);}
   if(SUB.phase==='dive'){
     SUB.s+=SPEED*dt;
@@ -5390,7 +5401,11 @@ function subStep(dt){
       o.t+=dt;o.x+=o.vx*dt;o.y+=o.vy*dt;o.vy+=70*dt;o.vx*=1-1.8*dt;o.vy*=1-1.8*dt;});
     SUB.parts=SUB.parts.concat(add);
     if(SUB.tp>3.6){SUB.phase='dive';SUB.s=0;SUB.ang=0;SUB.parts=[];}}
-  else{SUB.tp+=dt;if(SUB.tp>1.5){SUB.phase='dive';SUB.s=0;SUB.ang=0;}}}
+  else{
+    /* Bound not reached: the drill shakes and sweats. */
+    SUB.tp+=dt;
+    if(SUB.tp<2.6&&Math.random()<dt*16){var q=subAt(SUB.len);if(q){var c2=Math.cos(SUB.ang),s2=Math.sin(SUB.ang),sd2=Math.random()<.5?-1:1,bx=q.x-34*c2+7*s2,by=q.y-34*s2-7*c2;SUB.sw.push({x:bx,y:by,vx:sd2*(30+Math.random()*50),vy:-70-Math.random()*60,t:0});}}
+    if(SUB.tp>3.2){SUB.phase='dive';SUB.s=0;SUB.ang=0;SUB.sw=[];}}}
 function subLoop(tm){
   SUB.raf=0;
   if(!SUB.on||!SUB.vis||document.hidden){SUB.last=0;return;}
@@ -5400,7 +5415,7 @@ function subLoop(tm){
 function subStart(){if(!SUB.raf&&SUB.on&&SUB.vis&&!document.hidden){SUB.last=0;SUB.raf=requestAnimationFrame(subLoop);}}
 (function(){
   var b=$('#b-sub');b.setAttribute('aria-pressed',SUB.on);
-  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];subStart();}else subFrame();};
+  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];SUB.sw=[];subStart();}else{if(SUB.ng)SUB.ng.removeAttribute('transform');if(SUB.cl)SUB.cl.removeAttribute('stroke-dashoffset');subFrame();}};
   document.addEventListener('visibilitychange',subStart);
   if(window.IntersectionObserver)new IntersectionObserver(function(es){SUB.vis=es[0].isIntersecting;subStart();}).observe($('#exchart'));})();
 
