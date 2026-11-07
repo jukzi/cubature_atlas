@@ -5274,7 +5274,7 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   if(lit.length){clL=el('polyline',{points:lit.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-sym)','stroke-width':selk==='lit'?3.5:1.5,'stroke-dasharray':'5 3'},svg);lit.forEach(function(o){symEl(svg,'sym',X(o.N),Y(o.l),3.2,false);});}
   var clE=null;tk.filter(function(k){return k!==selk;}).concat(tk.indexOf(selk)>=0?[selk]:[]).forEach(function(k){if(tser[k].length){var pe=line(tser[k],SERCOL[k],k==='found'?'':SERSTY[k][1],k===selk?3.5:2,k);if(k===selk)clE=pe;}});
   var sdash=selk==='found'?'':(SERSTY[selk]||[0,''])[1];
-  var sel=ours.filter(function(o){return o.n===st.n;})[0];if(sel)el('circle',{cx:X(sel.N),cy:Y(sel.l),r:6,fill:'none',stroke:'var(--ink)','stroke-width':1.5},svg);
+  var sel=ours.filter(function(o){return o.n===st.n;})[0];if(sel){el('circle',{cx:X(sel.N),cy:Y(sel.l),r:6,fill:'none',stroke:'var(--ink)','stroke-width':1.5},svg);var slt=el('text',{x:X(sel.N)+10,y:Y(sel.l)-9,style:'fill:var(--ink);font-weight:500'},svg);slt.textContent='n='+st.n;}
   var ents=tk.filter(function(k){return tser[k].length;}).map(function(k){return {key:k,color:SERCOL[k],w:k===selk?3.5:2,dash:k==='found'?'':SERSTY[k][1],label:srcLabel(k,dom)};});
   if(gp.length)ents.push({key:'gauss',color:'--s-gauss',w:2,dash:'10 3 2 3',label:t('legGauss')+(dom==='interval'?'':' (Duffy, '+(LANG==='de'?'Gauß–Legendre':'Gauss–Legendre')+')')});
   ents.push({key:'noise',color:'--s-abz',w:2,dash:'',label:t('noiseLbl')});
@@ -5333,6 +5333,10 @@ function drillGeom(D,svg,curve,nz,cl,key){
   /* curve: [[x,y,log10 error]] in drawing order; nz: bound data; path ends where the error meets the bound. */
   var pts=[],hit=false,prev=null,i;
   D.nz=nz;D.cl=cl;
+  if(cl&&DRILL.on&&!cl.getAttribute('stroke-dasharray')){
+    /* Solid curve: a light dash overlay shows the motion while the curve itself stays solid. */
+    D.cl=el('polyline',{points:cl.getAttribute('points'),fill:'none',stroke:'#fff','stroke-opacity':.7,'stroke-width':1.2,'stroke-dasharray':'3 9','stroke-linejoin':'round','pointer-events':'none'});
+    cl.parentNode.insertBefore(D.cl,cl.nextSibling);}
   for(i=0;i<curve.length;i++){
     var c=curve[i],d=c[2]-drillNoiseAt(nz,c[0]);
     if(d<=0){
