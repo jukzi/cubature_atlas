@@ -5301,9 +5301,13 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
 function sci2(x){return dec(x,12);}
 
 /* ---------- Abbildung D: Bohrer ---------- */
+function subPref(v){
+  /* Remembers whether the viewer switched the animation off (storage may be unavailable). */
+  try{if(v===undefined)return localStorage.getItem('atlasDrill');localStorage.setItem('atlasDrill',v);}catch(_){}
+  return null;}
 /* A drill bores down the error curve of figure D.
    Where the curve reaches the dashed rounding bound fireworks go up, then a new drill starts. */
-var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),
+var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)&&subPref()!=='off',
   key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],sw:[],dash:0,nt:0,nz:null,last:0,raf:0,vis:true,g:null};
 function subGeom(svg,X,Y,logs,nl){
   /* Path along the curve up to the first point where the error meets the rounding bound. */
@@ -5423,7 +5427,7 @@ function subLoop(tm){
 function subStart(){if(!SUB.raf&&SUB.on&&SUB.vis&&!document.hidden){SUB.last=0;SUB.raf=requestAnimationFrame(subLoop);}}
 (function(){
   var b=$('#b-sub');b.setAttribute('aria-pressed',SUB.on);
-  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];SUB.sw=[];subStart();}else{if(SUB.cl)SUB.cl.removeAttribute('stroke-dashoffset');exChart();}};
+  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);subPref(SUB.on?'on':'off');if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];SUB.sw=[];subStart();}else{if(SUB.cl)SUB.cl.removeAttribute('stroke-dashoffset');exChart();}};
   document.addEventListener('visibilitychange',subStart);
   if(window.IntersectionObserver)new IntersectionObserver(function(es){SUB.vis=es[0].isIntersecting;subStart();}).observe($('#exchart'));})();
 
