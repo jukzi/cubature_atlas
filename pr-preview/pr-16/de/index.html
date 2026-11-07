@@ -5411,7 +5411,8 @@ function drillStep(D,dt){
       var y=y0+(Math.random()*2-1)*Math.max(1,ap);
       pts.push(o.x.toFixed(1)+','+y.toFixed(2));
       if(z.sy[j])z.sy[j].setAttribute('transform','translate(0,'+(y-z.Y(o.l)).toFixed(2)+')');});
-    if(z.pl)z.pl.setAttribute('points',pts.join(' '));
+    if(z.pl&&!z.seg)drillSplit(z);
+    if(z.seg)z.seg.forEach(function(ln,j){var a=pts[j].split(','),b=pts[j+1].split(',');ln.setAttribute('x1',a[0]);ln.setAttribute('y1',a[1]);ln.setAttribute('x2',b[0]);ln.setAttribute('y2',b[1]);});
     if(z.pg&&pts.length)z.pg.setAttribute('points',pts.join(' ')+' '+pts[pts.length-1].split(',')[0]+','+z.base+' '+pts[0].split(',')[0]+','+z.base);}
   if(D.phase==='dive'){
     D.s+=SPEED*dt;
@@ -5440,6 +5441,18 @@ function drillStep(D,dt){
     D.tp+=dt;
     if(D.tp<2.6&&Math.random()<dt*16){var q=drillAt(D,D.len);if(q){var c2=Math.cos(D.ang),s2=Math.sin(D.ang),sd2=Math.random()<.5?-1:1;D.sw.push({x:q.x-34*c2+7*s2,y:q.y-34*s2-7*c2,vx:sd2*(30+Math.random()*50),vy:-70-Math.random()*60,t:0});}}
     if(D.tp>3.2){D.phase='dive';D.s=0;D.ang=0;D.sw=[];}}}
+function drillSplit(z){
+  /* Replace the dashed bound by one line per segment whose dash pattern is pinned to the unshaken
+     geometry (pathLength and dashoffset), so the dashes stay put while the points jitter. */
+  var P=z.pts,par=z.pl.parentNode,cum=0,j;
+  z.seg=[];
+  for(j=0;j+1<P.length;j++){
+    var y0=z.Y(P[j].l),y1=z.Y(P[j+1].l),L=Math.hypot(P[j+1].x-P[j].x,y1-y0)||1e-6;
+    var ln=el('line',{x1:P[j].x,y1:y0,x2:P[j+1].x,y2:y1,stroke:z.pl.getAttribute('stroke'),'stroke-width':z.pl.getAttribute('stroke-width'),'stroke-dasharray':z.pl.getAttribute('stroke-dasharray'),pathLength:L.toFixed(3),'stroke-dashoffset':(-cum).toFixed(3),'stroke-linecap':'butt'});
+    par.insertBefore(ln,z.pl);
+    z.seg.push(ln);
+    cum+=L;}
+  z.pl.style.display='none';}
 function drillLoop(tm){
   DRILL.raf=0;
   var act=DRILL.list.filter(function(D){return D.vis;});
