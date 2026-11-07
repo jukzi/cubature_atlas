@@ -5288,9 +5288,9 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
   for(var n=1;n<=MX();n++)if(n===1||n%5===0){var t2=el('text',{x:X(n),y:H-18,'text-anchor':'middle'},svg);t2.textContent=n;}
   var at=el('text',{x:m.l+pw/2,y:H-3,'text-anchor':'middle'},svg);at.textContent=t('degree')+'  ·  '+t('relErr');
   el('line',{x1:X(st.n),x2:X(st.n),y1:m.t,y2:m.t+ph,'class':'sel'},svg);
-  var ng=el('g',{},svg);var nlp=vp(nl);if(nlp.length){el('polygon',{points:nlp.map(function(p){return p.join(',');}).join(' ')+' '+nlp[nlp.length-1][0]+','+Y(-16)+' '+nlp[0][0]+','+Y(-16),fill:'var(--s-abz)','fill-opacity':.14,stroke:'none'},ng);
-  el('polyline',{points:nlp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2,'stroke-dasharray':'7 4'},svg);}
-  nl.forEach(function(l2,i){if(l2!=null)symEl(ng,'noise',X(i+1),Y(l2),2.8,false);});SUB.ng=ng;legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'7 4',label:t('noiseLbl')}],W-m.r-8,m.t+14,true);
+  var ng=el('g',{},svg),npg=null,npl=null;var nlp=vp(nl);if(nlp.length){npg=el('polygon',{points:nlp.map(function(p){return p.join(',');}).join(' ')+' '+nlp[nlp.length-1][0]+','+Y(-16)+' '+nlp[0][0]+','+Y(-16),fill:'var(--s-abz)','fill-opacity':.14,stroke:'none'},ng);
+  npl=el('polyline',{points:nlp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2,'stroke-dasharray':'7 4'},ng);}
+  var nsy=[];nl.forEach(function(l2,i){if(l2!=null){var gi=el('g',{},ng);symEl(gi,'noise',X(i+1),Y(l2),2.8,false);nsy.push(gi);}});SUB.ng=ng;SUB.nz={X:X,Y:Y,nl:nl,pg:npg,pl:npl,sy:nsy,base:Y(-16)};legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'7 4',label:t('noiseLbl')}],W-m.r-8,m.t+14,true);
   var lgp=vp(logs);SUB.cl=null;if(lgp.length)SUB.cl=el('polyline',{points:lgp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var('+SERCOL[selk]+')','stroke-width':2.5,'stroke-dasharray':sdash,'stroke-linejoin':'round'},svg);
   logs.forEach(function(l2,i){if(l2==null)return;var hollow=res.rows[i].err/ev<1e-16||l2<=FLOOR;symEl(svg,selk,X(i+1),Y(l2),i+1===st.n?5:3.2,hollow);});
   for(var n2=1;n2<=MX();n2++){(function(nn){var rc=el('rect',{x:X(nn)-pw/(2*(MX()-1)),y:m.t,width:pw/(MX()-1),height:ph,fill:'transparent',style:'cursor:pointer'},svg);rc.onclick=function(){setDeg(nn);};})(n2);}
@@ -5304,7 +5304,7 @@ function sci2(x){return dec(x,12);}
 /* A drill bores down the error curve of figure D.
    Where the curve reaches the dashed rounding bound fireworks go up, then a new drill starts. */
 var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),
-  key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],sw:[],dash:0,last:0,raf:0,vis:true,g:null};
+  key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],sw:[],dash:0,nt:0,nz:null,last:0,raf:0,vis:true,g:null};
 function subGeom(svg,X,Y,logs,nl){
   /* Path along the curve up to the first point where the error meets the rounding bound. */
   var pts=[],hit=false,prev=-1,i;
@@ -5372,12 +5372,20 @@ function subStep(dt){
   for(i=SUB.sw.length-1;i>=0;i--){var w=SUB.sw[i];w.t+=dt;w.x+=w.vx*dt;w.y+=w.vy*dt;w.vy+=320*dt;if(w.t>1.2)SUB.sw.splice(i,1);}
   SUB.dash+=dt*28;
   if(SUB.cl&&SUB.cl.getAttribute('stroke-dasharray'))SUB.cl.setAttribute('stroke-dashoffset',(-SUB.dash).toFixed(1));
-  if(SUB.ng){
-    /* The bound trembles by about one pixel, more when the drill comes close. */
-    var amp=.6;
-    if(SUB.phase==='dive'&&SUB.hit){var rem=SUB.len-SUB.s;amp=.6+3*Math.max(0,1-rem/120);}
-    if(SUB.phase==='boom')amp=0;
-    SUB.ng.setAttribute('transform','translate(0,'+((Math.random()-.5)*2*amp).toFixed(2)+')');}
+  SUB.nt+=dt;
+  if(SUB.nz&&SUB.nt>.06){
+    /* Rounding noise: every point of the bound moves independently by up to 3e-16 (relative error). */
+    SUB.nt=0;
+    var z=SUB.nz,pts=[],k=0;
+    z.nl.forEach(function(l2,j){
+      if(l2==null)return;
+      var v=Math.pow(10,l2)+(Math.random()*2-1)*3e-16;
+      var y=z.Y(Math.max(-16,Math.log10(Math.max(v,1e-16))));
+      pts.push(z.X(j+1).toFixed(1)+','+y.toFixed(2));
+      if(z.sy[k])z.sy[k].setAttribute('transform','translate(0,'+(y-z.Y(l2)).toFixed(2)+')');
+      k++;});
+    if(z.pl)z.pl.setAttribute('points',pts.join(' '));
+    if(z.pg&&pts.length)z.pg.setAttribute('points',pts.join(' ')+' '+pts[pts.length-1].split(',')[0]+','+z.base+' '+pts[0].split(',')[0]+','+z.base);}
   for(i=SUB.bub.length-1;i>=0;i--){var b=SUB.bub[i];b.t+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=300*dt;if(b.t>1.0)SUB.bub.splice(i,1);}
   if(SUB.phase==='dive'){
     SUB.s+=SPEED*dt;
@@ -5415,7 +5423,7 @@ function subLoop(tm){
 function subStart(){if(!SUB.raf&&SUB.on&&SUB.vis&&!document.hidden){SUB.last=0;SUB.raf=requestAnimationFrame(subLoop);}}
 (function(){
   var b=$('#b-sub');b.setAttribute('aria-pressed',SUB.on);
-  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];SUB.sw=[];subStart();}else{if(SUB.ng)SUB.ng.removeAttribute('transform');if(SUB.cl)SUB.cl.removeAttribute('stroke-dashoffset');subFrame();}};
+  b.onclick=function(){SUB.on=!SUB.on;this.setAttribute('aria-pressed',SUB.on);if(SUB.on){SUB.s=0;SUB.phase='dive';SUB.parts=[];SUB.sw=[];subStart();}else{if(SUB.cl)SUB.cl.removeAttribute('stroke-dashoffset');exChart();}};
   document.addEventListener('visibilitychange',subStart);
   if(window.IntersectionObserver)new IntersectionObserver(function(es){SUB.vis=es[0].isIntersecting;subStart();}).observe($('#exchart'));})();
 
