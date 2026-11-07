@@ -1,0 +1,99 @@
+name: Automatic search for better rules
+
+# Once a day, several parallel slots each pick a random cube degree (weighted
+# towards high degrees), a symmetry group and a search mode, and run
+# code/cubature_search.py for a fixed time (tools/auto_search.py).
+# A slot that finds a rule with fewer nodes than every known rule of at least
+# that degree certifies it, checks the atlas (tools/build_atlas.py) and opens a
+# pull request from the branch ai/auto-cube-nXX-mYYY.
+#
+# Optional secret AUTO_SEARCH_TOKEN (fine-grained token with contents and
+# pull-requests write access to this repository): with it, the new pull
+# requests also start the normal checks and the live preview. With the default
+# GITHUB_TOKEN they do not (a GitHub rule), and the repository setting
+# "Allow GitHub Actions to create and approve pull requests" must be enabled.
+
+on:
+  schedule:
+    - cron: "37 2 * * *"
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Search time per slot in minutes"
+        default: "150"
+      slots:
+        description: "Number of parallel slots (1-6)"
+        default: "3"
+      degree:
+        description: "Fixed degree (0 = random)"
+        default: "0"
+      group:
+        description: "Fixed group: Td, Oh or empty (random)"
+        default: ""
+      mode:
+        description: "Fixed mode: refine, fresh or empty (random)"
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-search
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      slots: ${{ steps.p.outputs.slots }}
+    steps:
+      - id: p
+        run: |
+          n="${{ inputs.slots || '3' }}"
+          echo "slots=$(python3 -c "import json; print(json.dumps(list(range(max(1, min(6, int('$n')))))))")" >> "$GITHUB_OUTPUT"
+
+  search:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        slot: ${{ fromJSON(needs.plan.outputs.slots) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy scipy
+      - name: Search
+        id: s
+        run: >
+          python tools/auto_search.py
+          --minutes "${{ inputs.minutes || '150' }}"
+          --slot ${{ matrix.slot }}
+          --slots ${{ strategy.job-total }}
+          --seed ${{ github.run_id }}
+          --degree "${{ inputs.degree || '0' }}"
+          --group "${{ inputs.group }}"
+          --mode "${{ inputs.mode }}"
+      - name: Open a pull request
+        if: steps.s.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
+          BRANCH: ${{ steps.s.outputs.branch }}
+          TITLE: ${{ steps.s.outputs.title }}
+          RULE: ${{ steps.s.outputs.rule_path }}
+          BODY: ${{ steps.s.outputs.body }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "$RULE"
+          git commit -m "$TITLE" -m "Found by the scheduled automatic search (tools/auto_search.py), run ${{ github.run_id }}." -m "Co-Authored-By: Claude <noreply@anthropic.com>"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"
