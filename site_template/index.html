@@ -5311,7 +5311,7 @@ function certTable(){$('#tcap2').textContent=t('tabW')+' 2: '+t('tab2')+' – '+
 function refsHTML(){return REFS.map(function(r){var links='<a href="'+r.u+'" target="_blank" rel="noopener">'+r.u.replace(/^https?:\/\//,'').slice(0,64)+'</a>'+(r.u2?' · <a href="'+r.u2+'" target="_blank" rel="noopener">'+(r.l2||'Addendum')+'</a>':'');
   return '<li id="r'+r.n+'"><span class="n">['+r.n+']</span><span>'+(r.y?'<b>'+r.y+'</b> · ':'')+r.t+'<br>'+links+'</span></li>';}).join('');}
 function figFn(){figTitles();}
-function applyLang(){document.documentElement.lang=LANG;document.title=t('pageTitle');$('#h1').innerHTML=t('titleHtml');$('#links').innerHTML='<a href="'+ATLAS.links.repo+'">'+t('linkRepo')+'</a> · <a href="rules/index.html">'+t('rpIndex')+'</a> · <a href="'+ATLAS.links.data+'">'+t('linkData')+'</a> · <a href="'+ATLAS.links.zip+'">'+t('linkZip')+'</a>';
+function applyLang(){document.documentElement.lang=LANG;document.title=t('pageTitle');$('#h1').innerHTML=t('titleHtml');$('#links').innerHTML='<a href="'+ATLAS.links.repo+'">'+t('linkRepo')+'</a> · <a href="rules/index.html">'+t('rpIndex')+'</a> · <a href="'+ATLAS.links.data+'">'+t('linkData')+'</a> · <a href="'+ATLAS.links.zip+'">'+t('linkZip')+'</a> · <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">'+t('linkLicense')+'</a>';
   Array.prototype.forEach.call(document.querySelectorAll('[data-i]'),function(e){var k=e.getAttribute('data-i');if(typeof t(k)==='string'){if(t(k).indexOf('<sup>')>=0)e.innerHTML=t(k);else e.textContent=t(k);}});
   $('#l-de').setAttribute('aria-pressed',LANG==='de');$('#l-en').setAttribute('aria-pressed',LANG==='en');
   $('#kw').innerHTML=t('kw').map(function(x){return '<span>'+x+'</span>';}).join('');

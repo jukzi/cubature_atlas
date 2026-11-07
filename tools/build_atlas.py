@@ -480,6 +480,10 @@ def rule_page(r, fam, best, lang, t):
     else:
         ctext = "–"
     dname = t.get("dom_" + r["domain"], r["domain"])
+    if fam["role"] == "literature":
+        lic = html.escape(t["rpLicLit"])
+    else:
+        lic = '<a href="https://creativecommons.org/licenses/by/4.0/" rel="license">%s</a>' % html.escape(t["linkLicense"])
     cite = "Cubature Atlas, rule %s (%s, %s, degree %d, %d nodes), %s%s" % (
         r["id"], fam["name"]["en"], r["domain"], r["degree"], r["points"], BASE_URL, rule_url(r, "en"))
     title = "%s – %s %s, %s %d, %d %s" % (r["id"], t["title"], dname, t["rpDegree"], r["degree"], r["points"], t["nodes"])
@@ -493,6 +497,7 @@ def rule_page(r, fam, best, lang, t):
 <h1>%s</h1>
 <p class="ai">%s</p>
 %s
+<p>%s</p>
 <table>
 <tr><th>%s</th><td>%s<br><small>rules/%s/</small></td></tr>
 <tr><th>%s</th><td>%s (%s)</td></tr>
@@ -514,6 +519,7 @@ def rule_page(r, fam, best, lang, t):
 """ % (lang, html.escape(title), html.escape(fam["description"][lang][:150]), alt_en, alt_de, RULE_CSS,
        up + ("" if lang == "en" else "de/"), t["rpBack"], up + ("" if lang == "en" else "de/"), t["rpIndex"],
        html.escape(r["id"]), html.escape(t["ai"]), bestline,
+       lic,
        t["rpFamily"], html.escape(fam["name"][lang]), fam["id"],
        t["rpDomain"], html.escape(dname), SYM[r["domain"]],
        t["rpDegree"], r["degree"], t["rpPoints"], r["points"], t["rpQuality"], r["_q"],

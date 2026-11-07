@@ -141,4 +141,6 @@ Please cite the rule by its id and the atlas, e.g. *Cubature Atlas, rule CA-T2-1
 
 ## License
 
-Public Domain. The literature rules are reproduced from the cited publications for comparison; check their terms before redistributing them.
+Copyright © 2026 Jörg Kubitz. The Cubature Atlas (rules, data, texts, website and code) is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/), see `LICENSE`. You may use, share and adapt it for any purpose, including commercially, as long as you give appropriate credit (see *Citing*) and indicate if changes were made.
+
+Exception: the rules in the literature families (`witherden_vincent_2015`, `jaskowiec_sukumar_2020`, `diallo_worku_2026`) are reproduced from the cited publications for comparison and are not covered by this license; their original terms apply.
