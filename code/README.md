@@ -13,6 +13,7 @@ The programs that produced and certified the rules, as published on the original
 | `sqelim.py` | Square, node reduction (PI and PO) |
 | `seed_tri2.py`, `free_search.py` | Triangle/tetrahedron, start from the previous degree, PO search |
 | `symsearch.py` | Orbit search (triangle, tetrahedron) |
+| `simplex_cubature.py` | d-simplex search with symmetry groups S_{d+1}, A_{d+1} or none: invariant basis from the orthonormal Dubiner basis, NNLS start, orbit elimination with Levenberg–Marquardt and manifold walks; produced the tetrahedron rules CA-T3-24-766 … CA-T3-30-1704 |
 | `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
 
 `cubature_search.py` (version 3) produced the cube rules CA-C3-21-486 … CA-C3-30-1324. It searches in a chosen subgroup of the cube group (Oh, Td, Th, O, T, …): orbit elimination, large-neighbourhood search with simulated annealing, a rank-ILP target structure, and warm starts from stored rules (`--refine T --sources dir`). Run `python3 cubature_search.py --help` for the options; the module docstring describes the method and lists the literature.
