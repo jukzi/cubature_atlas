@@ -17,7 +17,7 @@
   "weight": "Weight",
   "rotate": "Rotate",
   "danceBtn": "Dancing polynomial",
-  "subBtn": "Drill",
+  "subBtn": "Drill animation",
   "legPoly": "Polynomial of degree {n} (dancing)",
   "legInt": "Area = integral of the polynomial",
   "legBar": "Bars: width = weight, height = value at the node",
