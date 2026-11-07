@@ -59,7 +59,7 @@
     "chartLbl": "cf2351f9bca81831",
     "notes": "38615ede01d21993",
     "exH": "7c73b04fcf74e0aa",
-    "exSub": "7ec6eae9602fda90",
+    "exSub": "e53ed96698d0b1e9",
     "fnSqrt": "4acd3dde4567519e",
     "fnLog": "f615f30fa5505259",
     "fnSin": "2a2586beab08bd28",
@@ -266,7 +266,7 @@
     "cube": "Der Würfel hat die größte Lücke zwischen Gauß-Produkt und den kleinsten bekannten Regeln: Ab Grad 10 braucht das Produkt mehr als dreimal so viele Knoten. Gegenüber voll symmetrischen Regeln (Grad 9: 58, Grad 15: 199) sind die zentralsymmetrischen Regeln hier kleiner (48 und 186)."
   },
   "exH": "Numerische Integration in Aktion",
-  "exSub": "Die Regeln integrieren Funktionen, die kein Polynom sind. Gezeigt ist der relative Fehler gegen den exakten Wert, über dem Grad. Die gestrichelte Linie ist die Rechengenauigkeit; darunter ist der Fehler nur noch Rundungsrauschen. Wurzel und Logarithmus sind so verschoben, dass sie im ganzen Gebiet endlich bleiben, die Verzweigungsstelle liegt knapp außerhalb. Der Fehler braucht wegen der Spannweite von 16 Größenordnungen eine logarithmische Skala.",
+  "exSub": "Die Regeln integrieren Funktionen, die kein Polynom sind. Gezeigt ist der relative Fehler gegen den exakten Wert, über dem Grad. Die orange Linie ist die Rechengenauigkeit; darunter ist der Fehler nur noch Rundungsrauschen. Wurzel und Logarithmus sind so verschoben, dass sie im ganzen Gebiet endlich bleiben, die Verzweigungsstelle liegt knapp außerhalb. Der Fehler braucht wegen der Spannweite von 16 Größenordnungen eine logarithmische Skala.",
   "fnSqrt": "Wurzel",
   "fnLog": "Logarithmus",
   "fnSin": "Sinus",

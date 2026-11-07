@@ -71,7 +71,7 @@
     "cube": "The cube shows the widest gap between the Gauss product and the smallest known rules: from degree 10 the product needs more than three times as many nodes. Compared with fully symmetric rules (degree 9: 58, degree 15: 199) the centrally symmetric rules here are smaller (48 and 186)."
   },
   "exH": "Numerical integration in action",
-  "exSub": "The rules integrate functions that are not polynomials. The plot shows the relative error against the exact value, over the degree. The dashed line is the computing accuracy; below it the error is only rounding noise. Square root and logarithm are shifted so that they stay finite on the whole domain, the branch point lies just outside. The error spans 16 orders of magnitude and therefore needs a logarithmic scale.",
+  "exSub": "The rules integrate functions that are not polynomials. The plot shows the relative error against the exact value, over the degree. The orange line is the computing accuracy; below it the error is only rounding noise. Square root and logarithm are shifted so that they stay finite on the whole domain, the branch point lies just outside. The error spans 16 orders of magnitude and therefore needs a logarithmic scale.",
   "fnSqrt": "Square root",
   "fnLog": "Logarithm",
   "fnSin": "Sine",
