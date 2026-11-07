@@ -4,6 +4,12 @@
 
 Website: <https://jukzi.github.io/cubature_atlas/>
 
+<p align="center">
+  <a href="https://jukzi.github.io/cubature_atlas/"><img src="assets/figure_a_interval_gauss_n2.gif" width="640" alt="Figure A of the atlas page: the 2-point Gauss–Legendre rule on the interval integrates every polynomial of degree 3 exactly. A randomly changing cubic is shown with its area; the two bars (width = weight, height = value at the node) always have the same total area."></a>
+  <br>
+  <sub>Figure A of the website (default view): the 2-point Gauss–Legendre rule integrates every polynomial of degree 3 exactly. The bars (width = weight, height = value at the node) always enclose the same area as the curve.</sub>
+</p>
+
 > **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments), and the rules of the atlas's own search also carry a Newton–Kantorovich certificate. Please verify results before you rely on them.
 
 ## What is in here
@@ -19,6 +25,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
 | `site_template/index.html` | The interactive page; the build inserts the data |
 | `code/` | Search, certificate and helper programs that produced the rules |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
+| `tools/make_readme_gif.py`, `assets/` | Records figure A of the built page as the animated GIF of this README (Playwright, Pillow) |
 | `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
 
 ## Rule families
