@@ -72,11 +72,33 @@ Method (summary)
    ordering, accept with a simulated-annealing rule.  This gave the largest
    improvements at high degree.
 
+5c. Targeted search (version 3):
+   For every subset S of orbit types, the Jacobian columns of S have a
+   maximal rank rank_S (estimated with Chebyshev-distributed samples).  The
+   cheapest orbit structure satisfying all necessary rank conditions solves
+   the integer linear program (structure_target, scipy.optimize.milp)
+       minimise   sum_f c_f size_f
+       subject to sum_{f not in S} c_f dof_f >= neq - rank_S  for all S.
+   This is an estimate, not a proven lower bound (positivity is ignored).
+   Half of the LNS perturbations add orbits preferentially in families with
+   a deficit w.r.t. this target structure.
+
+5d. Warm starts (--refine with --sources):
+   Every stored rule of degree >= n that is invariant under the chosen
+   group is an exact starting rule for degree n; O_h rules are T_d- and
+   T_h-invariant.  Improvements are written to disk immediately.
+
+5e. Speed (version 2): Cholesky factorisation of the smaller Gram matrix
+   instead of an SVD in the LM step, using
+       (J^T J + lam I)^{-1} J^T = J^T (J J^T + lam I)^{-1},
+   Woodbury updates for the move scores, gathered Legendre tables and
+   closed-form projections.
+
 Usage
 -----
    python3 cubature_search.py --nmin 1 --nmax 30 --group Oh --jobs 2      # search
    python3 cubature_search.py --nmin 2 --nmax 30 --group Td --out rules_Td # other group
-   python3 cubature_search.py --nmin 27 --nmax 27 --refine 1500           # continue LNS
+   python3 cubature_search.py --nmin 20 --nmax 30 --group Td --refine 600 --out rules_ref --sources rules_best --jobs 2 --seed 7   # warm-start LNS
    python3 cubature_search.py --nmin 1 --nmax 31 --finalize               # clean + summary
    python3 verify_rules.py rules_best                                     # independent check
 
@@ -105,6 +127,8 @@ import math
 import sys
 import time
 import numpy as np
+from scipy.linalg import cho_factor
+from scipy.linalg import cho_solve
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +175,7 @@ def cube_group(name, d=3):
     """Return (perms, signs) of a subgroup of the hyperoctahedral group.
 
     An element acts by (g x)_i = signs[i] * x[perms[i]].
-    Supported names (d = 3): Oh, O, Td, Th, D4h, D2h, Ci, C1.
+    Supported names (d = 3): Oh, O, Td, Th, T, D3d, D3, C3v, S6, C3, D4h, D2h, Ci, C1.
     For general d: 'Bd' (full group), 'Ci', 'C1', 'D2h' (sign flips only).
     """
     # Container for the permutation parts.
@@ -185,6 +209,18 @@ def cube_group(name, d=3):
                 keep = sprod == 1
             elif name == "Th":
                 keep = parity == 1
+            elif name == "T":
+                keep = parity == 1 and sprod == 1
+            elif name == "D3d":
+                keep = len(set(sgn)) == 1
+            elif name == "D3":
+                keep = len(set(sgn)) == 1 and det == 1
+            elif name == "C3v":
+                keep = all(x == 1 for x in sgn)
+            elif name == "S6":
+                keep = len(set(sgn)) == 1 and parity == 1
+            elif name == "C3":
+                keep = all(x == 1 for x in sgn) and parity == 1
             elif name == "D4h":
                 keep = perm[d - 1] == d - 1
             elif name == "D2h":
@@ -246,11 +282,13 @@ class Pattern:
         self.dim = A.shape[1]
         # Number of points of a generic orbit of this family.
         self.size = size
+        # Pseudo-inverse of A (closed-form projection onto the family).
+        self.Apinv = np.linalg.pinv(A) if A.shape[1] > 0 else np.zeros((0, A.shape[0]))
 
     def fit(self, q, tol=1e-9):
         """Return v with A v = q if q belongs to this family, else None."""
         # Least-squares solution (A has orthogonal columns).
-        v = np.linalg.lstsq(self.A, q, rcond=None)[0] if self.dim > 0 else np.zeros(0)
+        v = self.Apinv @ q
         # Check that the reconstruction is exact.
         if np.max(np.abs(self.A @ v - q)) > tol:
             return None
@@ -489,10 +527,14 @@ class Problem:
         F = np.zeros((self.neq, O))
         # Gradient accumulator.
         dF = np.zeros((self.neq, O, self.d)) if deriv else None
+        # Gather tables once: T[i][c][k, o] = L_{alpha_ki}(p_o[c]) (d*d gathers instead of |perms|*d).
+        T = [[L[self.alphas[:, i], :, c] for c in range(self.d)] for i in range(self.d)]
+        # Same for the derivatives.
+        dT = [[dL[self.alphas[:, i], :, c] for c in range(self.d)] for i in range(self.d)] if deriv else None
         # Loop over the distinct permutations.
         for u, perm in enumerate(self.uperms):
             # Factors: fac[i][k, o] = L_{alpha_ki}(p_o[perm_i]).
-            fac = [L[self.alphas[:, i], :, perm[i]] for i in range(self.d)]
+            fac = [T[i][perm[i]] for i in range(self.d)]
             # Product over the coordinates.
             prod = fac[0].copy()
             # Multiply the remaining factors.
@@ -506,7 +548,7 @@ class Problem:
             # Loop over the differentiated factor.
             for i in range(self.d):
                 # Derivative factor.
-                term = dL[self.alphas[:, i], :, perm[i]]
+                term = dT[i][perm[i]]
                 # Multiply the other factors.
                 for l in range(self.d):
                     # Skip the differentiated one.
@@ -670,22 +712,32 @@ def solve_rule(rule, tol=1e-14, maxit=None, verbose=False, patience=None, fixed=
         free = ~(at_lo | at_hi)
         # Reduced Jacobian.
         Jf = J[:, free]
-        # Thin SVD.
-        U, s, Vt = np.linalg.svd(Jf, full_matrices=False)
-        # Projected residual.
-        Ur = U.T @ r
-        # Scale of the problem.
-        smax2 = s[0] ** 2 if s.size else 1.0
+        # Use the smaller Gram matrix: (J^T J + lam I)^{-1} J^T = J^T (J J^T + lam I)^{-1}.
+        dual = Jf.shape[0] <= Jf.shape[1]
+        # Gram matrix of the smaller dimension.
+        Gm = Jf @ Jf.T if dual else Jf.T @ Jf
+        # Right-hand side for the primal form.
+        g = None if dual else Jf.T @ r
+        # Scale of the problem (largest diagonal entry ~ largest squared singular value).
+        smax2 = float(np.max(np.diag(Gm))) if Gm.size else 1.0
         # Flag for an accepted step.
         accepted = False
         # Try increasing damping until the residual decreases.
-        for _ in range(12):
+        for _ in range(14):
             # Damping value.
             lam = mu * smax2
-            # Filter factors of the damped least-squares step.
-            filt = s / (s * s + lam)
+            # Damped Gram matrix.
+            Ad = Gm + lam * np.eye(Gm.shape[0])
+            # Cholesky factorisation (may fail if lam is too small).
+            try:
+                # Factor.
+                cf = cho_factor(Ad, check_finite=False)
+            except np.linalg.LinAlgError:
+                # Increase the damping and retry.
+                mu *= 10.0
+                continue
             # Step in the free variables.
-            step = -(Vt.T @ (filt * Ur))
+            step = -(Jf.T @ cho_solve(cf, r, check_finite=False)) if dual else -cho_solve(cf, g, check_finite=False)
             # Full step vector.
             dz = np.zeros_like(z)
             # Insert the free part.
@@ -964,7 +1016,7 @@ def generate_moves(rule, max_dist=0.35):
             # Loop over images.
             for y in imgs:
                 # Least-squares coordinates in the smaller family.
-                v = np.linalg.lstsq(pat.A, y, rcond=None)[0] if pat.dim > 0 else np.zeros(0)
+                v = pat.Apinv @ y
                 # Clip into the box.
                 v = np.clip(v, -1.0, 1.0)
                 # Distance to the projection.
@@ -1016,6 +1068,8 @@ def fast_scores(rule, moves, eps=1e-13):
     M = Js @ Js.T
     # Regularisation.
     reg = eps * np.trace(M) / M.shape[0]
+    # Inverse of the regularised Gram matrix (used for Woodbury updates).
+    Minv = np.linalg.inv(M + reg * np.eye(M.shape[0]))
     # Scores.
     out = np.empty(len(moves))
     # Collect the new generator points of all demotions for one batched evaluation.
@@ -1043,8 +1097,10 @@ def fast_scores(rule, moves, eps=1e-13):
         To = rule.weights[o]
         # Residual change: remove the old orbit contribution.
         rp = r - F[:, o] * To
-        # Updated Gram matrix.
-        Mp = M - Uold @ Uold.T
+        # Low-rank factors of the Gram update: M' = M + U C U^T.
+        U = Uold
+        # Signs: removed columns.
+        csig = -np.ones(Uold.shape[1])
         # Demotion: add the new orbit.
         if q is not None:
             # Row of the new point.
@@ -1055,18 +1111,26 @@ def fast_scores(rule, moves, eps=1e-13):
             Unew = To * (dFn[:, k, :] @ A) if A.shape[1] > 0 else np.zeros((prob.neq, 0))
             # New weight column (scaled).
             Unew = np.hstack([Unew, wscale * Fn[:, k:k + 1]])
-            # Add to the Gram matrix.
-            Mp = Mp + Unew @ Unew.T
+            # Append the new columns.
+            U = np.hstack([U, Unew])
+            # Signs: added columns.
+            csig = np.concatenate([csig, np.ones(Unew.shape[1])])
             # Add the new contribution to the residual.
             rp = rp + Fn[:, k] * To
-        # Regularise.
-        Mp[np.diag_indices_from(Mp)] += reg
-        # Solve.
+        # Woodbury: (M + U C U^T)^{-1} = Minv - Minv U (C^{-1} + U^T Minv U)^{-1} U^T Minv.
+        MU = Minv @ U
+        # Small capacitance matrix.
+        cap = np.diag(1.0 / csig) + U.T @ MU
+        # Minv applied to the residual.
+        Mr = Minv @ rp
+        # Solve the small system.
         try:
-            lam = np.linalg.solve(Mp, rp)
+            corr = np.linalg.solve(cap, U.T @ Mr)
         except np.linalg.LinAlgError:
             out[idx] = np.inf
             continue
+        # Updated solution lambda = M'^{-1} r'.
+        lam = Mr - MU @ corr
         # Squared norm of the minimum-norm correction.
         out[idx] = math.sqrt(max(float(rp @ lam), 0.0))
     # Return the scores.
@@ -1117,11 +1181,14 @@ def unknown_slices(rule, o):
     return cidx, widx
 
 
-def homotopy_delete(rule, o, steps=(0.3, 0.6, 0.85, 1.0), min_dt=0.05):
+def homotopy_delete(rule, o, steps=(0.3, 0.6, 0.85, 1.0), min_dt=0.004, max_steps=200):
     """Remove orbit o by driving its weight to zero along a continuation path.
 
     The weight of orbit o is frozen at (1-t) w0 while all other unknowns
-    follow; the step in t is halved on failure.  Returns an exact rule or None.
+    follow; the step in t is halved on failure.  If the path reaches the
+    boundary of the feasible set because the weight of ANOTHER orbit drops
+    to zero, that orbit is removed as well and the continuation goes on.
+    Returns an exact rule with fewer points or None.
     """
     # Work on a copy.
     cur = rule.copy()
@@ -1131,8 +1198,12 @@ def homotopy_delete(rule, o, steps=(0.3, 0.6, 0.85, 1.0), min_dt=0.05):
     t = 0.0
     # Current step.
     dt = steps[0]
+    # Step counter.
+    nstep = 0
     # Continuation loop.
-    while t < 1.0:
+    while t < 1.0 and nstep < max_steps:
+        # Count the step.
+        nstep += 1
         # Trial parameter.
         tt = min(1.0, t + dt)
         # Trial rule.
@@ -1150,11 +1221,41 @@ def homotopy_delete(rule, o, steps=(0.3, 0.6, 0.85, 1.0), min_dt=0.05):
             cur = trial
             t = tt
             dt = min(2.0 * dt, 0.5)
-        else:
-            dt *= 0.5
-            # Give up below the minimal step.
-            if dt < min_dt:
+            continue
+        # Shrink the step.
+        dt *= 0.5
+        # Below the minimal step: try to drop other orbits whose weight vanished.
+        if dt < min_dt:
+            # Orbits (other than o) with (almost) zero weight.
+            dead = [k for k in range(len(cur.weights)) if k != o and cur.weights[k] < 1e-6 * float(np.mean(cur.weights))]
+            # Nothing to drop: give up.
+            if not dead:
                 return None
+            # Remove them (from the back so that indices stay valid).
+            for k in sorted(dead, reverse=True):
+                # Remove the pattern id.
+                del cur.pat_ids[k]
+                # Remove the coordinates.
+                del cur.coords[k]
+                # Remove the weight.
+                cur.weights = np.delete(cur.weights, k)
+                # Shift the index of orbit o.
+                if k < o:
+                    o -= 1
+            # Re-solve with the weight of o frozen at its current value.
+            fixed = np.zeros(cur.pack().size, dtype=bool)
+            # Mark the weight.
+            fixed[unknown_slices(cur, o)[1]] = True
+            # Solve.
+            ok, _ = solve_rule(cur, fixed=fixed)
+            # Failure.
+            if not ok:
+                return None
+            # Restart with a moderate step.
+            dt = 0.05
+    # Not finished.
+    if t < 1.0:
+        return None
     # Remove the now empty orbit.
     del cur.pat_ids[o]
     # Remove its coordinates.
@@ -1272,7 +1373,7 @@ def homotopy_candidates(rule):
             # Loop over images.
             for y in imgs:
                 # Projection coordinates.
-                v = np.linalg.lstsq(pat.A, y, rcond=None)[0] if pat.dim > 0 else np.zeros(0)
+                v = pat.Apinv @ y
                 # Clip.
                 v = np.clip(v, -1.0, 1.0)
                 # Distance.
@@ -1505,7 +1606,7 @@ def eliminate(rule, max_try=12, rng=None, noise=0.0, log=None, time_limit=None, 
     return cur
 
 
-def perturb(rule, rng, nadd, frac=0.5):
+def perturb(rule, rng, nadd, frac=0.5, target=None):
     """Add nadd random orbits and move real weight into them.
 
     The orbits are added with a tiny weight (keeps exactness), then their
@@ -1519,10 +1620,20 @@ def perturb(rule, rng, nadd, frac=0.5):
     fams = [q for q, p in enumerate(prob.patterns) if p.dim > 0]
     # Choose the families of the new orbits.
     extra = {}
+    # Selection probabilities: uniform, or proportional to the deficit w.r.t. the target structure.
+    prob_f = np.ones(len(fams))
+    # Targeted mode.
+    if target is not None:
+        # Current counts per family.
+        cur = np.array([rule.pat_ids.count(q) for q in fams])
+        # Deficit (plus a small floor so that every family stays possible).
+        prob_f = np.maximum(np.array([target[q] for q in fams]) - cur, 0) + 0.3
+    # Normalise.
+    prob_f = prob_f / prob_f.sum()
     # Draw nadd families.
     for _ in range(nadd):
         # Random family.
-        q = int(rng.choice(fams))
+        q = int(rng.choice(fams, p=prob_f))
         # Count it.
         extra[q] = extra.get(q, 0) + 1
     # Add with tiny weights.
@@ -1558,7 +1669,83 @@ def perturb(rule, rng, nadd, frac=0.5):
     return cur
 
 
-def lns(rule, rng, iters=50, time_limit=None, log=None, max_add=4, temp0=6.0):
+def drive_to_target(rule, target, rng, log=None, max_fail=6):
+    """Steer an exact rule towards the target orbit structure.
+
+    1. Add the missing orbits of every family with a deficit (exactness is
+       preserved; their weights are raised by continuation).
+    2. Remove surplus orbits of the families with an excess, largest family
+       first, each by a weight homotopy (homotopy_delete) so that the rule
+       stays exact along the way; the smallest-weight orbits are tried first.
+    3. Finish with an ordinary elimination.
+    Returns the resulting exact rule.
+    """
+    # Problem shortcut.
+    prob = rule.prob
+    # Current counts.
+    cur = np.array([rule.pat_ids.count(q) for q in range(len(prob.patterns))])
+    # Deficits of families with free coordinates.
+    extra = {q: int(target[q] - cur[q]) for q in range(len(prob.patterns)) if prob.patterns[q].dim > 0 and target[q] > cur[q]}
+    # Add the missing orbits.
+    work = rule.copy()
+    # One family at a time (continuation in the weights).
+    for q, cnt in extra.items():
+        # Add cnt orbits of family q.
+        for _ in range(cnt):
+            # Add one orbit with tiny weight.
+            work = augment(work, {q: 1}, rng)
+            # Index of the new orbit.
+            o = len(work.pat_ids) - 1
+            # Raise its weight to half of the mean by continuation.
+            for scale in (0.5, 0.15, 0.05):
+                # Trial copy.
+                trial = work.copy()
+                # Prescribed weight.
+                trial.weights[o] = scale * float(np.mean(work.weights))
+                # Freeze it.
+                fixed = np.zeros(trial.pack().size, dtype=bool)
+                # Mark the weight.
+                fixed[unknown_slices(trial, o)[1]] = True
+                # Solve.
+                ok, _ = solve_rule(trial, fixed=fixed)
+                # Accept.
+                if ok:
+                    work = trial
+                    break
+    # Families sorted by orbit size (largest first).
+    order_f = sorted(range(len(prob.patterns)), key=lambda q: -prob.patterns[q].size)
+    # Remove the surplus.
+    for q in order_f:
+        # Failures for this family.
+        fails = 0
+        # While the family has an excess.
+        while work.pat_ids.count(q) > target[q] and fails < max_fail:
+            # Orbits of this family sorted by weight.
+            cands = sorted([o for o, p in enumerate(work.pat_ids) if p == q], key=lambda o: work.weights[o])
+            # Success flag.
+            done = False
+            # Try the lightest orbits first.
+            for o in cands[:3]:
+                # Weight homotopy.
+                res = homotopy_delete(work, o)
+                # Accept.
+                if res is not None:
+                    work = res
+                    done = True
+                    break
+            # Count failures.
+            if not done:
+                fails += 1
+                # Give up on this family.
+                break
+        # Log.
+        if log is not None:
+            log("    drive: family %s now %d (target %d), m=%d" % (prob.patterns[q].name(), work.pat_ids.count(q), target[q], work.npoints()))
+    # Final ordinary elimination.
+    return eliminate(work, rng=rng, noise=0.2, power=3.0)
+
+
+def lns(rule, rng, iters=50, time_limit=None, log=None, max_add=4, temp0=6.0, target=None, on_improve=None):
     """Iterated large-neighbourhood search: perturb (add orbits) + re-eliminate.
 
     Accepts the new rule if it does not have more points (plateau moves are
@@ -1577,10 +1764,14 @@ def lns(rule, rng, iters=50, time_limit=None, log=None, max_add=4, temp0=6.0):
             break
         # Number of added orbits.
         nadd = int(rng.integers(1, max_add + 1))
+        # Targeted perturbation in half of the iterations (if a target is given).
+        tgt = target if (target is not None and rng.random() < 0.5) else None
         # Perturb.
-        pert = perturb(cur, rng, nadd)
+        pert = perturb(cur, rng, nadd, target=tgt)
+        # Size preference (stronger when targeting: remove the big orbits).
+        power = float(rng.choice([2.0, 3.0, 4.0])) if tgt is not None else float(rng.choice([1.0, 2.0, 3.0]))
         # Re-eliminate with randomised ordering.
-        cand = eliminate(pert, rng=rng, noise=float(rng.choice([0.2, 0.5])), power=float(rng.choice([1.0, 2.0, 3.0])))
+        cand = eliminate(pert, rng=rng, noise=float(rng.choice([0.2, 0.5])), power=power)
         # Simulated-annealing temperature (points), decreasing linearly in time or iterations.
         progress = (time.time() - t0) / time_limit if time_limit else it / max(iters, 1)
         # Temperature.
@@ -1596,6 +1787,9 @@ def lns(rule, rng, iters=50, time_limit=None, log=None, max_add=4, temp0=6.0):
             # Log improvements.
             if log is not None:
                 log("    lns it %d -> m=%d" % (it, best.npoints()))
+            # Checkpoint callback (e.g. write the rule to disk).
+            if on_improve is not None:
+                on_improve(best)
     # Return the best rule.
     return best
 
@@ -1623,8 +1817,8 @@ def rank_caps(prob, seed=0):
         # Pool size.
         cnt = 1 if pat.dim == 0 else prob.neq
         # Random rule consisting of this family only.
-        rule = Rule(prob, [f] * cnt, [rng.uniform(0.05, 0.95, pat.dim) for _ in range(cnt)], rng.uniform(0.5, 1.5, cnt))
-        # Its Jacobian.
+        rule = Rule(prob, [f] * cnt, [np.cos(np.pi * rng.uniform(0.0, 1.0, pat.dim)) for _ in range(cnt)], rng.uniform(0.5, 1.5, cnt))
+        # Its Jacobian (Chebyshev-distributed samples keep it well conditioned at high degree).
         blocks.append(rule.residual_jacobian()[1])
     # Ranks of all subsets (bit masks).
     ranks = {}
@@ -1635,9 +1829,49 @@ def rank_caps(prob, seed=0):
         # Singular values.
         sv = np.linalg.svd(J, compute_uv=False)
         # Numerical rank.
-        ranks[mask] = int(np.sum(sv > 1e-10 * sv[0]))
+        ranks[mask] = int(np.sum(sv > 1e-11 * sv[0]))
     # Return the table.
     return ranks
+
+
+def structure_target(prob):
+    """Cheapest orbit structure that satisfies all rank conditions (integer LP).
+
+    minimise   sum_f c_f size_f
+    subject to sum_{f not in S} c_f dof_f >= neq - rank_S   for every subset S,
+               c_f >= 0 integer, at most one centre.
+    Returns (points, counts) or (None, None).  Used as a lower estimate and
+    as a target for the large-neighbourhood search.
+    """
+    # Local import (scipy is only needed here).
+    from scipy.optimize import milp, LinearConstraint, Bounds
+    # Rank table.
+    ranks = rank_caps(prob)
+    # Number of families.
+    P = len(prob.patterns)
+    # Orbit sizes.
+    size = np.array([p.size for p in prob.patterns], dtype=float)
+    # Unknowns per orbit.
+    dof = np.array([p.dim + 1 for p in prob.patterns], dtype=float)
+    # Constraint rows.
+    rows = [dof.copy()]
+    # Lower bounds.
+    lbs = [prob.neq]
+    # One row per subset.
+    for mask, rk in ranks.items():
+        # Unknowns outside the subset.
+        rows.append(np.array([0.0 if mask >> f & 1 else dof[f] for f in range(P)]))
+        # Required amount.
+        lbs.append(prob.neq - rk)
+    # Upper bounds (centre at most once).
+    ub = np.array([1.0 if p.dim == 0 else np.inf for p in prob.patterns])
+    # Solve the integer program.
+    res = milp(size, constraints=LinearConstraint(np.array(rows), lbs, np.inf), integrality=np.ones(P), bounds=Bounds(0, ub))
+    # Infeasible or failed.
+    if res.x is None:
+        return None, None
+    # Return points and counts.
+    return int(round(res.fun)), np.round(res.x).astype(int)
 
 
 def rank_feasible(prob, counts, ranks):
@@ -1864,6 +2098,8 @@ def search_degree(n, group="Oh", restarts=6, time_limit=600.0, exhaustive_time=0
     log("phase1: %d runs, best counts %s  (%.0fs)" % (run, [e[0] for e in pool[:6]], time.time() - t0))
     # Best rule so far.
     best = pool[0][2]
+    # Target structure for the targeted large-neighbourhood search.
+    _, target = structure_target(prob)
     # Phase 2: large-neighbourhood search with annealing on the three best rules.
     chunk = 0
     # Loop until the time is used up.
@@ -1873,7 +2109,7 @@ def search_degree(n, group="Oh", restarts=6, time_limit=600.0, exhaustive_time=0
         # Time for this chunk.
         tl = min(0.25 * time_limit, time_limit - (time.time() - t0))
         # Run the LNS.
-        res = lns(seed_rule, rng, iters=10 ** 6, time_limit=tl, temp0=6.0 if chunk < 3 else 3.0)
+        res = lns(seed_rule, rng, iters=10 ** 6, time_limit=tl, temp0=6.0 if chunk < 3 else 3.0, target=target, max_add=6)
         # Log.
         log("phase2 chunk %d: %d -> %d  (%.0fs)" % (chunk, seed_rule.npoints(), res.npoints(), time.time() - t0))
         # Keep the best.
@@ -2026,28 +2262,81 @@ def load_rule_for(res, group):
     return Rule(prob, pids, crds, wts)
 
 
-def refine_degree(n, group, outdir, time_limit, seed=7):
-    """Continue the LNS from the best stored rule of degree n; save improvements."""
+def refine_degree(n, group, outdir, time_limit, seed=7, sources=None):
+    """Continue the LNS for degree n from the best known rule; save improvements.
+
+    Warm start: every stored rule of degree >= n (from any of the source
+    folders) that is invariant under `group` is a valid exact starting rule
+    for degree n.  In particular an O_h-invariant rule is also T_d-invariant.
+    """
     # Start time.
     t0 = time.time()
-    # Stored rules of this degree.
-    files = glob.glob(os.path.join(outdir, "cube3d_n%02d_m*_%s.txt" % (n, group)))
-    # Point count from the file name.
+    # Folders to search for starting rules.
+    dirs = [outdir] + list(sources or [])
+    # Point count from a file name.
     count = lambda f: int(re.search(r"_m(\d+)_", f).group(1))
-    # Best stored file.
-    fbest = min(files, key=count)
-    # Rebuild its orbit representation.
-    rule = load_rule_for({"n": n, "file": fbest}, group)
-    # Polish.
-    solve_rule(rule)
+    # Degree from a file name.
+    degree = lambda f: int(re.search(r"_n(\d+)_", f).group(1))
+    # All candidate files of degree >= n.
+    files = [f for d in dirs for f in glob.glob(os.path.join(d, "cube3d_n*_m*_*.txt")) if degree(f) >= n]
+    # Sort by point count.
+    files.sort(key=count)
+    # Best rule for this degree that is invariant under the group.
+    rule = None
+    # Try the candidates in order.
+    for f in files:
+        # Rebuild the orbit representation under the requested group (fails if not invariant).
+        try:
+            rule = load_rule_for({"n": n, "file": f}, group)
+        except Exception:
+            rule = None
+        # Check the point count (a non-invariant rule decomposes incorrectly).
+        if rule is not None and actual_points(rule)[0].shape[0] == count(f):
+            # Polish and check exactness.
+            ok, _ = solve_rule(rule)
+            # Accept the first valid one.
+            if ok:
+                fbest = f
+                break
+        # Not usable.
+        rule = None
+    # Nothing usable.
+    if rule is None:
+        return n, -1, -1
+    # Points of the start.
+    m0 = count(fbest)
     # Random generator.
     rng = np.random.default_rng(seed + n)
+    # Target structure from the rank conditions.
+    tpts, target = structure_target(rule.prob)
+    # Report it.
+    print("[n=%d refine] start m=%d, rank-ILP estimate m=%s target %s" % (n, m0, tpts, None if target is None else list(target)), flush=True)
+    # Checkpoint writer: save every improvement immediately.
+    def save(r):
+        # Expand.
+        Xc, Wc = actual_points(r)
+        # File name.
+        fn = os.path.join(outdir, "cube3d_n%02d_m%d_%s.txt" % (n, Xc.shape[0], group))
+        # Write.
+        with open(fn, "w") as fh:
+            # Header line 1.
+            fh.write("# cubature rule on [-1,1]^3, degree %d, %d points, group %s\n" % (n, Xc.shape[0], group))
+            # Header line 2.
+            fh.write("# columns: x y z w ; sum(w) = 8 ; max moment error %.2e\n" % verify(Xc, Wc, n))
+            # Points.
+            for x, w in zip(Xc, Wc * 8.0):
+                # One line per point.
+                fh.write("% .17e % .17e % .17e % .17e\n" % (x[0], x[1], x[2], w))
     # Large-neighbourhood search.
-    res = lns(rule, rng, iters=10 ** 6, time_limit=time_limit, temp0=4.0, log=lambda s: print("[n=%d refine] %s (%.0fs)" % (n, s.strip(), time.time() - t0), flush=True))
+    res = lns(rule, rng, iters=10 ** 6, time_limit=time_limit, temp0=4.0, target=target, on_improve=save, log=lambda s: print("[n=%d refine] %s (%.0fs)" % (n, s.strip(), time.time() - t0), flush=True))
     # Expand.
     X, W = actual_points(res)
-    # Save only real improvements.
-    if X.shape[0] < count(fbest):
+    # Save if better than everything stored in the output folder for this degree.
+    own = [f for f in glob.glob(os.path.join(outdir, "cube3d_n%02d_m*_%s.txt" % (n, group)))]
+    # Best own count.
+    mown = min([count(f) for f in own], default=10 ** 9)
+    # Write when improved.
+    if X.shape[0] < mown:
         # Verification.
         err = verify(X, W, n)
         # File name.
@@ -2063,7 +2352,7 @@ def refine_degree(n, group, outdir, time_limit, seed=7):
                 # One line per point.
                 fh.write("% .17e % .17e % .17e % .17e\n" % (x[0], x[1], x[2], w))
     # Report.
-    return n, count(fbest), int(X.shape[0])
+    return n, m0, int(X.shape[0])
 
 
 def finalize(args):
@@ -2165,8 +2454,14 @@ def main():
     ap.add_argument("--summary", default="summary.json")
     # Finalisation mode: collect the best stored rule per degree and write the summary.
     ap.add_argument("--finalize", action="store_true")
-    # Refinement mode: continue from stored rules for this many seconds per degree.
+    # Refinement mode: continue from stored rules for this many seconds (degree 30; scaled quadratically).
     ap.add_argument("--refine", type=float, default=0.0)
+    # Random seed for the refinement.
+    ap.add_argument("--seed", type=int, default=7)
+    # Only every step-th degree starting at nmin (e.g. 2 = odd degrees only).
+    ap.add_argument("--step", type=int, default=1)
+    # Additional folders with starting rules for the refinement (comma separated).
+    ap.add_argument("--sources", default="")
     # Parse.
     args = ap.parse_args()
     # Finalisation mode.
@@ -2184,7 +2479,12 @@ def main():
         # Worker pool.
         with ProcessPoolExecutor(max(args.jobs, 1)) as ex:
             # Submit.
-            futs = [ex.submit(refine_degree, n, args.group, args.out, args.refine) for n in degs]
+            # Source folders.
+            src = [d for d in args.sources.split(",") if d]
+            # Time per degree: 10% of the budget plus a quadratic part.
+            tl = lambda n: args.refine * (0.1 + 0.9 * ((n - 1) / 29.0) ** 2)
+            # Submit (largest first for load balance).
+            futs = [ex.submit(refine_degree, n, args.group, args.out, tl(n), args.seed, src) for n in sorted(degs, reverse=True) if n % args.step == args.nmin % args.step]
             # Collect and print.
             for f in futs:
                 # Result tuple.
