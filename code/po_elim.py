@@ -147,7 +147,8 @@ def main():
     x = np.r_[P.ravel(), w]
     t0 = time.time()
     fails = 0
-    while time.time() - t0 < tl and N > 1:
+    # Stop when one node less would give fewer unknowns than moments (generic count reached).
+    while time.time() - t0 < tl and 4 * (N - 1) >= pr.M:
         Qc = x[:3 * N].reshape(N, 3)
         wc = x[3 * N:4 * N]
         order = np.argsort(wc)
