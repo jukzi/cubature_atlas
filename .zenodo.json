@@ -1,0 +1,38 @@
+{
+  "title": "Cubature Atlas: best known quadrature and cubature rules with positive weights",
+  "upload_type": "dataset",
+  "description": "<p>Smallest known quadrature and cubature rules with few points and positive weights on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30. One JSON file per rule (nodes, weights, metadata), grouped into families: minimal point count for degree n with all nodes inside the domain (PI) or with nodes allowed outside (PO), plus fully symmetric rules from the literature for comparison. Every rule is checked against all monomial moments up to its degree, and the rules of the atlas's own search carry a Newton–Kantorovich certificate. Includes the search and certificate code, a verifier and the bilingual (English/German) website <a href=\"https://jukzi.github.io/cubature_atlas/\">https://jukzi.github.io/cubature_atlas/</a>.</p><p><strong>AI-generated:</strong> the search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by the author. Please verify results before relying on them.</p>",
+  "creators": [
+    {
+      "name": "Kubitz, Jörg"
+    }
+  ],
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "language": "eng",
+  "keywords": [
+    "cubature",
+    "quadrature",
+    "numerical integration",
+    "cubature rules",
+    "quadrature rules",
+    "positive weights",
+    "finite element method",
+    "triangle",
+    "tetrahedron",
+    "cube"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/jukzi/cubature_atlas",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://jukzi.github.io/cubature_atlas/",
+      "relation": "isDocumentedBy",
+      "resource_type": "other"
+    }
+  ],
+  "notes": "Rules in the literature families (witherden_vincent_2015, jaskowiec_sukumar_2020, diallo_worku_2026) are reproduced from the cited publications for comparison and are not covered by the CC BY 4.0 license; cite the original publications for them."
+}
