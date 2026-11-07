@@ -1,0 +1,29 @@
+{
+  "id": "CA-T3-02-4-PI-JS",
+  "family": "jaskowiec_sukumar_2020",
+  "domain": "tetra",
+  "dimension": 3,
+  "degree": 2,
+  "points": 4,
+  "quality": "PI",
+  "origin": "literature",
+  "method": "taken from the literature, moment equations re-checked by the build",
+  "author": "Jaśkowiec–Sukumar",
+  "source": "J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020).",
+  "status": "verified",
+  "locked": true,
+  "symmetry": "full",
+  "certificate": null,
+  "nodes": [
+    [0.13819660112501, 0.13819660112501, 0.13819660112501],
+    [0.585410196624968, 0.13819660112501, 0.13819660112501],
+    [0.13819660112501, 0.585410196624968, 0.13819660112501],
+    [0.13819660112501, 0.13819660112501, 0.585410196624968]
+  ],
+  "weights": [
+    0.041666666666667,
+    0.041666666666667,
+    0.041666666666667,
+    0.041666666666667
+  ]
+}
