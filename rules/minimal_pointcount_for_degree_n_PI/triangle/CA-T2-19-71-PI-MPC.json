@@ -10,7 +10,7 @@
   "method": "numerical search of this atlas (moment equations, least squares), certified",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "verified",
-  "locked": false,
+  "locked": true,
   "residual_reported": 3.3306690738754696e-16,
   "certificate": {"N": 71, "M": 210, "p": 213, "res": 3.271606362701401e-14, "sigma": 0.02004730742769578, "h": 7.279600989229915e-05, "rad": 5.955166123472404e-12, "cert": true, "inside": false},
   "nodes": [
