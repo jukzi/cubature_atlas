@@ -1,3 +1,4 @@
 site/
 __pycache__/
 *.pyc
+auto_search_work/

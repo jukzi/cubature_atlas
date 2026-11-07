@@ -19,6 +19,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
 | `site_template/index.html` | The interactive page; the build inserts the data |
 | `code/` | Search, certificate and helper programs that produced the rules |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
+| `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
 
 ## Rule families
 
@@ -103,6 +104,25 @@ python tools/build_atlas.py --base origin/main    # also refuse changes to locke
 Every rule is checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
 
 The build writes `site/`: the English page, the German page under `de/`, one static page per rule (both languages, for search engines), `data/atlas.json`, a ZIP of all rules, and `sitemap.xml`. GitHub Actions run the check on every pull request and publish a live preview of the pull request under `pr-preview/pr-<number>/`. On every push to `main` they deploy `site/` to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/atlas.yml`).
+
+## Automatic search
+
+Once a day, `.github/workflows/auto_search.yml` runs three parallel slots of about 150 minutes each (`workflow_dispatch` allows other values).
+
+Each slot (`tools/auto_search.py`):
+- picks a cube degree at random, weighted towards high degrees;
+- picks the symmetry group Td or Oh;
+- picks the mode: a warm-start large-neighbourhood search from the best atlas rules, or a fresh search;
+- runs `code/cubature_search.py`.
+
+If a rule has fewer nodes than every rule of the atlas and of the open automatic pull requests of at least that degree, the slot:
+- certifies it with `code/cube_cert.py`;
+- writes the rule file and runs `tools/build_atlas.py --base origin/main`;
+- opens a pull request from `ai/auto-cube-nXX-mYYY` if the check prints `OK`.
+
+Settings:
+- **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"** must be enabled.
+- Pull requests opened with the default `GITHUB_TOKEN` do not start the pull-request checks and the preview. With a repository secret `AUTO_SEARCH_TOKEN` (a fine-grained token with *Contents* and *Pull requests* write access to this repository) they do.
 
 ## Translations
 

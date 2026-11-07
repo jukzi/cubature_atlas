@@ -2456,8 +2456,8 @@ def main():
     ap.add_argument("--finalize", action="store_true")
     # Refinement mode: continue from stored rules for this many seconds (degree 30; scaled quadratically).
     ap.add_argument("--refine", type=float, default=0.0)
-    # Random seed for the refinement.
-    ap.add_argument("--seed", type=int, default=7)
+    # Random seed (default: 7 for --refine, 1 for the fresh search, as in earlier versions).
+    ap.add_argument("--seed", type=int, default=None)
     # Only every step-th degree starting at nmin (e.g. 2 = odd degrees only).
     ap.add_argument("--step", type=int, default=1)
     # Additional folders with starting rules for the refinement (comma separated).
@@ -2484,7 +2484,7 @@ def main():
             # Time per degree: 10% of the budget plus a quadratic part.
             tl = lambda n: args.refine * (0.1 + 0.9 * ((n - 1) / 29.0) ** 2)
             # Submit (largest first for load balance).
-            futs = [ex.submit(refine_degree, n, args.group, args.out, tl(n), args.seed, src) for n in sorted(degs, reverse=True) if n % args.step == args.nmin % args.step]
+            futs = [ex.submit(refine_degree, n, args.group, args.out, tl(n), 7 if args.seed is None else args.seed, src) for n in sorted(degs, reverse=True) if n % args.step == args.nmin % args.step]
             # Collect and print.
             for f in futs:
                 # Result tuple.
@@ -2504,7 +2504,7 @@ def main():
         # Quadratic interpolation between tmin and tmax.
         return args.tmin + (args.tmax - args.tmin) * ((n - 1) / 30.0) ** 2
     # Keyword arguments shared by all degrees.
-    kw = dict(group=args.group, restarts=args.restarts, outdir=args.out, escape_tries=args.escape)
+    kw = dict(group=args.group, restarts=args.restarts, outdir=args.out, escape_tries=args.escape, seed=1 if args.seed is None else args.seed)
     # Run the searches.
     found = {}
     # Parallel or sequential.
