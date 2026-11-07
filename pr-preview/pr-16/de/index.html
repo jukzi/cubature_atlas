@@ -5328,21 +5328,19 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   var plE=el('polyline',{points:nbp.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2},ngE);
   var syE=[];nbp.forEach(function(o){if(o.ext)return;var gi=el('g',{},ngE);symEl(gi,'noise',X(o.N),Y(o.l),3,false);syE.push(gi);});
   var nzE={pts:nbp.map(function(o){return {x:X(o.N),l:o.l};}),Y:Y,pg:pgE,pl:plE,sy:syE,base:Y(FLOOR)};
-  var clG=null,clL=null;if(gp.length)clG=line(gp,'--s-gauss','10 3 2 3',selk==='gauss'?3.5:2,'gauss');
-  if(lit.length){clL=el('polyline',{points:lit.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-sym)','stroke-width':selk==='lit'?3.5:1.5,'stroke-dasharray':'5 3'},svg);lit.forEach(function(o){symEl(svg,'sym',X(o.N),Y(o.l),3.2,false);});}
-  var clE=null;tk.filter(function(k){return k!==selk;}).concat(tk.indexOf(selk)>=0?[selk]:[]).forEach(function(k){if(tser[k].length){var pe=line(tser[k],SERCOL[k],k==='found'?'':SERSTY[k][1],k===selk?3.5:2,k);if(k===selk)clE=pe;}});
+  if(gp.length)line(gp,'--s-gauss','10 3 2 3',selk==='gauss'?3.5:2,'gauss');
+  if(lit.length){el('polyline',{points:lit.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-sym)','stroke-width':selk==='lit'?3.5:1.5,'stroke-dasharray':'5 3'},svg);lit.forEach(function(o){symEl(svg,'sym',X(o.N),Y(o.l),3.2,false);});}
+  var piK=tser.found?'found':'gauss',clE=null;tk.filter(function(k){return k!==selk;}).concat(tk.indexOf(selk)>=0?[selk]:[]).forEach(function(k){if(tser[k].length){var pe=line(tser[k],SERCOL[k],k==='found'?'':SERSTY[k][1],k===selk?3.5:2,k);if(k===piK)clE=pe;}});
   var sdash=selk==='found'?'':(SERSTY[selk]||[0,''])[1];
   var ents=tk.filter(function(k){return tser[k].length;}).map(function(k){return {key:k,color:SERCOL[k],w:k===selk?3.5:2,dash:k==='found'?'':SERSTY[k][1],label:srcLabel(k,dom)};});
   if(gp.length)ents.push({key:'gauss',color:'--s-gauss',w:2,dash:'10 3 2 3',label:t('legGauss')+(dom==='interval'?'':' (Duffy, '+(LANG==='de'?'Gauß–Legendre':'Gauss–Legendre')+')')});
   ents.push({key:'noise',color:'--s-abz',w:2,dash:'',label:t('noiseLbl')});
   if(lit.length)ents.push({key:'sym',color:'--s-sym',w:1.5,dash:'5 3',label:t('litLbl')});
   legEntries(svg,ents,W-m.r-8,m.t+14,true);
-  var srcE=ours;
-  if(selk==='gauss'&&gp.length){srcE=gp;clE=clG;}
-  else if(selk==='lit'&&lit.length){srcE=lit;clE=clL;}
-  else if(tser[selk]&&tser[selk].length)srcE=tser[selk];
+  /* The drill always rides on the N_PI line (on the interval: Gauss-Legendre, the minimal PI rule). */
+  var srcE=tser[piK]&&tser[piK].length?tser[piK]:ours;
   var cE=srcE.slice().sort(function(a,b){return a.N-b.N;}).map(function(o){return [X(o.N),Y(o.l),o.l];});
-  drillGeom(DRE,svg,cE,nzE,clE,'E|'+st.dom+'|'+st.fn+'|'+st.src);
+  drillGeom(DRE,svg,cE,nzE,clE,'E|'+st.dom+'|'+st.fn);
   $('#exNH').textContent='';$('#exNH').style.display='none';
   $('#exNnote').textContent=t(dom==='interval'?'exNnoteI':'exNnote');}
 function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var res=exErrors(),W=560,H=360,m={l:62,r:14,t:12,b:40},pw=W-m.l-m.r,ph=H-m.t-m.b,FLOOR=-16,top=1;
