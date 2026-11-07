@@ -12,7 +12,7 @@
   "status": "verified",
   "locked": false,
   "residual_reported": 0.0,
-  "certificate": null,
+  "certificate": {"N": 12, "M": 12, "p": 12, "res": 9.799826941038128e-15, "sigma": 2.983494149032358, "h": 1.1131994909923754e-12, "rad": 4.047962955039819e-15, "cert": true, "inside": true, "sym": true},
   "exact_degree": 23,
   "optimal": true,
   "nodes": [
