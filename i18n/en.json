@@ -210,5 +210,7 @@
   "dom_triangle": "Triangle",
   "dom_square": "Square",
   "dom_tetra": "Tetrahedron",
-  "dom_cube": "Cube"
+  "dom_cube": "Cube",
+  "linkLicense": "License: CC BY 4.0",
+  "rpLicLit": "Reproduced from the cited publication for comparison; not covered by the CC BY 4.0 license of the atlas, the original terms apply."
 }
