@@ -1,0 +1,18 @@
+# Code
+
+The programs that produced and certified the rules, as published on the original atlas page. They need numpy and scipy.
+
+| File | Purpose |
+|---|---|
+| `counts.py` | Counting value, lower bounds, Gauss product |
+| `cubature_atlas.py` | Basis, search, Newton–Kantorovich certificate |
+| `demo.py` | Find a rule, certify it, integrate |
+| `kubatur.py` | Triangle/tetrahedron search with certificate |
+| `dom.py`, `cs.py`, `fj.py` | Basis and solver (square, triangle, tetrahedron) |
+| `seed_sq.py`, `seed_cs.py` | Square, start from a lower degree |
+| `sqelim.py` | Square, node reduction (PI and PO) |
+| `seed_tri2.py`, `free_search.py` | Triangle/tetrahedron, start from the previous degree, PO search |
+| `symsearch.py` | Orbit search (triangle, tetrahedron) |
+| `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
+
+The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.

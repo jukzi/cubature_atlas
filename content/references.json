@@ -1,0 +1,103 @@
+[
+  {
+    "n": 1,
+    "y": "1976",
+    "t": "H. M. Möller: Kubaturformeln mit minimaler Knotenzahl. Numerische Mathematik 25 (1976).",
+    "u": "https://portal.mardi4nfdi.de/wiki/Publication:1222930"
+  },
+  {
+    "n": 2,
+    "y": "1985",
+    "t": "D. A. Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. Int. J. Numer. Methods Eng. 21 (1985).",
+    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/triangle_dunavant_rule/triangle_dunavant_rule.html"
+  },
+  {
+    "n": 3,
+    "y": "1993",
+    "t": "R. Cools, P. Rabinowitz: Monomial cubature rules since “Stroud”: a compilation. J. Comput. Appl. Math. 48 (1993).",
+    "u": "https://portal.mardi4nfdi.de/wiki/Publication:1318438"
+  },
+  {
+    "n": 4,
+    "y": "1997",
+    "t": "R. Cools: Constructing cubature formulae: the science behind the art. Acta Numerica 6 (1997).",
+    "u": "https://doi.org/10.1017/S0962492900002701"
+  },
+  {
+    "n": 5,
+    "y": "1999",
+    "t": "R. Cools: Monomial cubature rules since “Stroud”: a compilation – part 2. J. Comput. Appl. Math. 112 (1999) 21–27.",
+    "u": "http://dx.doi.org/10.1016/S0377-0427(99)00229-0"
+  },
+  {
+    "n": 6,
+    "y": "2003",
+    "t": "S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003).",
+    "u": "https://portal.mardi4nfdi.de/wiki/Publication:1827222"
+  },
+  {
+    "n": 7,
+    "y": "2003",
+    "t": "R. Cools: An Encyclopaedia of Cubature Formulas. J. Complexity 19 (2003) 445–453. The online database at KU Leuven asks to cite this article together with [3] and [5] (page retrieved 2026-11-06).",
+    "u": "http://dx.doi.org/10.1016/S0885-064X(03)00011-6",
+    "u2": "https://nines.cs.kuleuven.be/research/ecf/",
+    "l2": "Database"
+  },
+  {
+    "n": 8,
+    "y": "2010",
+    "t": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663–676.",
+    "u": "https://portal.mardi4nfdi.de/wiki/Publication:980255"
+  },
+  {
+    "n": 9,
+    "y": "2015",
+    "t": "F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015).",
+    "u": "https://arxiv.org/abs/1409.1865"
+  },
+  {
+    "n": 10,
+    "y": "2020",
+    "t": "J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020).",
+    "u": "https://www.osti.gov/biblio/1596161"
+  },
+  {
+    "n": 11,
+    "y": "2021",
+    "t": "J. Jaśkowiec, N. Sukumar: High-order symmetric cubature rules for tetrahedra and pyramids. Int. J. Numer. Methods Eng. (2021), with addendum.",
+    "u": "https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.6528",
+    "u2": "https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.6600"
+  },
+  {
+    "n": 12,
+    "y": "2025",
+    "t": "V. Kaarnioja: Explicit solutions of Genz test integrals. Appl. Math. Lett. 163 (2025). Closed-form values for the Genz test families (Genz 1984), used here for the Genz examples.",
+    "u": "https://www.sciencedirect.com/science/article/pii/S0893965924004646",
+    "u2": "https://refubium.fu-berlin.de/handle/fub188/46492",
+    "l2": "Preprint"
+  },
+  {
+    "n": 13,
+    "y": "2026",
+    "t": "M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026).",
+    "u": "https://arxiv.org/abs/2601.14488"
+  },
+  {
+    "n": 14,
+    "y": "",
+    "t": "A. Sommariva: Cubature rules on the triangle (simplex). University of Padova, online sets with 26 cited sources; the page shows no date (retrieved 2026-11-06).",
+    "u": "https://www.math.unipd.it/~alvise/SETS_CUBATURE_TRIANGLE/rules_triangle.html"
+  },
+  {
+    "n": 15,
+    "y": "",
+    "t": "J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection (link not re-checked in this session).",
+    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/cube_arbq_rule/cube_arbq_rule.html"
+  },
+  {
+    "n": 16,
+    "y": "",
+    "t": "Ackley function (Wikipedia article on the test function of D. H. Ackley, 1987); link given by the client, not re-fetched.",
+    "u": "https://en.wikipedia.org/wiki/Ackley_function"
+  }
+]
