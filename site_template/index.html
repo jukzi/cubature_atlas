@@ -5300,9 +5300,9 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
     .map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
 function sci2(x){return dec(x,12);}
 
-/* ---------- Abbildung D: U-Boot ---------- */
-/* A small submarine dives along the error curve of figure D.
-   Where the curve reaches the dashed rounding bound it explodes, then a new one starts. */
+/* ---------- Abbildung D: Bohrer ---------- */
+/* A drill bores down the error curve of figure D.
+   Where the curve reaches the dashed rounding bound fireworks go up, then a new drill starts. */
 var SUB={on:!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches),
   key:'',path:[],len:0,ang:0,hit:false,s:0,phase:'dive',tp:0,parts:[],bub:[],last:0,raf:0,vis:true,g:null};
 function subGeom(svg,X,Y,logs,nl){
@@ -5336,58 +5336,60 @@ function subAt(s){
     s-=l;}
   return null;}
 function subBoat(g,p,tm){
-  /* Hull, tower, periscope and a turning propeller, nose to the right. */
+  /* Drill: tip at the curve point, body behind it, turning flutes on the bit. */
   var b=el('g',{transform:'translate('+p.x.toFixed(1)+','+p.y.toFixed(1)+') rotate('+(p.a*180/Math.PI).toFixed(1)+')'},g);
-  el('ellipse',{cx:0,cy:-7,rx:15,ry:5.5,fill:'#e9b52a',stroke:'var(--ink)','stroke-width':1.2},b);
-  el('rect',{x:-5,y:-15.5,width:8,height:5.5,rx:1.5,fill:'#e9b52a',stroke:'var(--ink)','stroke-width':1.2},b);
-  el('path',{d:'M0 -15.5 V-20 H4',fill:'none',stroke:'var(--ink)','stroke-width':1.2},b);
-  el('circle',{cx:6,cy:-7,r:1.6,fill:'#7fc6e8',stroke:'var(--ink)','stroke-width':.8},b);
-  el('circle',{cx:-1,cy:-7,r:1.6,fill:'#7fc6e8',stroke:'var(--ink)','stroke-width':.8},b);
-  var pr=Math.abs(Math.sin(tm/60))*4+1;
-  el('ellipse',{cx:-16.5,cy:-7,rx:1.2,ry:pr,fill:'var(--ink)'},b);}
+  el('rect',{x:-44,y:-7,width:20,height:14,rx:3,fill:'#2f7fd1',stroke:'var(--ink)','stroke-width':1.2},b);
+  el('rect',{x:-40,y:7,width:7,height:11,rx:2,fill:'#2f7fd1',stroke:'var(--ink)','stroke-width':1.2},b);
+  el('rect',{x:-24,y:-4.5,width:6,height:9,fill:'#9aa3ad',stroke:'var(--ink)','stroke-width':1},b);
+  el('path',{d:'M-18 -3.5 L-3 -2 L0 0 L-3 2 L-18 3.5 Z',fill:'#c9ced4',stroke:'var(--ink)','stroke-width':1},b);
+  var ph=(tm/40)%5,k;
+  for(k=-1;k<4;k++){var x0=-18+k*5+ph;if(x0<-18||x0>-4)continue;el('line',{x1:x0,y1:-3.2,x2:x0+2.5,y2:3.2,stroke:'var(--ink)','stroke-width':.9},b);}}
 function subBoom(p){
-  /* Debris, sparks and smoke at the impact point. */
-  var i,cols=['#ffd23f','#ff8c1a','#e8402a','#e9b52a'];
+  /* Fireworks: rockets rise from the hit point and burst later in subStep. */
+  var i;
   SUB.parts=[];
-  for(i=0;i<34;i++){
-    var a=Math.random()*2*Math.PI,v=40+Math.random()*170;
-    SUB.parts.push({x:p.x,y:p.y-7,vx:Math.cos(a)*v,vy:Math.sin(a)*v-60,r:1.2+Math.random()*2.6,c:cols[i%4],k:'spark'});}
-  for(i=0;i<7;i++){
-    var a2=Math.random()*2*Math.PI;
-    SUB.parts.push({x:p.x+Math.cos(a2)*6,y:p.y-7+Math.sin(a2)*6,vx:Math.cos(a2)*18,vy:-10-Math.random()*12,r:3+Math.random()*2.5,c:'#8a8f98',k:'smoke'});}}
+  for(i=0;i<4;i++){
+    SUB.parts.push({x:p.x,y:p.y,vx:(i-1.5)*28+(Math.random()-.5)*20,vy:-210-Math.random()*70,r:2,c:'#ffd23f',k:'rocket',d:i*.35,f:.7+Math.random()*.35});}}
 function subFrame(){
   var g=SUB.g;if(!g)return;
   while(g.firstChild)g.removeChild(g.firstChild);
   if(!SUB.on||SUB.path.length<1)return;
   var tm=performance.now(),i;
-  SUB.bub.forEach(function(b){el('circle',{cx:b.x.toFixed(1),cy:b.y.toFixed(1),r:b.r,fill:'none',stroke:'#7fc6e8','stroke-width':1,opacity:Math.max(0,1-b.t/1.4).toFixed(2)},g);});
+  SUB.bub.forEach(function(b){el('rect',{x:(b.x-b.r/2).toFixed(1),y:(b.y-b.r/2).toFixed(1),width:b.r,height:b.r,fill:'#a07a4a',opacity:Math.max(0,1-b.t/1.0).toFixed(2)},g);});
   if(SUB.phase==='dive'){var p=subAt(SUB.s);if(p){p.a=SUB.ang;subBoat(g,p,tm);}}
   else if(SUB.phase==='boom'){
-    var e=SUB.tp,q=subAt(SUB.len);
-    if(q&&e<.5){
-      el('circle',{cx:q.x,cy:q.y-7,r:(8+e*90).toFixed(1),fill:'#ffd23f',opacity:(.85*(1-e/.5)).toFixed(2)},g);
-      el('circle',{cx:q.x,cy:q.y-7,r:(4+e*45).toFixed(1),fill:'#fff6c8',opacity:(1-e/.5).toFixed(2)},g);}
+    var e=SUB.tp;
     SUB.parts.forEach(function(o){
-      var life=o.k==='smoke'?1.8:1.5,op=Math.max(0,1-e/life);
+      if(o.k==='rocket'){if(e<o.d||o.done)return;el('circle',{cx:o.x.toFixed(1),cy:o.y.toFixed(1),r:2,fill:o.c},g);el('line',{x1:o.x.toFixed(1),y1:o.y.toFixed(1),x2:(o.x-o.vx*.06).toFixed(1),y2:(o.y-o.vy*.06).toFixed(1),stroke:'#ffb347','stroke-width':1.5,opacity:.7},g);return;}
+      var op=Math.max(0,1-o.t/o.life);
       if(op<=0)return;
-      el('circle',{cx:o.x.toFixed(1),cy:o.y.toFixed(1),r:(o.k==='smoke'?o.r*(1+e*1.1):o.r).toFixed(1),fill:o.c,opacity:(o.k==='smoke'?.35*op:op).toFixed(2)},g);});
-    if(q&&e<1.2){var tx=el('text',{x:q.x,y:q.y-26-e*14,'text-anchor':'middle',style:'font-weight:700;fill:#e8402a',opacity:Math.max(0,1-e/1.2).toFixed(2)},g);tx.textContent='BOOM!';}}}
+      el('line',{x1:o.x.toFixed(1),y1:o.y.toFixed(1),x2:(o.x-o.vx*.05).toFixed(1),y2:(o.y-o.vy*.05).toFixed(1),stroke:o.c,'stroke-width':1.6,'stroke-linecap':'round',opacity:op.toFixed(2)},g);
+      el('circle',{cx:o.x.toFixed(1),cy:o.y.toFixed(1),r:o.r,fill:o.c,opacity:op.toFixed(2)},g);});}}
 function subStep(dt){
-  var SPEED=95,i;
-  for(i=SUB.bub.length-1;i>=0;i--){var b=SUB.bub[i];b.t+=dt;b.y-=22*dt;b.x+=Math.sin(b.t*6+b.ph)*6*dt;if(b.t>1.4)SUB.bub.splice(i,1);}
+  var SPEED=80,i;
+  for(i=SUB.bub.length-1;i>=0;i--){var b=SUB.bub[i];b.t+=dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vy+=300*dt;if(b.t>1.0)SUB.bub.splice(i,1);}
   if(SUB.phase==='dive'){
     SUB.s+=SPEED*dt;
     var pa=subAt(Math.min(SUB.s+10,SUB.len));
-    if(pa){var ta=Math.max(-.6,Math.min(.6,pa.a));SUB.ang+=(ta-SUB.ang)*Math.min(1,dt*5);}
-    if(Math.random()<dt*7){var p=subAt(SUB.s);if(p){var c=Math.cos(SUB.ang),s=Math.sin(SUB.ang);SUB.bub.push({x:p.x-17*c+7*s,y:p.y-17*s-7*c,r:1+Math.random()*1.8,t:0,ph:Math.random()*6});}}
+    if(pa){var ta=Math.max(-1.2,Math.min(1.2,pa.a));SUB.ang+=(ta-SUB.ang)*Math.min(1,dt*6);}
+    if(Math.random()<dt*25){var p=subAt(SUB.s);if(p){var c=Math.cos(SUB.ang),sn=Math.sin(SUB.ang),sd=Math.random()<.5?-1:1;SUB.bub.push({x:p.x-4*c,y:p.y-4*sn,vx:-c*40+sd*(-sn)*(50+Math.random()*60),vy:-sn*40+sd*c*(50+Math.random()*60)-60,r:1.5+Math.random()*1.5,t:0});}}
     if(SUB.s>=SUB.len){
       SUB.s=SUB.len;SUB.tp=0;
       if(SUB.hit){SUB.phase='boom';subBoom(subAt(SUB.len));}
       else SUB.phase='rest';}}
   else if(SUB.phase==='boom'){
     SUB.tp+=dt;
-    SUB.parts.forEach(function(o){o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.k==='spark'){o.vy+=260*dt;o.vx*=1-1.5*dt;}else{o.vx*=1-2*dt;}});
-    if(SUB.tp>2.6){SUB.phase='dive';SUB.s=0;SUB.ang=0;SUB.parts=[];}}
+    var add=[],cols=['#ff4d6d','#ffd23f','#4dd2ff','#7cff6b','#c77dff','#ff9f1c'];
+    SUB.parts.forEach(function(o){
+      if(o.k==='rocket'){
+        if(SUB.tp<o.d||o.done)return;
+        o.x+=o.vx*dt;o.y+=o.vy*dt;o.vy+=120*dt;o.f-=dt;
+        if(o.f<=0||o.y<14){o.done=true;var c1=cols[Math.floor(Math.random()*cols.length)],c2=cols[Math.floor(Math.random()*cols.length)],j;
+          for(j=0;j<36;j++){var a=j/36*2*Math.PI+Math.random()*.1,v=60+Math.random()*50;add.push({x:o.x,y:o.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,r:1.4,c:j%2?c1:c2,k:'spark',t:0,life:1.1+Math.random()*.5});}}
+        return;}
+      o.t+=dt;o.x+=o.vx*dt;o.y+=o.vy*dt;o.vy+=70*dt;o.vx*=1-1.8*dt;o.vy*=1-1.8*dt;});
+    SUB.parts=SUB.parts.concat(add);
+    if(SUB.tp>3.6){SUB.phase='dive';SUB.s=0;SUB.ang=0;SUB.parts=[];}}
   else{SUB.tp+=dt;if(SUB.tp>1.5){SUB.phase='dive';SUB.s=0;SUB.ang=0;}}}
 function subLoop(tm){
   SUB.raf=0;
