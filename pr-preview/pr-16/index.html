@@ -5309,15 +5309,19 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   var maxN=ours.length?Math.max.apply(null,ours.map(function(o){return o.N;})):1,gp=[];
   if(dom!=='interval'){for(var mm=1;mm<=17;mm++){var N=Math.pow(mm,dim);if(N>maxN*1.35&&mm>2)break;var q=gaussProduct(dom,mm,f),e=Math.abs(q-res.ex.val)/ev;gp.push({N:N,l:e>0?Math.max(FLOOR,Math.log10(e)):FLOOR,m:mm});}}
   var lit=litPoints(dom,f,res.ex.val,ev,FLOOR);var tk=typeKeys(dom),tser={};tk.forEach(function(k){tser[k]=typeSeries(dom,k,f,res.ex.val,ev,FLOOR);});var allp=[].concat(ours);tk.forEach(function(k){allp=allp.concat(tser[k]);});
-  var xmax=Math.max(maxN,gp.length?gp[gp.length-1].N:0,Math.max.apply(null,allp.map(function(o){return o.N;}).concat([0]))),mxl=Math.max.apply(null,allp.concat(gp,lit).map(function(o){return o.l;}).concat([-16])),top=Math.min(2,Math.ceil(mxl+.3));
+  var oth=(selk==='gauss'&&dim>1?[]:ours);tk.forEach(function(k){if(k!=='gauss'||dim===1)oth=oth.concat(tser[k]);});var xmax=Math.max.apply(null,oth.concat(lit).map(function(o){return o.N;}).concat([1])),mxl=Math.max.apply(null,allp.concat(gp,lit).map(function(o){return o.l;}).concat([-16])),top=Math.min(2,Math.ceil(mxl+.3));
   var nice=1;outer:for(var e2=0;e2<5;e2++){for(var q2=0;q2<3;q2++){nice=[1,2,5][q2]*Math.pow(10,e2);if(xmax/nice<=8)break outer;}}xmax=CEIL(xmax/nice)*nice;
   var X=function(n){return m.l+n/xmax*pw;},Y=function(l){return m.t+ph-(l-FLOOR)/(top-FLOOR)*ph;};
+  /* The Gauss product does not set the length of the x axis: cut it at the right edge. */
+  var gk=gp.filter(function(o){return o.N<=xmax;});
+  if(gk.length&&gk.length<gp.length){var ga=gk[gk.length-1],gb=gp[gk.length],gf=(xmax-ga.N)/(gb.N-ga.N);gk.push({N:xmax,l:ga.l+gf*(gb.l-ga.l),m:gb.m,cut:true});}
+  gp=gk;
   for(var l=FLOOR;l<=top;l+=2){el('line',{x1:m.l,x2:W-m.r,y1:Y(l),y2:Y(l),'class':'grid'},svg);var tx=el('text',{x:m.l-8,y:Y(l)+4,'text-anchor':'end'},svg);tx.textContent='10';var ts=el('tspan',{dy:-5,'font-size':10},tx);ts.textContent=String(l).replace('-','−');}
   el('line',{x1:m.l,x2:W-m.r,y1:m.t+ph,y2:m.t+ph,'class':'axis'},svg);
   for(var v=0;v<=xmax+1e-9;v+=nice){var tt=el('text',{x:X(v),y:H-22,'text-anchor':'middle'},svg);tt.textContent=fmt(v);}
   var at=el('text',{x:m.l+pw/2,y:H-4,'text-anchor':'middle'},svg);at.textContent=t('nodes')+'  ·  '+t('relErr');
   function line(pts,color,dash,w,key){var pe=el('polyline',{points:pts.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var('+color+')','stroke-width':w,'stroke-dasharray':dash,'stroke-linejoin':'round'},svg);
-    pts.forEach(function(o){symEl(svg,key,X(o.N),Y(o.l),3.2,o.l<=FLOOR);});return pe;}
+    pts.forEach(function(o){if(!o.cut)symEl(svg,key,X(o.N),Y(o.l),3.2,o.l<=FLOOR);});return pe;}
   var nb=noiseBounds(dom,st.fn,res.ex.val),nbp=ours.map(function(o){return {N:o.N,l:Math.max(FLOOR,Math.log10(nb[o.n-1]))};}).sort(function(a,b){return a.N-b.N;});if(!nbp.length)nbp=[{N:0,l:FLOOR},{N:xmax,l:FLOOR}];else if(nbp[nbp.length-1].N<xmax){
     noiseExt(dom,st.fn,res.ex.val,nbp[nbp.length-1].N,xmax).forEach(function(o){
       var a=nbp[nbp.length-1];
