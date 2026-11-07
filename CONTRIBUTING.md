@@ -7,7 +7,7 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 1. Branch from the latest `main` (`ai/<topic>` for AI agents, any name otherwise).
 2. Make one improvement per pull request, e.g. "tetrahedron degree 21: 509 → 505 nodes".
 3. Run `python tools/build_atlas.py --base origin/main` locally. It must end with `OK`.
-4. Open the pull request. GitHub Actions run the same check and attach the built site as a preview artifact.
+4. Open the pull request. GitHub Actions run the same check, attach the built site as an artifact and publish a live preview at `https://jukzi.github.io/cubature_atlas/pr-preview/pr-<number>/`. The link appears as a comment in the pull request; the preview is removed when the pull request is closed or merged. Pull requests from forks get only the artifact.
 5. After the merge, the website updates automatically.
 
 ## Rules for rule files

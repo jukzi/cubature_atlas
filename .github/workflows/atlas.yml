@@ -1,24 +1,30 @@
 name: Cubature Atlas
 
+# Pull requests: verify all rules, build the site, attach it as an artifact and
+# publish a live preview under https://jukzi.github.io/cubature_atlas/pr-preview/pr-<number>/
+# (the link is posted as a comment in the pull request; the preview is removed when
+# the pull request is closed or merged).
+# Pushes to main: build the site and deploy it to the root of the gh-pages branch,
+# keeping the pr-preview/ folder. GitHub Pages serves the gh-pages branch.
+
 on:
   pull_request:
+    types: [opened, reopened, synchronize, closed]
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: atlas-${{ github.ref }}
-  cancel-in-progress: true
+  contents: write
+  pull-requests: write
 
 jobs:
   check:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
+    concurrency:
+      group: check-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,12 +40,49 @@ jobs:
           name: site-preview
           path: site
 
+  preview:
+    # Pull requests from forks get no write token, so they keep only the artifact.
+    needs: check
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-preview
+          path: site
+      - name: Publish the live preview
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          source-dir: site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: deploy
+
+  remove-preview:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove the live preview
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
+
   deploy:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: gh-pages
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -48,9 +91,12 @@ jobs:
       - run: pip install numpy
       - name: Verify rules and build the site
         run: python tools/build_atlas.py
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - name: Disable Jekyll processing on GitHub Pages
+        run: touch site/.nojekyll
+      - name: Deploy to the gh-pages branch (previews are kept)
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
-          path: site
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          folder: site
+          branch: gh-pages
+          clean-exclude: pr-preview
+          force: false
