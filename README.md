@@ -1,5 +1,7 @@
 # Cubature Atlas
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24037245.svg)](https://doi.org/10.5281/zenodo.24037245)
+
 **Best known quadrature and cubature rules with few points and positive weights** on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30, with certificates and source code.
 
 Website: <https://jukzi.github.io/cubature_atlas/>
@@ -137,7 +139,11 @@ English is the source. `i18n/de.json` stores, for each key, a hash of the Englis
 
 ## Citing
 
-Please cite the rule by its id and the atlas, e.g. *Cubature Atlas, rule CA-T2-13-35-PI-MPC, https://github.com/jukzi/cubature_atlas*. See `CITATION.cff`. Rules taken from the literature must be cited with their original publication (given in the rule file and in `family.json`).
+Please cite the atlas with its DOI and the rule by its id, e.g.
+
+> Jörg Kubitz: *Cubature Atlas: best known quadrature and cubature rules with positive weights*. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-13-35-PI-MPC.
+
+The DOI 10.5281/zenodo.24037245 always resolves to the latest version. To cite one exact version, use its version DOI from Zenodo (v1.0.0: [10.5281/zenodo.24037246](https://doi.org/10.5281/zenodo.24037246)). See `CITATION.cff`. Rules taken from the literature must be cited with their original publication (given in the rule file and in `family.json`).
 
 ## License
 
