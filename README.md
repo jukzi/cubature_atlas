@@ -2,9 +2,9 @@
 
 **Best known quadrature and cubature rules with few points and positive weights** on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30, with certificates and source code.
 
-Website: <https://jukzi.github.io/cubature_atlas/> (English) · <https://jukzi.github.io/cubature_atlas/de/> (Deutsch: *Kubaturatlas*)
+Website: <https://jukzi.github.io/cubature_atlas/>
 
-> **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Jörg Kubitz. Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments), and the rules of the atlas's own search also carry a Newton–Kantorovich certificate. Please verify results before you rely on them.
+> **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments), and the rules of the atlas's own search also carry a Newton–Kantorovich certificate. Please verify results before you rely on them.
 
 ## What is in here
 
@@ -114,4 +114,4 @@ Please cite the rule by its id and the atlas, e.g. *Cubature Atlas, rule CA-T2-1
 
 ## License
 
-Not yet chosen. Until a `LICENSE` file is added, all rights are reserved by the author. The literature rules are reproduced from the cited publications for comparison; check their terms before redistributing them.
+Public Domain. The literature rules are reproduced from the cited publications for comparison; check their terms before redistributing them.
