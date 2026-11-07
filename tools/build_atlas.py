@@ -558,6 +558,12 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
         for dom in DOMAINS:
             t.setdefault("dom_" + dom, dom)
     template = open(os.path.join(ROOT, "site_template", "index.html"), encoding="utf8").read()
+    # Files in site_template/static/ are copied unchanged to the site root
+    # (for example the Google Search Console verification file).
+    static_dir = os.path.join(ROOT, "site_template", "static")
+    if os.path.isdir(static_dir):
+        for name in sorted(os.listdir(static_dir)):
+            shutil.copy(os.path.join(static_dir, name), os.path.join(SITE, name))
     best = best_known(fams)
     for f in fams:
         for r in f["rules"]:
