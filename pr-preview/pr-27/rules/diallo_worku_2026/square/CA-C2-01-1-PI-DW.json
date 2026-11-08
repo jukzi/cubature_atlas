@@ -1,0 +1,23 @@
+{
+  "id": "CA-C2-01-1-PI-DW",
+  "family": "diallo_worku_2026",
+  "domain": "square",
+  "dimension": 2,
+  "degree": 1,
+  "points": 1,
+  "quality": "PI",
+  "origin": "literature",
+  "method": "taken from the literature, moment equations re-checked by the build",
+  "author": "Diallo–Worku",
+  "source": "M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026).",
+  "status": "verified",
+  "locked": true,
+  "symmetry": "full",
+  "certificate": null,
+  "nodes": [
+    [0.0, 0.0]
+  ],
+  "weights": [
+    4.0
+  ]
+}
