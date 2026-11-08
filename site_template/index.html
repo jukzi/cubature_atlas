@@ -81,7 +81,7 @@ th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--soft);whit
 th:first-child,td:first-child{text-align:left}
 td.litn{padding-right:2px}td.litc{text-align:left;padding-left:2px}th.pick{cursor:pointer}th.selcol,td.selcol{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 th{vertical-align:top;font:500 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
-th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}
+th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:help}th .hf{display:block;font:400 9.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap;margin-top:2px}
 th a{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
 th a:hover{color:var(--accent)}
 tbody tr.sel-row{cursor:pointer}
@@ -4807,7 +4807,29 @@ function facts(){$('#facts').innerHTML='';$('#dom-sub').textContent='';$('#h-dom
 function flag(dom,n){var r=DATA[dom][n];if(r&&r.src==='sym')return '<sup class="dag" title="'+t('symTip')+'">‡</sup>';return r&&r.src&&r.src!=='found'&&r.src!=='search'?'<sup class="dag" title="'+t(r.src==='search'?'srcTipS':'srcTip')+'">†</sup>':'';}
 var HSYM={n:'n',found:'N<sub>PI</sub>',abz:'Z',delta:'Δ',low:'L',gauss:'N<sub>G</sub>',lit:'N<sub>Lit</sub>',out:'N<sub>PO</sub>',lob:'N<sub>GL</sub>',cc:'N<sub>CC</sub>',nc:'N<sub>NC</sub>'};
 FAMX.forEach(function(x){HSYM[x.k]='N<sub>'+x.f.tag+'</sub>';});
-function hdr(h){var key=h[1]||'n';return '<span class="hs">'+HSYM[key]+'</span><small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';}
+/* closed formulas for Table 1 headers: a = approximation shown under the label, x = exact forms for the tooltip.
+   Odd/even (and mod 3, mod 4, mod 8) cases are exact without rounding; checked for n = 1..300. */
+function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
+  if(dom==='interval'){
+    if(k==='gauss')return {a:'(n+2)/2',x:['N_G = Z = L = ⌈(n+1)/2⌉',O+'N_G = (n+1)/2',E+'N_G = (n+2)/2']};
+    if(k==='lob')return {a:'(n+4)/2',x:['N_GL = ⌈(n+3)/2⌉',O+'N_GL = (n+3)/2',E+'N_GL = (n+4)/2']};
+    if(k==='cc'||k==='nc'){var s=k==='cc'?'N_CC':'N_NC';return {a:'n+1',x:[O+s+' = n (n = 1: '+s+' = 2)',E+s+' = n+1']};}
+    return null;}
+  if(d===2){
+    if(k==='low'){if(dom==='square')return {a:'(n²+6n+8)/8',x:['n ≡ 1 (mod 4): L = (n²+6n+1)/8','n ≡ 3 (mod 4): L = (n²+6n+5)/8',E+'L = (n²+6n+8)/8']};
+      return {a:'(n²+6n+8)/8',x:[O+'L = (n²+4n+3)/8',E+'L = (n²+6n+8)/8']};}
+    if(k==='abz')return {a:'(n²+3n+6)/6',x:['Z = ⌈(n²+3n+2)/6⌉','n ≡ 0 (mod 3): Z = (n²+3n+6)/6','n ≢ 0 (mod 3): Z = (n²+3n+2)/6']};
+    if(k==='gauss')return {a:'(n²+4n+4)/4',x:['N_G = ⌈(n+1)/2⌉²',O+'N_G = (n²+2n+1)/4',E+'N_G = (n²+4n+4)/4']};
+    return null;}
+  if(k==='low')return {a:'(n³+12n²+44n+48)/48',x:[O+'L = (n³+9n²+23n+15)/48',E+'L = (n³+12n²+44n+48)/48']};
+  if(k==='abz')return {a:'(n³+6n²+11n+24)/24',x:['Z = ⌈(n³+6n²+11n+6)/24⌉',O+'Z = (n³+6n²+11n+6)/24','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
+  if(k==='gauss')return {a:'(n³+6n²+12n+8)/8',x:['N_G = ⌈(n+1)/2⌉³',O+'N_G = (n³+3n²+3n+1)/8',E+'N_G = (n³+6n²+12n+8)/8']};
+  return null;}
+function hdr(h){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
+  var inner='<span class="hs">'+HSYM[key]+'</span><small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
+  if(!f)return inner;
+  var tip=f.x.join('&#10;').replace(/\{odd\}/g,t('nOdd')).replace(/\{even\}/g,t('nEven'));
+  return '<span class="hw" title="'+tip+'">'+inner+'<small class="hf">≈ '+f.a+'</small></span>';}
 function table(){var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
   var po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
   var heads=[['colN',null]];
