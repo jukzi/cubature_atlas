@@ -19,6 +19,7 @@ The programs that produced and certified the rules, as published on the original
 | `cert_large.py` | Certificate for large simplex rules (tetrahedron degree 28 and up): same test as `certificate()`, with cached basis recursions and power iteration for the norms |
 | `po_elim.py` | Cube/tetrahedron PO search: node elimination from the PI rule with nodes allowed outside the domain (CS=1: centrally symmetric pairs on the cube); produced CA-C3-06-21-PO … CA-C3-29-1181-PO and CA-T3-12-114-PO … CA-T3-24-757-PO |
 | `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
+| `flat_ext_cube6.py` | Open question cube degree 6: exact flat-extension equations (75 quadrics in the 36 degree-7 moments) for a 20-node rule, written in msolve format; pure Python, no numpy needed |
 
 `cubature_search.py` (version 3) produced the cube rules CA-C3-21-486 … CA-C3-30-1324. It searches in a chosen subgroup of the cube group (Oh, Td, Th, O, T, …): orbit elimination, large-neighbourhood search with simulated annealing, a rank-ILP target structure, and warm starts from stored rules (`--refine T --sources dir`). Run `python3 cubature_search.py --help` for the options; the module docstring describes the method and lists the literature.
 

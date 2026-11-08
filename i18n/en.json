@@ -42,6 +42,8 @@
   "colN": "Degree",
   "colFound": "PI numerical",
   "fmlBtn": "Show formulas",
+  "oqBtn": "Open question",
+  "oqCube6": "Open question (cube, degree 6): is N_PI = 22 minimal, and is N_PO = 21 minimal? The proven lower bound is only dim P3 = 20.\n\n21 nodes inside the cube: thousands of random starts found no rule. All 12 distinct 21-node rules found with positive weights (up to symmetry) have nodes outside the cube; the closest one reaches max|x| = 1.272 (the PO rule shown here).\n\n20 nodes, anywhere: such a rule exists exactly if the moment matrix M(3) has a flat extension M(4) (Curto-Fialkow). This is a system of 75 quadratic equations in the 36 moments of degree 7. Numerically it has no real or complex solution, but no algebraic certificate of degree 4 or lower exists, so a proof needs heavier computer algebra (degree 6 or more).\n\nFor the disk, Easwaran, Fialkow and Petrovic (2006) proved the analogous 10-node case; the next case there is open as well.",
   "colAbz": "counting value",
   "colLow": "lower bound",
   "colGauss": "Gauss product",
