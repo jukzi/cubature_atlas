@@ -105,6 +105,9 @@ def split_central(P, w):
 
 # How far nodes may leave the domain.
 BOXOUT = float(os.environ.get("BOXOUT", "0.5"))
+# Scale of the random perturbation (0 = none) and "small" = only delete the smallest weights.
+NOISE = float(os.environ.get("NOISE", "1"))
+CANDS = os.environ.get("CANDS", "all")
 # Nodes removed per deletion step.
 DELK = int(os.environ.get("DELK", "1"))
 # Iterations of the local solver per attempt.
@@ -202,6 +205,8 @@ def main():
         cands += [("mer", (int(a), int(b))) for a, b in pairs if a != b]
         cands += [("del", int(k)) for k in rng.choice(N, min(4, N), replace=False)]
         rng.shuffle(cands)
+        if CANDS == "small":
+            cands = [("del", int(k)) for k in order[:8]]
         done = False
         for kind, c in cands:
             if kind == "del":
@@ -217,7 +222,7 @@ def main():
                 Qn = np.vstack([Qc[keep], (Qc[a] * wc[a] + Qc[b] * wc[b]) / wm])
                 wn = np.r_[wc[keep], wm]
             scale = 2.0 if name == "cube" else 1.0
-            Qn = Qn + rng.normal(0, scale * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
+            Qn = Qn + rng.normal(0, scale * NOISE * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
             Nn = len(wn)
             if 4 * Nn + len(tail) < pr.M:
                 continue
