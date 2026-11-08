@@ -215,7 +215,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   </div>
   <h3 id="exNH" style="margin-top:28px"></h3>
   <div class="panel"><div class="figtag fi" data-i="figE"></div><svg id="exchartN" class="ch" viewBox="0 0 900 380" role="img"></svg>
-    <div class="btns" style="margin:4px 0 0"><button class="btn" id="b-subE" aria-pressed="true" data-i="subBtn"></button></div>
+    <div class="btns" style="margin:4px 0 0"><button class="btn" id="b-subE" aria-pressed="true" data-i="subBtn"></button> <button class="btn" id="b-compE" aria-pressed="false" data-i="compBtn"></button></div>
     <p class="sub" id="exNnote" style="margin:8px 0 0;font-size:13px"></p></div>
 </section>
 
@@ -4762,8 +4762,9 @@ function legSvg(key,color,w,dash){var c='var('+color+')',h='<svg viewBox="0 0 30
   [15].forEach(function(x){symEl(tmp,key,x,6,3,false);});h+=tmp.innerHTML;return h+'</svg>';}
 function legEntries(svg,entries,x,y0,anchorEnd){var tmp=[],mw=0;entries.forEach(function(e,i){var tx=el('text',{x:0,y:y0+i*18,style:'fill:var(--ink);font-weight:500'},svg);tx.textContent=e.label;var bw=0;try{bw=tx.getBBox().width;}catch(_){}if(!bw)bw=e.label.length*7;mw=Math.max(mw,bw);tmp.push([tx,bw]);});
   var lx=anchorEnd?x-mw-40:x;tmp.forEach(function(p,i){var e=entries[i],y=y0+i*18;p[0].setAttribute('x',lx+40);
-    el('line',{x1:lx,x2:lx+32,y1:y-4,y2:y-4,stroke:'var('+e.color+')','stroke-width':e.w,'stroke-dasharray':e.dash},svg);
-    [lx+16].forEach(function(xx){symEl(svg,e.key,xx,y-4,3,false);});});}
+    var lg=el('line',{x1:lx,x2:lx+32,y1:y-4,y2:y-4,stroke:'var('+e.color+')','stroke-width':e.w,'stroke-dasharray':e.dash},svg);
+    if(e.op)lg.setAttribute('opacity',e.op);
+    [lx+16].forEach(function(xx){var se=symEl(svg,e.key,xx,y-4,3,false);if(e.op)se.setAttribute('opacity',e.op);});});}
 var SERSTY={found:[3,''],abz:[2,'7 4'],low:[2,'2 4'],gauss:[2,'10 3 2 3'],xg:[2,''],sym:[2,'5 3'],lit:[2,'5 3'],out:[2,'9 3 2 3 2 3'],lob:[2,'7 4'],cc:[2,''],nc:[2,'2 4']};
 FAMX.forEach(function(x,i){SERCOL[x.k]='--s-f'+(i%6);SERSYM[x.k]=['square','hex','tri','diamond','tria','circle'][i%6];SERSTY[x.k]=[2,['4 2','8 3','3 3','6 2 2 2','10 4','1 3'][i%6]];});
 
@@ -5381,6 +5382,87 @@ function typeKeys(dom){var fx=FAMX.filter(function(x){return famHas(x.k,dom);}).
 function typeSeries(dom,k,f,exv,ev,FLOOR){var key=dom+'|'+st.fn+'|'+k;if(tsCache[key])return tsCache[key];var dim=DOM[dom].dim,pts=[];
   for(var n=1;n<=MX(dom);n++){var r=ruleFor(dom,n,k);if(!r)continue;var s=0;r.pts.forEach(function(p){s+=p[dim]*f(p.slice(0,dim));});if(!isFinite(s))continue;var e=Math.abs(s-exv)/ev;pts.push({N:r.n,l:e>0?Math.max(FLOOR,Math.log10(e)):FLOOR,n:n});}
   pts.sort(function(a,b){return a.N-b.N||a.n-b.n;});return tsCache[key]=pts;}
+/* ---------- Abbildung E: zusammengesetzte Regeln ---------- */
+/* Composite rules: the domain is split into k parts per direction (k^dim congruent cells:
+   boxes as a grid, triangles as the standard up/down split, tetrahedra by repeated red refinement after Bey),
+   and a rule is mapped affinely onto every cell. Node count k^dim * N, same degree. */
+var COMP={on:false,cells:{},val:{}};
+function compKs(dom){return DOM[dom].dim<3?[2,4,8]:[2,4];}
+function simplexDet(v){
+  /* Absolute determinant of the edge matrix of simplex v (= volume ratio to the reference simplex). */
+  var d=v.length-1,e=[],i;
+  for(i=1;i<=d;i++)e.push(v[i].map(function(x,j){return x-v[0][j];}));
+  if(d===2)return Math.abs(e[0][0]*e[1][1]-e[0][1]*e[1][0]);
+  return Math.abs(e[0][0]*(e[1][1]*e[2][2]-e[1][2]*e[2][1])-e[0][1]*(e[1][0]*e[2][2]-e[1][2]*e[2][0])+e[0][2]*(e[1][0]*e[2][1]-e[1][1]*e[2][0]));}
+function mid(a,b){return a.map(function(x,j){return (x+b[j])/2;});}
+function redTet(t){
+  /* Bey's red refinement: 8 children of equal volume. */
+  var x0=t[0],x1=t[1],x2=t[2],x3=t[3];
+  var a=mid(x0,x1),b=mid(x0,x2),c=mid(x0,x3),d=mid(x1,x2),e=mid(x1,x3),f=mid(x2,x3);
+  return [[x0,a,b,c],[a,x1,d,e],[b,d,x2,f],[c,e,f,x3],[a,b,c,e],[a,b,d,e],[b,c,e,f],[b,d,e,f]];}
+function compCells(dom,k){
+  /* Cells as affine maps of the reference domain, with their weight factor s. */
+  var key=dom+'|'+k;
+  if(COMP.cells[key])return COMP.cells[key];
+  var dim=DOM[dom].dim,out=[],i,j,l;
+  if(isBox(dom)){
+    var idx=[[]];
+    for(l=0;l<dim;l++){var nx=[];idx.forEach(function(p){for(i=0;i<k;i++)nx.push(p.concat([i]));});idx=nx;}
+    idx.forEach(function(p){out.push({box:true,c:p.map(function(i2){return -1+(2*i2+1)/k;}),h:1/k,s:Math.pow(k,-dim)});});
+    return COMP.cells[key]=out;}
+  var sim=[];
+  if(dim===2){
+    for(i=0;i<k;i++)for(j=0;i+j<k;j++){
+      sim.push([[i/k,j/k],[(i+1)/k,j/k],[i/k,(j+1)/k]]);
+      if(i+j<k-1)sim.push([[(i+1)/k,j/k],[(i+1)/k,(j+1)/k],[i/k,(j+1)/k]]);}}
+  else{
+    sim=[DOM[dom].verts.map(function(v){return v.slice();})];
+    for(l=1;l<k;l*=2){var ch=[];sim.forEach(function(t){ch=ch.concat(redTet(t));});sim=ch;}}
+  sim.forEach(function(v){out.push({box:false,v:v,s:simplexDet(v)});});
+  return COMP.cells[key]=out;}
+function compRuleValue(dom,pts,f,cells){
+  /* Sum of the rule (nodes pts) mapped onto all cells. */
+  var dim=DOM[dom].dim,s=0;
+  cells.forEach(function(c){
+    var sc=0;
+    pts.forEach(function(p){
+      var x=[],j,i;
+      if(c.box){for(j=0;j<dim;j++)x.push(c.c[j]+c.h*p[j]);}
+      else{for(j=0;j<dim;j++){var y=c.v[0][j];for(i=1;i<=dim;i++)y+=p[i-1]*(c.v[i][j]-c.v[0][j]);x.push(y);}}
+      sc+=p[dim]*f(x);});
+    s+=c.s*sc;});
+  return s;}
+function compSeriesE(dom,piK,I,xmax){
+  /* Composite variants of the PI rules and of the Gauss product, up to the first node count beyond xmax
+     (the axis of figure E keeps its length; the curves are cut at the edge). */
+  var key=dom+'|'+st.fn+'|'+piK+'|'+xmax;
+  if(COMP.val[key])return COMP.val[key];
+  var dim=DOM[dom].dim,f=fdef(dom,st.fn),ev=Math.abs(I)||1,FLOOR=-16,out=[];
+  var lg=function(q){var e=Math.abs(q-I)/ev;return e>0?Math.max(FLOOR,Math.log10(e)):FLOOR;};
+  compKs(dom).forEach(function(k){
+    var cells=compCells(dom,k),c=cells.length,pi=[],seen=[],n,mm;
+    for(n=1;n<=MX(dom);n++){
+      var r=ruleFor(dom,n,piK);
+      if(!r||seen.indexOf(r)>=0)continue;
+      seen.push(r);
+      if(r.n*c>xmax&&pi.some(function(o){return o.N>xmax;}))continue;
+      var q=compRuleValue(dom,r.pts,f,cells);
+      if(isFinite(q))pi.push({N:r.n*c,l:lg(q),n:n});}
+    pi.sort(function(a,b){return a.N-b.N;});
+    out.push({key:piK,k:k,c:c,pts:pi});
+    if(dim===1)return;
+    var gq=[];
+    for(mm=1;mm<=17;mm++){
+      var P=glProduct(dom,mm),q2=compRuleValue(dom,P,f,cells);
+      gq.push({N:P.length*c,l:lg(q2),m:mm});
+      if(P.length*c>xmax)break;}
+    out.push({key:'gauss',k:k,c:c,pts:gq});});
+  return COMP.val[key]=out;}
+function cutAt(pts,xmax){
+  /* Points up to xmax, plus an interpolated end point on the right edge. */
+  var k=pts.filter(function(o){return o.N<=xmax;});
+  if(k.length&&k.length<pts.length){var a=k[k.length-1],b=pts[k.length],f=(xmax-a.N)/(b.N-a.N);k.push({N:xmax,l:a.l+f*(b.l-a.l),cut:true});}
+  return k;}
 function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=DOM[dom].dim,res=exErrors(),ev=Math.abs(res.ex.val)||1,f=fdef(dom,st.fn),W=900,H=380,m={l:62,r:20,t:14,b:44},pw=W-m.l-m.r,ph=H-m.t-m.b,FLOOR=-16;
   var selk=st.src,ours=res.rows.filter(function(r){return r.ok;}).map(function(r){return {N:r.N,l:r.err>0?Math.max(FLOOR,Math.log10(r.err/ev)):FLOOR,n:r.n};});
   var maxN=ours.length?Math.max.apply(null,ours.map(function(o){return o.N;})):1,gp=[];
@@ -5393,6 +5475,11 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   var gk=gp.filter(function(o){return o.N<=xmax;});
   if(gk.length&&gk.length<gp.length){var ga=gk[gk.length-1],gb=gp[gk.length],gf=(xmax-ga.N)/(gb.N-ga.N);gk.push({N:xmax,l:ga.l+gf*(gb.l-ga.l),m:gb.m,cut:true});}
   gp=gk;
+  var cm=COMP.on,piK=tser.found?'found':'gauss',cser=[];
+  if(cm){
+    cser=compSeriesE(dom,piK,res.ex.val,xmax).map(function(c){return {key:c.key,k:c.k,c:c.c,pts:cutAt(c.pts,xmax)};});
+    /* The composite curves may reach further down than the other series. */
+    cser.forEach(function(c){c.pts.forEach(function(o){if(o.l>top)o.l=top;});});}
   for(var l=FLOOR;l<=top;l+=2){el('line',{x1:m.l,x2:W-m.r,y1:Y(l),y2:Y(l),'class':'grid'},svg);var tx=el('text',{x:m.l-8,y:Y(l)+4,'text-anchor':'end'},svg);tx.textContent='10';var ts=el('tspan',{dy:-5,'font-size':10},tx);ts.textContent=String(l).replace('-','−');}
   el('line',{x1:m.l,x2:W-m.r,y1:m.t+ph,y2:m.t+ph,'class':'axis'},svg);
   for(var v=0;v<=xmax+1e-9;v+=nice){var tt=el('text',{x:X(v),y:H-22,'text-anchor':'middle'},svg);tt.textContent=fmt(v);}
@@ -5412,12 +5499,25 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   var plE=el('polyline',{points:nbp.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2},ngE);
   var syE=[];nbp.forEach(function(o){if(o.ext)return;var gi=el('g',{},ngE);symEl(gi,'noise',X(o.N),Y(o.l),3,false);syE.push(gi);});
   var nzE={pts:nbp.map(function(o){return {x:X(o.N),l:o.l};}),Y:Y,pg:pgE,pl:plE,sy:syE,base:Y(FLOOR)};
+  var COP={2:.7,4:.5,8:.32},lys=[];
+  cser.forEach(function(c){
+    if(!c.pts.length)return;
+    var g=el('g',{opacity:COP[c.k]},svg),dash=c.key==='found'?'':SERSTY[c.key][1];
+    el('polyline',{points:c.pts.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var('+SERCOL[c.key]+')','stroke-width':1.8,'stroke-dasharray':dash,'stroke-linejoin':'round'},g);
+    c.pts.forEach(function(o){if(!o.cut)symEl(g,c.key,X(o.N),Y(o.l),2.4,o.l<=FLOOR);});
+    var lp=c.pts[c.pts.length-1],ly=Y(lp.l)+4;
+    lys.forEach(function(y0){if(Math.abs(ly-y0)<11)ly=y0-11;});
+    lys.push(ly);
+    var lt=el('text',{x:Math.min(X(lp.N)+5,W-m.r-14),y:ly,'font-size':11,style:'fill:var(--ink)'},g);
+    lt.textContent=String(c.c);});
   if(gp.length)line(gp,'--s-gauss','10 3 2 3',selk==='gauss'?3.5:2,'gauss');
+  if(cm)lit=[];
   if(lit.length){el('polyline',{points:lit.map(function(o){return X(o.N)+','+Y(o.l);}).join(' '),fill:'none',stroke:'var(--s-sym)','stroke-width':selk==='lit'?3.5:1.5,'stroke-dasharray':'5 3'},svg);lit.forEach(function(o){symEl(svg,'sym',X(o.N),Y(o.l),3.2,false);});}
-  var piK=tser.found?'found':'gauss',clE=null;tk.filter(function(k){return k!==selk;}).concat(tk.indexOf(selk)>=0?[selk]:[]).forEach(function(k){if(tser[k].length){var pe=line(tser[k],SERCOL[k],k==='found'?'':SERSTY[k][1],k===selk?3.5:2,k);if(k===piK)clE=pe;}});
+  var clE=null;tk.filter(function(k){return !cm||k===piK;}).filter(function(k){return k!==selk;}).concat(tk.indexOf(selk)>=0&&(!cm||selk===piK)?[selk]:[]).forEach(function(k){if(tser[k].length){var pe=line(tser[k],SERCOL[k],k==='found'?'':SERSTY[k][1],k===selk||cm?3.5:2,k);if(k===piK)clE=pe;}});
   var sdash=selk==='found'?'':(SERSTY[selk]||[0,''])[1];
-  var ents=tk.filter(function(k){return tser[k].length;}).map(function(k){return {key:k,color:SERCOL[k],w:k===selk?3.5:2,dash:k==='found'?'':SERSTY[k][1],label:srcLabel(k,dom)};});
+  var ents=tk.filter(function(k){return tser[k].length&&(!cm||k===piK);}).map(function(k){return {key:k,color:SERCOL[k],w:k===selk?3.5:2,dash:k==='found'?'':SERSTY[k][1],label:srcLabel(k,dom)};});
   if(gp.length)ents.push({key:'gauss',color:'--s-gauss',w:2,dash:'10 3 2 3',label:t('legGauss')+(dom==='interval'?'':' (Duffy, '+(LANG==='de'?'Gauß–Legendre':'Gauss–Legendre')+')')});
+  if(cm&&cser.length)ents.push({key:piK,color:SERCOL[piK],w:1.8,dash:'',op:.5,label:t('compLegN')});
   ents.push({key:'noise',color:'--s-abz',w:2,dash:'',label:t('noiseLbl')});
   if(lit.length)ents.push({key:'sym',color:'--s-sym',w:1.5,dash:'5 3',label:t('litLbl')});
   legEntries(svg,ents,W-m.r-8,m.t+14,true);
@@ -5426,7 +5526,7 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   var cE=srcE.slice().sort(function(a,b){return a.N-b.N;}).map(function(o){return [X(o.N),Y(o.l),o.l];});
   drillGeom(DRE,svg,cE,nzE,clE,'E|'+st.dom+'|'+st.fn);
   $('#exNH').textContent='';$('#exNH').style.display='none';
-  $('#exNnote').textContent=t(dom==='interval'?'exNnoteI':'exNnote');}
+  $('#exNnote').textContent=t(cm?'exNnoteC':(dom==='interval'?'exNnoteI':'exNnote'));}
 function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var res=exErrors(),W=560,H=360,m={l:62,r:14,t:12,b:40},pw=W-m.l-m.r,ph=H-m.t-m.b,FLOOR=-16,top=1;
   var ev=Math.abs(res.ex.val)||1;var nb=noiseBounds(st.dom,st.fn,res.ex.val),nl=nb.map(function(b){return isNaN(b)?null:Math.max(-16,Math.log10(b));});var logs=res.rows.map(function(r){return !r.ok?null:(r.err>0?Math.max(FLOOR,Math.log10(r.err/ev)):FLOOR);});var mxl=Math.max.apply(null,logs.concat(nl).filter(function(v){return v!=null;}).concat([-16]));var selk=st.src,sdash=selk==='found'?'':SERSTY[selk][1];function vp(a){var o=[];a.forEach(function(l2,i){if(l2!=null)o.push([X(i+1),Y(l2)]);});return o;}top=Math.min(2,Math.ceil(mxl+.3));
   var X=function(n){return m.l+(n-1)/(MX()-1)*pw;},Y=function(l){return m.t+ph-(l-FLOOR)/(top-FLOOR)*ph;};
@@ -5586,6 +5686,11 @@ function drillLoop(tm){
   act.forEach(function(D){drillStep(D,dt);drillFrame(D);});
   DRILL.raf=requestAnimationFrame(drillLoop);}
 function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DRILL.raf=requestAnimationFrame(drillLoop);}}
+(function(){
+  /* Toggle for figure E: only PI and Gauss product, each also as composite rule. */
+  var b=$('#b-compE');
+  b.setAttribute('aria-pressed',COMP.on);
+  b.onclick=function(){COMP.on=!COMP.on;b.setAttribute('aria-pressed',COMP.on);exChartN();};})();
 (function(){
   var bs=['#b-sub','#b-subE'].map(function(s){return $(s);});
   bs.forEach(function(b){
