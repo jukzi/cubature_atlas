@@ -42,6 +42,7 @@
   "colN": "Degree",
   "colFound": "PI numerical",
   "colAbz": "counting value",
+  "colZsym": "symm. counting value",
   "colLow": "lower bound",
   "colGauss": "Gauss product",
   "colLit": "literature",
