@@ -73,7 +73,7 @@
     "triangle": "The rules are at most 2 nodes above the counting value and never larger than the Xiao–Gimbutas rules. At degrees 3, 7, 10, 15, 17 and 18 to 20 they are smaller. The comparison is only partly fair, because the literature rules are fully symmetric. At the odd degrees 3, 5 and 7 the rules reach Möller's lower bound (4, 7 and 12 nodes), so they are minimal.",
     "square": "At the odd degrees 9 and 11 the rules reach the Möller bound (17 and 24 nodes). Compared with the smallest known fully symmetric rules (for example 57 nodes at degree 17), the centrally symmetric rules here need fewer nodes (54). From degree 21 the rules lie at most 1 node above the counting value at even degrees and below it at odd degrees.",
     "tetra": "The counting value is a good forecast here: for all degrees the rules are 0 to 5 nodes above it. Degrees 19 and 20 (389 and 446 nodes) are the most recently improved; the search there is not exhausted. The fully symmetric rules in the literature are larger (degree 9: 59, degree 10: 81).",
-    "cube": "The cube shows the widest gap between the Gauss product and the smallest known rules: from degree 10 the product needs more than three times as many nodes. Compared with fully symmetric rules (degree 9: 58, degree 15: 199) the centrally symmetric rules here are smaller (48 and 186)."
+    "cube": "The cube shows the widest gap between the Gauss product and the smallest known rules: from degree 10 the product needs more than three times as many nodes. Compared with fully symmetric rules (degree 9: 58, degree 15: 199) the centrally symmetric rules here are smaller (48 and 186). At degrees 3, 5 and 7 the rules reach Möller's bound for centrally symmetric domains (6, 13 and 26 nodes), so they are minimal."
   },
   "exH": "Numerical integration in action",
   "exSub": "The rules integrate functions that are not polynomials. The plot shows the relative error against the exact value, over the degree. The orange line is the computing accuracy; below it the error is only rounding noise. Square root and logarithm are shifted so that they stay finite on the whole domain, the branch point lies just outside. The error spans 16 orders of magnitude and therefore needs a logarithmic scale.",
@@ -178,6 +178,7 @@
   "code10": "cubature_search.py, verify_rules.py, cube_cert.py: cube, symmetric search and certificate",
   "code1": "counts.py: counting value, lower bounds, Gauss product",
   "code11": "triangle_moeller.py: triangle, exact Möller lower bound for odd degrees",
+  "code12": "moeller_bound.py: lower bounds for odd degrees in 2D and 3D (structural matrices, exact modulo a prime)",
   "code2": "cubature_atlas.py: basis, search, certificate",
   "code3": "demo.py: find a rule, certify it, integrate",
   "litH": "Literature and formula collections",

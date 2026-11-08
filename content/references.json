@@ -111,5 +111,11 @@
     "y": "2024",
     "t": "Y. Xu: Minimal cubature rules and Koornwinder polynomials. arXiv:2407.09903 (2024). Theorem 3.1 states Möller's bound with the structural matrices of the three-term relation.",
     "u": "https://arxiv.org/abs/2407.09903"
+  },
+  {
+    "n": 19,
+    "y": "2005",
+    "t": "A. Hinrichs, E. Novak: Cubature formulas for symmetric measures in higher dimensions with few points. arXiv:math/0509101 (2005). Section 2 gives Möller's bound for centrally symmetric weights in explicit form.",
+    "u": "https://arxiv.org/abs/math/0509101"
   }
 ]
