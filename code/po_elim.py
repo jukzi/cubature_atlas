@@ -74,6 +74,8 @@ class CubeProb(cs.Prob):
 
 # How far nodes may leave the domain.
 BOXOUT = float(os.environ.get("BOXOUT", "0.5"))
+# Nodes removed per deletion step.
+DELK = int(os.environ.get("DELK", "1"))
 # Iterations of the local solver per attempt.
 MI = int(os.environ.get("MI", "300"))
 
@@ -163,7 +165,9 @@ def main():
         done = False
         for kind, c in cands:
             if kind == "del":
-                keep = np.delete(np.arange(N), c)
+                # Remove node c and the DELK - 1 nodes with the smallest weights besides it.
+                drop = [c] + [int(k) for k in order if k != c][:DELK - 1]
+                keep = np.delete(np.arange(N), drop)
                 Qn = Qc[keep].copy()
                 wn = wc[keep] * (wc.sum() / wc[keep].sum())
             else:
@@ -174,16 +178,19 @@ def main():
                 wn = np.r_[wc[keep], wm]
             scale = 2.0 if name == "cube" else 1.0
             Qn = Qn + rng.normal(0, scale * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
-            lo, hi = pr.bounds(N - 1, "b")
+            Nn = len(wn)
+            if 4 * Nn < pr.M:
+                continue
+            lo, hi = pr.bounds(Nn, "b")
             xn = np.clip(np.r_[Qn.ravel(), wn], lo, hi)
-            r = pr.solve_lm(xn, N - 1, "b", max_iter=MI)
+            r = pr.solve_lm(xn, Nn, "b", max_iter=MI)
             if r.cost < 1e-24:
-                Xp, Wp = pr.full_points(r.x, N - 1)
+                Xp, Wp = pr.full_points(r.x, Nn)
                 cert = ok_rule(name, deg, Xp, Wp)
                 if cert is not None:
-                    np.save("po_%s_d%d_n%d.npy" % (name, deg, N - 1), np.c_[Xp, Wp])
+                    np.save("po_%s_d%d_n%d.npy" % (name, deg, Nn), np.c_[Xp, Wp])
                     x = r.x
-                    N = N - 1
+                    N = Nn
                     done = True
                     fails = 0
                     print("  -> %d nodes (%s) t=%.0fs" % (N, kind, time.time() - t0), flush=True)
