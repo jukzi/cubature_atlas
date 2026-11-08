@@ -81,7 +81,7 @@ th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--soft);whit
 th:first-child,td:first-child{text-align:left}
 td.litn{padding-right:2px}td.litc{text-align:left;padding-left:2px}th.pick{cursor:pointer}th.selcol,td.selcol{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 th{vertical-align:top;font:500 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
-th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:pointer}th .hw:hover .hl,th .hw:hover .hf,th .hw:focus .hl{color:var(--accent)}
+th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:help}th .hw:hover .hl,th .hw:hover .hf{color:var(--accent)}th .hi{display:inline-block;margin-left:4px;cursor:pointer;font-size:11px;line-height:1;color:var(--accent)}th .hi:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:50%}
 #hpop{display:none;position:absolute;z-index:50;max-width:min(560px,94vw);white-space:pre-wrap;font:400 12px/1.5 var(--f-mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}th .hf{display:block;font:400 9.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap;margin-top:2px}
 th a{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
 th a:hover{color:var(--accent)}
@@ -4838,22 +4838,26 @@ function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
 function hdr(h,href){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
   var sym='<span class="hs">'+HSYM[key]+'</span>';
   if(href)sym='<a href="'+href+'">'+sym+'</a>';
-  var lab='<small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
-  if(!f)return sym+lab;
+  var txt=(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])));
+  if(!f)return sym+'<small class="hl">'+txt+'</small>';
   var tip=f.x.join('&#10;').replace(/\{odd\}/g,t('nOdd')).replace(/\{even\}/g,t('nEven'));
-  return sym+'<span class="hw" role="button" tabindex="0" aria-haspopup="dialog" data-tip="'+tip+'">'+lab+'<small class="hf">≈ '+f.a+'</small></span>';}
-/* formula popup, opened by click (or Enter) on the explanatory header lines */
-var hpopFor=null;
-function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;}
-function hpopOpen(el){var p=$('#hpop');
-  if(!p){p=document.createElement('div');p.id='hpop';p.setAttribute('role','dialog');document.body.appendChild(p);}
-  if(hpopFor===el){hpopClose();return;}
+  return sym+'<span class="hw" data-tip="'+tip+'"><small class="hl">'+txt+'<span class="hi" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('fmlBtn')+'">ⓘ</span></small><small class="hf">≈ '+f.a+'</small></span>';}
+/* formula popup: opens on hover over the explanatory header lines like a tooltip,
+   and stays open (pinned) after a click on the info symbol at the end of the second line */
+var hpopFor=null,hpopPin=false;
+function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;hpopPin=false;}
+function hpopShow(el){var p=$('#hpop');
+  if(!p){p=document.createElement('div');p.id='hpop';p.setAttribute('role','dialog');document.body.appendChild(p);
+    p.addEventListener('mouseleave',function(e){if(!hpopPin&&!(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest('th .hw')))hpopClose();});}
   p.textContent=el.getAttribute('data-tip');p.style.display='block';
   var r=el.getBoundingClientRect(),w=p.offsetWidth;
   var x=Math.min(r.left+window.scrollX,window.scrollX+document.documentElement.clientWidth-w-8);
-  p.style.left=Math.max(window.scrollX+8,x)+'px';p.style.top=(r.bottom+window.scrollY+6)+'px';hpopFor=el;}
-document.addEventListener('click',function(e){var hw=e.target.closest&&e.target.closest('th .hw');if(hw){e.stopPropagation();hpopOpen(hw);return;}if(!(e.target.closest&&e.target.closest('#hpop')))hpopClose();},true);
-document.addEventListener('keydown',function(e){if(e.key==='Escape')hpopClose();var hw=e.target.closest&&e.target.closest('th .hw');if(hw&&(e.key==='Enter'||e.key===' ')){e.preventDefault();hpopOpen(hw);}});
+  p.style.left=Math.max(window.scrollX+8,x)+'px';p.style.top=(r.bottom+window.scrollY+4)+'px';hpopFor=el;}
+function hpopToggle(el){if(hpopFor===el&&hpopPin){hpopClose();return;}hpopShow(el);hpopPin=true;}
+document.addEventListener('mouseover',function(e){var hw=e.target.closest&&e.target.closest('th .hw');if(hw&&!hpopPin&&hpopFor!==hw)hpopShow(hw);});
+document.addEventListener('mouseout',function(e){var hw=e.target.closest&&e.target.closest('th .hw');if(!hw||hpopPin||hpopFor!==hw)return;var to=e.relatedTarget;if(to&&to.closest&&(to.closest('th .hw')===hw||to.closest('#hpop')))return;hpopClose();});
+document.addEventListener('click',function(e){var hi=e.target.closest&&e.target.closest('th .hi');if(hi){e.stopPropagation();e.preventDefault();hpopToggle(hi.closest('.hw'));return;}if(hpopPin&&!(e.target.closest&&e.target.closest('#hpop')))hpopClose();},true);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')hpopClose();var hi=e.target.closest&&e.target.closest('th .hi');if(hi&&(e.key==='Enter'||e.key===' ')){e.preventDefault();hpopToggle(hi.closest('.hw'));}});
 function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
   var po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
   var heads=[['colN',null]];
