@@ -118,7 +118,7 @@ summary{padding:12px 16px;cursor:pointer;font-weight:600}
 .plist{padding:0 16px 16px}
 pre{margin:8px 0 0;max-height:360px;overflow:auto;font:400 12.5px/1.5 var(--f-mono);background:var(--code-bg);border:1px solid var(--soft);padding:12px;border-radius:8px;tab-size:4}
 pre.pts{white-space:pre}
-.exsurf{max-width:640px;margin:0 auto 16px}.exsel{margin-top:8px}sup.dag{color:var(--s-sym);cursor:help;margin-left:2px}td .oq{display:inline-block;margin-left:3px;cursor:pointer;font-weight:600;color:var(--accent)}td .oq:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
+.exsurf{max-width:640px;margin:0 auto 16px}.exsel{margin-top:8px}sup.dag{color:var(--s-sym);cursor:help;margin-left:2px}td .mk{display:inline-block;width:0;overflow:visible;white-space:nowrap;text-align:left;font-weight:400}td .oq{display:inline-block;margin-left:3px;cursor:pointer;font-size:11px;line-height:1;color:var(--accent)}td .oq:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
 .viewer,.exfig{position:relative}.figtag{position:absolute;top:8px;left:8px;font:600 11px var(--f-mono);letter-spacing:.06em;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:2px 7px;z-index:2;pointer-events:none}.figtag.fi{position:static;display:inline-block;margin-bottom:8px}
 .exgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
 .fnbtns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
@@ -4851,10 +4851,10 @@ function hdr(h,href){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
 /* formula popup: opens on hover over the explanatory header lines like a tooltip,
    and stays open (pinned) after a click on the info symbol at the end of the second line */
 var hpopFor=null,hpopPin=false;
-/* open questions in Table 1: a '?' after the value; same popup as the header formulas (hover, click pins) */
+/* open questions in Table 1: an info symbol after the value; same popup as the header formulas (hover, click pins) */
 var OQ={cube:{6:'oqCube6'}};
 function escA(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
-function oqMark(dom,n){var k=OQ[dom]&&OQ[dom][n];return k?'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('oqBtn')+'" data-tip="'+escA(t(k))+'">?</span>':'';}
+function oqMark(dom,n){var k=OQ[dom]&&OQ[dom][n];return k?'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('oqBtn')+'" data-tip="'+escA(t(k))+'">ⓘ</span>':'';}
 var HPSEL='th .hw, td .oq';
 function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;hpopPin=false;}
 function hpopShow(el){var p=$('#hpop');
@@ -4886,7 +4886,7 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     var cells='<td>'+n+'</td>';
     if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':fmt(po.arr[i]))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv))+'</td>';});}
-    else cells+='<td class="found">'+fmt(f[i])+flag(st.dom,n)+oqMark(st.dom,n)+'</td>';
+    else{var mk=flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
       if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i]))+'</td><td class="dim litc">'+(lit.arr[i]==null?'':cite.apply(null,lit.src[i]))+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+'</td>';}
