@@ -81,7 +81,8 @@ th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--soft);whit
 th:first-child,td:first-child{text-align:left}
 td.litn{padding-right:2px}td.litc{text-align:left;padding-left:2px}th.pick{cursor:pointer}th.selcol,td.selcol{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 th{vertical-align:top;font:500 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
-th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:help}th .hf{display:block;font:400 9.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap;margin-top:2px}
+th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:pointer}th .hw:hover .hl,th .hw:hover .hf,th .hw:focus .hl{color:var(--accent)}
+#hpop{display:none;position:absolute;z-index:50;max-width:min(560px,94vw);white-space:pre-wrap;font:400 12px/1.5 var(--f-mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}th .hf{display:block;font:400 9.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap;margin-top:2px}
 th a{color:inherit;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
 th a:hover{color:var(--accent)}
 tbody tr.sel-row{cursor:pointer}
@@ -4823,21 +4824,37 @@ function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
   if(d===2){
     if(k==='low'){if(dom==='square')return {a:'(n²+6n+8)/8',x:['n ≡ 1 (mod 4): L = (n²+6n+1)/8','n ≡ 3 (mod 4): L = (n²+6n+5)/8',E+'L = (n²+6n+8)/8']};
       return {a:'(n²+6n+8)/8',x:[O+'L = (n²+4n+3)/8',E+'L = (n²+6n+8)/8']};}
-    if(k==='abz'&&dom==='square')return {a:'(n²+3n+6)/6',x:['Z = min(⌈(n²+3n+2)/6⌉, ⌈(n+1)²/6⌉)','n ≡ 1, 3 (mod 6): Z = (n²+2n+3)/6','n ≡ 5 (mod 6): Z = (n²+2n+1)/6','n ≡ 0 (mod 6): Z = (n²+3n+6)/6','n ≡ 2, 4 (mod 6): Z = (n²+3n+2)/6']};
+    if(k==='abz'&&dom==='square')return {a:'(n²+3n+6)/6',x:['Z = min(⌈(n²+3n+2)/6⌉, ⌈(n²+2n+1)/6⌉)','n ≡ 1, 3 (mod 6): Z = (n²+2n+3)/6','n ≡ 5 (mod 6): Z = (n²+2n+1)/6','n ≡ 0 (mod 6): Z = (n²+3n+6)/6','n ≡ 2, 4 (mod 6): Z = (n²+3n+2)/6']};
     if(k==='abz')return {a:'(n²+3n+6)/6',x:['Z = ⌈(n²+3n+2)/6⌉','n ≡ 0 (mod 3): Z = (n²+3n+6)/6','n ≢ 0 (mod 3): Z = (n²+3n+2)/6']};
     if(k==='gauss')return {a:'(n²+4n+4)/4',x:['N_G = ⌈(n+1)/2⌉²',O+'N_G = (n²+2n+1)/4',E+'N_G = (n²+4n+4)/4']};
     return null;}
   if(k==='low')return {a:'(n³+12n²+44n+48)/48',x:[O+'L = (n³+9n²+23n+15)/48',E+'L = (n³+12n²+44n+48)/48']};
-  if(k==='abz'&&dom==='cube')return {a:'(n³+6n²+11n+24)/24',x:['Z = min(⌈(n³+6n²+11n+6)/24⌉, ⌈(n+1)(n+3)(2n+1)/48⌉)','n ≡ 1, 3 (mod 8): Z = (2n³+9n²+10n+27)/48','n ≡ 5, 7 (mod 8): Z = (2n³+9n²+10n+3)/48','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
+  if(k==='abz'&&dom==='cube')return {a:'(n³+6n²+11n+24)/24',x:['Z = min(⌈(n³+6n²+11n+6)/24⌉, ⌈(2n³+9n²+10n+3)/48⌉)','n ≡ 1, 3 (mod 8): Z = (2n³+9n²+10n+27)/48','n ≡ 5, 7 (mod 8): Z = (2n³+9n²+10n+3)/48','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
   if(k==='abz')return {a:'(n³+6n²+11n+24)/24',x:['Z = ⌈(n³+6n²+11n+6)/24⌉',O+'Z = (n³+6n²+11n+6)/24','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
   if(k==='gauss')return {a:'(n³+6n²+12n+8)/8',x:['N_G = ⌈(n+1)/2⌉³',O+'N_G = (n³+3n²+3n+1)/8',E+'N_G = (n³+6n²+12n+8)/8']};
   return null;}
-function hdr(h){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
-  var inner='<span class="hs">'+HSYM[key]+'</span><small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
-  if(!f)return inner;
+/* header cell: the symbol links to the documentation (href), the explanatory lines below open the
+   formula popup on click (only for columns with closed formulas) */
+function hdr(h,href){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
+  var sym='<span class="hs">'+HSYM[key]+'</span>';
+  if(href)sym='<a href="'+href+'">'+sym+'</a>';
+  var lab='<small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
+  if(!f)return sym+lab;
   var tip=f.x.join('&#10;').replace(/\{odd\}/g,t('nOdd')).replace(/\{even\}/g,t('nEven'));
-  return '<span class="hw" title="'+tip+'">'+inner+'<small class="hf">≈ '+f.a+'</small></span>';}
-function table(){var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
+  return sym+'<span class="hw" role="button" tabindex="0" aria-haspopup="dialog" data-tip="'+tip+'">'+lab+'<small class="hf">≈ '+f.a+'</small></span>';}
+/* formula popup, opened by click (or Enter) on the explanatory header lines */
+var hpopFor=null;
+function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;}
+function hpopOpen(el){var p=$('#hpop');
+  if(!p){p=document.createElement('div');p.id='hpop';p.setAttribute('role','dialog');document.body.appendChild(p);}
+  if(hpopFor===el){hpopClose();return;}
+  p.textContent=el.getAttribute('data-tip');p.style.display='block';
+  var r=el.getBoundingClientRect(),w=p.offsetWidth;
+  var x=Math.min(r.left+window.scrollX,window.scrollX+document.documentElement.clientWidth-w-8);
+  p.style.left=Math.max(window.scrollX+8,x)+'px';p.style.top=(r.bottom+window.scrollY+6)+'px';hpopFor=el;}
+document.addEventListener('click',function(e){var hw=e.target.closest&&e.target.closest('th .hw');if(hw){e.stopPropagation();hpopOpen(hw);return;}if(!(e.target.closest&&e.target.closest('#hpop')))hpopClose();},true);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')hpopClose();var hw=e.target.closest&&e.target.closest('th .hw');if(hw&&(e.key==='Enter'||e.key===' ')){e.preventDefault();hpopOpen(hw);}});
+function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
   var po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
   var heads=[['colN',null]];
   if(iv){heads=[['colN',null],['srcGaussL','gauss'],['srcLobB','lob'],['srcCcB','cc'],['srcNcB','nc']].concat(FH);}
@@ -4845,7 +4862,7 @@ function table(){var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='inter
   if(!iv)heads.push(['colFound','found']);
   if(!iv){heads.push(['Δ','delta']);if(lit)heads.push(['colLit','lit']);heads=heads.concat(FH);heads.push(['colGauss','gauss']);}
   var A={found:'e-found',abz:'e-abz',low:'e-low',gauss:'e-gauss',lit:'e-lit',out:'e-out',delta:'e-delta'};
-  $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h);return '<th'+(h[1]==='lit'?' colspan="2"':'')+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+(h[1]&&(!iv||isF(h[1]))?'<a href="#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]])+'">'+txt+'</a>':txt)+'</th>';}).join('')+'</tr>';
+  $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h,h[1]&&(!iv||isF(h[1]))?'#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]]):null);return '<th'+(h[1]==='lit'?' colspan="2"':'')+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+txt+'</th>';}).join('')+'</tr>';
   document.querySelectorAll('#tbl th.pick').forEach(function(th){th.onclick=function(e){if(e.target.closest&&e.target.closest('a'))return;st.src=th.getAttribute('data-src');viewer();table();drawEx();exChart();};});
   $('#tcap1').textContent=t('tabW')+' 1: '+t('tab1')+' – '+d.lab[LANG];
   var tb=$('#tbl tbody');tb.innerHTML='';$('#tbl').style.width=iv?'auto':'';$('#tbl').style.minWidth=iv?'260px':'';
