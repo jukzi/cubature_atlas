@@ -102,17 +102,17 @@ canvas.cv{width:100%;aspect-ratio:1/1;max-height:640px;display:block;background:
 .slider output{font:500 40px/1 var(--f-display)}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
-.fsable{position:relative}
-.fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.8}
+.figbox{position:relative}
+.fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.75}
 .fsb:hover,.fsb:focus-visible{opacity:1}
 .fsb svg{width:16px;height:16px;display:block}
-.fsable:fullscreen{background:var(--bg);padding:24px;box-sizing:border-box;width:100vw;height:100vh;overflow:auto;border-radius:0;border:0;max-width:none}
-.panel.fsable:fullscreen{display:flex;flex-direction:column}
-.panel.fsable:fullscreen>.figtag{align-self:flex-start}
-.panel.fsable:fullscreen svg.ch{flex:1 1 0;min-height:0;height:auto;width:100%}
-.viewer.fsable:fullscreen{align-items:center}
-.viewer.fsable:fullscreen canvas.cv{width:min(100%,calc(100vh - 48px));max-height:none;margin:0 auto}
-.exfig.fsable:fullscreen canvas.cv{width:min(100%,calc(100vh - 150px));max-height:none;margin:0 auto}
+.fslabel{display:none}
+.figbox:fullscreen{background:var(--surface);padding:44px 16px 16px;box-sizing:border-box;width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.figbox:fullscreen .fslabel{display:block;position:absolute;top:10px;left:12px;font:600 13px var(--f-mono);letter-spacing:.06em;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:3px 8px}
+.figbox:fullscreen>.figtag{top:10px;left:12px;font-size:13px}
+.figbox:fullscreen svg.ch{flex:1 1 0;min-height:0;height:auto;width:100%}
+.figbox:fullscreen>.legend{align-self:stretch}
+.figbox:fullscreen canvas.cv{width:min(100%,calc(100vh - 60px));max-height:none;border:0}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px var(--f-body);padding:8px 12px;border-radius:8px;cursor:pointer}
 .btn.warn{border-color:var(--bad);color:var(--bad)}.btn.warn[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
 .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -166,8 +166,8 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <h2 data-i="viewH"></h2>
   <p class="sub" data-i="viewSub"></p>
   <div class="viewer">
-    <span class="figtag" data-i="figA"></span>
-    <canvas id="cv" class="cv" width="800" height="800" aria-label="Nodes"></canvas>
+    <div class="figbox" id="fbA"><span class="figtag" data-i="figA"></span>
+    <canvas id="cv" class="cv" width="800" height="800" aria-label="Nodes"></canvas></div>
     <div class="ctl">
       <div class="btns" id="srcbtns"></div><p class="sub" id="srcinfo" style="margin:0;font-size:13px"></p>
       <div class="slider"><label for="deg" class="eyebrow" data-i="degree"></label><output id="degout" for="deg">9</output>
@@ -196,8 +196,8 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <div class="facts" id="facts"></div>
   <div class="panel">
     <div class="figtag fi" data-i="figB"></div>
-    <div class="legend" id="legend"></div>
-    <svg id="chart" class="ch" viewBox="0 0 900 420" role="img"></svg>
+    <div class="figbox" id="fbB" data-fig="figB"><span class="fslabel"></span><div class="legend" id="legend"></div>
+    <svg id="chart" class="ch" viewBox="0 0 900 420" role="img"></svg></div>
   </div>
   <div class="figtag fi" id="tcap1" style="margin-top:18px"></div>
   <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
@@ -208,13 +208,13 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <h2 data-i="exH"></h2>
   <p class="sub" data-i="exSub"></p>
   <div class="exgrid">
-    <div class="exfig"><span class="figtag" data-i="figC"></span><canvas id="ex" class="cv" width="640" height="640" aria-label="Function"></canvas>
+    <div class="exfig"><div class="figbox" id="fbC"><span class="figtag" data-i="figC"></span><canvas id="ex" class="cv" width="640" height="640" aria-label="Function"></canvas></div>
       <div class="btns" style="margin-top:8px"><button class="btn" id="b-exauto" aria-pressed="true" data-i="rotate"></button></div><p class="sub" id="excap" style="margin:8px 0 0;font-size:13px"></p></div>
     <div class="panel">
       <div class="figtag fi" data-i="figD"></div>
       <div class="slider" style="margin-bottom:8px"><label for="deg2" class="eyebrow" data-i="degree"></label> <b id="deg2out" style="font:600 15px var(--f-mono);margin-left:8px"></b>
         <input type="range" id="deg2" min="1" max="30" value="9"></div>
-      <svg id="exchart" class="ch" viewBox="0 0 560 360" role="img"></svg>
+      <div class="figbox" id="fbD" data-fig="figD"><span class="fslabel"></span><svg id="exchart" class="ch" viewBox="0 0 560 360" role="img"></svg></div>
       <div class="btns" style="margin:4px 0 8px"><button class="btn" id="b-sub" aria-pressed="true" data-i="subBtn"></button></div>
       <div class="exread" id="exread"></div>
     </div>
@@ -225,7 +225,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
     <div class="formula" id="exformula"></div>
   </div>
   <h3 id="exNH" style="margin-top:28px"></h3>
-  <div class="panel"><div class="figtag fi" data-i="figE"></div><svg id="exchartN" class="ch" viewBox="0 0 900 380" role="img"></svg>
+  <div class="panel"><div class="figtag fi" data-i="figE"></div><div class="figbox" id="fbE" data-fig="figE"><span class="fslabel"></span><svg id="exchartN" class="ch" viewBox="0 0 900 380" role="img"></svg></div>
     <div class="btns" style="margin:4px 0 0"><button class="btn" id="b-subE" aria-pressed="true" data-i="subBtn"></button> <button class="btn" id="b-compE" aria-pressed="false" data-i="compBtn"></button></div>
     <p class="sub" id="exNnote" style="margin:8px 0 0;font-size:13px"></p></div>
 </section>
@@ -5538,7 +5538,7 @@ function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=D
   if(cm&&gp.length)cEnt('gauss',t('legGauss'));
   if(lit.length)ents.push({key:'sym',color:'--s-sym',w:1.5,dash:'5 3',label:t('litLbl')});
   ents.push({key:'noise',color:'--s-abz',w:2,dash:'',nosym:true,label:t('noiseLbl')});
-  legEntries(svg,ents,W-m.r-8,m.t+14,true);
+  legEntries(svg,ents,W-m.r-40,m.t+14,true);
   /* The drill always rides on the N_PI line (on the interval: Gauss-Legendre, the minimal PI rule). */
   var srcE=tser[piK]&&tser[piK].length?tser[piK]:ours;
   var cE=srcE.slice().sort(function(a,b){return a.N-b.N;}).map(function(o){return [X(o.N),Y(o.l),o.l];});
@@ -5555,7 +5555,7 @@ function exChart(){exChartN();figFn();var svg=$('#exchart');svg.innerHTML='';var
   el('line',{x1:X(st.n),x2:X(st.n),y1:m.t,y2:m.t+ph,'class':'sel'},svg);
   var ng=el('g',{},svg),npg=null,npl=null;var nlp=vp(nl);if(nlp.length){npg=el('polygon',{points:nlp.map(function(p){return p.join(',');}).join(' ')+' '+nlp[nlp.length-1][0]+','+Y(-16)+' '+nlp[0][0]+','+Y(-16),fill:'var(--s-abz)','fill-opacity':.14,stroke:'none'},ng);
   npl=el('polyline',{points:nlp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var(--s-abz)','stroke-width':2},ng);}
-  var nsy=[];nl.forEach(function(l2,i){if(l2!=null){var gi=el('g',{},ng);symEl(gi,'noise',X(i+1),Y(l2),2.8,false);nsy.push(gi);}});var nzp=[];nl.forEach(function(l2,i){if(l2!=null)nzp.push({x:X(i+1),l:l2});});var nzD={pts:nzp,Y:Y,pg:npg,pl:npl,sy:nsy,base:Y(-16)};legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'',label:t('noiseLbl')}],W-m.r-8,m.t+14,true);
+  var nsy=[];nl.forEach(function(l2,i){if(l2!=null){var gi=el('g',{},ng);symEl(gi,'noise',X(i+1),Y(l2),2.8,false);nsy.push(gi);}});var nzp=[];nl.forEach(function(l2,i){if(l2!=null)nzp.push({x:X(i+1),l:l2});});var nzD={pts:nzp,Y:Y,pg:npg,pl:npl,sy:nsy,base:Y(-16)};legEntries(svg,[{key:selk,color:SERCOL[selk],w:2.5,dash:sdash,label:srcLabel(selk,st.dom)},{key:'noise',color:'--s-abz',w:2,dash:'',label:t('noiseLbl')}],W-m.r-40,m.t+14,true);
   var lgp=vp(logs),clD=null;if(lgp.length)clD=el('polyline',{points:lgp.map(function(p){return p.join(',');}).join(' '),fill:'none',stroke:'var('+SERCOL[selk]+')','stroke-width':2.5,'stroke-dasharray':sdash,'stroke-linejoin':'round'},svg);
   logs.forEach(function(l2,i){if(l2==null)return;var hollow=res.rows[i].err/ev<1e-16||l2<=FLOOR;symEl(svg,selk,X(i+1),Y(l2),i+1===st.n?5:3.2,hollow);});
   for(var n2=1;n2<=MX();n2++){(function(nn){var rc=el('rect',{x:X(nn)-pw/(2*(MX()-1)),y:m.t,width:pw/(MX()-1),height:ph,fill:'transparent',style:'cursor:pointer'},svg);rc.onclick=function(){setDeg(nn);};})(n2);}
@@ -5714,14 +5714,14 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   var de=document.documentElement;
   var can=!!(de.requestFullscreen||de.webkitRequestFullscreen);
   if(!can)return;
-  var figs=[$('#cv').closest('.viewer'),$('#chart').closest('.panel'),$('#ex').closest('.exfig'),$('#exchart').closest('.panel'),$('#exchartN').closest('.panel')];
+  /* Only the diagram itself goes full screen: canvas or chart (with its legend in figure B), plus the figure label. */
+  var figs=['#fbA','#fbB','#fbC','#fbD','#fbE'].map(function(q){return $(q);});
   var icon='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/></svg>';
   var iconX='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 1v4H1M15 5h-4V1M11 15v-4h4M1 11h4v4"/></svg>';
   var cur=function(){return document.fullscreenElement||document.webkitFullscreenElement||null;};
   var btns=[];
   figs.forEach(function(f){
     if(!f)return;
-    f.classList.add('fsable');
     var b=document.createElement('button');
     b.type='button';
     b.className='fsb';
@@ -5731,6 +5731,9 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
     f.appendChild(b);
     btns.push([b,f]);});
   var upd=function(){
+    /* The label of figures B, D and E sits outside the box; copy its text in for full screen. */
+    var c=cur();
+    if(c&&c.dataset.fig){var src=c.parentNode.querySelector('[data-i='+c.dataset.fig+']');c.querySelector('.fslabel').textContent=src?src.textContent:'';}
     btns.forEach(function(p){
       var on=cur()===p[1];
       p[0].innerHTML=on?iconX:icon;
