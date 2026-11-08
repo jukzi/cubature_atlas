@@ -1,0 +1,51 @@
+name: Interval proofs
+
+# Rigorous check of the rules with interval arithmetic (tools/verify_rigorous.py):
+#  part 1 encloses the moment residual of the stored decimal numbers and checks nodes and weights exactly,
+#  part 2 proves with a Krawczyk test that an exact rule with the stored quality exists near the stored numbers.
+# Pull requests: the rule files added or changed against the base branch (all rules if the checker itself
+# changed). The job fails if the stored numbers do not pass, or if the existence proof fails for a rule
+# without "status": "needs_certificate".
+# Weekly and on demand: all rules; the report is attached as an artifact.
+
+on:
+  pull_request:
+    paths:
+      - "rules/**"
+      - "tools/verify_rigorous.py"
+      - ".github/workflows/rigorous.yml"
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  proofs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy
+      - name: Changed rules (pull request)
+        if: github.event_name == 'pull_request'
+        run: |
+          if git diff --quiet origin/${{ github.base_ref }} -- tools/verify_rigorous.py; then
+            python tools/verify_rigorous.py --changed origin/${{ github.base_ref }} --strict --report interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
+          else
+            python tools/verify_rigorous.py --report interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: All rules
+        if: github.event_name != 'pull_request'
+        run: python tools/verify_rigorous.py --report interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interval-proofs
+          path: interval_proofs.json

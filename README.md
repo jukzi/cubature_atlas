@@ -12,7 +12,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
   <sub>Figure A of the website (default view): the 2-point Gauss–Legendre rule integrates every polynomial of degree 3 exactly. The bars (width = weight, height = value at the node) always enclose the same area as the curve.</sub>
 </p>
 
-> **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments), and the rules of the atlas's own search also carry a Newton–Kantorovich certificate. Please verify results before you rely on them.
+> **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments, in floating point). The rules of the atlas's own search also carry a Newton–Kantorovich certificate, computed in floating point with an estimated Lipschitz constant, so it is strong evidence but not a proof. `tools/verify_rigorous.py` adds a rigorous check with interval arithmetic (see [Rigorous check](#rigorous-check-with-interval-arithmetic)). Please verify results before you rely on them.
 
 ## What is in here
 
@@ -27,6 +27,8 @@ Website: <https://jukzi.github.io/cubature_atlas/>
 | `site_template/index.html` | The interactive page; the build inserts the data |
 | `code/` | Search, certificate and helper programs that produced the rules |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
+| `tools/verify_rigorous.py`, `.github/workflows/rigorous.yml` | Rigorous check with interval arithmetic: stored numbers and existence of an exact rule (Krawczyk test) |
+| `reports/interval_proofs.json` | Result of the rigorous check for all rules |
 | `tools/make_readme_gif.py`, `assets/` | Records figure A of the built page as the animated GIF of this README (Playwright, Pillow) |
 | `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
 | `tools/auto_cannonball.py`, `.github/workflows/auto_cannonball.yml` | Automatic search for smaller tetrahedron rules from a cannonball start, started by hand; opens a pull request when it finds one |
@@ -112,6 +114,25 @@ python tools/build_atlas.py --base origin/main    # also refuse changes to locke
 ```
 
 Every rule is checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+
+### Rigorous check with interval arithmetic
+
+`tools/build_atlas.py` works in floating point, and so do the Newton–Kantorovich certificates stored in the rule files. `tools/verify_rigorous.py` (Python, numpy) adds a check in which every rounding error is accounted for:
+
+1. **Stored numbers.** The decimal numbers of the file are taken exactly. Node positions and weight signs are checked in exact rational arithmetic, and the moment residual of the stored rule is enclosed rigorously for every basis polynomial up to the degree (it must be ≤ 1e-11 per volume).
+2. **Existence of an exact rule.** A Krawczyk test (interval Newton method) proves that the moment equations have an exact solution within a small distance of the stored numbers, and that every rule in that neighbourhood has the stored quality (positive weights, nodes inside). Rules with symmetries are proven in the symmetry-reduced equations (signed permutations on square and cube, permutations of the barycentric coordinates on triangle and tetrahedron); nodes on the boundary are kept exactly on it.
+
+Basis: Legendre products on boxes, the orthogonal Dubiner (PKD) basis on triangle and tetrahedron. Basis values at the centres of the interval boxes are computed exactly with fractions; matrix products are enclosed with rigorous error bounds that hold for any BLAS.
+
+```bash
+python tools/verify_rigorous.py                                   # all rules
+python tools/verify_rigorous.py --changed origin/main             # only added or changed rule files
+python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json
+```
+
+The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week; a pull request fails if a changed rule does not pass, unless the rule has `"status": "needs_certificate"`.
+
+Current result (all 280 rules, about 20 minutes on one core): the stored numbers of every rule pass, and for every rule an exact rule with the stored quality is proven to exist within 5·10⁻¹¹ of the stored numbers (173 in symmetry-reduced equations, 107 in all unknowns). Seven tetrahedron PI rules store a node about 10⁻¹⁵ outside the face x + y + z = 1 (accepted by the build's tolerance of 10⁻¹²); for them the proof places that node exactly on the face, and the proven exact rule lies inside.
 
 The build writes `site/`: the English page, the German page under `de/`, one static page per rule (both languages, for search engines), `data/atlas.json`, a ZIP of all rules, and `sitemap.xml`. GitHub Actions run the check on every pull request and publish a live preview of the pull request under `pr-preview/pr-<number>/`. On every push to `main` they deploy `site/` to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/atlas.yml`).
 
