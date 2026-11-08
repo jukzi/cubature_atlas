@@ -99,5 +99,17 @@
     "y": "",
     "t": "Ackley function (Wikipedia article on the test function of D. H. Ackley, 1987); link given by the client, not re-fetched.",
     "u": "https://en.wikipedia.org/wiki/Ackley_function"
+  },
+  {
+    "n": 17,
+    "y": "1979",
+    "t": "H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230.",
+    "u": "https://doi.org/10.1007/978-3-0348-6288-2_17"
+  },
+  {
+    "n": 18,
+    "y": "2024",
+    "t": "Y. Xu: Minimal cubature rules and Koornwinder polynomials. arXiv:2407.09903 (2024). Theorem 3.1 states Möller's bound with the structural matrices of the three-term relation.",
+    "u": "https://arxiv.org/abs/2407.09903"
   }
 ]
