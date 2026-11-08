@@ -102,6 +102,17 @@ canvas.cv{width:100%;aspect-ratio:1/1;max-height:640px;display:block;background:
 .slider output{font:500 40px/1 var(--f-display)}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
+.fsable{position:relative}
+.fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.8}
+.fsb:hover,.fsb:focus-visible{opacity:1}
+.fsb svg{width:16px;height:16px;display:block}
+.fsable:fullscreen{background:var(--bg);padding:24px;box-sizing:border-box;width:100vw;height:100vh;overflow:auto;border-radius:0;border:0;max-width:none}
+.panel.fsable:fullscreen{display:flex;flex-direction:column}
+.panel.fsable:fullscreen>.figtag{align-self:flex-start}
+.panel.fsable:fullscreen svg.ch{flex:1 1 0;min-height:0;height:auto;width:100%}
+.viewer.fsable:fullscreen{align-items:center}
+.viewer.fsable:fullscreen canvas.cv{width:min(100%,calc(100vh - 48px));max-height:none;margin:0 auto}
+.exfig.fsable:fullscreen canvas.cv{width:min(100%,calc(100vh - 150px));max-height:none;margin:0 auto}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px var(--f-body);padding:8px 12px;border-radius:8px;cursor:pointer}
 .btn.warn{border-color:var(--bad);color:var(--bad)}.btn.warn[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
 .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -5698,6 +5709,39 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   var b=$('#b-compE');
   b.setAttribute('aria-pressed',COMP.on);
   b.onclick=function(){COMP.on=!COMP.on;b.setAttribute('aria-pressed',COMP.on);exChartN();};})();
+(function(){
+  /* Full-screen button for every figure (A to E). Hidden where the browser offers no element full screen. */
+  var de=document.documentElement;
+  var can=!!(de.requestFullscreen||de.webkitRequestFullscreen);
+  if(!can)return;
+  var figs=[$('#cv').closest('.viewer'),$('#chart').closest('.panel'),$('#ex').closest('.exfig'),$('#exchart').closest('.panel'),$('#exchartN').closest('.panel')];
+  var icon='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 5V1h4M11 1h4v4M15 11v4h-4M5 15H1v-4"/></svg>';
+  var iconX='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 1v4H1M15 5h-4V1M11 15v-4h4M1 11h4v4"/></svg>';
+  var cur=function(){return document.fullscreenElement||document.webkitFullscreenElement||null;};
+  var btns=[];
+  figs.forEach(function(f){
+    if(!f)return;
+    f.classList.add('fsable');
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='fsb';
+    b.onclick=function(){
+      if(cur()===f){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
+      (f.requestFullscreen||f.webkitRequestFullscreen).call(f);};
+    f.appendChild(b);
+    btns.push([b,f]);});
+  var upd=function(){
+    btns.forEach(function(p){
+      var on=cur()===p[1];
+      p[0].innerHTML=on?iconX:icon;
+      p[0].title=t(on?'fsExit':'fsBtn');
+      p[0].setAttribute('aria-label',p[0].title);});
+    /* Canvases take their size from the layout; redraw them for the new size. */
+    draw();
+    drawEx();};
+  document.addEventListener('fullscreenchange',upd);
+  document.addEventListener('webkitfullscreenchange',upd);
+  upd();})();
 (function(){
   var bs=['#b-sub','#b-subE'].map(function(s){return $(s);});
   bs.forEach(function(b){

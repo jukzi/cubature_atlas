@@ -203,7 +203,9 @@
     "compBtn": "173e1ef35ef36fe3",
     "exNnoteC": "381ad8274b14f0a3",
     "compLbl": "5b867387a38db122",
-    "evalsAx": "9bedf0cc3a2180e1"
+    "evalsAx": "9bedf0cc3a2180e1",
+    "fsBtn": "d09b8d2367fadfd1",
+    "fsExit": "aa4c0186cc8d628c"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -431,5 +433,7 @@
   "compBtn": "Zusammengesetzte Regeln",
   "exNnoteC": "Nur die minimalen PI-Regeln des Atlas und das Gauß-Produkt, jeweils ungeteilt und als zusammengesetzte Regel: Das Gebiet wird in k Teile je Richtung zerlegt (k^dim kongruente Zellen; Tetraeder durch rote Verfeinerung), die Regel wird auf jede Zelle abgebildet und die Ergebnisse werden addiert. Die x-Achse zählt die Funktionsauswertungen, also Knoten × Zellen; Kurven, die über den rechten Rand hinausgehen, sind dort abgeschnitten. Die Rechengenauigkeit ist die der ungeteilten Regel. Bei gleicher Knotenzahl liegt meist die ungeteilte Regel höheren Grades vorn; bis Grad 30 gewinnen zusammengesetzte Regeln überwiegend nur bei der Runge-Funktion, und auf dem Tetraeder nicht.",
   "compLbl": "{s}, {c} Zellen",
-  "evalsAx": "Funktionsauswertungen (Knoten × Zellen)"
+  "evalsAx": "Funktionsauswertungen (Knoten × Zellen)",
+  "fsBtn": "Vollbild",
+  "fsExit": "Vollbild beenden (Esc)"
 }
