@@ -197,8 +197,9 @@
     "rpLicLit": "67d6b4e2b087c11a",
     "linkDoi": "544a0457778abe39",
     "compBtn": "173e1ef35ef36fe3",
-    "compLegN": "3128f179b0fee95a",
-    "exNnoteC": "49e40178ef3c75e3"
+    "exNnoteC": "381ad8274b14f0a3",
+    "compLbl": "5b867387a38db122",
+    "evalsAx": "9bedf0cc3a2180e1"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -420,6 +421,7 @@
   "rpLicLit": "Aus der zitierten Veröffentlichung zum Vergleich übernommen; nicht von der CC-BY-4.0-Lizenz des Atlas erfasst, es gelten die ursprünglichen Bedingungen.",
   "linkDoi": "DOI 10.5281/zenodo.24037245",
   "compBtn": "Zusammengesetzte Regeln",
-  "compLegN": "blasser: zusammengesetzt (Zahl = Zellen)",
-  "exNnoteC": "Nur die minimalen PI-Regeln des Atlas und das Gauß-Produkt, jeweils ungeteilt und als zusammengesetzte Regel: Das Gebiet wird in k Teile je Richtung zerlegt (k^dim kongruente Zellen; Tetraeder durch rote Verfeinerung), die Regel wird auf jede Zelle abgebildet und die Ergebnisse werden addiert. Die Zahl am Ende jeder blassen Kurve ist die Zahl der Zellen; Kurven, die über den rechten Rand hinausgehen, sind dort abgeschnitten. Bei gleicher Knotenzahl liegt meist die ungeteilte Regel höheren Grades vorn; bis Grad 30 gewinnen zusammengesetzte Regeln überwiegend nur bei der Runge-Funktion, und auf dem Tetraeder nicht."
+  "exNnoteC": "Nur die minimalen PI-Regeln des Atlas und das Gauß-Produkt, jeweils ungeteilt und als zusammengesetzte Regel: Das Gebiet wird in k Teile je Richtung zerlegt (k^dim kongruente Zellen; Tetraeder durch rote Verfeinerung), die Regel wird auf jede Zelle abgebildet und die Ergebnisse werden addiert. Die x-Achse zählt die Funktionsauswertungen, also Knoten × Zellen; Kurven, die über den rechten Rand hinausgehen, sind dort abgeschnitten. Die Rechengenauigkeit ist die der ungeteilten Regel. Bei gleicher Knotenzahl liegt meist die ungeteilte Regel höheren Grades vorn; bis Grad 30 gewinnen zusammengesetzte Regeln überwiegend nur bei der Runge-Funktion, und auf dem Tetraeder nicht.",
+  "compLbl": "{s}, {c} Zellen",
+  "evalsAx": "Funktionsauswertungen (Knoten × Zellen)"
 }
