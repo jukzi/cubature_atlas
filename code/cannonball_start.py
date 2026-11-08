@@ -444,7 +444,7 @@ def solve_free(m, L, w, maxit=500):
     return nr < tol, Lx, w, nr
 
 
-def continuation_points(L, w, n, m0, solver, log, maxfev=400):
+def continuation_points(L, w, n, m0, solver, log, maxfev=400, deadline=float("inf")):
     """Degree continuation with the trf or free solver; returns (ok, L, w, residual norm)."""
     # Residual norm
     nr = float("inf")
@@ -452,6 +452,11 @@ def continuation_points(L, w, n, m0, solver, log, maxfev=400):
     ok = False
     # Loop over degrees
     for m in range(m0, n + 1):
+        # Out of time: stop before the next degree
+        if time.time() > deadline:
+            log("  time budget exhausted before degree %d" % m)
+            ok = False
+            break
         # Start time
         t0 = time.time()
         # Solve this degree
@@ -539,6 +544,8 @@ def main():
     ap.add_argument("--removal", choices=["spread", "top"], default="spread", help="which surplus balls of the pile to remove")
     # Solver
     ap.add_argument("--solver", choices=["trf", "lm", "free"], default="trf", help="nonlinear solver (see module docstring)")
+    # Total wall-clock budget
+    ap.add_argument("--budget", type=float, default=0.0, help="total wall-clock budget in seconds (0 = none); elimination ends by then")
     # Function evaluations per degree for trf
     ap.add_argument("--maxfev", type=int, default=400, help="function evaluations per degree (trf)")
     # First degree of the continuation
@@ -559,6 +566,10 @@ def main():
         # Print with flush
         print(msg, flush=True)
 
+    # Start time
+    t_start = time.time()
+    # Deadline of the whole run
+    deadline = t_start + args.budget if args.budget > 0 else float("inf")
     # Counting value
     Z = counting_value(args.n)
     # Number of points
@@ -582,7 +593,7 @@ def main():
         L, w = rule.expand()
     else:
         # Point form
-        ok, L, w, nr = continuation_points(L, w, args.n, m0, args.solver, log, args.maxfev)
+        ok, L, w, nr = continuation_points(L, w, args.n, m0, args.solver, log, args.maxfev, deadline)
     # Drop points with zero weight (the bounded solver may switch points off)
     keep = np.abs(w) > 0.0
     # Points
@@ -608,20 +619,37 @@ def main():
     if ok and quality == "PI" and args.eliminate > 0:
         # Basis of the target degree
         basis = sc.InvariantBasis(3, args.n, "C1")
-        # Eliminate
-        best = sc.eliminate(basis, rule_from_points(L, w), time.time() + args.eliminate, 10, log, rng)
-        # Expanded
-        L, w = best.expand()
-        # Error
-        err = ver.error(L, w)
-        # Report
-        log("after elimination: N = %d, max moment error %.3e" % (len(w), err))
-        # Output path
-        path = os.path.join(args.out, "tet_n%02d_m%d_seed%d_elim.json" % (args.n, len(w), args.seed))
-        # Write
-        write_atlas_json(path, args.n, L, w, err, info + ", then node elimination")
-        # Report
-        log("written " + path)
+        # End of the elimination
+        stop = min(time.time() + args.eliminate, deadline)
+        # Current rule
+        best = rule_from_points(L, w)
+        # Point count before elimination
+        before = len(w)
+        # Point count of the last snapshot
+        last = before
+        # Rounds of at most 20 minutes, each followed by a saved snapshot
+        while time.time() < stop - 60.0:
+            # End of this round
+            round_end = min(time.time() + 1200.0, stop)
+            # Eliminate
+            best = sc.eliminate(basis, best, round_end, 10, log, rng)
+            # Expanded
+            Le, we = best.expand()
+            # Error
+            err = ver.error(Le, we)
+            # Report
+            log("after elimination round: N = %d, max moment error %.3e" % (len(we), err))
+            # Output path
+            path = os.path.join(args.out, "tet_n%02d_m%d_seed%d_elim.json" % (args.n, len(we), args.seed))
+            # Write
+            write_atlas_json(path, args.n, Le, we, err, info + ", then node elimination from %d points" % before)
+            # Report
+            log("written " + path)
+            # Stop when a whole round brought no progress
+            if len(we) >= last:
+                break
+            # Remember the count
+            last = len(we)
 
 
 if __name__ == "__main__":

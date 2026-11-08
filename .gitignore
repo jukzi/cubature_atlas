@@ -2,3 +2,4 @@ site/
 __pycache__/
 *.pyc
 auto_search_work/
+auto_cannonball_work/

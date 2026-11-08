@@ -1,0 +1,111 @@
+name: Automatic cannonball search (tetrahedron)
+
+# Started by hand (or through the API). Every job runs tools/auto_cannonball.py
+# for one seed: code/cannonball_start.py starts from a cannonball packing of
+# ceil(Z(n)) + extra balls, Z(n) = (n+1)(n+2)(n+3)/24, solves the moment
+# equations by degree continuation with bounded least squares and then
+# eliminates nodes until the time budget is used up.
+# A job that finds a certified PI rule with fewer nodes than every known
+# tetrahedron rule of at least that degree checks the atlas
+# (tools/build_atlas.py) and opens a pull request from the branch
+# ai/auto-tet-nXX-mYYY.
+#
+# Optional secret AUTO_SEARCH_TOKEN (fine-grained token with contents and
+# pull-requests write access to this repository): with it, the new pull
+# requests also start the normal checks and the live preview. With the default
+# GITHUB_TOKEN they do not (a GitHub rule), and the repository setting
+# "Allow GitHub Actions to create and approve pull requests" must be enabled.
+
+on:
+  workflow_dispatch:
+    inputs:
+      degree:
+        description: "Degree n"
+        default: "24"
+      extra:
+        description: "Points above ceil(Z(n)) in the start"
+        default: "58"
+      seeds:
+        description: "Number of parallel jobs, one seed each (1-8)"
+        default: "4"
+      first_seed:
+        description: "Seed of the first job"
+        default: "1"
+      minutes:
+        description: "Time budget per job in minutes (at most 330)"
+        default: "320"
+      maxfev:
+        description: "Function evaluations per degree of the bounded solver"
+        default: "400"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-cannonball
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      seeds: ${{ steps.p.outputs.seeds }}
+    steps:
+      - id: p
+        run: |
+          echo "seeds=$(python3 -c "import json; k=max(1, min(8, int('${{ inputs.seeds }}'))); s=int('${{ inputs.first_seed }}'); print(json.dumps(list(range(s, s + k))))")" >> "$GITHUB_OUTPUT"
+
+  search:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: ${{ fromJSON(needs.plan.outputs.seeds) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy scipy
+      - name: Search
+        id: s
+        run: >
+          python tools/auto_cannonball.py
+          --degree "${{ inputs.degree }}"
+          --extra "${{ inputs.extra }}"
+          --seed ${{ matrix.seed }}
+          --minutes "$(python3 -c "print(min(330.0, float('${{ inputs.minutes }}')))")"
+          --maxfev "${{ inputs.maxfev }}"
+      - name: Keep the raw results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cannonball-n${{ inputs.degree }}-seed${{ matrix.seed }}
+          path: auto_cannonball_work/out
+          if-no-files-found: ignore
+      - name: Open a pull request
+        if: steps.s.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
+          BRANCH: ${{ steps.s.outputs.branch }}
+          TITLE: ${{ steps.s.outputs.title }}
+          RULE: ${{ steps.s.outputs.rule_path }}
+          BODY: ${{ steps.s.outputs.body }}
+        run: |
+          if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null; then
+            echo "branch $BRANCH exists already (another job found the same count)"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "$RULE"
+          git commit -m "$TITLE" -m "Found by the automatic cannonball search (tools/auto_cannonball.py), run ${{ github.run_id }}, seed ${{ matrix.seed }}." -m "Co-Authored-By: Claude <noreply@anthropic.com>"
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"

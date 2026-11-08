@@ -29,6 +29,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
 | `tools/make_readme_gif.py`, `assets/` | Records figure A of the built page as the animated GIF of this README (Playwright, Pillow) |
 | `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
+| `tools/auto_cannonball.py`, `.github/workflows/auto_cannonball.yml` | Automatic search for smaller tetrahedron rules from a cannonball start, started by hand; opens a pull request when it finds one |
 
 ## Rule families
 
@@ -132,6 +133,13 @@ If a rule has fewer nodes than every rule of the atlas and of the open automatic
 Settings:
 - **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"** must be enabled.
 - Pull requests opened with the default `GITHUB_TOKEN` do not start the pull-request checks and the preview. With a repository secret `AUTO_SEARCH_TOKEN` (a fine-grained token with *Contents* and *Pull requests* write access to this repository) they do.
+
+The tetrahedron has its own workflow, `.github/workflows/auto_cannonball.yml`, started by hand (`workflow_dispatch`: degree, extra points, number of seeds, minutes, maxfev). Each job (`tools/auto_cannonball.py`):
+- runs `code/cannonball_start.py` for one seed: a cannonball packing of ceil(Z(n)) + extra balls, Z(n) = (n+1)(n+2)(n+3)/24, as start, degree continuation with bounded least squares, then node elimination until the budget is used up (a snapshot after every elimination round);
+- keeps all results as a workflow artifact;
+- takes the smallest exact PI result and, if it has fewer nodes than every tetrahedron rule of the atlas and of the open pull requests `ai/auto-tet-*` of at least that degree, certifies it with `code/cubature_atlas.py`, writes the rule file, runs `tools/build_atlas.py --base origin/main` and opens a pull request from `ai/auto-tet-nXX-mYYY` if the check prints `OK`.
+
+The same settings as above apply.
 
 ## Translations
 
