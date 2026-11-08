@@ -56,20 +56,51 @@ class TetraProb(dom.ProbG):
 
 
 class CubeProb(cs.Prob):
-    """Moment system on the cube with nodes in [-1 - BOXOUT, 1 + BOXOUT]^3."""
+    """Moment system on the cube with nodes in [-1 - BOXOUT, 1 + BOXOUT]^3.
+    With cs=True the unknowns are one node of each pair (p, -p) and its weight, plus the centre weight if center=True."""
 
     def bounds(self, N, mode):
         # Nodes in a box around the cube, weights >= 0.
         PB = 1.0 + BOXOUT
         lo = np.r_[np.full(3 * N, -PB), np.full(N, 0.0)]
         hi = np.r_[np.full(3 * N, PB), np.full(N, 50.0)]
+        if self.center:
+            lo = np.r_[lo, 0.0]
+            hi = np.r_[hi, 50.0]
         return lo, hi
 
     def full_points(self, x, N):
-        # Plain (non-symmetric) layout: nodes then weights.
+        # Expand the unknowns to the full list of nodes and weights.
         P = x[:3 * N].reshape(N, 3)
         w = x[3 * N:4 * N]
-        return P, w
+        if not self.cs:
+            return P, w
+        Pf = np.vstack([P, -P])
+        wf = np.r_[w, w]
+        if self.center:
+            Pf = np.vstack([Pf, np.zeros((1, 3))])
+            wf = np.r_[wf, x[4 * N]]
+        return Pf, wf
+
+
+def split_central(P, w):
+    """Split a centrally symmetric rule into one node per pair (p, -p), the pair weight and the centre weight (or None)."""
+    r = np.linalg.norm(P, axis=1)
+    cen = r < 1e-12
+    c = None
+    if cen.any():
+        c = float(w[cen][0])
+    Q = P[~cen]
+    v = w[~cen]
+    # Keep the node whose first nonzero coordinate is positive.
+    keep = []
+    for i in range(len(Q)):
+        nz = np.nonzero(np.abs(Q[i]) > 1e-12)[0][0]
+        if Q[i, nz] > 0:
+            keep.append(i)
+    keep = np.array(keep)
+    assert 2 * len(keep) == len(Q), "rule is not centrally symmetric"
+    return Q[keep], v[keep], c
 
 
 # How far nodes may leave the domain.
@@ -133,10 +164,6 @@ def main():
     seed = int(sys.argv[4])
     rng = np.random.default_rng(seed)
     # Problem.
-    if name == "cube":
-        pr = CubeProb(deg, False, False)
-    else:
-        pr = TetraProb(PhysTetra("tetra", deg))
     # Start rule.
     if len(sys.argv) > 5:
         A = np.load(sys.argv[5])
@@ -144,12 +171,25 @@ def main():
         w = A[:, 3]
     else:
         P, w = atlas_best_pi(name, deg)
+    # Centrally symmetric search on the cube (environment CS=1).
+    sym = name == "cube" and os.environ.get("CS", "0") == "1"
+    tail = np.zeros(0)
+    if sym:
+        P, w, c = split_central(P, w)
+        pr = CubeProb(deg, True, c is not None)
+        if c is not None:
+            tail = np.array([c])
+    elif name == "cube":
+        pr = CubeProb(deg, False, False)
+    else:
+        pr = TetraProb(PhysTetra("tetra", deg))
     N = len(w)
-    print("start", name, "degree", deg, "N", N, "unknowns", 4 * N, "moments", pr.M, flush=True)
-    x = np.r_[P.ravel(), w]
+    print("start", name, "degree", deg, "N", N, "unknowns", 4 * N + len(tail), "moments", pr.M, "symmetric", sym, flush=True)
+    x = np.r_[P.ravel(), w, tail]
     t0 = time.time()
     fails = 0
-    while time.time() - t0 < tl and N > 1:
+    # Stop when one node (pair) less would give fewer unknowns than moments (generic count reached).
+    while time.time() - t0 < tl and 4 * (N - 1) + len(tail) >= pr.M:
         Qc = x[:3 * N].reshape(N, 3)
         wc = x[3 * N:4 * N]
         order = np.argsort(wc)
@@ -179,21 +219,21 @@ def main():
             scale = 2.0 if name == "cube" else 1.0
             Qn = Qn + rng.normal(0, scale * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
             Nn = len(wn)
-            if 4 * Nn < pr.M:
+            if 4 * Nn + len(tail) < pr.M:
                 continue
             lo, hi = pr.bounds(Nn, "b")
-            xn = np.clip(np.r_[Qn.ravel(), wn], lo, hi)
+            xn = np.clip(np.r_[Qn.ravel(), wn, x[4 * N:]], lo, hi)
             r = pr.solve_lm(xn, Nn, "b", max_iter=MI)
             if r.cost < 1e-24:
                 Xp, Wp = pr.full_points(r.x, Nn)
                 cert = ok_rule(name, deg, Xp, Wp)
                 if cert is not None:
-                    np.save("po_%s_d%d_n%d.npy" % (name, deg, Nn), np.c_[Xp, Wp])
+                    np.save("po_%s_d%d_n%d.npy" % (name, deg, len(Wp)), np.c_[Xp, Wp])
                     x = r.x
                     N = Nn
                     done = True
                     fails = 0
-                    print("  -> %d nodes (%s) t=%.0fs" % (N, kind, time.time() - t0), flush=True)
+                    print("  -> %d nodes (%s) t=%.0fs" % (len(Wp), kind, time.time() - t0), flush=True)
                     break
             if time.time() - t0 > tl:
                 break
