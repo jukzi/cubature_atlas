@@ -447,6 +447,239 @@ def main():
 if __name__ == &quot;__main__&quot;:
     main()
 </pre></div></details>
+<details><summary data-i="code12"></summary><div class="plist"><div class="btns"><button class="btn cp" data-t="code-moeller" data-i="copyCode"></button></div><pre id="code-moeller">&quot;&quot;&quot;Moeller-type lower bounds for odd degrees in 2D and 3D, exact modulo a prime.
+
+Domains: triangle, square, tetra (tetrahedron), cube (reference domains of the atlas).
+
+Statement.  Let a cubature rule with N nodes (any real weights) be exact for
+all polynomials of degree &lt;= 2k+1.  Let P_k be the orthonormal polynomials of
+degree k (a vector of length r_k) and A_{k,i} the structural matrices of the
+three-term relation  x_i P_k = A_{k,i} P_{k+1} + B_{k,i} P_k + A_{k-1,i}^T P_{k-1}.
+Put  M_ij = A_{k,i} A_{k,j}^T - A_{k,j} A_{k,i}^T  (skew-symmetric, r_k x r_k).  Then
+
+    N &gt;= dim P_k + rho,
+    rho &gt;= ceil(rank(M_ij) / 2)               for every pair i &lt; j,
+    rho &gt;= ceil(rank([M_12 | M_13 | M_23]) / 3)   (3D).
+
+For d = 2 this is Moeller&#x27;s bound in the form of Y. Xu.
+
+Proof (short).  Let &lt;f,g&gt;_N = sum w_m f(x_m) g(x_m).  It equals the integral
+&lt;f,g&gt; when deg f + deg g &lt;= 2k+1.  The Gram matrix of the orthonormal basis of
+P_{k+1} in &lt;.,.&gt;_N is block diagonal: identity on P_0..P_k, the block K of
+P_{k+1}, and zero coupling (degree &lt;= 2k+1).  Its rank is at most N, so
+N &gt;= dim P_k + rank K; put rho = rank K.  The matrix &lt;x_i P_k, x_j P_k^T&gt;_N equals
+sum w x_i x_j P_k P_k^T, so it is unchanged by swapping i and j.  Inserting the
+three-term relation, all terms except A_i K A_j^T are exact, and the same
+identity holds for the integral (K replaced by the identity).  Subtracting:
+A_i K A_j^T - A_j K A_i^T = M_ij.  With K = F F^T, rank F = rho, the column space of
+M_ij lies in col(A_i F) + col(A_j F) (dimension &lt;= 2 rho), and the column space of
+all M_ij together lies in col(A_1 F) + col(A_2 F) + col(A_3 F) (dimension &lt;= 3 rho).
+
+Computation.  Any basis Q of the orthogonal polynomials of degree k gives
+matrices congruent to M_ij (Q = T P_k, T invertible), with the same ranks;
+the concatenation [M_12|M_13|M_23] changes by T on the left and diag(T^T, T^T, T^T)
+on the right, also rank preserving.  With proj_V(f) = f - proj_{P_k}(f) for
+deg f = k+1:  (A_i A_j^T)[a][b] -&gt; &lt; proj_V(x_i Q_a), proj_V(x_j Q_b) &gt;.
+
+All quantities are rational.  They are computed in the field Z/pZ with a prime
+p larger than every denominator factor; the reduction mod p of a rational
+matrix has rank &lt;= its rational rank.  So every printed rank is a proven lower
+bound for the true rank, and the bound is rigorous.  If a Gram matrix is
+singular mod p the program stops (choose another prime).  When the computed
+rank already equals the maximum possible (r_k, rounded down to even), it is
+the exact rank.
+
+Usage:  python moeller_bound.py DOMAIN [max_degree]
+        python moeller_bound.py tetra 29
+&quot;&quot;&quot;
+import sys
+import time
+import numpy as np
+
+# Prime below 2^31: products of two residues fit into int64.
+PRIME = 2147483629
+
+
+def monomials(dim, deg):
+    &quot;&quot;&quot;Exponent tuples of total degree &lt;= deg, ordered by total degree.&quot;&quot;&quot;
+    out = []
+    for e in range(deg + 1):
+        out.extend(exact_degree(dim, e))
+    return out
+
+
+def exact_degree(dim, e):
+    &quot;&quot;&quot;Exponent tuples of total degree exactly e.&quot;&quot;&quot;
+    if dim == 1:
+        return [(e,)]
+    out = []
+    for a in range(e, -1, -1):
+        for rest in exact_degree(dim - 1, e - a):
+            out.append((a,) + rest)
+    return out
+
+
+def inv(a):
+    &quot;&quot;&quot;Inverse modulo PRIME.&quot;&quot;&quot;
+    return pow(int(a) % PRIME, PRIME - 2, PRIME)
+
+
+def fact(n):
+    &quot;&quot;&quot;n! modulo PRIME.&quot;&quot;&quot;
+    r = 1
+    for i in range(2, n + 1):
+        r = r * i % PRIME
+    return r
+
+
+MOMENT_CACHE = {}
+
+
+def moment(domain, e):
+    &quot;&quot;&quot;Cached integral of a monomial (see moment_raw).&quot;&quot;&quot;
+    key = (domain, e)
+    if key not in MOMENT_CACHE:
+        MOMENT_CACHE[key] = moment_raw(domain, e)
+    return MOMENT_CACHE[key]
+
+
+def moment_raw(domain, e):
+    &quot;&quot;&quot;Integral of the monomial with exponents e over the reference domain, mod PRIME.&quot;&quot;&quot;
+    if domain in (&quot;triangle&quot;, &quot;tetra&quot;):
+        # Simplex: prod(e_i!) / (|e| + d)!.
+        num = 1
+        for a in e:
+            num = num * fact(a) % PRIME
+        return num * inv(fact(sum(e) + len(e))) % PRIME
+    # Box [-1,1]^d: prod 2/(e_i+1) for even e_i, 0 otherwise.
+    r = 1
+    for a in e:
+        if a % 2 == 1:
+            return 0
+        r = r * 2 * inv(a + 1) % PRIME
+    return r
+
+
+def matmul(A, B):
+    &quot;&quot;&quot;A @ B modulo PRIME without int64 overflow (B split into 16-bit halves).&quot;&quot;&quot;
+    lo = B &amp; 0xFFFF
+    hi = B &gt;&gt; 16
+    r_lo = (A @ lo) % PRIME
+    r_hi = (A @ hi) % PRIME
+    return (r_lo + (r_hi &lt;&lt; 16)) % PRIME
+
+
+def solve(A, B):
+    &quot;&quot;&quot;Solve A X = B modulo PRIME (Gauss-Jordan); stops if A is singular mod PRIME.&quot;&quot;&quot;
+    n = A.shape[0]
+    T = np.concatenate([A % PRIME, B % PRIME], axis=1).astype(np.int64)
+    for col in range(n):
+        nz = np.nonzero(T[col:, col])[0]
+        if len(nz) == 0:
+            sys.exit(&quot;Gram matrix singular modulo the prime; choose another PRIME&quot;)
+        piv = col + nz[0]
+        if piv != col:
+            T[[col, piv]] = T[[piv, col]]
+        T[col] = T[col] * inv(T[col, col]) % PRIME
+        f = T[:, col].copy()
+        f[col] = 0
+        T = (T - np.outer(f, T[col]) % PRIME) % PRIME
+    return T[:, n:]
+
+
+def rank(M):
+    &quot;&quot;&quot;Rank modulo PRIME (a lower bound for the rank over the rationals).&quot;&quot;&quot;
+    T = M.copy() % PRIME
+    rows, cols = T.shape
+    r = 0
+    for col in range(cols):
+        if r == rows:
+            break
+        nz = np.nonzero(T[r:, col])[0]
+        if len(nz) == 0:
+            continue
+        piv = r + nz[0]
+        if piv != r:
+            T[[r, piv]] = T[[piv, r]]
+        T[r] = T[r] * inv(T[r, col]) % PRIME
+        f = T[:, col].copy()
+        f[r] = 0
+        T = (T - np.outer(f, T[r]) % PRIME) % PRIME
+        r += 1
+    return r
+
+
+def structural_ranks(domain, k):
+    &quot;&quot;&quot;Ranks of M_ij for all pairs and of their concatenation.&quot;&quot;&quot;
+    dim = 2 if domain in (&quot;triangle&quot;, &quot;square&quot;) else 3
+    basis = monomials(dim, k + 1)
+    index = {m: i for i, m in enumerate(basis)}
+    size = len(basis)
+    n_km1 = len(monomials(dim, k - 1))
+    n_k = len(monomials(dim, k))
+    # Gram matrix of the monomials up to degree k+1.
+    H = np.zeros((size, size), dtype=np.int64)
+    for i, a in enumerate(basis):
+        for j in range(i, size):
+            b = basis[j]
+            v = moment(domain, tuple(x + y for x, y in zip(a, b)))
+            H[i, j] = v
+            H[j, i] = v
+    # Orthogonal polynomials of degree k: monomial minus projection onto P_{k-1}.
+    deg_k = list(range(n_km1, n_k))
+    C = solve(H[:n_km1, :n_km1], H[:n_km1, deg_k])
+    Q = np.zeros((size, len(deg_k)), dtype=np.int64)
+    for c, i in enumerate(deg_k):
+        Q[i, c] = 1
+    Q[:n_km1, :] = (-C) % PRIME
+    # Projection onto V_{k+1}: R_i = x_i Q - proj_{P_k}(x_i Q).
+    R = []
+    for axis in range(dim):
+        X = np.zeros((size, len(deg_k)), dtype=np.int64)
+        for i in range(n_k):
+            m = list(basis[i])
+            m[axis] += 1
+            X[index[tuple(m)], :] = Q[i, :]
+        coef = solve(H[:n_k, :n_k], matmul(H[:n_k, :], X))
+        Ri = X.copy()
+        Ri[:n_k, :] = (Ri[:n_k, :] - coef) % PRIME
+        R.append(Ri)
+    # Skew-symmetric matrices M_ij = G_ij - G_ij^T with G_ij = R_i^T H R_j.
+    ranks = {}
+    blocks = []
+    for i in range(dim):
+        HRi = matmul(H, R[i])
+        for j in range(i + 1, dim):
+            G = matmul(np.ascontiguousarray(R[j].T), HRi).T % PRIME
+            M = (G - G.T) % PRIME
+            ranks[(i, j)] = rank(M)
+            blocks.append(M)
+    total = rank(np.concatenate(blocks, axis=1)) if dim == 3 else None
+    return ranks, total, len(deg_k)
+
+
+def main():
+    domain = sys.argv[1] if len(sys.argv) &gt; 1 else &quot;tetra&quot;
+    max_degree = int(sys.argv[2]) if len(sys.argv) &gt; 2 else 29
+    dim = 2 if domain in (&quot;triangle&quot;, &quot;square&quot;) else 3
+    print(&quot;%s: degree 2k+1, r_k = dim of degree-k orthogonal polynomials&quot; % domain)
+    print(&quot;degree  dim P_k   r_k  pair ranks        concat  rho  bound   time&quot;)
+    for n in range(3, max_degree + 1, 2):
+        k = (n - 1) // 2
+        t0 = time.time()
+        ranks, total, r_k = structural_ranks(domain, k)
+        rho = max((r + 1) // 2 for r in ranks.values())
+        if total is not None:
+            rho = max(rho, (total + 2) // 3)
+        dim_pk = len(monomials(dim, k))
+        pair_text = &quot; &quot;.join(str(ranks[p]) for p in sorted(ranks))
+        total_text = &quot;-&quot; if total is None else str(total)
+        print(&quot;%6d  %7d  %4d  %-16s  %6s  %3d  %5d  %5.1fs&quot; % (n, dim_pk, r_k, pair_text, total_text, rho, dim_pk + rho, time.time() - t0), flush=True)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</pre></div></details>
   <details><summary data-i="code2"></summary><div class="plist"><div class="btns"><button class="btn cp" data-t="code-lib" data-i="copyCode"></button></div><pre id="code-lib">&quot;&quot;&quot;Cubature atlas: search and certificate for cubature rules with positive weights.
 Domains: interval [-1,1], square [-1,1]^2, cube [-1,1]^3,
          triangle (0,0)(1,0)(0,1), tetra (0,0,0)(1,0,0)(0,1,0)(0,0,1).
@@ -4899,6 +5132,11 @@ var ABZ3=seq(function(n){return CEIL((n+1)*(n+2)*(n+3)/6/4);});
 function zSym(d){return function(n){var e=0;for(var j=0;j<=n;j+=2)e+=binom(j+d-1,d-1);return CEIL(2*e/(d+1));};}
 function minSeq(a,b){return a.map(function(v,i){return Math.min(v,b[i]);});}
 function evenLB(d){return function(n){var k=Math.floor(n/2);return binom(k+d,d);};}
+/* Lower bounds in 3D for odd n = 2k+1 (documentation, section lower bound; code/moeller_bound.py).
+   Tetrahedron: dim P_k + rho, rho = (dim V_k - ceil((k+1)/2))/2 from the structural matrices (computed for n <= 29).
+   Cube: Moeller's bound for centrally symmetric integrals: 2 dim(even part of P_k) - 1 for even k, 2 dim(odd part) for odd k. */
+function tetraLB(n){var k=Math.floor(n/2);if(n%2===0)return binom(k+3,3);var r=(k+1)*(k+2)/2;return binom(k+3,3)+(r-Math.floor((k+2)/2))/2;}
+function cubeLB(n){var k=Math.floor(n/2);if(n%2===0)return binom(k+3,3);var ev=0,od=0;for(var j=0;j<=k;j++){if(j%2===0)ev+=binom(j+2,2);else od+=binom(j+2,2);}return k%2===0?2*ev-1:2*od;}
 var DOM={
  interval:{lab:{de:'Intervall',en:'Interval'},range:'[−1,1]',dim:1,grp:'1D',box:true,c:[0],s:1,verts:[[-1],[1]],edges:[],vol:2,
    abz:seq(function(n){return CEIL((n+1)/2);}),low:seq(function(n){return CEIL((n+1)/2);}),gauss:seq(function(n){return CEIL((n+1)/2);}),cols:LCOLS("interval")},
@@ -4909,11 +5147,11 @@ var DOM={
    abz:minSeq(ABZ2,seq(zSym(2))),low:seq(function(n){var k=Math.floor(n/2);return binom(k+2,2)+(n%2?Math.floor((k+1)/2):0);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
    cols:LCOLS("square")},
  tetra:{lab:{de:'Tetraeder',en:'Tetrahedron'},range:'(0,0,0) (1,0,0) (0,1,0) (0,0,1)',dim:3,grp:'3D',box:false,c:[.25,.25,.25],s:1.9,verts:[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],edges:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]],vol:1/6,
-   abz:ABZ3,low:seq(evenLB(3)),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
+   abz:ABZ3,low:seq(tetraLB),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
    cols:LCOLS("tetra")},
  cube:{lab:{de:'Würfel',en:'Cube'},range:'[−1,1]³',dim:3,grp:'3D',box:true,c:[0,0,0],s:1,
    verts:[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],edges:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],vol:8,
-   abz:minSeq(ABZ3,seq(zSym(3))),low:seq(evenLB(3)),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
+   abz:minSeq(ABZ3,seq(zSym(3))),low:seq(cubeLB),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
    cols:LCOLS("cube")}
 };
 Object.keys(OUT).forEach(function(k){DOM[k].cols.unshift({k:'out',a:'e-out',refs:[],arr:OUT[k].slice()});});
@@ -5026,7 +5264,8 @@ function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
     if(k==='abz')return {a:'(n²+3n+6)/6',x:['Z = ⌈(n²+3n+2)/6⌉','n ≡ 0 (mod 3): Z = (n²+3n+6)/6','n ≢ 0 (mod 3): Z = (n²+3n+2)/6']};
     if(k==='gauss')return {a:'(n²+4n+4)/4',x:['N_G = ⌈(n+1)/2⌉²',O+'N_G = (n²+2n+1)/4',E+'N_G = (n²+4n+4)/4']};
     return null;}
-  if(k==='low')return {a:'(n³+12n²+44n+48)/48',x:[O+'L = (n³+9n²+23n+15)/48',E+'L = (n³+12n²+44n+48)/48']};
+  if(k==='low'&&dom==='tetra')return {a:'(n³+12n²+44n+48)/48',x:['n ≡ 1 (mod 4): L = (n³+12n²+29n+6)/48','n ≡ 3 (mod 4): L = (n³+12n²+29n+18)/48',E+'L = (n³+12n²+44n+48)/48']};
+  if(k==='low')return {a:'(n³+12n²+44n+48)/48',x:['n ≡ 1 (mod 4): L = (n³+12n²+41n−6)/48','n ≡ 3 (mod 4): L = (n³+12n²+41n+30)/48',E+'L = (n³+12n²+44n+48)/48']};
   if(k==='abz'&&dom==='cube')return {a:'(n³+6n²+11n+24)/24',x:['Z = min(⌈(n³+6n²+11n+6)/24⌉, ⌈(2n³+9n²+10n+3)/48⌉)','n ≡ 1, 3 (mod 8): Z = (2n³+9n²+10n+27)/48','n ≡ 5, 7 (mod 8): Z = (2n³+9n²+10n+3)/48','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
   if(k==='abz')return {a:'(n³+6n²+11n+24)/24',x:['Z = ⌈(n³+6n²+11n+6)/24⌉',O+'Z = (n³+6n²+11n+6)/24','n ≡ 0 (mod 8): Z = (n³+6n²+11n+24)/24','n ≡ 2 (mod 8): Z = (n³+6n²+11n+18)/24','n ≡ 4 (mod 8): Z = (n³+6n²+11n+12)/24','n ≡ 6 (mod 8): Z = (n³+6n²+11n+6)/24']};
   if(k==='gauss')return {a:'(n³+6n²+12n+8)/8',x:['N_G = ⌈(n+1)/2⌉³',O+'N_G = (n³+3n²+3n+1)/8',E+'N_G = (n³+6n²+12n+8)/8']};
