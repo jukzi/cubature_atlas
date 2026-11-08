@@ -85,7 +85,7 @@ svg.ch .sel{stroke:var(--accent);stroke-width:1;stroke-dasharray:2 3}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px;min-width:620px}
 th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--soft);white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-td.litn{padding-right:2px}td.litc{text-align:left;padding-left:2px}th.pick{cursor:pointer}th.selcol,td.selcol{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+td .mk .ml{margin-left:4px}th.pick{cursor:pointer}th.selcol,td.selcol{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 th{vertical-align:top;font:500 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
 th .hs{display:block;font:600 14px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--ink)}th .hl{display:block;font:500 10px var(--f-mono);letter-spacing:.03em;text-transform:none;color:var(--muted)}th .hw{display:block;cursor:help}th .hw:hover .hl,th .hw:hover .hf{color:var(--accent)}th .hi{display:inline-block;margin-left:4px;cursor:pointer;font-size:11px;line-height:1;color:var(--accent)}th .hi:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:50%}
 #hpop{display:none;position:absolute;z-index:50;max-width:min(560px,94vw);white-space:pre-wrap;font:400 12px/1.5 var(--f-mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;box-shadow:0 4px 14px rgba(0,0,0,.18)}th .hf{display:block;font:400 9.5px var(--f-mono);letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap;margin-top:2px}
@@ -4877,7 +4877,7 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
   if(!iv)heads.push(['colFound','found']);
   if(!iv){heads.push(['Δ','delta']);if(lit)heads.push(['colLit','lit']);heads=heads.concat(FH);heads.push(['colGauss','gauss']);}
   var A={found:'e-found',abz:'e-abz',low:'e-low',gauss:'e-gauss',lit:'e-lit',out:'e-out',delta:'e-delta'};
-  $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h,h[1]&&(!iv||isF(h[1]))?'#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]]):null);return '<th'+(h[1]==='lit'?' colspan="2"':'')+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+txt+'</th>';}).join('')+'</tr>';
+  $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h,h[1]&&(!iv||isF(h[1]))?'#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]]):null);return '<th'+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+txt+'</th>';}).join('')+'</tr>';
   document.querySelectorAll('#tbl th.pick').forEach(function(th){th.onclick=function(e){if(e.target.closest&&e.target.closest('a'))return;st.src=th.getAttribute('data-src');viewer();table();drawEx();exChart();};});
   $('#tcap1').textContent=t('tabW')+' 1: '+t('tab1')+' – '+d.lab[LANG];
   var tb=$('#tbl tbody');tb.innerHTML='';$('#tbl').style.width=iv?'auto':'';$('#tbl').style.minWidth=iv?'260px':'';
@@ -4888,10 +4888,13 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv))+'</td>';});}
     else{var mk=flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
-      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i]))+'</td><td class="dim litc">'+(lit.arr[i]==null?'':cite.apply(null,lit.src[i]))+'</td>';
+      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i])+'<span class="mk"><span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+'</td>';}
     tr.innerHTML=cells;(function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
-  if(!iv){var ci=-1,pos=0;heads.forEach(function(h){if(h[1]===st.src)ci=pos;pos+=h[1]==='lit'?2:1;});if(ci>=0){var wd=st.src==='lit'?2:1;Array.prototype.forEach.call(tb.rows,function(row){for(var q=0;q<wd;q++)if(row.cells[ci+q])row.cells[ci+q].classList.add('selcol');});}}
+  if(!iv){var ci=-1,pos=0;heads.forEach(function(h){if(h[1]===st.src)ci=pos;pos+=1;});if(ci>=0){var wd=1;Array.prototype.forEach.call(tb.rows,function(row){for(var q=0;q<wd;q++)if(row.cells[ci+q])row.cells[ci+q].classList.add('selcol');});}}
+  /* literature column: citations sit in a zero-width span right of the number; reserve their width as padding */
+  var lw=0;document.querySelectorAll('#tbl td.litn .ml').forEach(function(s){lw=Math.max(lw,s.getBoundingClientRect().width);});
+  if(lw)document.querySelectorAll('#tbl td.litn, #tbl th[data-src="lit"]').forEach(function(c){c.style.paddingRight=Math.ceil(lw+16)+'px';});
   $('#srcnote').innerHTML=t('srcNote').replace('[13]',cite(13));$('#srcnote').style.display=st.dom==='interval'?'none':'';}
 function el(tag,a,p){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
 function legend(){var L=$('#legend');L.innerHTML='';allKeys(st.dom).forEach(function(k){var w=SERSTY[k];
