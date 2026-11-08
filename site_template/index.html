@@ -5077,13 +5077,22 @@ function drawCells3(c,cells,vals,proj,yw,pt,ink){var cy=Math.cos(yw),sy=Math.sin
   order.forEach(function(o){var C=cells[o[1]],v=vals[o[1]],col=v<0?RED:GREEN,al=.05+.22*Math.abs(v);
     C.faces.forEach(function(F){var zn=sp*F.n[1]+cp*(-sy*F.n[0]+cy*F.n[2]);if(zn<=0)return;
       c.beginPath();F.v.forEach(function(p,i){var q=proj(p);if(i===0)c.moveTo(q.x,q.y);else c.lineTo(q.x,q.y);});c.closePath();c.fillStyle='rgba('+col+','+al+')';c.fill();c.strokeStyle=ink;c.globalAlpha=.10;c.lineWidth=.6;c.stroke();c.globalAlpha=1;});});}
-/* packing view: every node gets the radius half the distance to its nearest neighbour (in the drawing
-   coordinates), so each ball just touches its nearest neighbour and no two balls overlap */
+/* packing view: all balls grow at the same rate; a ball stops when it touches another ball (both stop if both
+   were still growing). Every ball then touches at least one neighbour and no two balls overlap.
+   For a still-growing ball i, its stopping time is min over j of d_ij/2 (j growing) or d_ij - r_j (j stopped);
+   a stopped neighbour only loosens the bound, so t_i is recomputed only when its arg-min neighbour stops. */
 function nnRadii(r,d,dim){var key=st.dom+'|'+dim;if(r._nn&&r._nn.key===key&&r._nn.n===r.n)return r._nn.v;
-  var P=r.pts.map(function(p){if(dim===1)return [p[0],0,0];var u=[];for(var a=0;a<3;a++)u.push(a<dim?(p[a]-d.c[a])*d.s:0);return u;}),N=P.length,v=new Float64Array(N),i,j;
-  for(i=0;i<N;i++)v[i]=Infinity;
-  for(i=0;i<N;i++)for(j=i+1;j<N;j++){var dx=P[i][0]-P[j][0],dy=P[i][1]-P[j][1],dz=P[i][2]-P[j][2],q=dx*dx+dy*dy+dz*dz;if(q<v[i])v[i]=q;if(q<v[j])v[j]=q;}
-  var out=[];for(i=0;i<N;i++)out.push(N>1?Math.sqrt(v[i])/2:.5);r._nn={key:key,n:r.n,v:out};return out;}
+  var P=r.pts.map(function(p){if(dim===1)return [p[0],0,0];var u=[];for(var a=0;a<3;a++)u.push(a<dim?(p[a]-d.c[a])*d.s:0);return u;}),N=P.length,i,j;
+  var D=new Float64Array(N*N);for(i=0;i<N;i++)for(j=i+1;j<N;j++){var dx=P[i][0]-P[j][0],dy=P[i][1]-P[j][1],dz=P[i][2]-P[j][2],q=Math.sqrt(dx*dx+dy*dy+dz*dz);D[i*N+j]=q;D[j*N+i]=q;}
+  var rad=new Float64Array(N),fr=new Uint8Array(N),tt=new Float64Array(N),arg=new Int32Array(N);
+  function best(k){var b=Infinity,a=-1;for(var m=0;m<N;m++){if(m===k)continue;var c=fr[m]?D[k*N+m]-rad[m]:D[k*N+m]/2;if(c<b){b=c;a=m;}}tt[k]=b;arg[k]=a;}
+  if(N<2){r._nn={key:key,n:r.n,v:[.5]};return r._nn.v;}
+  for(i=0;i<N;i++)best(i);
+  for(var left=N;left>0;){var k=-1;for(i=0;i<N;i++)if(!fr[i]&&(k<0||tt[i]<tt[k]))k=i;
+    var stop=[k];if(!fr[arg[k]]&&Math.abs(tt[arg[k]]-tt[k])<1e-12)stop.push(arg[k]);
+    stop.forEach(function(s){rad[s]=Math.max(tt[k],0);fr[s]=1;left--;});
+    for(i=0;i<N;i++)if(!fr[i]&&stop.indexOf(arg[i])>=0)best(i);}
+  var out=Array.prototype.slice.call(rad);r._nn={key:key,n:r.n,v:out};return out;}
 function packBall(c,q,rad,col){if(!(rad>0.3))rad=0.3;var rgb=col.map(Math.round),hi=rgb.map(function(x){return Math.round(x+(255-x)*.65);}),g=c.createRadialGradient(q.x-rad*.35,q.y-rad*.35,rad*.08,q.x,q.y,rad);
   g.addColorStop(0,'rgba('+hi.join(',')+',.55)');g.addColorStop(1,'rgba('+rgb.join(',')+',.42)');
   c.beginPath();c.arc(q.x,q.y,rad,0,6.2832);c.fillStyle=g;c.fill();c.lineWidth=.8;c.strokeStyle='rgba('+rgb.join(',')+',.7)';c.stroke();}
