@@ -223,6 +223,7 @@
   "rpLicLit": "Reproduced from the cited publication for comparison; not covered by the CC BY 4.0 license of the atlas, the original terms apply.",
   "linkDoi": "DOI 10.5281/zenodo.24037245",
   "compBtn": "Composite rules",
-  "compLegN": "fainter: composite (number = cells)",
-  "exNnoteC": "Only the minimal PI rules of the atlas and the Gauss product, each undivided and as a composite rule: the domain is split into k parts per direction (k^dim congruent cells; tetrahedra by red refinement), the rule is mapped onto every cell and the results are added up. The number at the end of each faint curve is the number of cells; curves running past the right edge are cut there. At equal node count the undivided rule of higher degree is usually ahead; within degree 30 composite rules win mostly only for the Runge function, and not on the tetrahedron."
+  "exNnoteC": "Only the minimal PI rules of the atlas and the Gauss product, each undivided and as a composite rule: the domain is split into k parts per direction (k^dim congruent cells; tetrahedra by red refinement), the rule is mapped onto every cell and the results are added up. The x axis counts function evaluations, i.e. nodes × cells; curves running past the right edge are cut there. The rounding bound is the one of the undivided rule. At equal node count the undivided rule of higher degree is usually ahead; within degree 30 composite rules win mostly only for the Runge function, and not on the tetrahedron.",
+  "compLbl": "{s}, {c} cells",
+  "evalsAx": "Function evaluations (nodes × cells)"
 }
