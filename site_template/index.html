@@ -4702,6 +4702,9 @@ function gl(m){var x=[],w=[];for(var i=0;i<m;i++){var z=Math.cos(Math.PI*(i+.75)
 /* ---------- Gebiete ---------- */
 var ABZ2=seq(function(n){return CEIL((n+1)*(n+2)/2/3);});
 var ABZ3=seq(function(n){return CEIL((n+1)*(n+2)*(n+3)/6/4);});
+/* symmetric counting value for centrally symmetric domains: odd moments vanish for x -> -x symmetric rules,
+   E = number of monomials of even degree <= n, a node pair +-x has 2(d+1)/2 = d+1 unknowns per 2 nodes */
+function zSym(d){return function(n){var e=0;for(var j=0;j<=n;j+=2)e+=binom(j+d-1,d-1);return CEIL(2*e/(d+1));};}
 function evenLB(d){return function(n){var k=Math.floor(n/2);return binom(k+d,d);};}
 var DOM={
  interval:{lab:{de:'Intervall',en:'Interval'},range:'[−1,1]',dim:1,grp:'1D',box:true,c:[0],s:1,verts:[[-1],[1]],edges:[],vol:2,
@@ -4710,14 +4713,14 @@ var DOM={
    abz:ABZ2,low:seq(function(n){return binom(Math.floor(n/2)+2,2);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
    cols:LCOLS("triangle")},
  square:{lab:{de:'Quadrat',en:'Square'},range:'[−1,1]²',dim:2,grp:'2D',box:true,c:[0,0],s:1,verts:[[-1,-1],[1,-1],[1,1],[-1,1]],edges:[[0,1],[1,2],[2,3],[3,0]],vol:4,
-   abz:ABZ2,low:seq(function(n){var k=Math.floor(n/2);return binom(k+2,2)+(n%2?Math.floor((k+1)/2):0);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
+   abz:ABZ2,zsym:seq(zSym(2)),low:seq(function(n){var k=Math.floor(n/2);return binom(k+2,2)+(n%2?Math.floor((k+1)/2):0);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
    cols:LCOLS("square")},
  tetra:{lab:{de:'Tetraeder',en:'Tetrahedron'},range:'(0,0,0) (1,0,0) (0,1,0) (0,0,1)',dim:3,grp:'3D',box:false,c:[.25,.25,.25],s:1.9,verts:[[0,0,0],[1,0,0],[0,1,0],[0,0,1]],edges:[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]],vol:1/6,
    abz:ABZ3,low:seq(evenLB(3)),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
    cols:LCOLS("tetra")},
  cube:{lab:{de:'Würfel',en:'Cube'},range:'[−1,1]³',dim:3,grp:'3D',box:true,c:[0,0,0],s:1,
    verts:[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],edges:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]],vol:8,
-   abz:ABZ3,low:seq(evenLB(3)),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
+   abz:ABZ3,zsym:seq(zSym(3)),low:seq(evenLB(3)),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),3);}),
    cols:LCOLS("cube")}
 };
 Object.keys(OUT).forEach(function(k){DOM[k].cols.unshift({k:'out',a:'e-out',refs:[],arr:OUT[k].slice()});});
@@ -4805,7 +4808,7 @@ function buildTabs(){var tb=$('#tabbar');tb.innerHTML='';GROUPS.forEach(function
 /* ---------- Fakten, Tabelle, Diagramm ---------- */
 function facts(){$('#facts').innerHTML='';$('#dom-sub').textContent='';$('#h-dom').textContent=t('ovH')+DOM[st.dom].lab[LANG];}
 function flag(dom,n){var r=DATA[dom][n];if(r&&r.src==='sym')return '<sup class="dag" title="'+t('symTip')+'">‡</sup>';return r&&r.src&&r.src!=='found'&&r.src!=='search'?'<sup class="dag" title="'+t(r.src==='search'?'srcTipS':'srcTip')+'">†</sup>':'';}
-var HSYM={n:'n',found:'N<sub>PI</sub>',abz:'Z',delta:'Δ',low:'L',gauss:'N<sub>G</sub>',lit:'N<sub>Lit</sub>',out:'N<sub>PO</sub>',lob:'N<sub>GL</sub>',cc:'N<sub>CC</sub>',nc:'N<sub>NC</sub>'};
+var HSYM={n:'n',found:'N<sub>PI</sub>',abz:'Z',delta:'Δ',zsym:'Z<sub>sym</sub>',dsym:'Δ<sub>sym</sub>',low:'L',gauss:'N<sub>G</sub>',lit:'N<sub>Lit</sub>',out:'N<sub>PO</sub>',lob:'N<sub>GL</sub>',cc:'N<sub>CC</sub>',nc:'N<sub>NC</sub>'};
 FAMX.forEach(function(x){HSYM[x.k]='N<sub>'+x.f.tag+'</sub>';});
 /* closed formulas for Table 1 headers: a = approximation shown under the label, x = exact forms for the tooltip.
    Odd/even (and mod 3, mod 4, mod 8) cases are exact without rounding; checked for n = 1..300. */
@@ -4826,7 +4829,7 @@ function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
   if(k==='gauss')return {a:'(n³+6n²+12n+8)/8',x:['N_G = ⌈(n+1)/2⌉³',O+'N_G = (n³+3n²+3n+1)/8',E+'N_G = (n³+6n²+12n+8)/8']};
   return null;}
 function hdr(h){var key=h[1]||'n',f=h[1]?fml(h[1],st.dom):null;
-  var inner='<span class="hs">'+HSYM[key]+'</span><small class="hl">'+(h[0]==='Δ'?'N − Z':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
+  var inner='<span class="hs">'+HSYM[key]+'</span><small class="hl">'+(h[0]==='Δ'?'N − Z':h[0]==='Δsym'?'N − Z<sub>sym</sub>':(isF(h[1])?famShort(h[1]):t(h[0])))+'</small>';
   if(!f)return inner;
   var tip=f.x.join('&#10;').replace(/\{odd\}/g,t('nOdd')).replace(/\{even\}/g,t('nEven'));
   return '<span class="hw" title="'+tip+'">'+inner+'<small class="hf">≈ '+f.a+'</small></span>';}
@@ -4836,8 +4839,8 @@ function table(){var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='inter
   if(iv){heads=[['colN',null],['srcGaussL','gauss'],['srcLobB','lob'],['srcCcB','cc'],['srcNcB','nc']].concat(FH);}
   if(!iv){heads.push(['colLow','low']);heads.push(['colAbz','abz']);if(po)heads.push(['colOut','out']);}
   if(!iv)heads.push(['colFound','found']);
-  if(!iv){heads.push(['Δ','delta']);if(lit)heads.push(['colLit','lit']);heads=heads.concat(FH);heads.push(['colGauss','gauss']);}
-  var A={found:'e-found',abz:'e-abz',low:'e-low',gauss:'e-gauss',lit:'e-lit',out:'e-out',delta:'e-delta'};
+  if(!iv){heads.push(['Δ','delta']);if(d.zsym){heads.push(['colZsym','zsym']);heads.push(['Δsym','dsym']);}if(lit)heads.push(['colLit','lit']);heads=heads.concat(FH);heads.push(['colGauss','gauss']);}
+  var A={found:'e-found',abz:'e-abz',low:'e-low',gauss:'e-gauss',lit:'e-lit',out:'e-out',delta:'e-delta',zsym:'e-zsym',dsym:'e-zsym'};
   $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h);return '<th'+(h[1]==='lit'?' colspan="2"':'')+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+(h[1]&&(!iv||isF(h[1]))?'<a href="#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]])+'">'+txt+'</a>':txt)+'</th>';}).join('')+'</tr>';
   document.querySelectorAll('#tbl th.pick').forEach(function(th){th.onclick=function(e){if(e.target.closest&&e.target.closest('a'))return;st.src=th.getAttribute('data-src');viewer();table();drawEx();exChart();};});
   $('#tcap1').textContent=t('tabW')+' 1: '+t('tab1')+' – '+d.lab[LANG];
@@ -4849,6 +4852,7 @@ function table(){var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='inter
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv))+'</td>';});}
     else cells+='<td class="found">'+fmt(f[i])+flag(st.dom,n)+'</td>';
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
+      if(d.zsym){var ds=f[i]-d.zsym[i];var dstxt=ds>0?'+'+ds:(ds===0?'0':String(ds).replace('-','−'));cells+='<td class="dim">'+fmt(d.zsym[i])+'</td><td class="'+(ds<=0?'delta-ok':'delta-up')+'">'+dstxt+'</td>';}
       if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i]))+'</td><td class="dim litc">'+(lit.arr[i]==null?'':cite.apply(null,lit.src[i]))+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+'</td>';}
     tr.innerHTML=cells;(function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
