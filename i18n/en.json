@@ -70,7 +70,7 @@
   "chartLbl": "Number of nodes over degree",
   "notes": {
     "interval": "On the interval the Gauss–Legendre rule is optimal: counting value, lower bound and Gauss product coincide, so no rule needs fewer than ⌈(n+1)/2⌉ nodes.",
-    "triangle": "The rules are at most 2 nodes above the counting value and never larger than the Xiao–Gimbutas rules. At degrees 3, 7, 10, 15, 17 and 18 to 20 they are smaller. The comparison is only partly fair, because the literature rules are fully symmetric.",
+    "triangle": "The rules are at most 2 nodes above the counting value and never larger than the Xiao–Gimbutas rules. At degrees 3, 7, 10, 15, 17 and 18 to 20 they are smaller. The comparison is only partly fair, because the literature rules are fully symmetric. At the odd degrees 3, 5 and 7 the rules reach Möller's lower bound (4, 7 and 12 nodes), so they are minimal.",
     "square": "At the odd degrees 9 and 11 the rules reach the Möller bound (17 and 24 nodes). Compared with the smallest known fully symmetric rules (for example 57 nodes at degree 17), the centrally symmetric rules here need fewer nodes (54). From degree 21 the rules lie at most 1 node above the counting value at even degrees and below it at odd degrees.",
     "tetra": "The counting value is a good forecast here: for all degrees the rules are 0 to 5 nodes above it. Degrees 19 and 20 (389 and 446 nodes) are the most recently improved; the search there is not exhausted. The fully symmetric rules in the literature are larger (degree 9: 59, degree 10: 81).",
     "cube": "The cube shows the widest gap between the Gauss product and the smallest known rules: from degree 10 the product needs more than three times as many nodes. Compared with fully symmetric rules (degree 9: 58, degree 15: 199) the centrally symmetric rules here are smaller (48 and 186)."
@@ -177,6 +177,7 @@
   "code9": "symsearch.py: orbit search (triangle, tetrahedron)",
   "code10": "cubature_search.py, verify_rules.py, cube_cert.py: cube, symmetric search and certificate",
   "code1": "counts.py: counting value, lower bounds, Gauss product",
+  "code11": "triangle_moeller.py: triangle, exact Möller lower bound for odd degrees",
   "code2": "cubature_atlas.py: basis, search, certificate",
   "code3": "demo.py: find a rule, certify it, integrate",
   "litH": "Literature and formula collections",

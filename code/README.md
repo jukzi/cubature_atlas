@@ -5,6 +5,7 @@ The programs that produced and certified the rules, as published on the original
 | File | Purpose |
 |---|---|
 | `counts.py` | Counting value, lower bounds, Gauss product |
+| `triangle_moeller.py` | Triangle, odd degrees: exact Möller lower bound dim P_k + rank(M_k)/2 from the three-term relation (fractions, no numpy); shows that no Gauss rule exists and that the degree 3, 5 and 7 rules (4, 7, 12 nodes) are minimal |
 | `cubature_atlas.py` | Basis, search, Newton–Kantorovich certificate |
 | `demo.py` | Find a rule, certify it, integrate |
 | `kubatur.py` | Triangle/tetrahedron search with certificate |

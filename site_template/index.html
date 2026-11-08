@@ -270,6 +270,183 @@ if __name__ == &quot;__main__&quot;:
         print(name, [(n, counting_value(d, n), lower_bound(d, n), gauss_product(d, n)) for n in (1, 5, 9, 20)])
     print(&quot;square, Moeller:&quot;, [lower_bound_square_moeller(n) for n in (3, 9, 11, 13, 15, 17, 19)])
 </pre></div></details>
+<details><summary data-i="code11"></summary><div class="plist"><div class="btns"><button class="btn cp" data-t="code-tmoeller" data-i="copyCode"></button></div><pre id="code-tmoeller">&quot;&quot;&quot;Exact lower bounds for cubature on the triangle (odd degrees).
+
+Triangle (0,0), (1,0), (0,1) with the Lebesgue measure.
+
+Moeller&#x27;s lower bound (general weight, no symmetry needed), in the form of
+Y. Xu (structural matrices of the three-term relation):
+
+    degree 2k+1:  N &gt;= dim P_k + rank(M_k) / 2
+    M_k = A_{k,1} A_{k,2}^T - A_{k,2} A_{k,1}^T
+
+A_{k,i} is the (k+1) x (k+2) matrix in  x_i P_k = A_{k,i} P_{k+1} + B_{k,i} P_k + A_{k-1,i}^T P_{k-1},
+P_k the orthonormal polynomials of degree k.  M_k is skew-symmetric, so its
+rank is even and at most k+1; the bound adds at most floor((k+1)/2).
+
+M_k = 0 is the Gauss case: then and only then a rule with dim P_k nodes can
+exist (Mysovskikh).  rank(M_k) &gt; 0 therefore also proves that no rule with
+dim P_k nodes exists.
+
+Computation without square roots: for any basis Q_0..Q_k of the orthogonal
+polynomials of degree k (orthogonal to all of P_{k-1}, not normalised) put
+
+    G[j][l] = &lt; proj_V(x Q_j), proj_V(y Q_l) &gt;,   V = orthogonal polynomials of degree k+1.
+
+Then G - G^T is congruent to M_k, so it has the same rank.  Because x Q_j and
+y Q_l have degree k+1, proj_V(f) = f - proj_{P_k}(f), and
+
+    G[j][l] = &lt;x Q_j, y Q_l&gt; - &lt;proj_{P_k}(x Q_j), proj_{P_k}(y Q_l)&gt;.
+
+All arithmetic is exact (fractions), so the printed ranks are exact.
+
+Usage:  python triangle_moeller.py [max_degree]      (default 29)
+&quot;&quot;&quot;
+import sys
+import time
+from fractions import Fraction
+from math import factorial
+
+
+def monomials(deg):
+    &quot;&quot;&quot;Exponent pairs (a, b) with a + b &lt;= deg, ordered by total degree.&quot;&quot;&quot;
+    out = []
+    for e in range(deg + 1):
+        for b in range(e + 1):
+            out.append((e - b, b))
+    return out
+
+
+def moment(a, b):
+    &quot;&quot;&quot;Integral of x^a y^b over the reference triangle: a! b! / (a+b+2)!.&quot;&quot;&quot;
+    return Fraction(factorial(a) * factorial(b), factorial(a + b + 2))
+
+
+def solve(A, B):
+    &quot;&quot;&quot;Solve A X = B exactly (A square, B list of columns); Gauss-Jordan with fractions.&quot;&quot;&quot;
+    n = len(A)
+    m = len(B)
+    # Augmented matrix [A | B].
+    T = []
+    for i in range(n):
+        row = list(A[i])
+        for c in range(m):
+            row.append(B[c][i])
+        T.append(row)
+    for col in range(n):
+        piv = col
+        while T[piv][col] == 0:
+            piv += 1
+        T[col], T[piv] = T[piv], T[col]
+        inv = 1 / T[col][col]
+        T[col] = [v * inv for v in T[col]]
+        for i in range(n):
+            if i != col and T[i][col] != 0:
+                f = T[i][col]
+                T[i] = [a - f * b for a, b in zip(T[i], T[col])]
+    # Columns of the solution.
+    X = []
+    for c in range(m):
+        X.append([T[i][n + c] for i in range(n)])
+    return X
+
+
+def rank(M):
+    &quot;&quot;&quot;Exact rank of a matrix of fractions.&quot;&quot;&quot;
+    R = [list(r) for r in M]
+    rows = len(R)
+    cols = len(R[0]) if rows else 0
+    r = 0
+    for col in range(cols):
+        piv = None
+        for i in range(r, rows):
+            if R[i][col] != 0:
+                piv = i
+                break
+        if piv is None:
+            continue
+        R[r], R[piv] = R[piv], R[r]
+        for i in range(rows):
+            if i != r and R[i][col] != 0:
+                f = R[i][col] / R[r][col]
+                R[i] = [a - f * b for a, b in zip(R[i], R[r])]
+        r += 1
+    return r
+
+
+def moeller_rank(k):
+    &quot;&quot;&quot;Rank of M_k for the triangle, exact.&quot;&quot;&quot;
+    # Monomial basis up to degree k+1 and its Gram matrix.
+    basis = monomials(k + 1)
+    index = {m: i for i, m in enumerate(basis)}
+    size = len(basis)
+    H = []
+    for (a1, b1) in basis:
+        H.append([moment(a1 + a2, b1 + b2) for (a2, b2) in basis])
+    n_km1 = len(monomials(k - 1))
+    n_k = len(monomials(k))
+    # Orthogonal polynomials Q_j of degree k: monomial minus projection onto P_{k-1}.
+    Hkm1 = [row[:n_km1] for row in H[:n_km1]]
+    rhs = []
+    for j in range(k + 1):
+        col = index[(k - j, j)]
+        rhs.append([H[i][col] for i in range(n_km1)])
+    coef = solve(Hkm1, rhs)
+    Q = []
+    for j in range(k + 1):
+        q = [Fraction(0)] * size
+        q[index[(k - j, j)]] = Fraction(1)
+        for i in range(n_km1):
+            q[i] -= coef[j][i]
+        Q.append(q)
+
+    def shift(p, da, db):
+        &quot;&quot;&quot;Coefficient vector of x^da y^db * p (p of degree &lt;= k).&quot;&quot;&quot;
+        out = [Fraction(0)] * size
+        for i, c in enumerate(p):
+            if c != 0:
+                a, b = basis[i]
+                out[index[(a + da, b + db)]] += c
+        return out
+
+    X = [shift(q, 1, 0) for q in Q]
+    Y = [shift(q, 0, 1) for q in Q]
+
+    def gram_rows(f, rows):
+        &quot;&quot;&quot;Inner products &lt;basis_i, f&gt; for i &lt; rows.&quot;&quot;&quot;
+        return [sum(H[i][t] * f[t] for t in range(size) if f[t] != 0) for i in range(rows)]
+
+    UX = [gram_rows(f, n_k) for f in X]
+    UY = [gram_rows(f, n_k) for f in Y]
+    Hk = [row[:n_k] for row in H[:n_k]]
+    ZY = solve(Hk, UY)
+    G = []
+    for j in range(k + 1):
+        full = gram_rows(X[j], size)
+        row = []
+        for l in range(k + 1):
+            direct = sum(full[t] * Y[l][t] for t in range(size) if Y[l][t] != 0)
+            proj = sum(UX[j][t] * ZY[l][t] for t in range(n_k))
+            row.append(direct - proj)
+        G.append(row)
+    M = [[G[j][l] - G[l][j] for l in range(k + 1)] for j in range(k + 1)]
+    return rank(M)
+
+
+def main():
+    max_degree = int(sys.argv[1]) if len(sys.argv) &gt; 1 else 29
+    print(&quot;degree  dim P_k  rank M_k  bound  (dim P_k + rank/2)&quot;)
+    for n in range(3, max_degree + 1, 2):
+        k = (n - 1) // 2
+        t0 = time.time()
+        r = moeller_rank(k)
+        dim = (k + 1) * (k + 2) // 2
+        print(&quot;%6d  %7d  %8d  %5d   %.1fs&quot; % (n, dim, r, dim + r // 2, time.time() - t0), flush=True)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</pre></div></details>
   <details><summary data-i="code2"></summary><div class="plist"><div class="btns"><button class="btn cp" data-t="code-lib" data-i="copyCode"></button></div><pre id="code-lib">&quot;&quot;&quot;Cubature atlas: search and certificate for cubature rules with positive weights.
 Domains: interval [-1,1], square [-1,1]^2, cube [-1,1]^3,
          triangle (0,0)(1,0)(0,1), tetra (0,0,0)(1,0,0)(0,1,0)(0,0,1).
@@ -4726,7 +4903,7 @@ var DOM={
  interval:{lab:{de:'Intervall',en:'Interval'},range:'[−1,1]',dim:1,grp:'1D',box:true,c:[0],s:1,verts:[[-1],[1]],edges:[],vol:2,
    abz:seq(function(n){return CEIL((n+1)/2);}),low:seq(function(n){return CEIL((n+1)/2);}),gauss:seq(function(n){return CEIL((n+1)/2);}),cols:LCOLS("interval")},
  triangle:{lab:{de:'Dreieck',en:'Triangle'},range:'(0,0) (1,0) (0,1)',dim:2,grp:'2D',box:false,c:[1/3,1/3],s:1.7,verts:[[0,0],[1,0],[0,1]],edges:[[0,1],[1,2],[2,0]],vol:.5,
-   abz:ABZ2,low:seq(function(n){return binom(Math.floor(n/2)+2,2);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
+   abz:ABZ2,low:seq(function(n){var k=Math.floor(n/2);return binom(k+2,2)+(n%2?Math.floor((k+1)/2):0);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
    cols:LCOLS("triangle")},
  square:{lab:{de:'Quadrat',en:'Square'},range:'[−1,1]²',dim:2,grp:'2D',box:true,c:[0,0],s:1,verts:[[-1,-1],[1,-1],[1,1],[-1,1]],edges:[[0,1],[1,2],[2,3],[3,0]],vol:4,
    abz:minSeq(ABZ2,seq(zSym(2))),low:seq(function(n){var k=Math.floor(n/2);return binom(k+2,2)+(n%2?Math.floor((k+1)/2):0);}),gauss:seq(function(n){return Math.pow(CEIL((n+1)/2),2);}),
@@ -4843,7 +5020,7 @@ function fml(k,dom){var O='{odd}: ',E='{even}: ',d=DOM[dom].dim;
     if(k==='cc'||k==='nc'){var s=k==='cc'?'N_CC':'N_NC';return {a:'n+1',x:[O+s+' = n (n = 1: '+s+' = 2)',E+s+' = n+1']};}
     return null;}
   if(d===2){
-    if(k==='low'){if(dom==='square')return {a:'(n²+6n+8)/8',x:['n ≡ 1 (mod 4): L = (n²+6n+1)/8','n ≡ 3 (mod 4): L = (n²+6n+5)/8',E+'L = (n²+6n+8)/8']};
+    if(k==='low'){if(dom==='square'||dom==='triangle')return {a:'(n²+6n+8)/8',x:['n ≡ 1 (mod 4): L = (n²+6n+1)/8','n ≡ 3 (mod 4): L = (n²+6n+5)/8',E+'L = (n²+6n+8)/8']};
       return {a:'(n²+6n+8)/8',x:[O+'L = (n²+4n+3)/8',E+'L = (n²+6n+8)/8']};}
     if(k==='abz'&&dom==='square')return {a:'(n²+3n+6)/6',x:['Z = min(⌈(n²+3n+2)/6⌉, ⌈(n²+2n+1)/6⌉)','n ≡ 1, 3 (mod 6): Z = (n²+2n+3)/6','n ≡ 5 (mod 6): Z = (n²+2n+1)/6','n ≡ 0 (mod 6): Z = (n²+3n+6)/6','n ≡ 2, 4 (mod 6): Z = (n²+3n+2)/6']};
     if(k==='abz')return {a:'(n²+3n+6)/6',x:['Z = ⌈(n²+3n+2)/6⌉','n ≡ 0 (mod 3): Z = (n²+3n+6)/6','n ≢ 0 (mod 3): Z = (n²+3n+2)/6']};
