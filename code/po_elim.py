@@ -105,10 +105,42 @@ def split_central(P, w):
 
 # How far nodes may leave the domain.
 BOXOUT = float(os.environ.get("BOXOUT", "0.5"))
+# Scale of the random perturbation (0 = none) and "small" = only delete the smallest weights.
+NOISE = float(os.environ.get("NOISE", "1"))
+CANDS = os.environ.get("CANDS", "all")
 # Nodes removed per deletion step.
 DELK = int(os.environ.get("DELK", "1"))
 # Iterations of the local solver per attempt.
 MI = int(os.environ.get("MI", "300"))
+
+
+def solve_gn_minnorm(pr, x0, N, iters):
+    """Minimum-norm Gauss-Newton for underdetermined systems: x <- x - J^T (J J^T + lam I)^-1 r, projected to the bounds."""
+    lo, hi = pr.bounds(N, "b")
+    x = np.clip(x0, lo, hi)
+    r = pr.res(x, N)
+    for it in range(iters):
+        c = 0.5 * float(r @ r)
+        if c < 1e-26:
+            break
+        J = pr.jac(x, N)
+        G = J @ J.T
+        lam = 1e-14 * np.trace(G) / len(G)
+        G[np.diag_indices_from(G)] += lam
+        L = np.linalg.cholesky(G)
+        y = np.linalg.solve(L.T, np.linalg.solve(L, r))
+        xn = np.clip(x - J.T @ y, lo, hi)
+        rn = pr.res(xn, N)
+        if float(rn @ rn) > 4.0 * float(r @ r):
+            break
+        x = xn
+        r = rn
+    class R:
+        pass
+    out = R()
+    out.x = x
+    out.cost = 0.5 * float(r @ r)
+    return out
 
 
 def atlas_best_pi(name, deg):
@@ -202,6 +234,8 @@ def main():
         cands += [("mer", (int(a), int(b))) for a, b in pairs if a != b]
         cands += [("del", int(k)) for k in rng.choice(N, min(4, N), replace=False)]
         rng.shuffle(cands)
+        if CANDS == "small":
+            cands = [("del", int(k)) for k in order[:8]]
         done = False
         for kind, c in cands:
             if kind == "del":
@@ -217,13 +251,16 @@ def main():
                 Qn = np.vstack([Qc[keep], (Qc[a] * wc[a] + Qc[b] * wc[b]) / wm])
                 wn = np.r_[wc[keep], wm]
             scale = 2.0 if name == "cube" else 1.0
-            Qn = Qn + rng.normal(0, scale * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
+            Qn = Qn + rng.normal(0, scale * NOISE * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
             Nn = len(wn)
             if 4 * Nn + len(tail) < pr.M:
                 continue
             lo, hi = pr.bounds(Nn, "b")
             xn = np.clip(np.r_[Qn.ravel(), wn, x[4 * N:]], lo, hi)
-            r = pr.solve_lm(xn, Nn, "b", max_iter=MI)
+            if os.environ.get("SOLVER", "lm") == "gn":
+                r = solve_gn_minnorm(pr, xn, Nn, MI)
+            else:
+                r = pr.solve_lm(xn, Nn, "b", max_iter=MI)
             if r.cost < 1e-24:
                 Xp, Wp = pr.full_points(r.x, Nn)
                 cert = ok_rule(name, deg, Xp, Wp)
