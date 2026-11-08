@@ -94,6 +94,8 @@
   "srcLitB": "Literature",
   "tabW": "Table",
   "tab1": "Number of nodes per degree",
+  "nOdd": "n odd",
+  "nEven": "n even",
   "tab2": "Certificates",
   "srcGaussL": "Gauss–Legendre",
   "srcOutB": "Numerical search PO",
