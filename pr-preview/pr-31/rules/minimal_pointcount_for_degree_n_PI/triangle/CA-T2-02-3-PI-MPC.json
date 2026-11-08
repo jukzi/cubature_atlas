@@ -1,0 +1,26 @@
+{
+  "id": "CA-T2-02-3-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 2,
+  "points": 3,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), certified",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "verified",
+  "locked": true,
+  "residual_reported": 5.134781488891349e-15,
+  "certificate": {"N": 3, "M": 6, "p": 9, "res": 1.002520768268114e-13, "sigma": 1.8337099484129735, "h": 4.27636712440812e-13, "rad": 4.868724324265179e-14, "cert": true, "inside": false},
+  "nodes": [
+    [0.02579033903323, 0.550518137531374],
+    [0.572712439461957, 0.427287560538043],
+    [0.436519242073512, 0.0]
+  ],
+  "weights": [
+    0.178635327676441,
+    0.159903271442997,
+    0.161461400880562
+  ]
+}
