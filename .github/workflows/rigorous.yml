@@ -20,14 +20,12 @@ on:
     - cron: "17 3 * * 1"
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   proofs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,6 +48,9 @@ jobs:
         run: python tools/verify_rigorous.py --report interval_proofs.json --update reports/interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
       - name: Pull request with the updated report
         if: github.event_name != 'pull_request'
+        permissions:
+          contents: write
+          pull-requests: write
         env:
           GH_TOKEN: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
         run: |
