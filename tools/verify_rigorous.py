@@ -1652,12 +1652,29 @@ def verdict(res):
     return ok1, ok2
 
 
+def write_report(path, results):
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(dict(tool="tools/verify_rigorous.py", rules=results), fh, indent=1)
+        fh.write("\n")
+
+
+def report_key(results):
+    """What a report says, without run times and rounding noise: per rule file hash and verdicts."""
+    out = []
+    for r in results:
+        ex = r.get("exist", {})
+        out.append((r.get("id"), r.get("sha"), r.get("ok_stored"), r.get("ok_exist"), ex.get("quality_proved"), ex.get("mode")))
+    return sorted(out, key=lambda t: str(t))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("files", nargs="*", help="rule files (default: all)")
     ap.add_argument("--changed", help="only rule files added or changed against this git revision")
     ap.add_argument("--report", help="write the results as JSON to this file")
     ap.add_argument("--strict", action="store_true", help="also fail if the existence proof does not succeed (except for rules with status needs_certificate)")
+    ap.add_argument("--update", help="rewrite this report file, but only if a result changed (new, changed or removed rule files, or a different verdict); run times and last digits of distances do not count")
     ap.add_argument("--summary", help="append a Markdown summary to this file (e.g. $GITHUB_STEP_SUMMARY)")
     args = ap.parse_args()
     if args.files:
@@ -1689,10 +1706,17 @@ def main():
         results.append(res)
     print("checked %d rules: stored numbers %d ok, %d bad; existence proven %d, not proven %d" % (len(results), len(results) - bad1, bad1, len(results) - bad2, bad2))
     if args.report:
-        os.makedirs(os.path.dirname(os.path.abspath(args.report)), exist_ok=True)
-        with open(args.report, "w") as fh:
-            json.dump(dict(tool="tools/verify_rigorous.py", rules=results), fh, indent=1)
-            fh.write("\n")
+        write_report(args.report, results)
+    if args.update:
+        old = None
+        if os.path.exists(args.update):
+            with open(args.update) as fh:
+                old = json.load(fh).get("rules", [])
+        if old is None or report_key(old) != report_key(results):
+            write_report(args.update, results)
+            print("report %s updated" % args.update)
+        else:
+            print("report %s unchanged" % args.update)
     if args.summary:
         with open(args.summary, "a") as fh:
             fh.write("### Interval proofs (tools/verify_rigorous.py)\n\n")
