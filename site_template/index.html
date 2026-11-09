@@ -5246,7 +5246,7 @@ function buildTabs(){var tb=$('#tabbar');tb.innerHTML='';GROUPS.forEach(function
 
 /* ---------- Fakten, Tabelle, Diagramm ---------- */
 function facts(){$('#facts').innerHTML='';$('#dom-sub').textContent='';$('#h-dom').textContent=t('ovH')+DOM[st.dom].lab[LANG];}
-function flag(dom,n){var r=DATA[dom][n];if(r&&r.src==='sym')return '<sup class="dag" title="'+t('symTip')+'">‡</sup>';return r&&r.src&&r.src!=='found'&&r.src!=='search'?'<sup class="dag" title="'+t(r.src==='search'?'srcTipS':'srcTip')+'">†</sup>':'';}
+function flag(dom,n){var r=DATA[dom][n];var mk=function(sym,k){return '<sup class="dag oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t(k))+'" data-tip="'+escA(t(k))+'">'+sym+'</sup>';};if(r&&r.src==='sym')return mk('‡','symTip');return r&&r.src&&r.src!=='found'&&r.src!=='search'?mk('†',r.src==='search'?'srcTipS':'srcTip'):'';}
 var HSYM={n:'n',found:'N<sub>PI</sub>',abz:'Z',delta:'Δ',low:'L',gauss:'N<sub>G</sub>',lit:'N<sub>Lit</sub>',out:'N<sub>PO</sub>',lob:'N<sub>GL</sub>',cc:'N<sub>CC</sub>',nc:'N<sub>NC</sub>'};
 FAMX.forEach(function(x){HSYM[x.k]='N<sub>'+x.f.tag+'</sub>';});
 /* closed formulas for Table 1 headers: a = approximation shown under the label, x = exact forms for the tooltip.
@@ -6175,18 +6175,23 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   if(window.IntersectionObserver)DRILL.list.forEach(function(D){new IntersectionObserver(function(es){D.vis=es[0].isIntersecting;drillStart();}).observe($(D.sel));});})();
 
 /* ---------- Zertifikat ---------- */
+function sciTxt(v){
+  /* Plain-text scientific notation with superscript exponent (the popup shows text, not HTML). */
+  var p=v.toExponential(1).split('e'),SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  var mant=LANG==='de'?p[0].replace('.',','):p[0];
+  return mant+'·10'+p[1].replace('+','').split('').map(function(c){return SUP[c]||c;}).join('');}
 function ivCell(iv){
   /* Interval proof (tools/verify_rigorous.py) of the rule in this row. */
   if(!iv)return '<td class="dim">'+t('rpIvNone')+'</td>';
   if(!iv.ok)return '<td>'+t('rpIvNo')+'</td>';
   var m=iv.m&&iv.m.indexOf('sym')===0?t('ivSym').replace('{g}',iv.m.slice(3)):t('ivFull');
-  var tip=t('rpIvOk').replace('{q}',iv.q).replace('{d}',sci(iv.d)).replace('{m}',m);
-  return '<td class="stat-ok" title="'+tip.replace(/"/g,'&quot;')+'">✓ '+t('ivOk')+'</td>';}
+  var tip=t('rpIvOk').replace('{q}',iv.q).replace('{d}',sciTxt(iv.d)).replace('{m}',m);
+  return '<td class="stat-ok">✓ '+t('ivOk')+'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('ivBtn'))+'" data-tip="'+escA(tip)+'">ⓘ</span></td>';}
 function certTable(){$('#tcap2').textContent=t('tabW')+' 2: '+t('tab2')+' – '+DOM[st.dom].lab[LANG];var c=CERT[st.dom],th=$('#certtbl thead'),tb=$('#certtbl tbody'),cols=t('certCols');
   th.innerHTML='<tr>'+cols.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>';tb.innerHTML='';var ok=0,ins=0,tot=0,ivok=0;
-  for(var n=1;n<=MX();n++){var r=c[n];if(!r){var d0=DATA[st.dom][n],tr0=document.createElement('tr');tr0.className='sel-row';tr0.setAttribute('aria-selected',n===st.n);tr0.innerHTML='<td>'+n+'</td><td>'+fmt(d0.n)+'</td>'+ivCell(d0.iv)+'<td colspan="7" class="dim">'+t(d0.src==='found'?'srcNoCertC':(d0.src==='sym'?'srcSymC':(d0.src==='gauss'?'srcGauss':(d0.src==='search'?'srcSearch':'srcLit'))))+'</td>';if(d0.iv&&d0.iv.ok)ivok++;(function(nn){tr0.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr0);continue;}tot++;if(r.cert)ok++;if(r.inside)ins++;
+  for(var n=1;n<=MX();n++){var r=c[n];if(!r){var d0=DATA[st.dom][n],tr0=document.createElement('tr');tr0.className='sel-row';tr0.setAttribute('aria-selected',n===st.n);tr0.innerHTML='<td>'+n+'</td><td>'+fmt(d0.n)+'</td>'+ivCell(d0.iv)+'<td colspan="6" class="dim">'+t(d0.src==='found'?'srcNoCertC':(d0.src==='sym'?'srcSymC':(d0.src==='gauss'?'srcGauss':(d0.src==='search'?'srcSearch':'srcLit'))))+'</td>';if(d0.iv&&d0.iv.ok)ivok++;(function(nn){tr0.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr0);continue;}tot++;if(r.cert)ok++;if(r.inside)ins++;
     var tr=document.createElement('tr');tr.className='sel-row';tr.setAttribute('aria-selected',n===st.n);
-    tr.innerHTML='<td>'+n+'</td><td>'+fmt(r.N)+'</td>'+ivCell((DATA[st.dom][n]||{}).iv)+'<td>'+r.M+' × '+r.p+'</td><td>'+sci(r.res)+'</td><td>'+sci(r.sigma)+'</td><td>'+(r.h===0?'0':sci(r.h))+'</td><td>'+sci(r.rad)+'</td><td class="'+(r.cert?'stat-ok':'')+'">'+(r.cert?'✓ '+t('certOk'):t('certBad'))+'</td><td class="'+(r.inside?'stat-ok':'stat-edge')+'">'+(r.inside?'✓ '+t('inOk'):t('inEdge'))+'</td>';if((DATA[st.dom][n]||{}).iv&&DATA[st.dom][n].iv.ok)ivok++;
+    tr.innerHTML='<td>'+n+'</td><td>'+fmt(r.N)+'</td>'+ivCell((DATA[st.dom][n]||{}).iv)+'<td>'+r.M+' × '+r.p+'</td><td>'+sci(r.res)+'</td><td>'+sci(r.sigma)+'</td><td>'+(r.h===0?'0':sci(r.h))+'</td><td>'+sci(r.rad)+'</td><td class="'+(r.inside?'stat-ok':'stat-edge')+'">'+(r.inside?'✓ '+t('inOk'):t('inEdge'))+'</td>';if((DATA[st.dom][n]||{}).iv&&DATA[st.dom][n].iv.ok)ivok++;
     (function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
   $('#certsum').textContent=t('certSum')(st.dom,ok,tot,ins)+' '+t('ivSumTpl').replace('{iv}',ivok).replace('{all}',MX());}
 
