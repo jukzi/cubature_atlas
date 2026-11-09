@@ -39,6 +39,7 @@ Exit code 1 if a checked rule fails part 1, or (with --strict) if part 2 cannot 
 
 import argparse
 import glob
+import hashlib
 import json
 import math
 import os
@@ -1407,14 +1408,21 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     zero = np.zeros(q)
     Fm, Fr = residual(par, n, u0, zero, exact)
     J0m, J0r = jacobian(par, n, u0, zero)
+    # Scale the unknowns so that all Jacobian columns have comparable size: the Krawczyk box is a cube
+    # in the scaled variables. A node with a tiny weight then gets a correspondingly wider box for its
+    # coordinates, which hardly influence the moments. Powers of two keep the scaling exact.
+    cn = np.linalg.norm(J0m, axis=0)
+    ref = float(np.median(cn[cn > 0])) if np.any(cn > 0) else 1.0
+    sc = np.where(cn > 0, ref / np.maximum(cn, 1e-300), 1.0)
+    sc = np.exp2(np.round(np.log2(np.clip(sc, 2.0 ** -20, 2.0 ** 40))))
     if q > M:
         # keep q - M unknowns fixed at their values: choose M well-conditioned columns (greedy pivoting)
         sel = pivot_columns(J0m, M)
-        V = np.zeros((q, M))
-        V[sel, np.arange(M)] = 1.0
     else:
-        V = None
-    A0 = J0m @ V if V is not None else J0m
+        sel = np.arange(q)
+    # z -> u = u0 + V z with V[sel[k], k] = vs[k]; the products below are exact (powers of two)
+    vs = sc[sel]
+    A0 = J0m[:, sel] * vs
     try:
         C = np.linalg.inv(A0)
     except np.linalg.LinAlgError:
@@ -1434,15 +1442,11 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     for f in tries:
         r = max(f * delta, 1e-300)
         rz = np.full(M, r)
-        if V is not None:
-            ru = up((np.abs(V) @ rz) * (1 + gamma(M + 2)) + M * TINY)
-        else:
-            ru = rz
+        ru = np.zeros(q)
+        ru[sel] = vs * rz
         Jm, Jr = jacobian(par, n, u0, ru)
-        if V is not None:
-            Am, Ar = mm_iv(Jm, Jr, V)
-        else:
-            Am, Ar = Jm, Jr
+        Am = Jm[:, sel] * vs
+        Ar = Jr[:, sel] * vs
         CAm, CAr = mm(C, Am)
         CAr = up(CAr + up((absC @ Ar) * (1 + gamma(M + 2)) + M * TINY))
         Bm = np.eye(M) - CAm
@@ -1607,14 +1611,15 @@ def prove(dom, n, X, W, Xq, zero_tol):
 
 
 def check_rule(path):
-    with open(path) as fh:
-        r = json.load(fh, parse_float=Fraction)
+    with open(path, "rb") as fh:
+        raw = fh.read()
+    r = json.loads(raw.decode("utf8"), parse_float=Fraction)
     dom = r["domain"]
     n = int(r["degree"])
     Xq = [[Fraction(v) for v in p] for p in r["nodes"]]
     Wq = [Fraction(v) for v in r["weights"]]
     t0 = time.time()
-    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"))
+    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"), sha=hashlib.sha256(raw).hexdigest()[:16])
     out["stored"] = stored_check(dom, n, Xq, Wq)
     X = [[float(v) for v in p] for p in Xq]
     W = [float(v) for v in Wq]
@@ -1650,12 +1655,29 @@ def verdict(res):
     return ok1, ok2
 
 
+def write_report(path, results):
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "w") as fh:
+        json.dump(dict(tool="tools/verify_rigorous.py", rules=results), fh, indent=1)
+        fh.write("\n")
+
+
+def report_key(results):
+    """What a report says, without run times and rounding noise: per rule file hash and verdicts."""
+    out = []
+    for r in results:
+        ex = r.get("exist", {})
+        out.append((r.get("id"), r.get("sha"), r.get("ok_stored"), r.get("ok_exist"), ex.get("quality_proved"), ex.get("mode")))
+    return sorted(out, key=lambda t: str(t))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("files", nargs="*", help="rule files (default: all)")
     ap.add_argument("--changed", help="only rule files added or changed against this git revision")
     ap.add_argument("--report", help="write the results as JSON to this file")
     ap.add_argument("--strict", action="store_true", help="also fail if the existence proof does not succeed (except for rules with status needs_certificate)")
+    ap.add_argument("--update", help="rewrite this report file, but only if a result changed (new, changed or removed rule files, or a different verdict); run times and last digits of distances do not count")
     ap.add_argument("--summary", help="append a Markdown summary to this file (e.g. $GITHUB_STEP_SUMMARY)")
     args = ap.parse_args()
     if args.files:
@@ -1687,10 +1709,17 @@ def main():
         results.append(res)
     print("checked %d rules: stored numbers %d ok, %d bad; existence proven %d, not proven %d" % (len(results), len(results) - bad1, bad1, len(results) - bad2, bad2))
     if args.report:
-        os.makedirs(os.path.dirname(os.path.abspath(args.report)), exist_ok=True)
-        with open(args.report, "w") as fh:
-            json.dump(dict(tool="tools/verify_rigorous.py", rules=results), fh, indent=1)
-            fh.write("\n")
+        write_report(args.report, results)
+    if args.update:
+        old = None
+        if os.path.exists(args.update):
+            with open(args.update) as fh:
+                old = json.load(fh).get("rules", [])
+        if old is None or report_key(old) != report_key(results):
+            write_report(args.update, results)
+            print("report %s updated" % args.update)
+        else:
+            print("report %s unchanged" % args.update)
     if args.summary:
         with open(args.summary, "a") as fh:
             fh.write("### Interval proofs (tools/verify_rigorous.py)\n\n")
