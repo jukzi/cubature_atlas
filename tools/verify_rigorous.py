@@ -1408,14 +1408,21 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     zero = np.zeros(q)
     Fm, Fr = residual(par, n, u0, zero, exact)
     J0m, J0r = jacobian(par, n, u0, zero)
+    # Scale the unknowns so that all Jacobian columns have comparable size: the Krawczyk box is a cube
+    # in the scaled variables. A node with a tiny weight then gets a correspondingly wider box for its
+    # coordinates, which hardly influence the moments. Powers of two keep the scaling exact.
+    cn = np.linalg.norm(J0m, axis=0)
+    ref = float(np.median(cn[cn > 0])) if np.any(cn > 0) else 1.0
+    sc = np.where(cn > 0, ref / np.maximum(cn, 1e-300), 1.0)
+    sc = np.exp2(np.round(np.log2(np.clip(sc, 2.0 ** -20, 2.0 ** 40))))
     if q > M:
         # keep q - M unknowns fixed at their values: choose M well-conditioned columns (greedy pivoting)
         sel = pivot_columns(J0m, M)
-        V = np.zeros((q, M))
-        V[sel, np.arange(M)] = 1.0
     else:
-        V = None
-    A0 = J0m @ V if V is not None else J0m
+        sel = np.arange(q)
+    # z -> u = u0 + V z with V[sel[k], k] = vs[k]; the products below are exact (powers of two)
+    vs = sc[sel]
+    A0 = J0m[:, sel] * vs
     try:
         C = np.linalg.inv(A0)
     except np.linalg.LinAlgError:
@@ -1435,15 +1442,11 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     for f in tries:
         r = max(f * delta, 1e-300)
         rz = np.full(M, r)
-        if V is not None:
-            ru = up((np.abs(V) @ rz) * (1 + gamma(M + 2)) + M * TINY)
-        else:
-            ru = rz
+        ru = np.zeros(q)
+        ru[sel] = vs * rz
         Jm, Jr = jacobian(par, n, u0, ru)
-        if V is not None:
-            Am, Ar = mm_iv(Jm, Jr, V)
-        else:
-            Am, Ar = Jm, Jr
+        Am = Jm[:, sel] * vs
+        Ar = Jr[:, sel] * vs
         CAm, CAr = mm(C, Am)
         CAr = up(CAr + up((absC @ Ar) * (1 + gamma(M + 2)) + M * TINY))
         Bm = np.eye(M) - CAm
