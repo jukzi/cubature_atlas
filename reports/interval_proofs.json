@@ -9,6 +9,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "69b0b520184ce474",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -31,8 +32,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "69b0b520184ce474"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-03-8-PI-DW",
@@ -42,6 +42,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
+   "sha": "77d035028eee1e5a",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -62,10 +63,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "77d035028eee1e5a"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-05-14-PI-DW",
@@ -75,6 +75,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "8d27c5255452196a",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -97,8 +98,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8d27c5255452196a"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-07-34-PI-DW",
@@ -108,6 +108,7 @@
    "points": 34,
    "quality": "PI",
    "status": "verified",
+   "sha": "c28981b01f2e433d",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -128,10 +129,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c28981b01f2e433d"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-09-58-PI-DW",
@@ -141,6 +141,7 @@
    "points": 58,
    "quality": "PI",
    "status": "verified",
+   "sha": "aca0f59c6e54b3fc",
    "stored": {
     "res_bound": 1.5543122344752201e-15,
     "res_ok": true,
@@ -163,8 +164,7 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "aca0f59c6e54b3fc"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-11-90-PI-DW",
@@ -174,6 +174,7 @@
    "points": 90,
    "quality": "PI",
    "status": "verified",
+   "sha": "ccab22c84d4fa89c",
    "stored": {
     "res_bound": 1.5543122344752201e-15,
     "res_ok": true,
@@ -194,10 +195,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.04,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ccab22c84d4fa89c"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-13-148-PI-DW",
@@ -207,6 +207,7 @@
    "points": 148,
    "quality": "PI",
    "status": "verified",
+   "sha": "34dfb91c8b88376e",
    "stored": {
     "res_bound": 4.662936703425661e-15,
     "res_ok": true,
@@ -227,10 +228,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.08,
+   "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "34dfb91c8b88376e"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-15-199-PI-DW",
@@ -240,6 +240,7 @@
    "points": 199,
    "quality": "PI",
    "status": "verified",
+   "sha": "798dd3b9cbe47499",
    "stored": {
     "res_bound": 3.0337603089403166e-15,
     "res_ok": true,
@@ -260,10 +261,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.12,
+   "seconds": 0.15,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "798dd3b9cbe47499"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-17-282-PI-DW",
@@ -273,6 +273,7 @@
    "points": 282,
    "quality": "PI",
    "status": "verified",
+   "sha": "ec56ab191f2b10e5",
    "stored": {
     "res_bound": 3.3473725635953268e-15,
     "res_ok": true,
@@ -293,10 +294,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.19,
+   "seconds": 0.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ec56ab191f2b10e5"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-19-369-PI-DW",
@@ -306,6 +306,7 @@
    "points": 369,
    "quality": "PI",
    "status": "verified",
+   "sha": "db1ef7a2d6e740e1",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -326,10 +327,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.29,
+   "seconds": 0.35,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "db1ef7a2d6e740e1"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-21-495-PI-DW",
@@ -339,6 +339,7 @@
    "points": 495,
    "quality": "PI",
    "status": "verified",
+   "sha": "71385c0c338aa7f9",
    "stored": {
     "res_bound": 4.626453300321525e-15,
     "res_ok": true,
@@ -359,10 +360,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.45,
+   "seconds": 0.55,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "71385c0c338aa7f9"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-23-617-PI-DW",
@@ -372,6 +372,7 @@
    "points": 617,
    "quality": "PI",
    "status": "verified",
+   "sha": "4cb9e9ced022f2de",
    "stored": {
     "res_bound": 8.54871728961371e-15,
     "res_ok": true,
@@ -392,10 +393,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.66,
+   "seconds": 0.78,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4cb9e9ced022f2de"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-25-828-PI-DW",
@@ -405,6 +405,7 @@
    "points": 828,
    "quality": "PI",
    "status": "verified",
+   "sha": "b66be3d3b695597e",
    "stored": {
     "res_bound": 1.4876988529977107e-14,
     "res_ok": true,
@@ -414,22 +415,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.7065478784769384e-12,
-    "kratio": 0.6668333260107254,
+    "r": 1.7065478784769752e-12,
+    "kratio": 0.6668333260179526,
     "mode": "sym48",
     "equations": 102,
     "unknowns": 102,
-    "dist": 1.730140140343262e-12,
+    "dist": 1.7301401403432987e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 9.992007221626409e-16
    },
-   "seconds": 1.61,
+   "seconds": 1.87,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b66be3d3b695597e"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-27-984-PI-DW",
@@ -439,6 +439,7 @@
    "points": 984,
    "quality": "PI",
    "status": "verified",
+   "sha": "9ac0fefba68f8b33",
    "stored": {
     "res_bound": 7.370680807231377e-15,
     "res_ok": true,
@@ -448,21 +449,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.709816488833041e-13,
-    "kratio": 0.6667090316423508,
+    "r": 7.709816488832916e-13,
+    "kratio": 0.6667090316370327,
     "mode": "sym48",
     "equations": 123,
     "unknowns": 123,
-    "dist": 7.907436384836019e-13,
+    "dist": 7.907436384835893e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.45,
+   "seconds": 1.81,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9ac0fefba68f8b33"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-29-1258-PI-DW",
@@ -472,6 +472,7 @@
    "points": 1258,
    "quality": "PI",
    "status": "verified",
+   "sha": "0f02b0783d71bd4f",
    "stored": {
     "res_bound": 9.58735755986641e-15,
     "res_ok": true,
@@ -481,21 +482,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.430750166142306e-13,
-    "kratio": 0.6667231269636699,
+    "r": 7.430750166142212e-13,
+    "kratio": 0.6667231269686343,
     "mode": "sym48",
     "equations": 147,
     "unknowns": 149,
-    "dist": 7.471845806383922e-13,
+    "dist": 7.471845806383828e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.19,
+   "seconds": 2.62,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0f02b0783d71bd4f"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-31-1478-PI-DW",
@@ -505,6 +505,7 @@
    "points": 1478,
    "quality": "PI",
    "status": "verified",
+   "sha": "e44d538735a1de87",
    "stored": {
     "res_bound": 2.053912595556541e-14,
     "res_ok": true,
@@ -514,21 +515,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.4850644748287646e-12,
-    "kratio": 0.6670440312966424,
+    "r": 1.4850644748287416e-12,
+    "kratio": 0.6670440312883498,
     "mode": "sym48",
     "equations": 174,
     "unknowns": 177,
-    "dist": 1.4903935506760656e-12,
+    "dist": 1.4903935506760425e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.3,
+   "seconds": 3.5,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e44d538735a1de87"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-01-1-PI-DW",
@@ -538,6 +538,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "637893e13d155df4",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -560,8 +561,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "637893e13d155df4"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-03-4-PI-DW",
@@ -571,6 +571,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "81634a68bfa88532",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -593,8 +594,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "81634a68bfa88532"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-05-8-PI-DW",
@@ -604,6 +604,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
+   "sha": "41b1167a50e8b19c",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -624,10 +625,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "41b1167a50e8b19c"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-07-12-PI-DW",
@@ -637,6 +637,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "6c086889bddbe9e4",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -657,10 +658,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6c086889bddbe9e4"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-09-20-PI-DW",
@@ -670,6 +670,7 @@
    "points": 20,
    "quality": "PI",
    "status": "verified",
+   "sha": "51d43b8d195cd1a3",
    "stored": {
     "res_bound": 1.8492152253912783e-15,
     "res_ok": true,
@@ -692,8 +693,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "51d43b8d195cd1a3"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-11-28-PI-DW",
@@ -703,6 +703,7 @@
    "points": 28,
    "quality": "PI",
    "status": "verified",
+   "sha": "10572a8d43f3c94e",
    "stored": {
     "res_bound": 2.6645352591003773e-15,
     "res_ok": true,
@@ -723,10 +724,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "10572a8d43f3c94e"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-13-37-PI-DW",
@@ -736,6 +736,7 @@
    "points": 37,
    "quality": "PI",
    "status": "verified",
+   "sha": "8f40ad6d20c2ea90",
    "stored": {
     "res_bound": 1.7359059339711753e-15,
     "res_ok": true,
@@ -756,10 +757,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8f40ad6d20c2ea90"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-15-48-PI-DW",
@@ -769,6 +769,7 @@
    "points": 48,
    "quality": "PI",
    "status": "verified",
+   "sha": "6b285fc723543165",
    "stored": {
     "res_bound": 2.5141564177766386e-15,
     "res_ok": true,
@@ -791,8 +792,7 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6b285fc723543165"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-17-57-PI-DW",
@@ -802,6 +802,7 @@
    "points": 57,
    "quality": "PI",
    "status": "verified",
+   "sha": "5e20a512df542338",
    "stored": {
     "res_bound": 3.710681935331644e-15,
     "res_ok": true,
@@ -822,10 +823,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.03,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5e20a512df542338"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-19-72-PI-DW",
@@ -835,6 +835,7 @@
    "points": 72,
    "quality": "PI",
    "status": "verified",
+   "sha": "a95f2f416d494777",
    "stored": {
     "res_bound": 3.7929999852776056e-15,
     "res_ok": true,
@@ -855,10 +856,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.04,
+   "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a95f2f416d494777"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-21-85-PI-DW",
@@ -868,6 +868,7 @@
    "points": 85,
    "quality": "PI",
    "status": "verified",
+   "sha": "e253af4d2aff95bc",
    "stored": {
     "res_bound": 5.200890716358657e-15,
     "res_ok": true,
@@ -888,10 +889,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.06,
+   "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e253af4d2aff95bc"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-23-101-PI-DW",
@@ -901,6 +901,7 @@
    "points": 101,
    "quality": "PI",
    "status": "verified",
+   "sha": "5e05b9eeb58551a7",
    "stored": {
     "res_bound": 4.1367056264826666e-15,
     "res_ok": true,
@@ -923,8 +924,7 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5e05b9eeb58551a7"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-25-120-PI-DW",
@@ -934,6 +934,7 @@
    "points": 120,
    "quality": "PI",
    "status": "verified",
+   "sha": "6d5e761282652c03",
    "stored": {
     "res_bound": 6.068225349292749e-15,
     "res_ok": true,
@@ -954,10 +955,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.12,
+   "seconds": 0.11,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6d5e761282652c03"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-27-137-PI-DW",
@@ -967,6 +967,7 @@
    "points": 137,
    "quality": "PI",
    "status": "verified",
+   "sha": "b896927dd8bfcf6a",
    "stored": {
     "res_bound": 6.9483450975326966e-15,
     "res_ok": true,
@@ -989,8 +990,7 @@
    },
    "seconds": 0.13,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b896927dd8bfcf6a"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-29-157-PI-DW",
@@ -1000,6 +1000,7 @@
    "points": 157,
    "quality": "PI",
    "status": "verified",
+   "sha": "72f582cd479f1ea6",
    "stored": {
     "res_bound": 7.803287638448462e-15,
     "res_ok": true,
@@ -1020,10 +1021,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.18,
+   "seconds": 0.17,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "72f582cd479f1ea6"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-31-177-PI-DW",
@@ -1033,6 +1033,7 @@
    "points": 177,
    "quality": "PI",
    "status": "verified",
+   "sha": "0484dbdd1f97e18a",
    "stored": {
     "res_bound": 8.089042673534173e-15,
     "res_ok": true,
@@ -1055,8 +1056,7 @@
    },
    "seconds": 0.21,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0484dbdd1f97e18a"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-01-1-PI-JS",
@@ -1066,6 +1066,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "d2141bb0187705cf",
    "stored": {
     "res_bound": 3.830269434956793e-15,
     "res_ok": true,
@@ -1086,10 +1087,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d2141bb0187705cf"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-02-4-PI-JS",
@@ -1099,6 +1099,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "83cbe1220f6abe72",
    "stored": {
     "res_bound": 9.825473767932642e-15,
     "res_ok": true,
@@ -1121,8 +1122,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "83cbe1220f6abe72"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-03-8-PI-JS",
@@ -1132,6 +1132,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
+   "sha": "13658f9dfb47c054",
    "stored": {
     "res_bound": 9.992007221626415e-15,
     "res_ok": true,
@@ -1154,8 +1155,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "13658f9dfb47c054"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-04-14-PI-JS",
@@ -1165,6 +1165,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "646f3c27ca5a2f68",
    "stored": {
     "res_bound": 2.1982415887578112e-14,
     "res_ok": true,
@@ -1187,8 +1188,7 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "646f3c27ca5a2f68"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-05-14-PI-JS",
@@ -1198,6 +1198,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "66aad0748d6b9ad9",
    "stored": {
     "res_bound": 2.181588243388434e-14,
     "res_ok": true,
@@ -1220,8 +1221,7 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "66aad0748d6b9ad9"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-06-24-PI-JS",
@@ -1231,6 +1231,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
+   "sha": "3610ef15ee05322d",
    "stored": {
     "res_bound": 1.7486012637846228e-14,
     "res_ok": true,
@@ -1253,8 +1254,7 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3610ef15ee05322d"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-07-35-PI-JS",
@@ -1264,6 +1264,7 @@
    "points": 35,
    "quality": "PI",
    "status": "verified",
+   "sha": "5634daa77bd4eb6e",
    "stored": {
     "res_bound": 4.146682996974962e-14,
     "res_ok": true,
@@ -1286,8 +1287,7 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5634daa77bd4eb6e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-08-46-PI-JS",
@@ -1297,6 +1297,7 @@
    "points": 46,
    "quality": "PI",
    "status": "verified",
+   "sha": "2952ecb134475353",
    "stored": {
     "res_bound": 1.0033640585049859e-14,
     "res_ok": true,
@@ -1317,10 +1318,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.07,
+   "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2952ecb134475353"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-09-59-PI-JS",
@@ -1330,6 +1330,7 @@
    "points": 59,
    "quality": "PI",
    "status": "verified",
+   "sha": "d226fb941da77cc7",
    "stored": {
     "res_bound": 3.5471625636773777e-14,
     "res_ok": true,
@@ -1350,10 +1351,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.1,
+   "seconds": 0.11,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d226fb941da77cc7"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-10-81-PI-JS",
@@ -1363,6 +1363,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
+   "sha": "a59f0f93478c4d5e",
    "stored": {
     "res_bound": 5.195843755245735e-14,
     "res_ok": true,
@@ -1383,10 +1384,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.14,
+   "seconds": 0.15,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a59f0f93478c4d5e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-11-110-PI-JS",
@@ -1396,6 +1396,7 @@
    "points": 110,
    "quality": "PI",
    "status": "verified",
+   "sha": "6f97c7ef412b955d",
    "stored": {
     "res_bound": 1.7486012637846228e-14,
     "res_ok": true,
@@ -1416,10 +1417,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.2,
+   "seconds": 0.23,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6f97c7ef412b955d"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-12-168-PI-JS",
@@ -1429,6 +1429,7 @@
    "points": 168,
    "quality": "PI",
    "status": "verified",
+   "sha": "2cc5137e3c47854f",
    "stored": {
     "res_bound": 5.345723863570131e-14,
     "res_ok": true,
@@ -1449,10 +1450,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.36,
+   "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2cc5137e3c47854f"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-13-172-PI-JS",
@@ -1462,6 +1462,7 @@
    "points": 172,
    "quality": "PI",
    "status": "verified",
+   "sha": "9bc242b5d3923227",
    "stored": {
     "res_bound": 5.778710843173944e-14,
     "res_ok": true,
@@ -1482,10 +1483,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.44,
+   "seconds": 0.48,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9bc242b5d3923227"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-14-204-PI-JS",
@@ -1495,6 +1495,7 @@
    "points": 204,
    "quality": "PI",
    "status": "verified",
+   "sha": "cf3e1b9e042c9a4b",
    "stored": {
     "res_bound": 6.994405055138491e-14,
     "res_ok": true,
@@ -1515,10 +1516,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.55,
+   "seconds": 0.64,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "cf3e1b9e042c9a4b"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-15-264-PI-JS",
@@ -1528,6 +1528,7 @@
    "points": 264,
    "quality": "PI",
    "status": "verified",
+   "sha": "2d1869691ac6a224",
    "stored": {
     "res_bound": 2.1382895454280525e-13,
     "res_ok": true,
@@ -1548,10 +1549,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.82,
+   "seconds": 0.88,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2d1869691ac6a224"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-16-304-PI-JS",
@@ -1561,6 +1561,7 @@
    "points": 304,
    "quality": "PI",
    "status": "verified",
+   "sha": "6531ddf7a0981a5c",
    "stored": {
     "res_bound": 2.4980018054066037e-13,
     "res_ok": true,
@@ -1581,10 +1582,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.06,
+   "seconds": 1.18,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6531ddf7a0981a5c"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-17-364-PI-JS",
@@ -1594,6 +1594,7 @@
    "points": 364,
    "quality": "PI",
    "status": "verified",
+   "sha": "05f6b2fe1ccb75a9",
    "stored": {
     "res_bound": 6.994405055138491e-14,
     "res_ok": true,
@@ -1614,10 +1615,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.54,
+   "seconds": 1.63,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "05f6b2fe1ccb75a9"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-18-436-PI-JS",
@@ -1627,6 +1627,7 @@
    "points": 436,
    "quality": "PI",
    "status": "verified",
+   "sha": "600fecb4778eb565",
    "stored": {
     "res_bound": 2.934319454084291e-13,
     "res_ok": true,
@@ -1636,21 +1637,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.0410077856053066e-14,
-    "kratio": 0.6666672796681534,
+    "r": 3.041007785605306e-14,
+    "kratio": 0.6666672796669988,
     "mode": "sym24",
     "equations": 119,
     "unknowns": 135,
-    "dist": 3.3407683020143576e-14,
+    "dist": 3.340768302014357e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.98,
+   "seconds": 2.09,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "600fecb4778eb565"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-19-487-PI-JS",
@@ -1660,6 +1660,7 @@
    "points": 487,
    "quality": "PI",
    "status": "verified",
+   "sha": "5d86d3cb352f6c8c",
    "stored": {
     "res_bound": 2.4980018054066037e-13,
     "res_ok": true,
@@ -1669,21 +1670,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.484215139451374e-14,
-    "kratio": 0.6666692705672177,
+    "r": 5.484215139451436e-14,
+    "kratio": 0.6666692705652851,
     "mode": "sym24",
     "equations": 125,
     "unknowns": 131,
-    "dist": 5.914426991705124e-14,
+    "dist": 5.914426991705186e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.44,
+   "seconds": 2.7,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5d86d3cb352f6c8c"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-20-552-PI-JS",
@@ -1693,6 +1693,7 @@
    "points": 552,
    "quality": "PI",
    "status": "verified",
+   "sha": "477490176e2269db",
    "stored": {
     "res_bound": 1.6153745008296038e-13,
     "res_ok": true,
@@ -1702,21 +1703,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.8312041738805153e-13,
-    "kratio": 0.6667054251713062,
+    "r": 1.8312041738804724e-13,
+    "kratio": 0.6667054251524587,
     "mode": "sym24",
     "equations": 144,
     "unknowns": 151,
-    "dist": 1.8589597772517505e-13,
+    "dist": 1.8589597772517076e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.1,
+   "seconds": 3.65,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "477490176e2269db"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-01-1-PI-MPC",
@@ -1726,6 +1726,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "7a8ff214327461c3",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1748,8 +1749,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7a8ff214327461c3"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-02-4-PI-MPC",
@@ -1759,6 +1759,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "5f85027d7348a96d",
    "stored": {
     "res_bound": 1.4432899320127045e-15,
     "res_ok": true,
@@ -1781,8 +1782,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5f85027d7348a96d"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-03-6-PI-MPC",
@@ -1792,6 +1792,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "a97f63b8a2095b73",
    "stored": {
     "res_bound": 4.607425552194402e-14,
     "res_ok": true,
@@ -1812,10 +1813,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a97f63b8a2095b73"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-04-10-PI-MPC",
@@ -1825,6 +1825,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
+   "sha": "8969770008d481cd",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1847,8 +1848,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8969770008d481cd"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-05-13-PI-MPC",
@@ -1858,6 +1858,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
+   "sha": "889072832f54726f",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -1878,10 +1879,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "889072832f54726f"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-06-22-PI-MPC",
@@ -1891,6 +1891,7 @@
    "points": 22,
    "quality": "PI",
    "status": "verified",
+   "sha": "0e4b3d3668acb6eb",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1911,10 +1912,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0e4b3d3668acb6eb"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-07-26-PI-MPC",
@@ -1924,6 +1924,7 @@
    "points": 26,
    "quality": "PI",
    "status": "verified",
+   "sha": "86299b2d63f38831",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1944,10 +1945,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.03,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "86299b2d63f38831"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-08-42-PI-MPC",
@@ -1957,6 +1957,7 @@
    "points": 42,
    "quality": "PI",
    "status": "verified",
+   "sha": "f21b2507ca41f971",
    "stored": {
     "res_bound": 2.2204460492503147e-15,
     "res_ok": true,
@@ -1966,21 +1967,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.6841742643787518e-13,
-    "kratio": 0.666666680086413,
+    "r": 1.6841742643787505e-13,
+    "kratio": 0.6666666800863595,
     "mode": "full",
     "equations": 165,
     "unknowns": 168,
-    "dist": 2.0472175564741388e-13,
+    "dist": 2.0472175564741376e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.06,
+   "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f21b2507ca41f971"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-09-48-PI-MPC",
@@ -1990,6 +1990,7 @@
    "points": 48,
    "quality": "PI",
    "status": "verified",
+   "sha": "2b173135cd5402f3",
    "stored": {
     "res_bound": 2.109423746787799e-15,
     "res_ok": true,
@@ -2010,10 +2011,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.06,
+   "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2b173135cd5402f3"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-10-71-PI-MPC",
@@ -2023,6 +2023,7 @@
    "points": 71,
    "quality": "PI",
    "status": "verified",
+   "sha": "d6a94e6f5b3f4b06",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -2043,10 +2044,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.03,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d6a94e6f5b3f4b06"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-11-81-PI-MPC",
@@ -2056,6 +2056,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
+   "sha": "20544e2d7b80ff07",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -2066,7 +2067,7 @@
    "exist": {
     "proved": true,
     "r": 5.002710284216726e-13,
-    "kratio": 0.6666670040259942,
+    "kratio": 0.6666670040260955,
     "mode": "sym2",
     "equations": 161,
     "unknowns": 161,
@@ -2076,10 +2077,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.14,
+   "seconds": 0.16,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "20544e2d7b80ff07"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-12-115-PI-MPC",
@@ -2089,6 +2089,7 @@
    "points": 115,
    "quality": "PI",
    "status": "verified",
+   "sha": "3008f9a51d84e911",
    "stored": {
     "res_bound": 2.6405496577263878e-14,
     "res_ok": true,
@@ -2098,21 +2099,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.3446700793344832e-12,
-    "kratio": 0.6666711129378103,
+    "r": 1.3446700793345021e-12,
+    "kratio": 0.6666711129367375,
     "mode": "full",
     "equations": 455,
     "unknowns": 460,
-    "dist": 1.1905788184491363e-11,
+    "dist": 1.190578818449138e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.38,
+   "seconds": 0.48,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3008f9a51d84e911"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-13-126-PI-MPC",
@@ -2122,6 +2122,7 @@
    "points": 126,
    "quality": "PI",
    "status": "verified",
+   "sha": "483b5634bc627822",
    "stored": {
     "res_bound": 2.3095674678286235e-15,
     "res_ok": true,
@@ -2131,21 +2132,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.714091838127713e-12,
-    "kratio": 0.666675434875337,
+    "r": 1.7140918381276633e-12,
+    "kratio": 0.6666754348757303,
     "mode": "sym2",
     "equations": 252,
     "unknowns": 252,
-    "dist": 1.715535129503016e-12,
+    "dist": 1.7155351295029663e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.27,
+   "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "483b5634bc627822"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-14-169-PI-MPC",
@@ -2155,6 +2155,7 @@
    "points": 169,
    "quality": "PI",
    "status": "verified",
+   "sha": "da832c2d5c38e0ba",
    "stored": {
     "res_bound": 1.7363430029719585e-15,
     "res_ok": true,
@@ -2175,10 +2176,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.11,
+   "seconds": 0.16,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "da832c2d5c38e0ba"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-15-186-PI-MPC",
@@ -2188,6 +2188,7 @@
    "points": 186,
    "quality": "PI",
    "status": "verified",
+   "sha": "6b3354fb5431ae84",
    "stored": {
     "res_bound": 2.5916480739891455e-15,
     "res_ok": true,
@@ -2197,21 +2198,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.337574076182049e-12,
-    "kratio": 0.6666756254357556,
+    "r": 1.337574076182043e-12,
+    "kratio": 0.6666756254370879,
     "mode": "sym2",
     "equations": 372,
     "unknowns": 372,
-    "dist": 1.3423653872140033e-12,
+    "dist": 1.3423653872139973e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.53,
+   "seconds": 0.65,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6b3354fb5431ae84"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-16-244-PI-MPC",
@@ -2221,6 +2221,7 @@
    "points": 244,
    "quality": "PI",
    "status": "verified",
+   "sha": "08900ff49d5506d9",
    "stored": {
     "res_bound": 3.1755033251119984e-15,
     "res_ok": true,
@@ -2230,21 +2231,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.421073837401608e-12,
-    "kratio": 0.666712377523667,
+    "r": 2.4210738374014723e-12,
+    "kratio": 0.6667123775217649,
     "mode": "full",
     "equations": 969,
     "unknowns": 976,
-    "dist": 2.423238774464826e-12,
+    "dist": 2.4232387744646903e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.15,
+   "seconds": 2.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "08900ff49d5506d9"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-17-265-PI-MPC",
@@ -2254,6 +2254,7 @@
    "points": 265,
    "quality": "PI",
    "status": "verified",
+   "sha": "6cd4a8cecfdd24f5",
    "stored": {
     "res_bound": 3.563144042512994e-15,
     "res_ok": true,
@@ -2263,21 +2264,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.3626042775822966e-12,
-    "kratio": 0.6666841472038905,
+    "r": 1.3626042775822324e-12,
+    "kratio": 0.6666841472108321,
     "mode": "sym2",
     "equations": 525,
     "unknowns": 529,
-    "dist": 1.5139000715588136e-12,
+    "dist": 1.5139000715587494e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.0,
+   "seconds": 1.12,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6cd4a8cecfdd24f5"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-18-326-PI-MPC",
@@ -2287,6 +2287,7 @@
    "points": 326,
    "quality": "PI",
    "status": "verified",
+   "sha": "86af00edd2b8d155",
    "stored": {
     "res_bound": 2.7130939639005726e-15,
     "res_ok": true,
@@ -2307,10 +2308,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.25,
+   "seconds": 0.3,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "86af00edd2b8d155"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-19-360-PI-MPC",
@@ -2320,6 +2320,7 @@
    "points": 360,
    "quality": "PI",
    "status": "verified",
+   "sha": "ec0fe14f4d474c91",
    "stored": {
     "res_bound": 3.756238755366769e-15,
     "res_ok": true,
@@ -2329,21 +2330,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.136349271479628e-12,
-    "kratio": 0.6667371844448333,
+    "r": 2.136349271479467e-12,
+    "kratio": 0.6667371844414796,
     "mode": "sym2",
     "equations": 715,
     "unknowns": 720,
-    "dist": 2.3485131036492876e-12,
+    "dist": 2.348513103649127e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.97,
+   "seconds": 1.99,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ec0fe14f4d474c91"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-20-444-PI-MPC",
@@ -2353,6 +2353,7 @@
    "points": 444,
    "quality": "PI",
    "status": "verified",
+   "sha": "2b3e9acee092a8f2",
    "stored": {
     "res_bound": 4.189230060132567e-15,
     "res_ok": true,
@@ -2362,21 +2363,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.922470933468899e-11,
-    "kratio": 0.6748085062759392,
+    "r": 1.9222964634654678e-11,
+    "kratio": 0.674807767332805,
     "mode": "full",
     "equations": 1771,
     "unknowns": 1776,
-    "dist": 1.924735790704372e-11,
+    "dist": 1.9245613207009408e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 8.02,
+   "seconds": 7.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2b3e9acee092a8f2"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-21-486-PI-MPC",
@@ -2386,6 +2386,7 @@
    "points": 486,
    "quality": "PI",
    "status": "verified",
+   "sha": "cc91385382f4c9af",
    "stored": {
     "res_bound": 3.5252613409799914e-15,
     "res_ok": true,
@@ -2395,21 +2396,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.34104916664301e-13,
-    "kratio": 0.6666738901251258,
+    "r": 5.341049166642904e-13,
+    "kratio": 0.6666738901247006,
     "mode": "sym24",
     "equations": 120,
     "unknowns": 120,
-    "dist": 5.735178734514115e-13,
+    "dist": 5.735178734514009e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.54,
+   "seconds": 0.7,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "cc91385382f4c9af"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-21-494-PI-MPC",
@@ -2419,6 +2419,7 @@
    "points": 494,
    "quality": "PI",
    "status": "verified",
+   "sha": "b8a1e04079abec8b",
    "stored": {
     "res_bound": 3.1694549870904555e-15,
     "res_ok": true,
@@ -2428,21 +2429,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.4935246281395422e-13,
-    "kratio": 0.6666671845310285,
+    "r": 1.493524628139539e-13,
+    "kratio": 0.6666671845321631,
     "mode": "sym24",
     "equations": 120,
     "unknowns": 121,
-    "dist": 1.4946348522744114e-13,
+    "dist": 1.4946348522744082e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.5,
+   "seconds": 0.6,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b8a1e04079abec8b"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-22-551-PI-MPC",
@@ -2452,6 +2452,7 @@
    "points": 551,
    "quality": "PI",
    "status": "verified",
+   "sha": "555d27dc6ed70e35",
    "stored": {
     "res_bound": 3.535984778092231e-15,
     "res_ok": true,
@@ -2461,21 +2462,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.707102681950349e-13,
-    "kratio": 0.666679787475779,
+    "r": 5.707102681950365e-13,
+    "kratio": 0.666679787466612,
     "mode": "sym24",
     "equations": 136,
     "unknowns": 136,
-    "dist": 5.729307164647314e-13,
+    "dist": 5.72930716464733e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.65,
+   "seconds": 0.78,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "555d27dc6ed70e35"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-22-554-PI-MPC",
@@ -2485,6 +2485,7 @@
    "points": 554,
    "quality": "PI",
    "status": "verified",
+   "sha": "1fcf75ee3327ecd6",
    "stored": {
     "res_bound": 3.843137559491482e-15,
     "res_ok": true,
@@ -2494,21 +2495,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.464178012913381e-13,
-    "kratio": 0.6666772918435653,
+    "r": 5.464178012913344e-13,
+    "kratio": 0.666677291842647,
     "mode": "sym24",
     "equations": 136,
     "unknowns": 137,
-    "dist": 5.465288237048317e-13,
+    "dist": 5.465288237048279e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.6,
+   "seconds": 0.73,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1fcf75ee3327ecd6"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-22-558-PI-MPC",
@@ -2518,6 +2518,7 @@
    "points": 558,
    "quality": "PI",
    "status": "verified",
+   "sha": "33888132402ca77a",
    "stored": {
     "res_bound": 3.719002339972523e-15,
     "res_ok": true,
@@ -2527,21 +2528,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.845995893445674e-13,
-    "kratio": 0.6666762130881762,
+    "r": 4.845995893445669e-13,
+    "kratio": 0.6666762130892293,
     "mode": "sym24",
     "equations": 136,
     "unknowns": 136,
-    "dist": 4.845995893445675e-13,
+    "dist": 4.84599589344567e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.6,
+   "seconds": 0.7,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "33888132402ca77a"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-23-610-PI-MPC",
@@ -2551,6 +2551,7 @@
    "points": 610,
    "quality": "PI",
    "status": "verified",
+   "sha": "768ccdfe50e5705b",
    "stored": {
     "res_bound": 4.2663779003778274e-15,
     "res_ok": true,
@@ -2560,21 +2561,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.735148056389488e-13,
-    "kratio": 0.6666812705239258,
+    "r": 5.735148056389185e-13,
+    "kratio": 0.6666812705242786,
     "mode": "sym24",
     "equations": 150,
     "unknowns": 150,
-    "dist": 5.735703168456913e-13,
+    "dist": 5.73570316845661e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.73,
+   "seconds": 0.83,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "768ccdfe50e5705b"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-24-730-PI-MPC",
@@ -2584,6 +2584,7 @@
    "points": 730,
    "quality": "PI",
    "status": "verified",
+   "sha": "c3a4ba756f464a08",
    "stored": {
     "res_bound": 4.693783949298769e-15,
     "res_ok": true,
@@ -2593,21 +2594,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.050859381403575e-12,
-    "kratio": 0.6680907521447167,
+    "r": 5.050859381403396e-12,
+    "kratio": 0.6680907522072583,
     "mode": "sym24",
     "equations": 169,
     "unknowns": 170,
-    "dist": 5.0509704038171575e-12,
+    "dist": 5.050970403816979e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.97,
+   "seconds": 1.07,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c3a4ba756f464a08"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-24-743-PI-MPC",
@@ -2617,6 +2617,7 @@
    "points": 743,
    "quality": "PI",
    "status": "verified",
+   "sha": "f812dc8a849cafe1",
    "stored": {
     "res_bound": 4.214344984065351e-15,
     "res_ok": true,
@@ -2626,21 +2627,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.1915047242498217e-12,
-    "kratio": 0.6667346991585356,
+    "r": 1.1915047242498355e-12,
+    "kratio": 0.6667346991559584,
     "mode": "sym24",
     "equations": 169,
     "unknowns": 169,
-    "dist": 1.2425750344528382e-12,
+    "dist": 1.242575034452852e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.17,
+   "seconds": 1.22,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f812dc8a849cafe1"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-25-780-PI-MPC",
@@ -2650,6 +2650,7 @@
    "points": 780,
    "quality": "PI",
    "status": "verified",
+   "sha": "13f1d2008911c3ef",
    "stored": {
     "res_bound": 5.01596902441294e-15,
     "res_ok": true,
@@ -2659,21 +2660,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.386406024718781e-13,
-    "kratio": 0.6666954670304274,
+    "r": 6.386406024718873e-13,
+    "kratio": 0.6666954670328081,
     "mode": "sym24",
     "equations": 185,
     "unknowns": 185,
-    "dist": 6.387516248853631e-13,
+    "dist": 6.387516248853723e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.15,
+   "seconds": 1.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "13f1d2008911c3ef"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-25-798-PI-MPC",
@@ -2683,6 +2683,7 @@
    "points": 798,
    "quality": "PI",
    "status": "verified",
+   "sha": "4d558a4125ec2201",
    "stored": {
     "res_bound": 5.709330713277524e-15,
     "res_ok": true,
@@ -2692,21 +2693,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.61508895017837e-13,
-    "kratio": 0.6666708106655687,
+    "r": 2.6150889501784067e-13,
+    "kratio": 0.6666708106656591,
     "mode": "sym48",
     "equations": 102,
     "unknowns": 102,
-    "dist": 2.6267463035942766e-13,
+    "dist": 2.6267463035943135e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.08,
+   "seconds": 1.21,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4d558a4125ec2201"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-26-897-PI-MPC",
@@ -2716,6 +2716,7 @@
    "points": 897,
    "quality": "PI",
    "status": "verified",
+   "sha": "a93d601691094a2e",
    "stored": {
     "res_bound": 5.213905271714101e-15,
     "res_ok": true,
@@ -2725,21 +2726,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.4152871724115155e-12,
-    "kratio": 0.6668324452942231,
+    "r": 1.4152871724113824e-12,
+    "kratio": 0.6668324452815069,
     "mode": "sym24",
     "equations": 206,
     "unknowns": 206,
-    "dist": 1.4153981948250005e-12,
+    "dist": 1.4153981948248675e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.64,
+   "seconds": 1.53,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a93d601691094a2e"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-26-922-PI-MPC",
@@ -2749,6 +2749,7 @@
    "points": 922,
    "quality": "PI",
    "status": "verified",
+   "sha": "3d88ec8c8e7e058d",
    "stored": {
     "res_bound": 5.915393500553761e-15,
     "res_ok": true,
@@ -2758,21 +2759,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.670135512789042e-13,
-    "kratio": 0.666727995921171,
+    "r": 8.67013551278953e-13,
+    "kratio": 0.6667279959199648,
     "mode": "sym24",
     "equations": 206,
     "unknowns": 207,
-    "dist": 8.681237754137728e-13,
+    "dist": 8.681237754138215e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.93,
+   "seconds": 1.69,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3d88ec8c8e7e058d"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-27-958-PI-MPC",
@@ -2782,6 +2782,7 @@
    "points": 958,
    "quality": "PI",
    "status": "verified",
+   "sha": "c764b8a48dc78906",
    "stored": {
     "res_bound": 6.707140607340773e-15,
     "res_ok": true,
@@ -2791,21 +2792,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.0877311193500207e-12,
-    "kratio": 0.6670689365705701,
+    "r": 2.0877311193496147e-12,
+    "kratio": 0.6670689365852132,
     "mode": "sym24",
     "equations": 225,
     "unknowns": 226,
-    "dist": 2.0878421417635596e-12,
+    "dist": 2.0878421417631537e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.0,
+   "seconds": 1.79,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c764b8a48dc78906"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-27-960-PI-MPC",
@@ -2815,6 +2815,7 @@
    "points": 960,
    "quality": "PI",
    "status": "verified",
+   "sha": "9143d28ff2a5dff3",
    "stored": {
     "res_bound": 5.268112452119008e-15,
     "res_ok": true,
@@ -2824,21 +2825,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.2125044981760768e-12,
-    "kratio": 0.666794720978187,
+    "r": 1.212504498176084e-12,
+    "kratio": 0.6667947209832153,
     "mode": "sym24",
     "equations": 225,
     "unknowns": 226,
-    "dist": 1.2796175471276807e-12,
+    "dist": 1.279617547127688e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.08,
+   "seconds": 2.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9143d28ff2a5dff3"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-27-966-PI-MPC",
@@ -2848,6 +2848,7 @@
    "points": 966,
    "quality": "PI",
    "status": "verified",
+   "sha": "d1bf820e2c3ed77c",
    "stored": {
     "res_bound": 6.3193154021934e-15,
     "res_ok": true,
@@ -2857,21 +2858,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.032970076458559e-12,
-    "kratio": 0.6667540039281745,
+    "r": 1.032970076458549e-12,
+    "kratio": 0.666754003926845,
     "mode": "sym48",
     "equations": 123,
     "unknowns": 124,
-    "dist": 1.0330810988720588e-12,
+    "dist": 1.0330810988720489e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.47,
+   "seconds": 1.57,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d1bf820e2c3ed77c"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-28-1145-PI-MPC",
@@ -2881,6 +2881,7 @@
    "points": 1145,
    "quality": "PI",
    "status": "verified",
+   "sha": "1cee10f798b028fb",
    "stored": {
     "res_bound": 6.153639092902688e-15,
     "res_ok": true,
@@ -2890,21 +2891,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.26246854259811e-13,
-    "kratio": 0.6667444604208647,
+    "r": 8.262468542598342e-13,
+    "kratio": 0.6667444604173222,
     "mode": "sym24",
     "equations": 249,
     "unknowns": 250,
-    "dist": 8.719325774088372e-13,
+    "dist": 8.719325774088604e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.36,
+   "seconds": 2.76,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1cee10f798b028fb"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-28-1177-PI-MPC",
@@ -2914,6 +2914,7 @@
    "points": 1177,
    "quality": "PI",
    "status": "verified",
+   "sha": "5958096cb2ac377e",
    "stored": {
     "res_bound": 7.703090417051857e-15,
     "res_ok": true,
@@ -2923,21 +2924,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.822954820994121e-13,
-    "kratio": 0.6667167825132244,
+    "r": 6.82295482099405e-13,
+    "kratio": 0.6667167825102163,
     "mode": "sym24",
     "equations": 249,
     "unknowns": 253,
-    "dist": 6.831281502005678e-13,
+    "dist": 6.831281502005606e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.34,
+   "seconds": 2.75,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5958096cb2ac377e"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-29-1189-PI-MPC",
@@ -2947,6 +2947,7 @@
    "points": 1189,
    "quality": "PI",
    "status": "verified",
+   "sha": "56339ddc1d1a94d7",
    "stored": {
     "res_bound": 6.655626816345845e-15,
     "res_ok": true,
@@ -2956,21 +2957,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.199367661055389e-12,
-    "kratio": 0.6701606851945038,
+    "r": 5.199367661055292e-12,
+    "kratio": 0.6701606851937486,
     "mode": "sym24",
     "equations": 270,
     "unknowns": 270,
-    "dist": 5.199478683468875e-12,
+    "dist": 5.199478683468778e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.31,
+   "seconds": 2.74,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "56339ddc1d1a94d7"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-29-1193-PI-MPC",
@@ -2980,6 +2980,7 @@
    "points": 1193,
    "quality": "PI",
    "status": "verified",
+   "sha": "90f1c9dde51588d5",
    "stored": {
     "res_bound": 7.378349314140227e-15,
     "res_ok": true,
@@ -2989,21 +2990,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.1289752137859346e-12,
-    "kratio": 0.6680903164830074,
+    "r": 3.12897521378598e-12,
+    "kratio": 0.6680903164786718,
     "mode": "sym24",
     "equations": 270,
     "unknowns": 270,
-    "dist": 3.1377737400546068e-12,
+    "dist": 3.137773740054652e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.6,
+   "seconds": 3.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "90f1c9dde51588d5"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-29-1223-PI-MPC",
@@ -3013,6 +3013,7 @@
    "points": 1223,
    "quality": "PI",
    "status": "verified",
+   "sha": "85d0f34cc23c7d67",
    "stored": {
     "res_bound": 6.06105860352603e-15,
     "res_ok": true,
@@ -3022,21 +3023,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 9.061386137938099e-13,
-    "kratio": 0.6667719030046743,
+    "r": 9.061386137937394e-13,
+    "kratio": 0.6667719030126019,
     "mode": "sym48",
     "equations": 147,
     "unknowns": 147,
-    "dist": 9.513802472888734e-13,
+    "dist": 9.51380247288803e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 2.34,
+   "seconds": 2.7,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "85d0f34cc23c7d67"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-30-1324-PI-MPC",
@@ -3046,6 +3046,7 @@
    "points": 1324,
    "quality": "PI",
    "status": "verified",
+   "sha": "ab6918de5f01abae",
    "stored": {
     "res_bound": 6.766224437664431e-15,
     "res_ok": true,
@@ -3055,21 +3056,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.718119010309666e-12,
-    "kratio": 0.6692887053202038,
+    "r": 3.7181190103099955e-12,
+    "kratio": 0.6692887052954596,
     "mode": "sym24",
     "equations": 297,
     "unknowns": 298,
-    "dist": 3.722615418055927e-12,
+    "dist": 3.722615418056257e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.44,
+   "seconds": 3.57,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ab6918de5f01abae"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-30-1410-PI-MPC",
@@ -3079,6 +3079,7 @@
    "points": 1410,
    "quality": "PI",
    "status": "verified",
+   "sha": "2c5dfe90ad6723b1",
    "stored": {
     "res_bound": 7.348356777450459e-15,
     "res_ok": true,
@@ -3088,21 +3089,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.083390658005581e-12,
-    "kratio": 0.668121150559873,
+    "r": 3.0833906580057434e-12,
+    "kratio": 0.6681211505814049,
     "mode": "sym24",
     "equations": 297,
     "unknowns": 300,
-    "dist": 3.08350168041917e-12,
+    "dist": 3.0835016804193324e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.37,
+   "seconds": 3.54,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2c5dfe90ad6723b1"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-01-1-PI-MPC",
@@ -3112,6 +3112,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "f7090613eceb7753",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3134,8 +3135,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f7090613eceb7753"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-02-2-PI-MPC",
@@ -3145,6 +3145,7 @@
    "points": 2,
    "quality": "PI",
    "status": "verified",
+   "sha": "a0f9a9bdc3fb1adf",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3167,8 +3168,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a0f9a9bdc3fb1adf"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-03-2-PI-MPC",
@@ -3178,6 +3178,7 @@
    "points": 2,
    "quality": "PI",
    "status": "verified",
+   "sha": "bccf4bcb2a39abd1",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3200,8 +3201,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "bccf4bcb2a39abd1"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-04-3-PI-MPC",
@@ -3211,6 +3211,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
+   "sha": "5b863d9e79377ff3",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3233,8 +3234,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5b863d9e79377ff3"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-05-3-PI-MPC",
@@ -3244,6 +3244,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
+   "sha": "e76cf5f831b7c357",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3266,8 +3267,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e76cf5f831b7c357"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-06-4-PI-MPC",
@@ -3277,6 +3277,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "35f613f63d705e19",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3299,8 +3300,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "35f613f63d705e19"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-07-4-PI-MPC",
@@ -3310,6 +3310,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "20bc8fc976028885",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3332,8 +3333,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "20bc8fc976028885"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-08-5-PI-MPC",
@@ -3343,6 +3343,7 @@
    "points": 5,
    "quality": "PI",
    "status": "verified",
+   "sha": "d4bcfc8f32868163",
    "stored": {
     "res_bound": 8.881784197001262e-16,
     "res_ok": true,
@@ -3365,8 +3366,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d4bcfc8f32868163"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-09-5-PI-MPC",
@@ -3376,6 +3376,7 @@
    "points": 5,
    "quality": "PI",
    "status": "verified",
+   "sha": "f40feb46bc4e8e14",
    "stored": {
     "res_bound": 8.881784197001262e-16,
     "res_ok": true,
@@ -3398,8 +3399,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f40feb46bc4e8e14"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-10-6-PI-MPC",
@@ -3409,6 +3409,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "15ba77db55661464",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3431,8 +3432,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "15ba77db55661464"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-11-6-PI-MPC",
@@ -3442,6 +3442,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "56f08dd3bbce3d63",
    "stored": {
     "res_bound": 1.1483869410966475e-15,
     "res_ok": true,
@@ -3462,10 +3463,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "56f08dd3bbce3d63"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-12-7-PI-MPC",
@@ -3475,6 +3475,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
+   "sha": "6a8a756d2ce3c6a9",
    "stored": {
     "res_bound": 1.5543122344752203e-15,
     "res_ok": true,
@@ -3495,10 +3496,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6a8a756d2ce3c6a9"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-13-7-PI-MPC",
@@ -3508,6 +3508,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
+   "sha": "7189628c83469656",
    "stored": {
     "res_bound": 1.727784582072901e-15,
     "res_ok": true,
@@ -3528,10 +3529,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7189628c83469656"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-14-8-PI-MPC",
@@ -3541,39 +3541,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "stored": {
-    "res_bound": 1.6965595595053185e-15,
-    "res_ok": true,
-    "margin_exact": 0.0397101435024638,
-    "minw_exact": 0.10122853629037706,
-    "quality_exact": "PI"
-   },
-   "exist": {
-    "proved": true,
-    "r": 1.3050582021493682e-15,
-    "kratio": 0.6666666666715826,
-    "mode": "sym2",
-    "equations": 8,
-    "unknowns": 8,
-    "dist": 2.0822150965430954e-15,
-    "pos": true,
-    "inside": true,
-    "outside": false,
-    "quality_proved": "PI"
-   },
-   "seconds": 0.0,
-   "ok_stored": true,
-   "ok_exist": true,
-   "sha": "76187c495d979b6b"
-  },
-  {
-   "id": "CA-C1-15-8-PI-MPC",
-   "file": "rules/minimal_pointcount_for_degree_n_PI/interval/CA-C1-15-8-PI-MPC.json",
-   "domain": "interval",
-   "degree": 15,
-   "points": 8,
-   "quality": "PI",
-   "status": "verified",
+   "sha": "76187c495d979b6b",
    "stored": {
     "res_bound": 1.6965595595053185e-15,
     "res_ok": true,
@@ -3596,8 +3564,40 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9fcb6b92cd304844"
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C1-15-8-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/interval/CA-C1-15-8-PI-MPC.json",
+   "domain": "interval",
+   "degree": 15,
+   "points": 8,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "9fcb6b92cd304844",
+   "stored": {
+    "res_bound": 1.6965595595053185e-15,
+    "res_ok": true,
+    "margin_exact": 0.0397101435024638,
+    "minw_exact": 0.10122853629037706,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.3050582021493682e-15,
+    "kratio": 0.6666666666715826,
+    "mode": "sym2",
+    "equations": 8,
+    "unknowns": 8,
+    "dist": 2.0822150965430954e-15,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.01,
+   "ok_stored": true,
+   "ok_exist": true
   },
   {
    "id": "CA-C1-16-9-PI-MPC",
@@ -3607,6 +3607,7 @@
    "points": 9,
    "quality": "PI",
    "status": "verified",
+   "sha": "2f1f19ba32bcf939",
    "stored": {
     "res_bound": 3.2335245592207708e-15,
     "res_ok": true,
@@ -3627,10 +3628,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2f1f19ba32bcf939"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-17-9-PI-MPC",
@@ -3640,6 +3640,7 @@
    "points": 9,
    "quality": "PI",
    "status": "verified",
+   "sha": "9f22aaf4b3962f80",
    "stored": {
     "res_bound": 3.5717956370362505e-15,
     "res_ok": true,
@@ -3660,10 +3661,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9f22aaf4b3962f80"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-18-10-PI-MPC",
@@ -3673,6 +3673,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
+   "sha": "db49b7da11e354f8",
    "stored": {
     "res_bound": 3.799044412389212e-15,
     "res_ok": true,
@@ -3695,8 +3696,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "db49b7da11e354f8"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-19-10-PI-MPC",
@@ -3706,6 +3706,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
+   "sha": "fc8fc914c7df835f",
    "stored": {
     "res_bound": 4.101753658947165e-15,
     "res_ok": true,
@@ -3728,8 +3729,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "fc8fc914c7df835f"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-20-11-PI-MPC",
@@ -3739,6 +3739,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
+   "sha": "4875b133776f9489",
    "stored": {
     "res_bound": 2.954234079588505e-15,
     "res_ok": true,
@@ -3761,8 +3762,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4875b133776f9489"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-21-11-PI-MPC",
@@ -3772,6 +3772,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
+   "sha": "a0c82f4bd5384d0e",
    "stored": {
     "res_bound": 3.242198176600655e-15,
     "res_ok": true,
@@ -3794,8 +3795,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a0c82f4bd5384d0e"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-22-12-PI-MPC",
@@ -3805,6 +3805,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "2a6ca8dbab1ee90c",
    "stored": {
     "res_bound": 3.66980751342894e-15,
     "res_ok": true,
@@ -3827,8 +3828,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2a6ca8dbab1ee90c"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-23-12-PI-MPC",
@@ -3838,6 +3838,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "6ee66931b3cc647f",
    "stored": {
     "res_bound": 3.949097993061206e-15,
     "res_ok": true,
@@ -3860,8 +3861,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6ee66931b3cc647f"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-24-13-PI-MPC",
@@ -3871,6 +3871,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
+   "sha": "bf412141c1ff2d8a",
    "stored": {
     "res_bound": 3.799044412389212e-15,
     "res_ok": true,
@@ -3893,8 +3894,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "bf412141c1ff2d8a"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-25-13-PI-MPC",
@@ -3904,6 +3904,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
+   "sha": "2483a2bdd0918804",
    "stored": {
     "res_bound": 4.05578348683378e-15,
     "res_ok": true,
@@ -3926,8 +3927,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2483a2bdd0918804"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-26-14-PI-MPC",
@@ -3937,6 +3937,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "67afd9eecbc9a687",
    "stored": {
     "res_bound": 3.4928657188793035e-15,
     "res_ok": true,
@@ -3959,8 +3960,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "67afd9eecbc9a687"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-27-14-PI-MPC",
@@ -3970,6 +3970,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "73134b196300d8d6",
    "stored": {
     "res_bound": 3.706236706424453e-15,
     "res_ok": true,
@@ -3992,8 +3993,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "73134b196300d8d6"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-28-15-PI-MPC",
@@ -4003,6 +4003,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
+   "sha": "57e2324460797ec1",
    "stored": {
     "res_bound": 7.12407563496776e-15,
     "res_ok": true,
@@ -4025,8 +4026,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "57e2324460797ec1"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-29-15-PI-MPC",
@@ -4036,6 +4036,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
+   "sha": "1d2e358c182c3311",
    "stored": {
     "res_bound": 7.526965162263375e-15,
     "res_ok": true,
@@ -4058,8 +4059,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1d2e358c182c3311"
+   "ok_exist": true
   },
   {
    "id": "CA-C1-30-16-PI-MPC",
@@ -4069,6 +4069,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
+   "sha": "3e444c9ac6fe04c7",
    "stored": {
     "res_bound": 6.172146127525484e-15,
     "res_ok": true,
@@ -4089,10 +4090,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3e444c9ac6fe04c7"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-01-1-PI-MPC",
@@ -4102,6 +4102,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "e4e3e819b3b04df4",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -4124,8 +4125,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e4e3e819b3b04df4"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-02-3-PI-MPC",
@@ -4135,6 +4135,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
+   "sha": "82f673a0794878e4",
    "stored": {
     "res_bound": 2.2204460492503147e-15,
     "res_ok": true,
@@ -4157,8 +4158,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "82f673a0794878e4"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-03-4-PI-MPC",
@@ -4168,6 +4168,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "2daaf06e39914cee",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -4190,8 +4191,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2daaf06e39914cee"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-04-6-PI-MPC",
@@ -4201,6 +4201,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "37717bff22958988",
    "stored": {
     "res_bound": 1.8873791418627677e-15,
     "res_ok": true,
@@ -4223,8 +4224,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "37717bff22958988"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-05-7-PI-MPC",
@@ -4234,6 +4234,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
+   "sha": "243c496d8d017f87",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4256,8 +4257,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "243c496d8d017f87"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-06-10-PI-MPC",
@@ -4267,6 +4267,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
+   "sha": "55b271e89cb325a2",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4289,8 +4290,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "55b271e89cb325a2"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-07-12-PI-MPC",
@@ -4300,6 +4300,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "b075e98395cd1b1a",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4322,8 +4323,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b075e98395cd1b1a"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-08-16-PI-MPC",
@@ -4333,6 +4333,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
+   "sha": "439f2e7e2ffff51a",
    "stored": {
     "res_bound": 1.3322676295501888e-15,
     "res_ok": true,
@@ -4353,10 +4354,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "439f2e7e2ffff51a"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-09-17-PI-MPC",
@@ -4366,6 +4366,7 @@
    "points": 17,
    "quality": "PI",
    "status": "verified",
+   "sha": "a2351945164e4bf7",
    "stored": {
     "res_bound": 1.379538844270557e-15,
     "res_ok": true,
@@ -4388,8 +4389,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a2351945164e4bf7"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-10-22-PI-MPC",
@@ -4399,6 +4399,7 @@
    "points": 22,
    "quality": "PI",
    "status": "verified",
+   "sha": "23c0ce7f5d7b52af",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4421,8 +4422,7 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "23c0ce7f5d7b52af"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-11-24-PI-MPC",
@@ -4432,6 +4432,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
+   "sha": "f64632b48cd96b82",
    "stored": {
     "res_bound": 5.308253836489034e-15,
     "res_ok": true,
@@ -4452,10 +4453,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f64632b48cd96b82"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-12-31-PI-MPC",
@@ -4465,6 +4465,7 @@
    "points": 31,
    "quality": "PI",
    "status": "verified",
+   "sha": "81dd391a9590692b",
    "stored": {
     "res_bound": 1.9662548499110885e-15,
     "res_ok": true,
@@ -4487,8 +4488,7 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "81dd391a9590692b"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-13-33-PI-MPC",
@@ -4498,6 +4498,7 @@
    "points": 33,
    "quality": "PI",
    "status": "verified",
+   "sha": "4e77ce85ad5dd1a3",
    "stored": {
     "res_bound": 1.815577852989916e-15,
     "res_ok": true,
@@ -4520,8 +4521,7 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4e77ce85ad5dd1a3"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-14-40-PI-MPC",
@@ -4531,6 +4531,7 @@
    "points": 40,
    "quality": "PI",
    "status": "verified",
+   "sha": "73dafdbe0c332cbb",
    "stored": {
     "res_bound": 2.2251758812277835e-15,
     "res_ok": true,
@@ -4540,21 +4541,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.028209893951747e-13,
-    "kratio": 0.6666679982823048,
+    "r": 5.028209893951757e-13,
+    "kratio": 0.6666679982823646,
     "mode": "full",
     "equations": 120,
     "unknowns": 120,
-    "dist": 5.06651262660401e-13,
+    "dist": 5.06651262660402e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.07,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "73dafdbe0c332cbb"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-15-43-PI-MPC",
@@ -4564,6 +4564,7 @@
    "points": 43,
    "quality": "PI",
    "status": "verified",
+   "sha": "e39d1e73ae79a924",
    "stored": {
     "res_bound": 2.418800836706538e-15,
     "res_ok": true,
@@ -4584,10 +4585,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.06,
+   "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e39d1e73ae79a924"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-16-51-PI-MPC",
@@ -4597,6 +4597,7 @@
    "points": 51,
    "quality": "PI",
    "status": "verified",
+   "sha": "5210891cbcc830e9",
    "stored": {
     "res_bound": 2.869801835406196e-15,
     "res_ok": true,
@@ -4606,21 +4607,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.3127195094053945e-12,
-    "kratio": 0.6666818536329148,
+    "r": 1.3127195094052033e-12,
+    "kratio": 0.6666818536333817,
     "mode": "full",
     "equations": 153,
     "unknowns": 153,
-    "dist": 2.0583460383694336e-12,
+    "dist": 2.058346038369242e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.09,
+   "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5210891cbcc830e9"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-17-54-PI-MPC",
@@ -4630,6 +4630,7 @@
    "points": 54,
    "quality": "PI",
    "status": "verified",
+   "sha": "49c920d9b3245210",
    "stored": {
     "res_bound": 3.362544617746546e-15,
     "res_ok": true,
@@ -4650,10 +4651,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.09,
+   "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "49c920d9b3245210"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-18-64-PI-MPC",
@@ -4663,6 +4663,7 @@
    "points": 64,
    "quality": "PI",
    "status": "verified",
+   "sha": "6ab023b0ab65f168",
    "stored": {
     "res_bound": 3.5048054953038e-15,
     "res_ok": true,
@@ -4672,21 +4673,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.8457036717651977e-12,
-    "kratio": 0.6667219254087469,
+    "r": 1.8457036717653645e-12,
+    "kratio": 0.6667219254070063,
     "mode": "full",
     "equations": 190,
     "unknowns": 191,
-    "dist": 2.0938387659038066e-12,
+    "dist": 2.0938387659039734e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.15,
+   "seconds": 0.14,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6ab023b0ab65f168"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-19-67-PI-MPC",
@@ -4696,6 +4696,7 @@
    "points": 67,
    "quality": "PI",
    "status": "verified",
+   "sha": "e1097c187bfbee2f",
    "stored": {
     "res_bound": 4.332634511577953e-15,
     "res_ok": true,
@@ -4705,21 +4706,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.884722622570543e-13,
-    "kratio": 0.6666680014991738,
+    "r": 2.8847226225705303e-13,
+    "kratio": 0.6666680014992253,
     "mode": "sym2",
     "equations": 100,
     "unknowns": 100,
-    "dist": 3.7040680340885013e-13,
+    "dist": 3.7040680340884887e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.13,
+   "seconds": 0.16,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e1097c187bfbee2f"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-20-77-PI-MPC",
@@ -4729,6 +4729,7 @@
    "points": 77,
    "quality": "PI",
    "status": "verified",
+   "sha": "56693adac5e115f9",
    "stored": {
     "res_bound": 4.647954384654628e-15,
     "res_ok": true,
@@ -4738,21 +4739,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.007454292097015e-13,
-    "kratio": 0.6666788057878701,
+    "r": 7.007454292097114e-13,
+    "kratio": 0.6666788057882882,
     "mode": "full",
     "equations": 231,
     "unknowns": 231,
-    "dist": 9.825203146341701e-13,
+    "dist": 9.8252031463418e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.18,
+   "seconds": 0.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "56693adac5e115f9"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-21-81-PI-MPC",
@@ -4762,6 +4762,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
+   "sha": "7fe0907738d018e8",
    "stored": {
     "res_bound": 4.9271296678060675e-15,
     "res_ok": true,
@@ -4771,21 +4772,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 9.947127913328527e-13,
-    "kratio": 0.6666913473342007,
+    "r": 9.947127913328218e-13,
+    "kratio": 0.6666913473345556,
     "mode": "sym2",
     "equations": 121,
     "unknowns": 121,
-    "dist": 1.9756513256779637e-12,
+    "dist": 1.9756513256779326e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.17,
+   "seconds": 0.22,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7fe0907738d018e8"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-22-92-PI-MPC",
@@ -4795,6 +4795,7 @@
    "points": 92,
    "quality": "PI",
    "status": "verified",
+   "sha": "c0b3d98a0a1d9f4d",
    "stored": {
     "res_bound": 5.654150751928642e-15,
     "res_ok": true,
@@ -4804,21 +4805,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.1497766714720128e-11,
-    "kratio": 0.6821831523361537,
+    "r": 2.1497766714703694e-11,
+    "kratio": 0.6821831523311477,
     "mode": "full",
     "equations": 276,
     "unknowns": 276,
-    "dist": 2.368540786123173e-11,
+    "dist": 2.3685407861215297e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.25,
+   "seconds": 0.32,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c0b3d98a0a1d9f4d"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-23-96-PI-MPC",
@@ -4828,6 +4828,7 @@
    "points": 96,
    "quality": "PI",
    "status": "verified",
+   "sha": "1d03ddf5c3f51c5f",
    "stored": {
     "res_bound": 5.220088718108176e-15,
     "res_ok": true,
@@ -4837,21 +4838,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.43138221120074e-13,
-    "kratio": 0.6666875531118397,
+    "r": 7.431382211200616e-13,
+    "kratio": 0.6666875531121683,
     "mode": "sym2",
     "equations": 144,
     "unknowns": 144,
-    "dist": 8.546602354655739e-13,
+    "dist": 8.546602354655615e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.23,
+   "seconds": 0.27,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1d03ddf5c3f51c5f"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-24-109-PI-MPC",
@@ -4861,6 +4861,7 @@
    "points": 109,
    "quality": "PI",
    "status": "verified",
+   "sha": "29572d3d058f489b",
    "stored": {
     "res_bound": 6.26662079433044e-15,
     "res_ok": true,
@@ -4870,21 +4871,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.9633346681945318e-12,
-    "kratio": 0.6670959958214042,
+    "r": 2.96333466819504e-12,
+    "kratio": 0.6670959958199258,
     "mode": "full",
     "equations": 325,
     "unknowns": 327,
-    "dist": 3.048488859337497e-12,
+    "dist": 3.048488859338005e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.38,
+   "seconds": 0.43,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "29572d3d058f489b"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-25-113-PI-MPC",
@@ -4894,6 +4894,7 @@
    "points": 113,
    "quality": "PI",
    "status": "verified",
+   "sha": "b98f1e031bce8854",
    "stored": {
     "res_bound": 6.042136734517316e-15,
     "res_ok": true,
@@ -4903,21 +4904,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.173236729085112e-12,
-    "kratio": 0.6675804251128973,
+    "r": 4.173236729087716e-12,
+    "kratio": 0.6675804251153025,
     "mode": "sym2",
     "equations": 169,
     "unknowns": 169,
-    "dist": 2.1042648368449292e-11,
+    "dist": 2.1042648368451897e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.31,
+   "seconds": 0.37,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b98f1e031bce8854"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-26-127-PI-MPC",
@@ -4927,6 +4927,7 @@
    "points": 127,
    "quality": "PI",
    "status": "verified",
+   "sha": "7e2de7a301d7be14",
    "stored": {
     "res_bound": 7.883172586253436e-15,
     "res_ok": true,
@@ -4936,21 +4937,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.9033309559536934e-12,
-    "kratio": 0.669692967820284,
+    "r": 6.903330955952625e-12,
+    "kratio": 0.6696929678322299,
     "mode": "full",
     "equations": 378,
     "unknowns": 381,
-    "dist": 6.999476366031842e-12,
+    "dist": 6.999476366030773e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.48,
+   "seconds": 0.58,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7e2de7a301d7be14"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-27-131-PI-MPC",
@@ -4960,6 +4960,7 @@
    "points": 131,
    "quality": "PI",
    "status": "verified",
+   "sha": "a03da963cb9e36a4",
    "stored": {
     "res_bound": 6.826941559268632e-15,
     "res_ok": true,
@@ -4969,21 +4970,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.6027883660743368e-12,
-    "kratio": 0.666861413790064,
+    "r": 1.6027883660737698e-12,
+    "kratio": 0.6668614137898661,
     "mode": "sym2",
     "equations": 196,
     "unknowns": 196,
-    "dist": 4.3961886172616326e-12,
+    "dist": 4.3961886172610655e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.4,
+   "seconds": 0.47,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a03da963cb9e36a4"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-28-146-PI-MPC",
@@ -4993,6 +4993,7 @@
    "points": 146,
    "quality": "PI",
    "status": "verified",
+   "sha": "d4c16fd75a7804e0",
    "stored": {
     "res_bound": 8.517649815174322e-15,
     "res_ok": true,
@@ -5002,21 +5003,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.125229828327913e-12,
-    "kratio": 0.6722082575948983,
+    "r": 8.125229828327118e-12,
+    "kratio": 0.6722082575550747,
     "mode": "full",
     "equations": 435,
     "unknowns": 438,
-    "dist": 8.159702287715352e-12,
+    "dist": 8.159702287714557e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.61,
+   "seconds": 0.65,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "d4c16fd75a7804e0"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-29-150-PI-MPC",
@@ -5026,6 +5026,7 @@
    "points": 150,
    "quality": "PI",
    "status": "verified",
+   "sha": "69354b4b87113cc5",
    "stored": {
     "res_bound": 8.210720650473148e-15,
     "res_ok": true,
@@ -5035,21 +5036,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.860751147113653e-11,
-    "kratio": 0.6986035904025253,
+    "r": 1.860751147113342e-11,
+    "kratio": 0.6986035903765199,
     "mode": "sym2",
     "equations": 225,
     "unknowns": 225,
-    "dist": 1.9295517367501952e-11,
+    "dist": 1.9295517367498844e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.52,
+   "seconds": 0.57,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "69354b4b87113cc5"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-30-166-PI-MPC",
@@ -5059,6 +5059,7 @@
    "points": 166,
    "quality": "PI",
    "status": "verified",
+   "sha": "6ea6b60bd895d34a",
    "stored": {
     "res_bound": 3.3382874194931836e-13,
     "res_ok": true,
@@ -5068,21 +5069,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.1603381132721398e-11,
-    "kratio": 0.6839013008484534,
+    "r": 1.160338113272764e-11,
+    "kratio": 0.6839013008260456,
     "mode": "full",
     "equations": 496,
     "unknowns": 498,
-    "dist": 1.2104647329606e-11,
+    "dist": 1.2104647329612243e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.91,
+   "seconds": 0.86,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6ea6b60bd895d34a"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-30-167-PI-MPC",
@@ -5092,6 +5092,7 @@
    "points": 167,
    "quality": "PI",
    "status": "verified",
+   "sha": "586ebd16bd303af8",
    "stored": {
     "res_bound": 9.171872229128652e-15,
     "res_ok": true,
@@ -5101,21 +5102,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.161557469170347e-11,
-    "kratio": 0.6840417170979683,
+    "r": 1.1615574691702279e-11,
+    "kratio": 0.6840417171190587,
     "mode": "full",
     "equations": 496,
     "unknowns": 501,
-    "dist": 1.4511649858662345e-11,
+    "dist": 1.4511649858661152e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.89,
+   "seconds": 0.88,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "586ebd16bd303af8"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-01-1-PI-MPC",
@@ -5125,6 +5125,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "eaff9a85feb2616c",
    "stored": {
     "res_bound": 3.830269434956793e-15,
     "res_ok": true,
@@ -5145,10 +5146,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "eaff9a85feb2616c"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-02-4-PI-MPC",
@@ -5158,6 +5158,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "a5c7d98717dc7070",
    "stored": {
     "res_bound": 3.996802888650567e-15,
     "res_ok": true,
@@ -5180,8 +5181,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a5c7d98717dc7070"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-03-6-PI-MPC",
@@ -5191,6 +5191,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "4ce5d80d91f82ee3",
    "stored": {
     "res_bound": 3.996802888650567e-15,
     "res_ok": true,
@@ -5211,10 +5212,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4ce5d80d91f82ee3"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-04-11-PI-MPC",
@@ -5224,6 +5224,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
+   "sha": "dc39fcc8d58e162f",
    "stored": {
     "res_bound": 6.341281666433223e-15,
     "res_ok": true,
@@ -5244,10 +5245,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "dc39fcc8d58e162f"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-05-14-PI-MPC",
@@ -5257,6 +5257,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
+   "sha": "81ef842c270772c6",
    "stored": {
     "res_bound": 1.5820678100908493e-14,
     "res_ok": true,
@@ -5277,10 +5278,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "81ef842c270772c6"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-06-23-PI-MPC",
@@ -5290,6 +5290,7 @@
    "points": 23,
    "quality": "PI",
    "status": "verified",
+   "sha": "1ed21c1364fe1907",
    "stored": {
     "res_bound": 1.455086051649347e-14,
     "res_ok": true,
@@ -5310,10 +5311,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.05,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1ed21c1364fe1907"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-07-31-PI-MPC",
@@ -5323,6 +5323,7 @@
    "points": 31,
    "quality": "PI",
    "status": "verified",
+   "sha": "58fdeda60689bcd0",
    "stored": {
     "res_bound": 9.992007221626415e-15,
     "res_ok": true,
@@ -5332,21 +5333,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.8281606918926396e-14,
-    "kratio": 0.6666667048536201,
+    "r": 4.828160691892622e-14,
+    "kratio": 0.6666667048535591,
     "mode": "full",
     "equations": 120,
     "unknowns": 122,
-    "dist": 2.669402502772764e-13,
+    "dist": 2.669402502772762e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.07,
+   "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "58fdeda60689bcd0"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-08-43-PI-MPC",
@@ -5356,6 +5356,7 @@
    "points": 43,
    "quality": "PI",
    "status": "verified",
+   "sha": "921fff95d890de45",
    "stored": {
     "res_bound": 2.181588243388434e-14,
     "res_ok": true,
@@ -5365,21 +5366,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.213390595172828e-14,
-    "kratio": 0.6666667477340452,
+    "r": 8.213390595172906e-14,
+    "kratio": 0.6666667477351823,
     "mode": "full",
     "equations": 165,
     "unknowns": 167,
-    "dist": 8.429884301468379e-14,
+    "dist": 8.429884301468457e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.21,
+   "seconds": 0.27,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "921fff95d890de45"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-09-56-PI-MPC",
@@ -5389,6 +5389,7 @@
    "points": 56,
    "quality": "PI",
    "status": "verified",
+   "sha": "32696df01718788e",
    "stored": {
     "res_bound": 1.3072876114961225e-14,
     "res_ok": true,
@@ -5398,22 +5399,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.4192898875200807e-13,
-    "kratio": 0.6666718028284359,
+    "r": 4.4192898875203256e-13,
+    "kratio": 0.666671802828579,
     "mode": "full",
     "equations": 220,
     "unknowns": 223,
-    "dist": 5.843707425885057e-13,
+    "dist": 5.843707425885302e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.664535259100376e-15
    },
-   "seconds": 0.47,
+   "seconds": 0.62,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "32696df01718788e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-10-74-PI-MPC",
@@ -5423,6 +5423,7 @@
    "points": 74,
    "quality": "PI",
    "status": "verified",
+   "sha": "7ae9fb094fd7f2b7",
    "stored": {
     "res_bound": 3.3378317962356916e-15,
     "res_ok": true,
@@ -5432,21 +5433,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.219576942972097e-13,
-    "kratio": 0.6666734956644006,
+    "r": 3.219576942972058e-13,
+    "kratio": 0.6666734956698226,
     "mode": "full",
     "equations": 286,
     "unknowns": 295,
-    "dist": 3.253300001068215e-13,
+    "dist": 3.2533000010681756e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.3,
+   "seconds": 0.37,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7ae9fb094fd7f2b7"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-10-75-PI-MPC",
@@ -5456,6 +5456,7 @@
    "points": 75,
    "quality": "PI",
    "status": "verified",
+   "sha": "2ab49b3608e5ef7b",
    "stored": {
     "res_bound": 2.246119956694771e-14,
     "res_ok": true,
@@ -5465,21 +5466,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.186873211387753e-14,
-    "kratio": 0.6666670027728477,
+    "r": 7.186873211387453e-14,
+    "kratio": 0.6666670027757877,
     "mode": "full",
     "equations": 286,
     "unknowns": 292,
-    "dist": 1.3970342675310375e-13,
+    "dist": 1.3970342675310074e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.31,
+   "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2ab49b3608e5ef7b"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-11-92-PI-MPC",
@@ -5489,6 +5489,7 @@
    "points": 92,
    "quality": "PI",
    "status": "verified",
+   "sha": "c213ce951f1be82b",
    "stored": {
     "res_bound": 2.3481216970822073e-14,
     "res_ok": true,
@@ -5498,21 +5499,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.4032998121664905e-13,
-    "kratio": 0.6666759794662976,
+    "r": 3.4032998121663814e-13,
+    "kratio": 0.6666759794728151,
     "mode": "full",
     "equations": 364,
     "unknowns": 366,
-    "dist": 1.028446899995566e-12,
+    "dist": 1.028446899995555e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.47,
+   "seconds": 0.56,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c213ce951f1be82b"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-12-117-PI-MPC",
@@ -5522,6 +5522,7 @@
    "points": 117,
    "quality": "PI",
    "status": "verified",
+   "sha": "ced474e9e5e458b4",
    "stored": {
     "res_bound": 2.356448369766896e-14,
     "res_ok": true,
@@ -5531,21 +5532,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.105562374194323e-13,
-    "kratio": 0.666671321453665,
+    "r": 2.1055623741944002e-13,
+    "kratio": 0.6666713214691224,
     "mode": "full",
     "equations": 455,
     "unknowns": 462,
-    "dist": 2.286528908174685e-13,
+    "dist": 2.2865289081747625e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.05,
+   "seconds": 1.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ced474e9e5e458b4"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-13-142-PI-MPC",
@@ -5555,6 +5555,7 @@
    "points": 142,
    "quality": "PI",
    "status": "verified",
+   "sha": "112c13322567826a",
    "stored": {
     "res_bound": 2.312807919423287e-14,
     "res_ok": true,
@@ -5564,22 +5565,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.0412212544958617e-12,
-    "kratio": 0.6667830059718332,
+    "r": 1.0412212544960096e-12,
+    "kratio": 0.6667830059662453,
     "mode": "full",
     "equations": 560,
     "unknowns": 563,
-    "dist": 1.244253490935843e-12,
+    "dist": 1.2442534909359908e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.2204460492503135e-15
    },
-   "seconds": 3.12,
+   "seconds": 3.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "112c13322567826a"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-14-173-PI-MPC",
@@ -5589,6 +5589,7 @@
    "points": 173,
    "quality": "PI",
    "status": "verified",
+   "sha": "38dfdbe324aacfd5",
    "stored": {
     "res_bound": 5.345723863570131e-14,
     "res_ok": true,
@@ -5598,22 +5599,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.343569989793976e-13,
-    "kratio": 0.6667376422821869,
+    "r": 6.343569989794305e-13,
+    "kratio": 0.666737642248648,
     "mode": "full",
     "equations": 680,
     "unknowns": 684,
-    "dist": 9.98510512989204e-13,
+    "dist": 9.985105129892368e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.2204460492503135e-15
    },
-   "seconds": 4.34,
+   "seconds": 3.54,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "38dfdbe324aacfd5"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-15-207-PI-MPC",
@@ -5623,6 +5623,7 @@
    "points": 207,
    "quality": "PI",
    "status": "verified",
+   "sha": "a1ec23e4d2f62fcf",
    "stored": {
     "res_bound": 2.0400348077487264e-14,
     "res_ok": true,
@@ -5632,21 +5633,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.2613498712738613e-12,
-    "kratio": 0.667551038414843,
+    "r": 2.2613498712738306e-12,
+    "kratio": 0.667551038534035,
     "mode": "full",
     "equations": 816,
     "unknowns": 820,
-    "dist": 4.508693320637129e-12,
+    "dist": 4.508693320637098e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.53,
+   "seconds": 3.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a1ec23e4d2f62fcf"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-16-248-PI-MPC",
@@ -5656,6 +5656,7 @@
    "points": 248,
    "quality": "PI",
    "status": "verified",
+   "sha": "80ed0d0ef107c257",
    "stored": {
     "res_bound": 4.5963233219481506e-14,
     "res_ok": true,
@@ -5665,21 +5666,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.902598889315384e-12,
-    "kratio": 0.6675295118894862,
+    "r": 1.902598889315307e-12,
+    "kratio": 0.6675295120994739,
     "mode": "full",
     "equations": 969,
     "unknowns": 978,
-    "dist": 4.4768755907880705e-12,
+    "dist": 4.476875590787994e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 5.52,
+   "seconds": 4.45,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "80ed0d0ef107c257"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-17-289-PI-MPC",
@@ -5689,6 +5689,7 @@
    "points": 289,
    "quality": "PI",
    "status": "verified",
+   "sha": "b85d53d4a175e483",
    "stored": {
     "res_bound": 2.3481216970822073e-14,
     "res_ok": true,
@@ -5698,21 +5699,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.033709480654412e-13,
-    "kratio": 0.6668371068381451,
+    "r": 6.03370948065467e-13,
+    "kratio": 0.6668371068245875,
     "mode": "full",
     "equations": 1140,
     "unknowns": 1151,
-    "dist": 6.219116911174834e-13,
+    "dist": 6.219116911175092e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 5.17,
+   "seconds": 4.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b85d53d4a175e483"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-18-337-PI-MPC",
@@ -5722,6 +5722,7 @@
    "points": 337,
    "quality": "PI",
    "status": "verified",
+   "sha": "0fdbd0114643cc5b",
    "stored": {
     "res_bound": 5.195843755245735e-14,
     "res_ok": true,
@@ -5731,22 +5732,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.966993858771513e-12,
-    "kratio": 0.6707308706340401,
+    "r": 2.966993858771232e-12,
+    "kratio": 0.6707308705940079,
     "mode": "full",
     "equations": 1330,
     "unknowns": 1333,
-    "dist": 3.2182098222201947e-12,
+    "dist": 3.2182098222199136e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.664535259100376e-15
    },
-   "seconds": 19.13,
+   "seconds": 14.87,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0fdbd0114643cc5b"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-19-389-PI-MPC",
@@ -5756,6 +5756,7 @@
    "points": 389,
    "quality": "PI",
    "status": "verified",
+   "sha": "07733b6b75eeba20",
    "stored": {
     "res_bound": 6.05349104176867e-14,
     "res_ok": true,
@@ -5765,22 +5766,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.936655895200953e-12,
-    "kratio": 0.675473503116101,
+    "r": 3.937032817602075e-12,
+    "kratio": 0.6754743457062948,
     "mode": "full",
     "equations": 1540,
     "unknowns": 1544,
-    "dist": 4.153427155088254e-12,
+    "dist": 4.1535265214556635e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.4424906541753448e-15
    },
-   "seconds": 26.46,
+   "seconds": 20.37,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "07733b6b75eeba20"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-20-446-PI-MPC",
@@ -5790,6 +5790,7 @@
    "points": 446,
    "quality": "PI",
    "status": "verified",
+   "sha": "afb6e3c95ca5e115",
    "stored": {
     "res_bound": 3.559429861272798e-14,
     "res_ok": true,
@@ -5799,22 +5800,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.8239551156860166e-12,
-    "kratio": 0.6730614326726333,
+    "r": 2.8236167747125824e-12,
+    "kratio": 0.6730606675926144,
     "mode": "full",
     "equations": 1771,
     "unknowns": 1776,
-    "dist": 9.386378951918206e-12,
+    "dist": 9.38604061094477e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.4424906541753448e-15
    },
-   "seconds": 32.51,
+   "seconds": 25.32,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "afb6e3c95ca5e115"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-21-509-PI-MPC",
@@ -5824,6 +5824,7 @@
    "points": 509,
    "quality": "PI",
    "status": "verified",
+   "sha": "3a7588f861a44966",
    "stored": {
     "res_bound": 5.945244296867717e-14,
     "res_ok": true,
@@ -5833,21 +5834,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.479815869030209e-12,
-    "kratio": 0.6815701119134603,
+    "r": 3.475989307968203e-12,
+    "kratio": 0.6815537317218617,
     "mode": "full",
     "equations": 2024,
     "unknowns": 2026,
-    "dist": 5.0075953009955824e-12,
+    "dist": 5.007210434751606e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 20.02,
+   "seconds": 14.2,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3a7588f861a44966"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-22-580-PI-MPC",
@@ -5857,6 +5857,7 @@
    "points": 580,
    "quality": "PI",
    "status": "verified",
+   "sha": "c079e3708bf96ec8",
    "stored": {
     "res_bound": 4.219998661643497e-14,
     "res_ok": true,
@@ -5866,22 +5867,21 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.854173250198459e-12,
-    "kratio": 0.6923797533713101,
+    "r": 4.853433608195505e-12,
+    "kratio": 0.6923758313356537,
     "mode": "full",
     "equations": 2300,
     "unknowns": 2307,
-    "dist": 5.6538121806595824e-12,
+    "dist": 5.649131242977917e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI",
     "snapped": 2.664535259100376e-15
    },
-   "seconds": 65.91,
+   "seconds": 44.56,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c079e3708bf96ec8"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-23-659-PI-MPC",
@@ -5891,6 +5891,7 @@
    "points": 659,
    "quality": "PI",
    "status": "verified",
+   "sha": "69c1009ae0c6f51e",
    "stored": {
     "res_bound": 4.5963233219481506e-14,
     "res_ok": true,
@@ -5900,21 +5901,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.2610956884969334e-12,
-    "kratio": 0.680199611503609,
+    "r": 3.2610566468904313e-12,
+    "kratio": 0.6801994524532896,
     "mode": "full",
     "equations": 2600,
     "unknowns": 2615,
-    "dist": 3.865945797163175e-12,
+    "dist": 3.8648936760336246e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 47.93,
+   "seconds": 31.5,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "69c1009ae0c6f51e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-24-766-PI-MPC",
@@ -5924,6 +5924,7 @@
    "points": 766,
    "quality": "PI",
    "status": "verified",
+   "sha": "0747310c9c1f4030",
    "stored": {
     "res_bound": 4.438299118890848e-15,
     "res_ok": true,
@@ -5933,21 +5934,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.2619621973308345e-13,
-    "kratio": 0.6667040008998872,
+    "r": 1.2619621973308424e-13,
+    "kratio": 0.6667040008913993,
     "mode": "sym24",
     "equations": 223,
     "unknowns": 223,
-    "dist": 1.263627533533107e-13,
+    "dist": 1.263627533533115e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 5.03,
+   "seconds": 5.26,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0747310c9c1f4030"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-25-871-PI-MPC",
@@ -5957,6 +5957,7 @@
    "points": 871,
    "quality": "PI",
    "status": "verified",
+   "sha": "bb46dc61f8d22ff5",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -5966,21 +5967,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 9.721839063595188e-12,
-    "kratio": 0.8565173196951712,
+    "r": 9.723238373068103e-12,
+    "kratio": 0.8565446367996425,
     "mode": "full",
     "equations": 3276,
     "unknowns": 3484,
-    "dist": 1.1162909990631703e-11,
+    "dist": 1.116319907596977e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 56.55,
+   "seconds": 50.4,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "bb46dc61f8d22ff5"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-25-872-PI-MPC",
@@ -5990,6 +5990,7 @@
    "points": 872,
    "quality": "PI",
    "status": "verified",
+   "sha": "e2aa917136eea11c",
    "stored": {
     "res_bound": 4.1835107712499744e-15,
     "res_ok": true,
@@ -5999,21 +6000,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.3866099857224134e-13,
-    "kratio": 0.666916471642147,
+    "r": 3.3678052495461433e-13,
+    "kratio": 0.666915075227771,
     "mode": "sym24",
     "equations": 248,
     "unknowns": 257,
-    "dist": 3.403263347745232e-13,
+    "dist": 3.375576818490176e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 8.46,
+   "seconds": 6.64,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e2aa917136eea11c"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-26-950-PI-MPC",
@@ -6023,6 +6023,7 @@
    "points": 950,
    "quality": "PI",
    "status": "verified",
+   "sha": "fd074201253bfd34",
    "stored": {
     "res_bound": 5.502024296346262e-15,
     "res_ok": true,
@@ -6032,21 +6033,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 9.090767216784996e-14,
-    "kratio": 0.666692129582235,
+    "r": 9.09685645697767e-14,
+    "kratio": 0.6666921772760975,
     "mode": "sym24",
     "equations": 275,
     "unknowns": 281,
-    "dist": 9.129625061504969e-14,
+    "dist": 9.135714301697642e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 7.88,
+   "seconds": 8.19,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "fd074201253bfd34"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-27-1077-PI-MPC",
@@ -6056,6 +6056,7 @@
    "points": 1077,
    "quality": "PI",
    "status": "verified",
+   "sha": "aee75ce270c9eb5f",
    "stored": {
     "res_bound": 6.8278716014447175e-15,
     "res_ok": true,
@@ -6065,21 +6066,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.1546453476628305e-12,
-    "kratio": 0.746427063996263,
+    "r": 5.153245372810755e-12,
+    "kratio": 0.7464054100274924,
     "mode": "full",
     "equations": 4060,
     "unknowns": 4308,
-    "dist": 5.16341611833048e-12,
+    "dist": 5.161794098651434e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 122.6,
+   "seconds": 78.53,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "aee75ce270c9eb5f"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-27-1079-PI-MPC",
@@ -6089,6 +6089,7 @@
    "points": 1079,
    "quality": "PI",
    "status": "verified",
+   "sha": "9f896db19e7fae1e",
    "stored": {
     "res_bound": 5.588561903784698e-15,
     "res_ok": true,
@@ -6098,21 +6099,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.8457600814451965e-13,
-    "kratio": 0.6671516802049202,
+    "r": 3.845760081445002e-13,
+    "kratio": 0.6671516801514953,
     "mode": "sym24",
     "equations": 301,
     "unknowns": 312,
-    "dist": 3.851311202119569e-13,
+    "dist": 3.8513112021193746e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 11.31,
+   "seconds": 9.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9f896db19e7fae1e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-28-1181-PI-MPC",
@@ -6122,6 +6122,7 @@
    "points": 1181,
    "quality": "PI",
    "status": "verified",
+   "sha": "7e650be724121e76",
    "stored": {
     "res_bound": 6.455527663796428e-15,
     "res_ok": true,
@@ -6131,21 +6132,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.866676110139918e-13,
-    "kratio": 0.6702156081376301,
+    "r": 8.866676110137022e-13,
+    "kratio": 0.6702156081835428,
     "mode": "sym24",
     "equations": 329,
     "unknowns": 331,
-    "dist": 8.892211265241757e-13,
+    "dist": 8.892211265238861e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 13.9,
+   "seconds": 12.26,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7e650be724121e76"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-28-1336-PI-MPC",
@@ -6155,6 +6155,7 @@
    "points": 1336,
    "quality": "PI",
    "status": "verified",
+   "sha": "5f031701620c562c",
    "stored": {
     "res_bound": 5.374038845552167e-15,
     "res_ok": true,
@@ -6164,21 +6165,53 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.639455878067136e-14,
-    "kratio": 0.6666879056005824,
+    "r": 6.63945587806713e-14,
+    "kratio": 0.6666879055392902,
     "mode": "sym24",
     "equations": 343,
     "unknowns": 388,
-    "dist": 7.16126122144604e-14,
+    "dist": 7.161261221446034e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 17.39,
+   "seconds": 17.88,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "5f031701620c562c"
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T3-29-1374-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-29-1374-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 29,
+   "points": 1374,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "52a5c4fbe93243e9",
+   "stored": {
+    "res_bound": 5.739361280423137e-15,
+    "res_ok": true,
+    "margin_exact": 3.8516647556842e-05,
+    "minw_exact": 2.15685823849355e-06,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 3.542803099489904e-13,
+    "kratio": 0.6672462358613963,
+    "mode": "sym24",
+    "equations": 362,
+    "unknowns": 384,
+    "dist": 3.870319219270263e-13,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 15.58,
+   "ok_stored": true,
+   "ok_exist": true
   },
   {
    "id": "CA-T3-29-1480-PI-MPC",
@@ -6188,6 +6221,7 @@
    "points": 1480,
    "quality": "PI",
    "status": "verified",
+   "sha": "6936ec4f4cc0a929",
    "stored": {
     "res_bound": 7.469104493837665e-15,
     "res_ok": true,
@@ -6197,21 +6231,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.3429494477411703e-13,
-    "kratio": 0.6667549976620191,
+    "r": 1.342949447741121e-13,
+    "kratio": 0.6667549978165205,
     "mode": "sym24",
     "equations": 372,
     "unknowns": 422,
-    "dist": 8.409248510016189e-13,
+    "dist": 8.409248510016139e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 22.33,
+   "seconds": 21.57,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6936ec4f4cc0a929"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-29-1536-PI-MPC",
@@ -6221,6 +6254,7 @@
    "points": 1536,
    "quality": "PI",
    "status": "verified",
+   "sha": "489e390cf15bc86f",
    "stored": {
     "res_bound": 6.682285299006325e-15,
     "res_ok": true,
@@ -6230,21 +6264,53 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.2017244911718622e-13,
-    "kratio": 0.6667400511586119,
+    "r": 1.201724491171848e-13,
+    "kratio": 0.6667400512931643,
     "mode": "sym24",
     "equations": 377,
     "unknowns": 442,
-    "dist": 1.3360616114885437e-13,
+    "dist": 1.3360616114885296e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 18.81,
+   "seconds": 15.87,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "489e390cf15bc86f"
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T3-30-1678-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-30-1678-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 30,
+   "points": 1678,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "37bbcfea41582d1d",
+   "stored": {
+    "res_bound": 7.686284191499921e-15,
+    "res_ok": true,
+    "margin_exact": 0.00029979502496088817,
+    "minw_exact": 1.5608971274900719e-06,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 3.068960980694123e-13,
+    "kratio": 0.6671994698421606,
+    "mode": "sym12",
+    "equations": 618,
+    "unknowns": 720,
+    "dist": 3.0711814289640337e-13,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 36.38,
+   "ok_stored": true,
+   "ok_exist": true
   },
   {
    "id": "CA-T3-30-1704-PI-MPC",
@@ -6254,6 +6320,7 @@
    "points": 1704,
    "quality": "PI",
    "status": "verified",
+   "sha": "1939ec8dbce184c7",
    "stored": {
     "res_bound": 7.053591058811414e-15,
     "res_ok": true,
@@ -6263,21 +6330,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.5110898460787504e-13,
-    "kratio": 0.6667918941884328,
+    "r": 1.5110898460787655e-13,
+    "kratio": 0.6667918941895976,
     "mode": "sym24",
     "equations": 412,
     "unknowns": 480,
-    "dist": 1.5244125356969992e-13,
+    "dist": 1.5244125356970144e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 22.46,
+   "seconds": 20.8,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1939ec8dbce184c7"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-01-1-PI-MPC",
@@ -6287,6 +6353,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "00a407deeafdd191",
    "stored": {
     "res_bound": 1.6764367671839873e-14,
     "res_ok": true,
@@ -6309,8 +6376,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "00a407deeafdd191"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-02-3-PI-MPC",
@@ -6320,6 +6386,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
+   "sha": "ed1bdfd20b4a6af6",
    "stored": {
     "res_bound": 6.192268919846816e-14,
     "res_ok": true,
@@ -6342,8 +6409,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ed1bdfd20b4a6af6"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-03-4-PI-MPC",
@@ -6353,6 +6419,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
+   "sha": "fd4089687803a958",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -6373,10 +6440,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.0,
+   "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "fd4089687803a958"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-04-6-PI-MPC",
@@ -6386,6 +6452,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "27fb93d36fc999ac",
    "stored": {
     "res_bound": 1.901961661082698e-15,
     "res_ok": true,
@@ -6408,8 +6475,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "27fb93d36fc999ac"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-05-7-PI-MPC",
@@ -6419,6 +6485,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
+   "sha": "87a71111e90a0a22",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -6441,8 +6508,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "87a71111e90a0a22"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-06-11-PI-MPC",
@@ -6452,6 +6518,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
+   "sha": "f5dd0c878999fcfd",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -6472,10 +6539,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f5dd0c878999fcfd"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-07-12-PI-MPC",
@@ -6485,6 +6551,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "852867fdd8be05f6",
    "stored": {
     "res_bound": 9.409140133698206e-15,
     "res_ok": true,
@@ -6505,10 +6572,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "852867fdd8be05f6"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-08-16-PI-MPC",
@@ -6518,6 +6584,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
+   "sha": "af2e3d7a5a0dc108",
    "stored": {
     "res_bound": 3.996802888650566e-15,
     "res_ok": true,
@@ -6540,8 +6607,7 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "af2e3d7a5a0dc108"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-09-19-PI-MPC",
@@ -6551,6 +6617,7 @@
    "points": 19,
    "quality": "PI",
    "status": "verified",
+   "sha": "db24a54c48c1c5f2",
    "stored": {
     "res_bound": 7.935058859986916e-15,
     "res_ok": true,
@@ -6573,8 +6640,7 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "db24a54c48c1c5f2"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-10-24-PI-MPC",
@@ -6584,6 +6650,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
+   "sha": "1e4525783a317718",
    "stored": {
     "res_bound": 2.994349559970468e-15,
     "res_ok": true,
@@ -6604,10 +6671,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.07,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1e4525783a317718"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-11-27-PI-MPC",
@@ -6617,6 +6683,7 @@
    "points": 27,
    "quality": "PI",
    "status": "verified",
+   "sha": "f6d75dcadc2834b1",
    "stored": {
     "res_bound": 5.468173656930646e-15,
     "res_ok": true,
@@ -6637,10 +6704,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.14,
+   "seconds": 0.16,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f6d75dcadc2834b1"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-12-32-PI-MPC",
@@ -6650,6 +6716,7 @@
    "points": 32,
    "quality": "PI",
    "status": "verified",
+   "sha": "0b92d917bebb1afd",
    "stored": {
     "res_bound": 8.301085513418022e-15,
     "res_ok": true,
@@ -6670,10 +6737,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.09,
+   "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0b92d917bebb1afd"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-13-35-PI-MPC",
@@ -6683,6 +6749,7 @@
    "points": 35,
    "quality": "PI",
    "status": "verified",
+   "sha": "56736b2fdb93e1dc",
    "stored": {
     "res_bound": 5.3290705182007545e-15,
     "res_ok": true,
@@ -6703,10 +6770,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.09,
+   "seconds": 0.11,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "56736b2fdb93e1dc"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-14-41-PI-MPC",
@@ -6716,6 +6782,7 @@
    "points": 41,
    "quality": "PI",
    "status": "verified",
+   "sha": "368e4075ecec6318",
    "stored": {
     "res_bound": 5.818370958643464e-15,
     "res_ok": true,
@@ -6725,21 +6792,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.9450519597025836e-14,
-    "kratio": 0.6666666814329727,
+    "r": 3.945051959702586e-14,
+    "kratio": 0.6666666814328953,
     "mode": "full",
     "equations": 120,
     "unknowns": 121,
-    "dist": 1.7989387265532136e-13,
+    "dist": 1.7989387265532138e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.28,
+   "seconds": 0.32,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "368e4075ecec6318"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-15-46-PI-MPC",
@@ -6749,6 +6815,7 @@
    "points": 46,
    "quality": "PI",
    "status": "verified",
+   "sha": "9331e0b28c16d291",
    "stored": {
     "res_bound": 6.3467026772956506e-15,
     "res_ok": true,
@@ -6758,21 +6825,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.6942646732684096e-14,
-    "kratio": 0.6666666952951127,
+    "r": 3.694264673268418e-14,
+    "kratio": 0.6666666952949648,
     "mode": "full",
     "equations": 136,
     "unknowns": 138,
-    "dist": 6.888107475087944e-13,
+    "dist": 6.888107475087945e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.19,
+   "seconds": 0.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9331e0b28c16d291"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-16-52-PI-MPC",
@@ -6782,6 +6848,7 @@
    "points": 52,
    "quality": "PI",
    "status": "verified",
+   "sha": "35fb6a673c9f1418",
    "stored": {
     "res_bound": 7.549516567451069e-15,
     "res_ok": true,
@@ -6791,21 +6858,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.1802824666305586e-14,
-    "kratio": 0.6666666713561038,
+    "r": 1.1802824666305574e-14,
+    "kratio": 0.6666666713561087,
     "mode": "full",
     "equations": 153,
     "unknowns": 156,
-    "dist": 1.2468959147214703e-14,
+    "dist": 1.246895914721469e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.21,
+   "seconds": 0.29,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "35fb6a673c9f1418"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-17-58-PI-MPC",
@@ -6815,6 +6881,7 @@
    "points": 58,
    "quality": "PI",
    "status": "verified",
+   "sha": "7d3178b865e902ab",
    "stored": {
     "res_bound": 4.920258536537941e-15,
     "res_ok": true,
@@ -6824,21 +6891,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.182865560265405e-14,
-    "kratio": 0.6666669455076756,
+    "r": 8.182865560265317e-14,
+    "kratio": 0.6666669455082356,
     "mode": "full",
     "equations": 171,
     "unknowns": 173,
-    "dist": 8.349399180492792e-14,
+    "dist": 8.349399180492704e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.26,
+   "seconds": 0.33,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7d3178b865e902ab"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-18-65-PI-MPC",
@@ -6848,6 +6914,7 @@
    "points": 65,
    "quality": "PI",
    "status": "verified",
+   "sha": "87358e7a158a9044",
    "stored": {
     "res_bound": 7.327471962526038e-15,
     "res_ok": true,
@@ -6857,21 +6924,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.588293306691885e-14,
-    "kratio": 0.6666667842356208,
+    "r": 4.588293306691878e-14,
+    "kratio": 0.6666667842349988,
     "mode": "full",
     "equations": 190,
     "unknowns": 193,
-    "dist": 5.65965959682048e-14,
+    "dist": 5.6596595968204735e-14,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.31,
+   "seconds": 0.4,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "87358e7a158a9044"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-19-71-PI-MPC",
@@ -6881,6 +6947,7 @@
    "points": 71,
    "quality": "PI",
    "status": "verified",
+   "sha": "ff4f7471f5992e0e",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -6890,21 +6957,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.036032640202368e-13,
-    "kratio": 0.6666765507049797,
+    "r": 6.036032640202126e-13,
+    "kratio": 0.6666765507051109,
     "mode": "full",
     "equations": 210,
     "unknowns": 211,
-    "dist": 4.79408874979797e-12,
+    "dist": 4.794088749797946e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.63,
+   "seconds": 0.79,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ff4f7471f5992e0e"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-20-78-PI-MPC",
@@ -6914,6 +6980,7 @@
    "points": 78,
    "quality": "PI",
    "status": "verified",
+   "sha": "4fa256f22b27359b",
    "stored": {
     "res_bound": 7.257025926368794e-15,
     "res_ok": true,
@@ -6923,21 +6990,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 9.187598327210938e-14,
-    "kratio": 0.6666672309850189,
+    "r": 9.187598327210765e-14,
+    "kratio": 0.6666672309872804,
     "mode": "full",
     "equations": 231,
     "unknowns": 234,
-    "dist": 9.649562429167218e-13,
+    "dist": 9.6495624291672e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.43,
+   "seconds": 0.57,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4fa256f22b27359b"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-21-85-PI-MPC",
@@ -6947,6 +7013,7 @@
    "points": 85,
    "quality": "PI",
    "status": "verified",
+   "sha": "cb5b1dc358d199ec",
    "stored": {
     "res_bound": 8.129171706443293e-15,
     "res_ok": true,
@@ -6956,21 +7023,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.363112271492943e-13,
-    "kratio": 0.6666715599455431,
+    "r": 3.363112271493068e-13,
+    "kratio": 0.6666715599455137,
     "mode": "full",
     "equations": 253,
     "unknowns": 254,
-    "dist": 5.689031833999981e-13,
+    "dist": 5.689031834000106e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.84,
+   "seconds": 1.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "cb5b1dc358d199ec"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-22-93-PI-MPC",
@@ -6980,6 +7046,7 @@
    "points": 93,
    "quality": "PI",
    "status": "verified",
+   "sha": "4163d961d5c62338",
    "stored": {
     "res_bound": 7.535171217456375e-15,
     "res_ok": true,
@@ -6989,21 +7056,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.9502339741875284e-13,
-    "kratio": 0.6666712469670405,
+    "r": 2.950233974187535e-13,
+    "kratio": 0.6666712469732478,
     "mode": "full",
     "equations": 276,
     "unknowns": 278,
-    "dist": 3.989403764405519e-13,
+    "dist": 3.9894037644055253e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.99,
+   "seconds": 1.13,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4163d961d5c62338"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-23-101-PI-MPC",
@@ -7013,6 +7079,7 @@
    "points": 101,
    "quality": "PI",
    "status": "verified",
+   "sha": "e4fa7afa14db1727",
    "stored": {
     "res_bound": 8.037441426387441e-15,
     "res_ok": true,
@@ -7022,21 +7089,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.651099245943192e-13,
-    "kratio": 0.6666895924476754,
+    "r": 4.651099245942861e-13,
+    "kratio": 0.6666895924369929,
     "mode": "full",
     "equations": 300,
     "unknowns": 303,
-    "dist": 5.074094641320508e-13,
+    "dist": 5.074094641320177e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.68,
+   "seconds": 0.83,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e4fa7afa14db1727"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-24-109-PI-MPC",
@@ -7046,6 +7112,7 @@
    "points": 109,
    "quality": "PI",
    "status": "verified",
+   "sha": "0adec8c07157db43",
    "stored": {
     "res_bound": 1.0769163338864025e-14,
     "res_ok": true,
@@ -7055,21 +7122,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.3916895458417805e-12,
-    "kratio": 0.6675149372526152,
+    "r": 2.391689545839256e-12,
+    "kratio": 0.6675149372062956,
     "mode": "full",
     "equations": 325,
     "unknowns": 326,
-    "dist": 5.8159538449541145e-12,
+    "dist": 5.81595384495159e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.8,
+   "seconds": 0.96,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0adec8c07157db43"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-25-117-PI-MPC",
@@ -7079,6 +7145,7 @@
    "points": 117,
    "quality": "PI",
    "status": "verified",
+   "sha": "86df0bdbd2312281",
    "stored": {
     "res_bound": 9.465017203162683e-15,
     "res_ok": true,
@@ -7088,21 +7155,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.200692493089091e-12,
-    "kratio": 0.6668496996849044,
+    "r": 1.2006924930884975e-12,
+    "kratio": 0.6668496997040156,
     "mode": "full",
     "equations": 351,
     "unknowns": 351,
-    "dist": 8.933903193167357e-12,
+    "dist": 8.933903193166764e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.95,
+   "seconds": 1.09,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "86df0bdbd2312281"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-26-127-PI-MPC",
@@ -7112,6 +7178,7 @@
    "points": 127,
    "quality": "PI",
    "status": "verified",
+   "sha": "9994ff3cfa1310ef",
    "stored": {
     "res_bound": 1.1040205941051524e-14,
     "res_ok": true,
@@ -7121,21 +7188,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.0201924027991286e-12,
-    "kratio": 0.6673195790641224,
+    "r": 2.020192402799764e-12,
+    "kratio": 0.6673195790093684,
     "mode": "full",
     "equations": 378,
     "unknowns": 380,
-    "dist": 2.071568024639315e-12,
+    "dist": 2.07156802463995e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.22,
+   "seconds": 1.25,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9994ff3cfa1310ef"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-27-136-PI-MPC",
@@ -7145,6 +7211,7 @@
    "points": 136,
    "quality": "PI",
    "status": "verified",
+   "sha": "0af76bd187a30056",
    "stored": {
     "res_bound": 1.0218535171941267e-14,
     "res_ok": true,
@@ -7154,21 +7221,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.974461926576147e-12,
-    "kratio": 0.670206183473553,
+    "r": 4.974461926575779e-12,
+    "kratio": 0.6702061834918741,
     "mode": "full",
     "equations": 406,
     "unknowns": 407,
-    "dist": 5.0787119728386205e-12,
+    "dist": 5.078711972838252e-12,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.22,
+   "seconds": 1.42,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "0af76bd187a30056"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-28-146-PI-MPC",
@@ -7178,6 +7244,7 @@
    "points": 146,
    "quality": "PI",
    "status": "verified",
+   "sha": "b8e8b20d94ad69f8",
    "stored": {
     "res_bound": 1.3203216697851772e-14,
     "res_ok": true,
@@ -7187,21 +7254,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.7513147662164e-13,
-    "kratio": 0.6667324485594418,
+    "r": 5.751314766215048e-13,
+    "kratio": 0.6667324485664475,
     "mode": "full",
     "equations": 435,
     "unknowns": 437,
-    "dist": 5.923954619185576e-13,
+    "dist": 5.923954619184224e-13,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.52,
+   "seconds": 1.65,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b8e8b20d94ad69f8"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-29-155-PI-MPC",
@@ -7211,6 +7277,7 @@
    "points": 155,
    "quality": "PI",
    "status": "verified",
+   "sha": "1c42f095d6b1c4c8",
    "stored": {
     "res_bound": 1.4120305199074634e-14,
     "res_ok": true,
@@ -7220,21 +7287,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.0452064560501242e-11,
-    "kratio": 0.6897339446737717,
+    "r": 1.0452064560497448e-11,
+    "kratio": 0.6897339450990893,
     "mode": "full",
     "equations": 465,
     "unknowns": 465,
-    "dist": 1.0536941195610387e-11,
+    "dist": 1.0536941195606593e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 1.73,
+   "seconds": 1.79,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1c42f095d6b1c4c8"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-30-166-PI-MPC",
@@ -7244,6 +7310,7 @@
    "points": 166,
    "quality": "PI",
    "status": "verified",
+   "sha": "6c6c21ae347eb4f2",
    "stored": {
     "res_bound": 1.4011161192172655e-14,
     "res_ok": true,
@@ -7253,21 +7320,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.8356214257196335e-12,
-    "kratio": 0.6739903400594798,
+    "r": 5.835621425706564e-12,
+    "kratio": 0.673990339880383,
     "mode": "full",
     "equations": 496,
     "unknowns": 497,
-    "dist": 1.605612276630535e-11,
+    "dist": 1.6056122766292282e-11,
     "pos": true,
     "inside": true,
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 3.1,
+   "seconds": 3.12,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "6c6c21ae347eb4f2"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-06-21-PO-MPC",
@@ -7277,6 +7343,7 @@
    "points": 21,
    "quality": "PO",
    "status": "verified",
+   "sha": "3b1af6146f6591e7",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -7297,10 +7364,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3b1af6146f6591e7"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-12-114-PO-MPC",
@@ -7310,6 +7376,7 @@
    "points": 114,
    "quality": "PO",
    "status": "verified",
+   "sha": "a914f3edc541e522",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -7319,21 +7386,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.2943288195134e-12,
-    "kratio": 0.6667643922299462,
+    "r": 6.294328819512833e-12,
+    "kratio": 0.6667643922155927,
     "mode": "full",
     "equations": 455,
     "unknowns": 456,
-    "dist": 7.842564131162887e-12,
+    "dist": 7.842564131162318e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.52,
+   "seconds": 0.5,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "a914f3edc541e522"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-16-243-PO-MPC",
@@ -7343,6 +7409,7 @@
    "points": 243,
    "quality": "PO",
    "status": "verified",
+   "sha": "017d99040bad85ff",
    "stored": {
     "res_bound": 2.5137263367976702e-15,
     "res_ok": true,
@@ -7352,21 +7419,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.0174452479368395e-12,
-    "kratio": 0.6669649054999672,
+    "r": 6.017445247937578e-12,
+    "kratio": 0.6669649055146246,
     "mode": "full",
     "equations": 969,
     "unknowns": 972,
-    "dist": 6.0174452479374955e-12,
+    "dist": 6.017445247938234e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 1.74,
+   "seconds": 1.41,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "017d99040bad85ff"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-17-263-PO-MPC",
@@ -7376,6 +7442,7 @@
    "points": 263,
    "quality": "PO",
    "status": "verified",
+   "sha": "4d0278ee9f2ff287",
    "stored": {
     "res_bound": 2.7245407671497672e-15,
     "res_ok": true,
@@ -7385,21 +7452,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.40936707086687e-12,
-    "kratio": 0.6671479281579731,
+    "r": 4.409367070866561e-12,
+    "kratio": 0.6671479288458584,
     "mode": "sym2",
     "equations": 525,
     "unknowns": 525,
-    "dist": 5.00200471404883e-12,
+    "dist": 5.0020047140485215e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 1.1,
+   "seconds": 1.11,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4d0278ee9f2ff287"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-19-358-PO-MPC",
@@ -7409,6 +7475,7 @@
    "points": 358,
    "quality": "PO",
    "status": "verified",
+   "sha": "88d38acab3537deb",
    "stored": {
     "res_bound": 3.428839345429298e-15,
     "res_ok": true,
@@ -7418,21 +7485,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.287963816822907e-11,
-    "kratio": 0.6954575674258132,
+    "r": 4.287963816822182e-11,
+    "kratio": 0.6954575674501835,
     "mode": "sym2",
     "equations": 715,
     "unknowns": 716,
-    "dist": 4.2879638168232525e-11,
+    "dist": 4.2879638168225275e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 1.6,
+   "seconds": 1.45,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "88d38acab3537deb"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-20-443-PO-MPC",
@@ -7442,6 +7508,7 @@
    "points": 443,
    "quality": "PO",
    "status": "verified",
+   "sha": "fbcdeeb1e33934e2",
    "stored": {
     "res_bound": 3.629534848878257e-15,
     "res_ok": true,
@@ -7451,21 +7518,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.873751101299063e-11,
-    "kratio": 0.6854509257985011,
+    "r": 2.8738233237297978e-11,
+    "kratio": 0.6854513978841739,
     "mode": "full",
     "equations": 1771,
     "unknowns": 1772,
-    "dist": 3.1739293395393804e-11,
+    "dist": 3.17219467219065e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 9.27,
+   "seconds": 8.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "fbcdeeb1e33934e2"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-21-474-PO-MPC",
@@ -7475,6 +7541,7 @@
    "points": 474,
    "quality": "PO",
    "status": "verified",
+   "sha": "041f10e1540d1f31",
    "stored": {
     "res_bound": 3.781668431448797e-15,
     "res_ok": true,
@@ -7484,21 +7551,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.560142301466607e-12,
-    "kratio": 0.6673829020143288,
+    "r": 5.560142301466939e-12,
+    "kratio": 0.6673829021664879,
     "mode": "sym2",
     "equations": 946,
     "unknowns": 948,
-    "dist": 5.5601423014672e-12,
+    "dist": 5.560142301467532e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 2.73,
+   "seconds": 2.44,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "041f10e1540d1f31"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-24-732-PO-MPC",
@@ -7508,6 +7574,7 @@
    "points": 732,
    "quality": "PO",
    "status": "verified",
+   "sha": "7bab05ea632c4d24",
    "stored": {
     "res_bound": 5.026812475505894e-15,
     "res_ok": true,
@@ -7517,21 +7584,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.740151085220005e-11,
-    "kratio": 0.7851667285761792,
+    "r": 4.740151085215276e-11,
+    "kratio": 0.7851667286192114,
     "mode": "full",
     "equations": 2925,
     "unknowns": 2928,
-    "dist": 4.740151085221562e-11,
+    "dist": 4.740151085216833e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 23.77,
+   "seconds": 15.89,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7bab05ea632c4d24"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-25-774-PO-MPC",
@@ -7541,6 +7607,7 @@
    "points": 774,
    "quality": "PO",
    "status": "verified",
+   "sha": "b9a47107e5de811f",
    "stored": {
     "res_bound": 5.3756955526614875e-15,
     "res_ok": true,
@@ -7550,21 +7617,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.4635689132410605e-11,
-    "kratio": 0.7042118804858148,
+    "r": 2.464503867726409e-11,
+    "kratio": 0.7042261287544028,
     "mode": "sym2",
     "equations": 1547,
     "unknowns": 1548,
-    "dist": 2.498940654177752e-11,
+    "dist": 2.49995332435254e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 9.47,
+   "seconds": 9.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "b9a47107e5de811f"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-28-1141-PO-MPC",
@@ -7574,6 +7640,7 @@
    "points": 1141,
    "quality": "PO",
    "status": "verified",
+   "sha": "052061892f098c50",
    "stored": {
     "res_bound": 6.565806357358035e-15,
     "res_ok": true,
@@ -7583,21 +7650,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.600182439397511e-11,
-    "kratio": 0.9415989840749127,
+    "r": 4.600182439397069e-11,
+    "kratio": 0.9415989706595409,
     "mode": "full",
     "equations": 4495,
     "unknowns": 4564,
-    "dist": 4.600182439399832e-11,
+    "dist": 4.60018243939939e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 81.57,
+   "seconds": 47.77,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "052061892f098c50"
+   "ok_exist": true
   },
   {
    "id": "CA-C3-29-1181-PO-MPC",
@@ -7607,6 +7673,7 @@
    "points": 1181,
    "quality": "PO",
    "status": "verified",
+   "sha": "1452f8ff054d5309",
    "stored": {
     "res_bound": 7.196858026221551e-15,
     "res_ok": true,
@@ -7616,21 +7683,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.581547350173326e-11,
-    "kratio": 0.6983606781916799,
+    "r": 1.5811500797097952e-11,
+    "kratio": 0.6983527163242323,
     "mode": "sym2",
     "equations": 2360,
     "unknowns": 2361,
-    "dist": 1.58634351843629e-11,
+    "dist": 1.5863348264199557e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 27.45,
+   "seconds": 22.11,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1452f8ff054d5309"
+   "ok_exist": true
   },
   {
    "id": "CA-C2-08-15-PO-MPC",
@@ -7640,6 +7706,7 @@
    "points": 15,
    "quality": "PO",
    "status": "verified",
+   "sha": "90cbd99f958c5aa8",
    "stored": {
     "res_bound": 8.838493088456084e-13,
     "res_ok": true,
@@ -7660,10 +7727,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "90cbd99f958c5aa8"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-04-10-PO-MPC",
@@ -7673,6 +7739,7 @@
    "points": 10,
    "quality": "PO",
    "status": "verified",
+   "sha": "172a95d2be32b43a",
    "stored": {
     "res_bound": 6.349087922075118e-13,
     "res_ok": true,
@@ -7693,10 +7760,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "172a95d2be32b43a"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-06-22-PO-MPC",
@@ -7706,6 +7772,7 @@
    "points": 22,
    "quality": "PO",
    "status": "verified",
+   "sha": "8448f354b93500cd",
    "stored": {
     "res_bound": 1.630728999101398e-12,
     "res_ok": true,
@@ -7726,10 +7793,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.05,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8448f354b93500cd"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-07-30-PO-MPC",
@@ -7739,6 +7805,7 @@
    "points": 30,
    "quality": "PO",
    "status": "verified",
+   "sha": "9ba4b6bccfea7407",
    "stored": {
     "res_bound": 4.377857126293408e-13,
     "res_ok": true,
@@ -7759,10 +7826,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.05,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9ba4b6bccfea7407"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-08-42-PO-MPC",
@@ -7772,6 +7838,7 @@
    "points": 42,
    "quality": "PO",
    "status": "verified",
+   "sha": "7c2304e77881870e",
    "stored": {
     "res_bound": 4.3799748780681334e-13,
     "res_ok": true,
@@ -7781,21 +7848,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.605991176091842e-13,
-    "kratio": 0.6680860317506128,
+    "r": 7.605991176091858e-13,
+    "kratio": 0.6680860303800339,
     "mode": "full",
     "equations": 165,
     "unknowns": 168,
-    "dist": 1.303498719549959e-12,
+    "dist": 1.3034987195499607e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.12,
+   "seconds": 0.15,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7c2304e77881870e"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-09-55-PO-MPC",
@@ -7805,6 +7871,7 @@
    "points": 55,
    "quality": "PO",
    "status": "verified",
+   "sha": "38fcec699ee2c9f0",
    "stored": {
     "res_bound": 3.330669073875472e-15,
     "res_ok": true,
@@ -7814,21 +7881,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.251102433963002e-13,
-    "kratio": 0.6670242284945798,
+    "r": 7.251102433961271e-13,
+    "kratio": 0.6670242252147099,
     "mode": "full",
     "equations": 220,
     "unknowns": 220,
-    "dist": 7.261094451176637e-13,
+    "dist": 7.261094451174906e-13,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.18,
+   "seconds": 0.25,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "38fcec699ee2c9f0"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-10-72-PO-MPC",
@@ -7838,6 +7904,7 @@
    "points": 72,
    "quality": "PO",
    "status": "verified",
+   "sha": "8ae2fe6ee6ab8be1",
    "stored": {
     "res_bound": 3.639156421328174e-13,
     "res_ok": true,
@@ -7847,21 +7914,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.274038267547776e-13,
-    "kratio": 0.6666793380210011,
+    "r": 2.274038267547734e-13,
+    "kratio": 0.6666793379131944,
     "mode": "full",
     "equations": 286,
     "unknowns": 288,
-    "dist": 2.383681141456923e-12,
+    "dist": 2.3836811414569187e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.3,
+   "seconds": 0.37,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8ae2fe6ee6ab8be1"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-12-114-PO-MPC",
@@ -7871,6 +7937,7 @@
    "points": 114,
    "quality": "PO",
    "status": "verified",
+   "sha": "69797dff56f8adbd",
    "stored": {
     "res_bound": 3.747488057988684e-15,
     "res_ok": true,
@@ -7880,21 +7947,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.321096919634897e-13,
-    "kratio": 0.6677070398734404,
+    "r": 5.321096919634711e-13,
+    "kratio": 0.6677070295373477,
     "mode": "full",
     "equations": 455,
     "unknowns": 456,
-    "dist": 8.981505892229625e-13,
+    "dist": 8.981505892229439e-13,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.69,
+   "seconds": 0.74,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "69797dff56f8adbd"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-13-140-PO-MPC",
@@ -7904,6 +7970,7 @@
    "points": 140,
    "quality": "PO",
    "status": "verified",
+   "sha": "423f6464457228c5",
    "stored": {
     "res_bound": 5.162537064506981e-15,
     "res_ok": true,
@@ -7913,12 +7980,12 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.780533812105452e-13,
-    "kratio": 0.6668154860566463,
+    "r": 8.780533812104285e-13,
+    "kratio": 0.6668154861153758,
     "mode": "full",
     "equations": 560,
     "unknowns": 560,
-    "dist": 2.3182361289356064e-12,
+    "dist": 2.3182361289354897e-12,
     "pos": true,
     "inside": false,
     "outside": true,
@@ -7926,8 +7993,7 @@
    },
    "seconds": 1.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "423f6464457228c5"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-14-170-PO-MPC",
@@ -7937,6 +8003,7 @@
    "points": 170,
    "quality": "PO",
    "status": "verified",
+   "sha": "950d4d1f50fd3ab2",
    "stored": {
     "res_bound": 4.496403249731887e-15,
     "res_ok": true,
@@ -7946,21 +8013,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.9114567499584628e-12,
-    "kratio": 0.6769248205509044,
+    "r": 2.9114567499577447e-12,
+    "kratio": 0.6769248291288363,
     "mode": "full",
     "equations": 680,
     "unknowns": 680,
-    "dist": 3.1259520528111317e-12,
+    "dist": 3.1259520528104136e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 1.61,
+   "seconds": 1.51,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "950d4d1f50fd3ab2"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-15-204-PO-MPC",
@@ -7970,6 +8036,7 @@
    "points": 204,
    "quality": "PO",
    "status": "verified",
+   "sha": "852f3e6de3d23c08",
    "stored": {
     "res_bound": 3.4587779367082382e-15,
     "res_ok": true,
@@ -7979,21 +8046,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.177594206801904e-12,
-    "kratio": 0.6680112165307152,
+    "r": 1.1775942068023747e-12,
+    "kratio": 0.6680112171450445,
     "mode": "full",
     "equations": 816,
     "unknowns": 816,
-    "dist": 1.2226693066767403e-12,
+    "dist": 1.222669306677211e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 2.39,
+   "seconds": 2.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "852f3e6de3d23c08"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-16-243-PO-MPC",
@@ -8003,6 +8069,7 @@
    "points": 243,
    "quality": "PO",
    "status": "verified",
+   "sha": "161a86c52e9ecebe",
    "stored": {
     "res_bound": 4.2013706363051204e-15,
     "res_ok": true,
@@ -8012,21 +8079,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.7024862670254676e-12,
-    "kratio": 0.6717604537988668,
+    "r": 1.7024862670252913e-12,
+    "kratio": 0.671760445062026,
     "mode": "full",
     "equations": 969,
     "unknowns": 972,
-    "dist": 1.7524463530938213e-12,
+    "dist": 1.752446353093645e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 3.38,
+   "seconds": 3.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "161a86c52e9ecebe"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-17-285-PO-MPC",
@@ -8036,6 +8102,7 @@
    "points": 285,
    "quality": "PO",
    "status": "verified",
+   "sha": "1b1b8d3c13e1f627",
    "stored": {
     "res_bound": 6.994405055138491e-15,
     "res_ok": true,
@@ -8045,21 +8112,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.941872666278507e-13,
-    "kratio": 0.6676598476465281,
+    "r": 8.941872666275666e-13,
+    "kratio": 0.6676598502452357,
     "mode": "full",
     "equations": 1140,
     "unknowns": 1140,
-    "dist": 9.071491334022033e-13,
+    "dist": 9.071491334019193e-13,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 4.55,
+   "seconds": 3.72,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1b1b8d3c13e1f627"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-18-333-PO-MPC",
@@ -8069,6 +8135,7 @@
    "points": 333,
    "quality": "PO",
    "status": "verified",
+   "sha": "f5e00208925e5772",
    "stored": {
     "res_bound": 4.829470157119434e-15,
     "res_ok": true,
@@ -8078,21 +8145,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.901902003504074e-12,
-    "kratio": 0.686456776261624,
+    "r": 2.9019020035040477e-12,
+    "kratio": 0.6864568083758117,
     "mode": "full",
     "equations": 1330,
     "unknowns": 1332,
-    "dist": 3.1789584363558722e-12,
+    "dist": 3.178958436355846e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 8.02,
+   "seconds": 5.8,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f5e00208925e5772"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-19-386-PO-MPC",
@@ -8102,6 +8168,7 @@
    "points": 386,
    "quality": "PO",
    "status": "verified",
+   "sha": "534bbfd984e44ca2",
    "stored": {
     "res_bound": 3.5200329370552465e-15,
     "res_ok": true,
@@ -8111,21 +8178,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.9023273026568864e-12,
-    "kratio": 0.7455417331953823,
+    "r": 3.897218598927352e-12,
+    "kratio": 0.7454385209566897,
     "mode": "full",
     "equations": 1540,
     "unknowns": 1544,
-    "dist": 4.031279835920179e-12,
+    "dist": 4.022340858925419e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 12.03,
+   "seconds": 8.31,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "534bbfd984e44ca2"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-20-444-PO-MPC",
@@ -8135,6 +8201,7 @@
    "points": 444,
    "quality": "PO",
    "status": "verified",
+   "sha": "f2ac8f9c742da898",
    "stored": {
     "res_bound": 6.328271240363397e-15,
     "res_ok": true,
@@ -8144,21 +8211,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.0829091476693354e-12,
-    "kratio": 0.6786105719170389,
+    "r": 2.0845701549208227e-12,
+    "kratio": 0.6786201075903221,
     "mode": "full",
     "equations": 1771,
     "unknowns": 1776,
-    "dist": 2.0957322364272466e-12,
+    "dist": 2.0976707997124464e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 11.41,
+   "seconds": 11.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f2ac8f9c742da898"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-21-507-PO-MPC",
@@ -8168,6 +8234,7 @@
    "points": 507,
    "quality": "PO",
    "status": "verified",
+   "sha": "4c1c3bf725509c43",
    "stored": {
     "res_bound": 3.998891334408807e-15,
     "res_ok": true,
@@ -8177,21 +8244,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 6.9791246280710414e-12,
-    "kratio": 0.77400425192578,
+    "r": 6.985587783100912e-12,
+    "kratio": 0.7741035985800618,
     "mode": "full",
     "equations": 2024,
     "unknowns": 2028,
-    "dist": 6.99344651941217e-12,
+    "dist": 6.9995766072015875e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 22.49,
+   "seconds": 12.9,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4c1c3bf725509c43"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-22-576-PO-MPC",
@@ -8201,6 +8267,7 @@
    "points": 576,
    "quality": "PO",
    "status": "verified",
+   "sha": "1145c688907533bc",
    "stored": {
     "res_bound": 8.826273045770001e-15,
     "res_ok": true,
@@ -8210,21 +8277,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.6280509935788106e-12,
-    "kratio": 0.6912112163365768,
+    "r": 2.6235754602723172e-12,
+    "kratio": 0.6911694053219081,
     "mode": "full",
     "equations": 2300,
     "unknowns": 2304,
-    "dist": 2.800579824134897e-12,
+    "dist": 2.792329528769919e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 23.17,
+   "seconds": 18.96,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1145c688907533bc"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-23-652-PO-MPC",
@@ -8234,6 +8300,7 @@
    "points": 652,
    "quality": "PO",
    "status": "verified",
+   "sha": "f43c1129feff5611",
    "stored": {
     "res_bound": 1.2323475573339244e-14,
     "res_ok": true,
@@ -8243,21 +8310,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.801079528938884e-12,
-    "kratio": 0.7996404473802465,
+    "r": 5.8103897173139235e-12,
+    "kratio": 0.7998537242003807,
     "mode": "full",
     "equations": 2600,
     "unknowns": 2608,
-    "dist": 5.861586744289804e-12,
+    "dist": 5.865012744750151e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 35.51,
+   "seconds": 22.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f43c1129feff5611"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-24-757-PO-MPC",
@@ -8267,6 +8333,7 @@
    "points": 757,
    "quality": "PO",
    "status": "verified",
+   "sha": "fb4d23eede712ab8",
    "stored": {
     "res_bound": 7.494005416219813e-15,
     "res_ok": true,
@@ -8276,21 +8343,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 4.070700635533809e-12,
-    "kratio": 0.9021129905764426,
+    "r": 4.0704558636627e-12,
+    "kratio": 0.9020980574957246,
     "mode": "full",
     "equations": 2925,
     "unknowns": 3028,
-    "dist": 4.081913899297113e-12,
+    "dist": 4.081780149839489e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 49.93,
+   "seconds": 33.94,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "fb4d23eede712ab8"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-25-870-PO-MPC",
@@ -8300,6 +8366,7 @@
    "points": 870,
    "quality": "PO",
    "status": "verified",
+   "sha": "c41c1d9604855b31",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -8309,21 +8376,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 5.621797669382586e-12,
-    "kratio": 0.7268299247828218,
+    "r": 5.615635718280987e-12,
+    "kratio": 0.7267640077032517,
     "mode": "full",
     "equations": 3276,
     "unknowns": 3480,
-    "dist": 5.6626539175470665e-12,
+    "dist": 5.656103387998269e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 69.77,
+   "seconds": 40.84,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c41c1d9604855b31"
+   "ok_exist": true
   },
   {
    "id": "CA-T3-26-949-PO-MPC",
@@ -8333,6 +8399,7 @@
    "points": 949,
    "quality": "PO",
    "status": "verified",
+   "sha": "3320505608716eb7",
    "stored": {
     "res_bound": 5.717910852630747e-15,
     "res_ok": true,
@@ -8342,21 +8409,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 3.09353559744838e-12,
-    "kratio": 0.6954309940327914,
+    "r": 3.092683538585876e-12,
+    "kratio": 0.6954230738633639,
     "mode": "full",
     "equations": 3654,
     "unknowns": 3796,
-    "dist": 3.241639497038396e-12,
+    "dist": 3.240787438175892e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 91.1,
+   "seconds": 56.46,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3320505608716eb7"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-06-10-PO-MPC",
@@ -8366,6 +8432,7 @@
    "points": 10,
    "quality": "PO",
    "status": "verified",
+   "sha": "9fe7eec424d492f7",
    "stored": {
     "res_bound": 5.113687251423474e-13,
     "res_ok": true,
@@ -8386,10 +8453,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.02,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "9fe7eec424d492f7"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-10-23-PO-MPC",
@@ -8399,6 +8465,7 @@
    "points": 23,
    "quality": "PO",
    "status": "verified",
+   "sha": "2fdadaa1b9047e42",
    "stored": {
     "res_bound": 7.159419541588613e-13,
     "res_ok": true,
@@ -8419,10 +8486,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.05,
+   "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2fdadaa1b9047e42"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-11-26-PO-MPC",
@@ -8432,6 +8498,7 @@
    "points": 26,
    "quality": "PO",
    "status": "verified",
+   "sha": "16e3da31b24a40cf",
    "stored": {
     "res_bound": 3.220823130770103e-13,
     "res_ok": true,
@@ -8452,10 +8519,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.06,
+   "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "16e3da31b24a40cf"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-12-31-PO-MPC",
@@ -8465,6 +8531,7 @@
    "points": 31,
    "quality": "PO",
    "status": "verified",
+   "sha": "c61c4a67f068a24e",
    "stored": {
     "res_bound": 6.432050869025801e-13,
     "res_ok": true,
@@ -8485,10 +8552,9 @@
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.08,
+   "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c61c4a67f068a24e"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-14-40-PO-MPC",
@@ -8498,6 +8564,7 @@
    "points": 40,
    "quality": "PO",
    "status": "verified",
+   "sha": "da635f2ee140f843",
    "stored": {
     "res_bound": 4.960006201332888e-13,
     "res_ok": true,
@@ -8507,21 +8574,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 8.896871201275489e-14,
-    "kratio": 0.6666670115219672,
+    "r": 8.896871201274951e-14,
+    "kratio": 0.6666670115242275,
     "mode": "full",
     "equations": 120,
     "unknowns": 120,
-    "dist": 6.350879639445754e-13,
+    "dist": 6.3508796394457e-13,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.13,
+   "seconds": 0.17,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "da635f2ee140f843"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-17-57-PO-MPC",
@@ -8531,6 +8597,7 @@
    "points": 57,
    "quality": "PO",
    "status": "verified",
+   "sha": "e364dc23f9c2c22d",
    "stored": {
     "res_bound": 3.856839638784716e-13,
     "res_ok": true,
@@ -8540,21 +8607,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 7.245274749572337e-13,
-    "kratio": 0.6666901228385217,
+    "r": 7.245274749571529e-13,
+    "kratio": 0.6666901228293138,
     "mode": "full",
     "equations": 171,
     "unknowns": 171,
-    "dist": 1.2203535735804316e-12,
+    "dist": 1.2203535735803509e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.24,
+   "seconds": 0.33,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "e364dc23f9c2c22d"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-18-64-PO-MPC",
@@ -8564,6 +8630,7 @@
    "points": 64,
    "quality": "PO",
    "status": "verified",
+   "sha": "ffb1660d588eb20a",
    "stored": {
     "res_bound": 4.910591078460383e-13,
     "res_ok": true,
@@ -8573,21 +8640,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 2.0768149098521048e-13,
-    "kratio": 0.6666754720747894,
+    "r": 2.0768149098519806e-13,
+    "kratio": 0.6666754721002014,
     "mode": "full",
     "equations": 190,
     "unknowns": 192,
-    "dist": 1.5802099554929647e-12,
+    "dist": 1.5802099554929524e-12,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.31,
+   "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ffb1660d588eb20a"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-19-70-PO-MPC",
@@ -8597,6 +8663,7 @@
    "points": 70,
    "quality": "PO",
    "status": "verified",
+   "sha": "bfc96bd9ffd59a51",
    "stored": {
     "res_bound": 5.181532591500789e-13,
     "res_ok": true,
@@ -8606,21 +8673,20 @@
    },
    "exist": {
     "proved": true,
-    "r": 1.8081461567956756e-12,
-    "kratio": 0.666877302558981,
+    "r": 1.8081461567954841e-12,
+    "kratio": 0.6668773024930248,
     "mode": "full",
     "equations": 210,
     "unknowns": 210,
-    "dist": 1.0974156614102262e-11,
+    "dist": 1.0974156614102071e-11,
     "pos": true,
     "inside": false,
     "outside": true,
     "quality_proved": "PO"
    },
-   "seconds": 0.37,
+   "seconds": 0.44,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "bfc96bd9ffd59a51"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-01-1-PI-WV",
@@ -8630,6 +8696,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
+   "sha": "42e4955899479d78",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -8652,8 +8719,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "42e4955899479d78"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-02-3-PI-WV",
@@ -8663,6 +8729,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
+   "sha": "7ac84acd6410a344",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -8685,8 +8752,7 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "7ac84acd6410a344"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-04-6-PI-WV",
@@ -8696,6 +8762,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
+   "sha": "1d5d1b0d20926ab6",
    "stored": {
     "res_bound": 3.3306690738754716e-15,
     "res_ok": true,
@@ -8718,8 +8785,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "1d5d1b0d20926ab6"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-05-7-PI-WV",
@@ -8729,6 +8795,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
+   "sha": "ad9f527b34671416",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -8751,8 +8818,7 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "ad9f527b34671416"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-06-12-PI-WV",
@@ -8762,6 +8828,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
+   "sha": "74b488126fe5dab7",
    "stored": {
     "res_bound": 3.3306690738754716e-15,
     "res_ok": true,
@@ -8782,10 +8849,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.01,
+   "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "74b488126fe5dab7"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-07-15-PI-WV",
@@ -8795,6 +8861,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
+   "sha": "eec60a86aedef6b6",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -8817,8 +8884,7 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "eec60a86aedef6b6"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-08-16-PI-WV",
@@ -8828,6 +8894,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
+   "sha": "3adb7f1623c00011",
    "stored": {
     "res_bound": 8.881784197001259e-15,
     "res_ok": true,
@@ -8848,10 +8915,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "3adb7f1623c00011"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-09-19-PI-WV",
@@ -8861,6 +8927,7 @@
    "points": 19,
    "quality": "PI",
    "status": "verified",
+   "sha": "2571114796d0a5eb",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -8881,10 +8948,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.02,
+   "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "2571114796d0a5eb"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-10-25-PI-WV",
@@ -8894,6 +8960,7 @@
    "points": 25,
    "quality": "PI",
    "status": "verified",
+   "sha": "8f8a0f129dddcacb",
    "stored": {
     "res_bound": 2.8310687127941515e-15,
     "res_ok": true,
@@ -8914,10 +8981,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.03,
+   "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "8f8a0f129dddcacb"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-11-28-PI-WV",
@@ -8927,6 +8993,7 @@
    "points": 28,
    "quality": "PI",
    "status": "verified",
+   "sha": "c36cde7bd043cd20",
    "stored": {
     "res_bound": 5.263151026113637e-15,
     "res_ok": true,
@@ -8949,8 +9016,7 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c36cde7bd043cd20"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-12-33-PI-WV",
@@ -8960,6 +9026,7 @@
    "points": 33,
    "quality": "PI",
    "status": "verified",
+   "sha": "441eecaa8181ab8e",
    "stored": {
     "res_bound": 4.796727251510373e-15,
     "res_ok": true,
@@ -8982,8 +9049,7 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "441eecaa8181ab8e"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-13-37-PI-WV",
@@ -8993,6 +9059,7 @@
    "points": 37,
    "quality": "PI",
    "status": "verified",
+   "sha": "eed036adc1131d68",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -9015,8 +9082,7 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "eed036adc1131d68"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-14-42-PI-WV",
@@ -9026,6 +9092,7 @@
    "points": 42,
    "quality": "PI",
    "status": "verified",
+   "sha": "477ef66104a99aec",
    "stored": {
     "res_bound": 4.884981308350692e-15,
     "res_ok": true,
@@ -9048,8 +9115,7 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "477ef66104a99aec"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-15-49-PI-WV",
@@ -9059,6 +9125,7 @@
    "points": 49,
    "quality": "PI",
    "status": "verified",
+   "sha": "c5eef380faa3c5c2",
    "stored": {
     "res_bound": 1.532107773982717e-14,
     "res_ok": true,
@@ -9079,10 +9146,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.09,
+   "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c5eef380faa3c5c2"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-16-55-PI-WV",
@@ -9092,6 +9158,7 @@
    "points": 55,
    "quality": "PI",
    "status": "verified",
+   "sha": "86de85c9d6b0f62d",
    "stored": {
     "res_bound": 4.5895362163483936e-15,
     "res_ok": true,
@@ -9114,8 +9181,7 @@
    },
    "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "86de85c9d6b0f62d"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-17-60-PI-WV",
@@ -9125,6 +9191,7 @@
    "points": 60,
    "quality": "PI",
    "status": "verified",
+   "sha": "47354031cedbaee4",
    "stored": {
     "res_bound": 1.532107773982717e-14,
     "res_ok": true,
@@ -9145,10 +9212,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.13,
+   "seconds": 0.14,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "47354031cedbaee4"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-18-67-PI-WV",
@@ -9158,6 +9224,7 @@
    "points": 67,
    "quality": "PI",
    "status": "verified",
+   "sha": "4d5f1b91ecee8595",
    "stored": {
     "res_bound": 8.625316173099816e-15,
     "res_ok": true,
@@ -9178,10 +9245,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.16,
+   "seconds": 0.17,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "4d5f1b91ecee8595"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-19-73-PI-WV",
@@ -9191,6 +9257,7 @@
    "points": 73,
    "quality": "PI",
    "status": "verified",
+   "sha": "f9d2ace609f613f1",
    "stored": {
     "res_bound": 8.881784197001259e-15,
     "res_ok": true,
@@ -9211,10 +9278,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.18,
+   "seconds": 0.19,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "f9d2ace609f613f1"
+   "ok_exist": true
   },
   {
    "id": "CA-T2-20-79-PI-WV",
@@ -9224,6 +9290,7 @@
    "points": 79,
    "quality": "PI",
    "status": "verified",
+   "sha": "c82a8e00894cb539",
    "stored": {
     "res_bound": 7.287573322578573e-15,
     "res_ok": true,
@@ -9244,10 +9311,9 @@
     "outside": false,
     "quality_proved": "PI"
    },
-   "seconds": 0.21,
+   "seconds": 0.24,
    "ok_stored": true,
-   "ok_exist": true,
-   "sha": "c82a8e00894cb539"
+   "ok_exist": true
   }
  ]
 }
