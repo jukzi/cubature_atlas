@@ -227,6 +227,8 @@ def load_rules(fam):
             if r is None:
                 continue
             r["_path"] = path
+            with open(path, "rb") as fh:
+                r["_sha"] = hashlib.sha256(fh.read()).hexdigest()[:16]
             check_rule(fam, dom, r, fn)
             fam["rules"].append(r)
 
@@ -283,6 +285,35 @@ def check_rule(fam, dom, r, fn):
     fq = fam.get("quality")
     if fq and q != fq:
         err("%s: family %s holds %s rules, this rule is %s" % (where, fam["id"], fq, q))
+
+
+def attach_interval_proofs(fams):
+    """Results of tools/verify_rigorous.py (reports/interval_proofs.json) for rule files that are unchanged since."""
+    path = os.path.join(ROOT, "reports", "interval_proofs.json")
+    rep = {}
+    if os.path.exists(path):
+        for e in load_json(path).get("rules", []):
+            rep[e["id"]] = e
+    for f in fams:
+        for r in f["rules"]:
+            e = rep.get(r["id"])
+            if e and e.get("sha") == r["_sha"]:
+                ex = e["exist"]
+                r["_iv"] = {"ok": bool(e.get("ok_stored") and e.get("ok_exist")), "d": ex.get("dist"),
+                            "q": ex.get("quality_proved"), "m": ex.get("mode")}
+            else:
+                r["_iv"] = None
+
+
+def iv_text(iv, t):
+    """Text of the interval proof for a rule page."""
+    if not iv:
+        return t["rpIvNone"]
+    if not iv["ok"]:
+        return t["rpIvNo"]
+    m = iv["m"] or ""
+    mode = t["ivSym"].replace("{g}", m[3:]) if m.startswith("sym") else t["ivFull"]
+    return t["rpIvOk"].replace("{q}", iv["q"]).replace("{d}", "%.1e" % iv["d"]).replace("{m}", mode)
 
 
 def check_unique(fams):
@@ -414,6 +445,7 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
                 "origin": r.get("origin", ""),
                 "err": r["_res"],
                 "cert": r.get("certificate"),
+                "iv": r.get("_iv"),
                 "url": rule_url(r, lang),
                 "pts": pts,
             })
@@ -510,6 +542,7 @@ def rule_page(r, fam, best, lang, t):
 <tr><th>%s</th><td>%.3e</td></tr>
 <tr><th>%s</th><td>%s</td></tr>
 <tr><th>%s</th><td>%s</td></tr>
+<tr><th>%s</th><td>%s</td></tr>
 </table>
 <p><a href="%s%s">%s</a></p>
 <h2>%s</h2>
@@ -525,7 +558,7 @@ def rule_page(r, fam, best, lang, t):
        t["rpDomain"], html.escape(dname), SYM[r["domain"]],
        t["rpDegree"], r["degree"], t["rpPoints"], r["points"], t["rpQuality"], r["_q"],
        t["rpResidual"], r["_res"], t["rpMinW"], r["_minw"], t["rpMargin"], r["_margin"],
-       t["rpCert"], ctext, t["rpOrigin"], html.escape(r.get("method", r.get("source", ""))),
+       t["rpCert"], ctext, t["rpIv"], html.escape(iv_text(r.get("_iv"), t)), t["rpOrigin"], html.escape(r.get("method", r.get("source", ""))),
        up, rule_url(r, "en", ".json"), t["rpDownload"],
        t["rpCite"], html.escape(cite), t["rpNodes"], "\n".join(rows))
     return body
@@ -634,6 +667,7 @@ def main():
     for f in fams:
         load_rules(f)
     check_unique(fams)
+    attach_interval_proofs(fams)
     if args.base:
         check_locked(args.base)
     en, de, doc_en, doc_de, stale_doc = check_i18n(args.strict)

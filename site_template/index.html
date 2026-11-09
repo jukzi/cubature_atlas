@@ -5104,7 +5104,7 @@ function famRule(k,dom,n){var x=famOf(k),b=null;if(!x)return null;(x.f.rules[dom
   ATLAS.families.slice().sort(function(a,b){return ORDER[a.role]-ORDER[b.role];}).forEach(function(f){var R=f.rules||{};
     if(f.role==='pi'){Object.keys(R).forEach(function(d){for(var n=1;n<=MAXN;n++){var b=null;
       R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n||(r.n===b.n&&r.deg===n&&b.deg!==n)))b=r;});
-      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
+      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
     else if(f.role==='po'){Object.keys(R).forEach(function(d){OUTR[d]={};for(var n=1;n<=MAXN;n++){var b=null;
         R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n))OUTR[d][n]=b.pts;}});
       var S=f.searched_degrees||{},doms={};Object.keys(S).concat(Object.keys(R)).forEach(function(d){doms[d]=1;});
@@ -6175,13 +6175,20 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   if(window.IntersectionObserver)DRILL.list.forEach(function(D){new IntersectionObserver(function(es){D.vis=es[0].isIntersecting;drillStart();}).observe($(D.sel));});})();
 
 /* ---------- Zertifikat ---------- */
+function ivCell(iv){
+  /* Interval proof (tools/verify_rigorous.py) of the rule in this row. */
+  if(!iv)return '<td class="dim">'+t('rpIvNone')+'</td>';
+  if(!iv.ok)return '<td>'+t('rpIvNo')+'</td>';
+  var m=iv.m&&iv.m.indexOf('sym')===0?t('ivSym').replace('{g}',iv.m.slice(3)):t('ivFull');
+  var tip=t('rpIvOk').replace('{q}',iv.q).replace('{d}',sci(iv.d)).replace('{m}',m);
+  return '<td class="stat-ok" title="'+tip.replace(/"/g,'&quot;')+'">✓ '+t('ivOk')+'</td>';}
 function certTable(){$('#tcap2').textContent=t('tabW')+' 2: '+t('tab2')+' – '+DOM[st.dom].lab[LANG];var c=CERT[st.dom],th=$('#certtbl thead'),tb=$('#certtbl tbody'),cols=t('certCols');
-  th.innerHTML='<tr>'+cols.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>';tb.innerHTML='';var ok=0,ins=0,tot=0;
-  for(var n=1;n<=MX();n++){var r=c[n];if(!r){var d0=DATA[st.dom][n],tr0=document.createElement('tr');tr0.className='sel-row';tr0.setAttribute('aria-selected',n===st.n);tr0.innerHTML='<td>'+n+'</td><td>'+fmt(d0.n)+'</td><td colspan="7" class="dim">'+t(d0.src==='found'?'srcNoCertC':(d0.src==='sym'?'srcSymC':(d0.src==='gauss'?'srcGauss':(d0.src==='search'?'srcSearch':'srcLit'))))+'</td>';(function(nn){tr0.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr0);continue;}tot++;if(r.cert)ok++;if(r.inside)ins++;
+  th.innerHTML='<tr>'+cols.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>';tb.innerHTML='';var ok=0,ins=0,tot=0,ivok=0;
+  for(var n=1;n<=MX();n++){var r=c[n];if(!r){var d0=DATA[st.dom][n],tr0=document.createElement('tr');tr0.className='sel-row';tr0.setAttribute('aria-selected',n===st.n);tr0.innerHTML='<td>'+n+'</td><td>'+fmt(d0.n)+'</td>'+ivCell(d0.iv)+'<td colspan="7" class="dim">'+t(d0.src==='found'?'srcNoCertC':(d0.src==='sym'?'srcSymC':(d0.src==='gauss'?'srcGauss':(d0.src==='search'?'srcSearch':'srcLit'))))+'</td>';if(d0.iv&&d0.iv.ok)ivok++;(function(nn){tr0.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr0);continue;}tot++;if(r.cert)ok++;if(r.inside)ins++;
     var tr=document.createElement('tr');tr.className='sel-row';tr.setAttribute('aria-selected',n===st.n);
-    tr.innerHTML='<td>'+n+'</td><td>'+fmt(r.N)+'</td><td>'+r.M+' × '+r.p+'</td><td>'+sci(r.res)+'</td><td>'+sci(r.sigma)+'</td><td>'+(r.h===0?'0':sci(r.h))+'</td><td>'+sci(r.rad)+'</td><td class="'+(r.cert?'stat-ok':'')+'">'+(r.cert?'✓ '+t('certOk'):t('certBad'))+'</td><td class="'+(r.inside?'stat-ok':'stat-edge')+'">'+(r.inside?'✓ '+t('inOk'):t('inEdge'))+'</td>';
+    tr.innerHTML='<td>'+n+'</td><td>'+fmt(r.N)+'</td>'+ivCell((DATA[st.dom][n]||{}).iv)+'<td>'+r.M+' × '+r.p+'</td><td>'+sci(r.res)+'</td><td>'+sci(r.sigma)+'</td><td>'+(r.h===0?'0':sci(r.h))+'</td><td>'+sci(r.rad)+'</td><td class="'+(r.cert?'stat-ok':'')+'">'+(r.cert?'✓ '+t('certOk'):t('certBad'))+'</td><td class="'+(r.inside?'stat-ok':'stat-edge')+'">'+(r.inside?'✓ '+t('inOk'):t('inEdge'))+'</td>';if((DATA[st.dom][n]||{}).iv&&DATA[st.dom][n].iv.ok)ivok++;
     (function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
-  $('#certsum').textContent=t('certSum')(st.dom,ok,tot,ins);}
+  $('#certsum').textContent=t('certSum')(st.dom,ok,tot,ins)+' '+t('ivSumTpl').replace('{iv}',ivok).replace('{all}',MX());}
 
 /* ---------- Sprache anwenden ---------- */
 function refsHTML(){return REFS.map(function(r){var links='<a href="'+r.u+'" target="_blank" rel="noopener">'+r.u.replace(/^https?:\/\//,'').slice(0,64)+'</a>'+(r.u2?' · <a href="'+r.u2+'" target="_blank" rel="noopener">'+(r.l2||'Addendum')+'</a>':'');
