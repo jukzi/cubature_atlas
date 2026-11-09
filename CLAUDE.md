@@ -11,3 +11,4 @@ Read README.md and CONTRIBUTING.md first. In short:
 - Every reference you add must be checked to exist; never invent citations.
 - Code conventions: pure Python, a single file per program, English comments, one statement per line.
 - State in the pull request description what was computed, how it was verified, and what is still open (for example a missing certificate).
+- Tooltips on the website: never hover only (`title` alone). Every tooltip needs a clickable, keyboard-reachable ⓘ (or marker) in addition to hover, so it also works on touch screens; use the shared popup (`td .oq` / `th .hw` with `data-tip`).

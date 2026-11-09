@@ -138,7 +138,7 @@
     "shiftTxt": "49d34d3bf79cb2ba",
     "certH": "dbfbc383e8c78b88",
     "certSub": "13422236fe63bc2e",
-    "certCols": "f8abae10bdc10a17",
+    "certCols": "006c775faa07aae8",
     "certOk": "82dd43841f057ad0",
     "certBad": "35ff74aeea25311f",
     "inOk": "6c76a9331e7f5ff9",
@@ -161,7 +161,7 @@
     "code3": "3c5024042ed5142c",
     "litH": "e17a71bc4dc6feb2",
     "foot": "68f5f4f90db10412",
-    "certSumTpl": "aac5fbcee321fdca",
+    "certSumTpl": "e0547b84d3348b11",
     "title": "0f394d0b609923b0",
     "titleHtml": "87caef088f7bf2c4",
     "pageTitle": "42dfc77aebb60132",
@@ -215,7 +215,8 @@
     "ivOk": "4e7fc83f71c93104",
     "ivSym": "1ef963c061b313e6",
     "ivFull": "09eda755f00289fe",
-    "ivSumTpl": "c326c95979e264fb"
+    "ivSumTpl": "c326c95979e264fb",
+    "ivBtn": "90aa2821946dc8f5"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -377,8 +378,7 @@
     "σ_min(J)",
     "h = L·η/σ²",
     "Radius 2η",
-    "Zertifikat",
-    "Ball im Gebiet"
+    "im Gebiet"
   ],
   "certOk": "bestätigt",
   "certBad": "offen",
@@ -402,7 +402,7 @@
   "code3": "demo.py: Regel suchen, zertifizieren, integrieren",
   "litH": "Literatur und Formelsammlungen",
   "foot": "Diese Seite wurde von einer KI erstellt: Claude (Modell claude-sonnet-5-5) von Anthropic hat Suche, Rechnung, Prüfung, Text und Code erzeugt, im Auftrag und unter Anleitung von Jörg Kubitz. Fehler sind möglich; die Zertifikate und der Quellcode erlauben die Nachprüfung. Alle Regeln sind numerisch berechnet; Die Würfelregeln ab Grad 21 stammen aus einer Suche mit Symmetriereduktion. Gauß-Legendre im Intervall und die Referenzwerte der Beispiele sind analytisch oder in hoher Ordnung bestimmt.",
-  "certSumTpl": "{dom}: {ok} von {tot} Regeln zertifiziert (h ≤ ½), bei {ins} davon bleibt der Ball um die Regel sicher im Gebiet mit positiven Gewichten. Bei den übrigen liegt mindestens ein Knoten auf dem Rand des Gebiets, und das Zertifikat kann nicht entscheiden, ob die exakte Lösung im abgeschlossenen Gebiet liegt; das entscheidet der Intervall-Beweis (dritte Spalte, Abstand im Tooltip).",
+  "certSumTpl": "{dom}: {ok} von {tot} Regeln zertifiziert (h ≤ ½), bei {ins} davon bleibt der Ball um die Regel sicher im Gebiet mit positiven Gewichten. Bei den übrigen liegt mindestens ein Knoten auf dem Rand des Gebiets, und das Zertifikat kann nicht entscheiden, ob die exakte Lösung im abgeschlossenen Gebiet liegt; das entscheidet der Intervall-Beweis (dritte Spalte; Qualität, Abstand und Modus unter ⓘ).",
   "title": "Kubaturatlas",
   "titleHtml": "Kubatur<em>atlas</em>",
   "pageTitle": "Kubaturatlas – kleinste bekannte Quadratur- und Kubaturformeln mit positiven Gewichten",
@@ -456,5 +456,6 @@
   "ivOk": "bewiesen",
   "ivSym": "symmetriereduzierte Gleichungen, Gruppe der Ordnung {g}",
   "ivFull": "Gleichungen in allen Unbekannten",
-  "ivSumTpl": "Intervall-Beweis: Für {iv} der {all} Grade ist bewiesen, dass die Regel der Tabelle nahe einer exakten Regel ihrer Qualität liegt."
+  "ivSumTpl": "Intervall-Beweis: Für {iv} der {all} Grade ist bewiesen, dass die Regel der Tabelle nahe einer exakten Regel ihrer Qualität liegt.",
+  "ivBtn": "Details des Intervall-Beweises"
 }
