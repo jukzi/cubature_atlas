@@ -1,0 +1,32 @@
+{
+  "id": "CA-C2-04-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "square",
+  "dimension": 2,
+  "degree": 4,
+  "points": 6,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), certified",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "verified",
+  "locked": true,
+  "residual_reported": 8.881784197001252e-16,
+  "certificate": {"N": 6, "M": 15, "p": 18, "res": 3.96039160770114e-15, "sigma": 1.1202228083116759, "h": 5.4002575628194564e-14, "rad": 3.55628806937398e-15, "cert": true, "inside": false},
+  "nodes": [
+    [0.390544815342154, 0.970344222532729],
+    [-0.667212800202448, -0.626805179945917],
+    [0.523224234405045, -0.787654952440078],
+    [1.0, 0.191920950269844],
+    [-0.756515620985185, 0.599005919910974],
+    [0.093936708409996, 0.124978803529724]
+  ],
+  "weights": [
+    0.395863027740475,
+    0.759171676393902,
+    0.647449908784946,
+    0.383471808774547,
+    0.635793152198904,
+    1.178250426107227
+  ]
+}
