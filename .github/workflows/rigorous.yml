@@ -30,7 +30,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -46,11 +45,34 @@ jobs:
       - name: All rules
         if: github.event_name != 'pull_request'
         run: python tools/verify_rigorous.py --report interval_proofs.json --update reports/interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
-      - name: Pull request with the updated report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interval-proofs
+          path: interval_proofs.json
+      - uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
-        permissions:
-          contents: write
-          pull-requests: write
+        with:
+          name: interval-report
+          path: reports/interval_proofs.json
+
+  # Separate job with write access, so that the long proof job keeps read-only permissions.
+  report-pr:
+    needs: proofs
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: interval-report
+          path: reports
+      - name: Pull request with the updated report
         env:
           GH_TOKEN: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
         run: |
@@ -72,8 +94,3 @@ jobs:
             } > /tmp/pr_body.md
             gh pr create --base main --head auto/interval-report --title "Update the interval proof report" --body-file /tmp/pr_body.md
           fi
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: interval-proofs
-          path: interval_proofs.json
