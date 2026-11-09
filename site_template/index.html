@@ -123,7 +123,7 @@ summary{padding:12px 16px;cursor:pointer;font-weight:600}
 .plist{padding:0 16px 16px}
 pre{margin:8px 0 0;max-height:360px;overflow:auto;font:400 12.5px/1.5 var(--f-mono);background:var(--code-bg);border:1px solid var(--soft);padding:12px;border-radius:8px;tab-size:4}
 pre.pts{white-space:pre}
-.exsurf{max-width:640px;margin:0 auto 16px}.exsel{margin-top:8px}sup.dag{color:var(--s-sym);cursor:help;margin-left:2px}td .mk{display:inline-block;width:0;overflow:visible;white-space:nowrap;text-align:left;font-weight:400}td .oq{display:inline-block;margin-left:3px;cursor:pointer;font-size:11px;line-height:1;color:var(--accent)}td .oq:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
+.exsurf{max-width:640px;margin:0 auto 16px}.exsel{margin-top:8px}sup.dag{color:var(--s-sym);cursor:help;margin-left:2px}td .mk{display:inline-block;width:0;overflow:visible;white-space:nowrap;text-align:left;font-weight:400}td .oq{display:inline-block;margin-left:3px;cursor:pointer;font-size:11px;line-height:1;color:var(--accent)}td .oq.star{color:#e0a100;font-size:12px}#tbl td:last-child,#tbl th:last-child{padding-right:22px}td .oq:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:3px}
 .viewer,.exfig{position:relative}.figtag{position:absolute;top:8px;left:8px;font:600 11px var(--f-mono);letter-spacing:.06em;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:2px 7px;z-index:2;pointer-events:none}.figtag.fi{position:static;display:inline-block;margin-bottom:8px}
 .exgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
 .fnbtns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
@@ -5515,6 +5515,9 @@ var hpopFor=null,hpopPin=false;
 var OQ={cube:{6:'oqCube6'},triangle:{9:'oqTri9'}};
 function escA(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 function oqMark(dom,n){var k=OQ[dom]&&OQ[dom][n];return k?'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('oqBtn')+'" data-tip="'+escA(t(k))+'">ⓘ</span>':'';}
+/* optimal rules: a star after the value when N equals the proven lower bound L (same popup) */
+function optStar(v,low){return (v!=null&&low!=null&&v===low)?'<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optBtn')+'" data-tip="'+escA(t('optStar'))+'">★</span>':'';}
+function starCell(v,low){var s=optStar(v,low);return s?'<span class="mk">'+s+'</span>':'';}
 var HPSEL='th .hw, td .oq';
 function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;hpopPin=false;}
 function hpopShow(el){var p=$('#hpop');
@@ -5544,16 +5547,16 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
   for(var n=1;n<=MX();n++){var i=n-1,tr=document.createElement('tr');tr.className='sel-row';tr.setAttribute('aria-selected',n===st.n);
     var dl=f[i]-d.abz[i];var dtxt=dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'));
     var cells='<td>'+n+'</td>';
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':fmt(po.arr[i]))+'</td>';}
-    if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv))+'</td>';});}
-    else{var mk=flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':fmt(po.arr[i])+starCell(po.arr[i],d.low[i]))+'</td>';}
+    if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i]))+'</td>';});}
+    else{var mk=optStar(f[i],d.low[i])+flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
-      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i])+'<span class="mk"><span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
-      FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+'</td>';}
+      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i])+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
+      FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i]))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i])+'</td>';}
     tr.innerHTML=cells;(function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
   if(!iv){var ci=-1,pos=0;heads.forEach(function(h){if(h[1]===st.src)ci=pos;pos+=1;});if(ci>=0){var wd=1;Array.prototype.forEach.call(tb.rows,function(row){for(var q=0;q<wd;q++)if(row.cells[ci+q])row.cells[ci+q].classList.add('selcol');});}}
   /* literature column: citations sit in a zero-width span right of the number; reserve their width as padding */
-  var lw=0;document.querySelectorAll('#tbl td.litn .ml').forEach(function(s){lw=Math.max(lw,s.getBoundingClientRect().width);});
+  var lw=0;document.querySelectorAll('#tbl td.litn .mk').forEach(function(m){var w=0;Array.prototype.forEach.call(m.children,function(c){w+=c.getBoundingClientRect().width+4;});lw=Math.max(lw,w);});
   if(lw)document.querySelectorAll('#tbl td.litn, #tbl th[data-src="lit"]').forEach(function(c){c.style.paddingRight=Math.ceil(lw+16)+'px';});
   $('#srcnote').innerHTML=t('srcNote').replace('[13]',cite(13));$('#srcnote').style.display=st.dom==='interval'?'none':'';}
 function el(tag,a,p){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
