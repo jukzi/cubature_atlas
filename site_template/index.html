@@ -5516,8 +5516,11 @@ var OQ={cube:{6:'oqCube6'},triangle:{9:'oqTri9'}};
 function escA(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 function oqMark(dom,n){var k=OQ[dom]&&OQ[dom][n];return k?'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('oqBtn')+'" data-tip="'+escA(t(k))+'">ⓘ</span>':'';}
 /* optimal rules: a star after the value when N equals the proven lower bound L (same popup) */
-function optStar(v,low){return (v!=null&&low!=null&&v===low)?'<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optBtn')+'" data-tip="'+escA(t('optStar'))+'">★</span>':'';}
-function starCell(v,low){var s=optStar(v,low);return s?'<span class="mk">'+s+'</span>':'';}
+/* proven minimal only among rules with positive weights (documentation, section lower bound): hollow star */
+var LPOS={tetra:{3:6}};
+function optStar(v,low,n){if(v!=null&&n!=null&&v!==low&&LPOS[st.dom]&&LPOS[st.dom][n]===v)return '<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optPosBtn')+'" data-tip="'+escA(t('optPosStar'))+'">☆</span>';
+  return (v!=null&&low!=null&&v===low)?'<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optBtn')+'" data-tip="'+escA(t('optStar'))+'">★</span>':'';}
+function starCell(v,low,n){var s=optStar(v,low,n);return s?'<span class="mk">'+s+'</span>':'';}
 var HPSEL='th .hw, td .oq';
 function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;hpopPin=false;}
 function hpopShow(el){var p=$('#hpop');
@@ -5547,12 +5550,12 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
   for(var n=1;n<=MX();n++){var i=n-1,tr=document.createElement('tr');tr.className='sel-row';tr.setAttribute('aria-selected',n===st.n);
     var dl=f[i]-d.abz[i];var dtxt=dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'));
     var cells='<td>'+n+'</td>';
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':fmt(po.arr[i])+starCell(po.arr[i],d.low[i]))+'</td>';}
-    if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i]))+'</td>';});}
-    else{var mk=optStar(f[i],d.low[i])+flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
+    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
-      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i])+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
-      FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i]))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i])+'</td>';}
+      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
+      FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i],n)+'</td>';}
     tr.innerHTML=cells;(function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
   if(!iv){var ci=-1,pos=0;heads.forEach(function(h){if(h[1]===st.src)ci=pos;pos+=1;});if(ci>=0){var wd=1;Array.prototype.forEach.call(tb.rows,function(row){for(var q=0;q<wd;q++)if(row.cells[ci+q])row.cells[ci+q].classList.add('selcol');});}}
   /* literature column: citations sit in a zero-width span right of the number; reserve their width as padding */
