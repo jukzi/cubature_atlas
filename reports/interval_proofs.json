@@ -31,7 +31,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "69b0b520184ce474"
   },
   {
    "id": "CA-C3-03-8-PI-DW",
@@ -63,7 +64,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "77d035028eee1e5a"
   },
   {
    "id": "CA-C3-05-14-PI-DW",
@@ -95,7 +97,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8d27c5255452196a"
   },
   {
    "id": "CA-C3-07-34-PI-DW",
@@ -127,7 +130,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c28981b01f2e433d"
   },
   {
    "id": "CA-C3-09-58-PI-DW",
@@ -159,7 +163,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "aca0f59c6e54b3fc"
   },
   {
    "id": "CA-C3-11-90-PI-DW",
@@ -191,7 +196,8 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ccab22c84d4fa89c"
   },
   {
    "id": "CA-C3-13-148-PI-DW",
@@ -223,7 +229,8 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "34dfb91c8b88376e"
   },
   {
    "id": "CA-C3-15-199-PI-DW",
@@ -255,7 +262,8 @@
    },
    "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "798dd3b9cbe47499"
   },
   {
    "id": "CA-C3-17-282-PI-DW",
@@ -287,7 +295,8 @@
    },
    "seconds": 0.19,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ec56ab191f2b10e5"
   },
   {
    "id": "CA-C3-19-369-PI-DW",
@@ -319,7 +328,8 @@
    },
    "seconds": 0.29,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "db1ef7a2d6e740e1"
   },
   {
    "id": "CA-C3-21-495-PI-DW",
@@ -351,7 +361,8 @@
    },
    "seconds": 0.45,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "71385c0c338aa7f9"
   },
   {
    "id": "CA-C3-23-617-PI-DW",
@@ -383,7 +394,8 @@
    },
    "seconds": 0.66,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4cb9e9ced022f2de"
   },
   {
    "id": "CA-C3-25-828-PI-DW",
@@ -416,7 +428,8 @@
    },
    "seconds": 1.61,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b66be3d3b695597e"
   },
   {
    "id": "CA-C3-27-984-PI-DW",
@@ -448,7 +461,8 @@
    },
    "seconds": 1.45,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9ac0fefba68f8b33"
   },
   {
    "id": "CA-C3-29-1258-PI-DW",
@@ -480,7 +494,8 @@
    },
    "seconds": 2.19,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0f02b0783d71bd4f"
   },
   {
    "id": "CA-C3-31-1478-PI-DW",
@@ -512,7 +527,8 @@
    },
    "seconds": 3.3,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e44d538735a1de87"
   },
   {
    "id": "CA-C2-01-1-PI-DW",
@@ -544,7 +560,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "637893e13d155df4"
   },
   {
    "id": "CA-C2-03-4-PI-DW",
@@ -576,7 +593,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "81634a68bfa88532"
   },
   {
    "id": "CA-C2-05-8-PI-DW",
@@ -608,7 +626,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "41b1167a50e8b19c"
   },
   {
    "id": "CA-C2-07-12-PI-DW",
@@ -640,7 +659,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6c086889bddbe9e4"
   },
   {
    "id": "CA-C2-09-20-PI-DW",
@@ -672,7 +692,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "51d43b8d195cd1a3"
   },
   {
    "id": "CA-C2-11-28-PI-DW",
@@ -704,7 +725,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "10572a8d43f3c94e"
   },
   {
    "id": "CA-C2-13-37-PI-DW",
@@ -736,7 +758,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8f40ad6d20c2ea90"
   },
   {
    "id": "CA-C2-15-48-PI-DW",
@@ -768,7 +791,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6b285fc723543165"
   },
   {
    "id": "CA-C2-17-57-PI-DW",
@@ -800,7 +824,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5e20a512df542338"
   },
   {
    "id": "CA-C2-19-72-PI-DW",
@@ -832,7 +857,8 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a95f2f416d494777"
   },
   {
    "id": "CA-C2-21-85-PI-DW",
@@ -864,7 +890,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e253af4d2aff95bc"
   },
   {
    "id": "CA-C2-23-101-PI-DW",
@@ -896,7 +923,8 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5e05b9eeb58551a7"
   },
   {
    "id": "CA-C2-25-120-PI-DW",
@@ -928,7 +956,8 @@
    },
    "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6d5e761282652c03"
   },
   {
    "id": "CA-C2-27-137-PI-DW",
@@ -960,7 +989,8 @@
    },
    "seconds": 0.13,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b896927dd8bfcf6a"
   },
   {
    "id": "CA-C2-29-157-PI-DW",
@@ -992,7 +1022,8 @@
    },
    "seconds": 0.18,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "72f582cd479f1ea6"
   },
   {
    "id": "CA-C2-31-177-PI-DW",
@@ -1024,7 +1055,8 @@
    },
    "seconds": 0.21,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0484dbdd1f97e18a"
   },
   {
    "id": "CA-T3-01-1-PI-JS",
@@ -1056,7 +1088,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d2141bb0187705cf"
   },
   {
    "id": "CA-T3-02-4-PI-JS",
@@ -1088,7 +1121,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "83cbe1220f6abe72"
   },
   {
    "id": "CA-T3-03-8-PI-JS",
@@ -1120,7 +1154,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "13658f9dfb47c054"
   },
   {
    "id": "CA-T3-04-14-PI-JS",
@@ -1152,7 +1187,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "646f3c27ca5a2f68"
   },
   {
    "id": "CA-T3-05-14-PI-JS",
@@ -1184,7 +1220,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "66aad0748d6b9ad9"
   },
   {
    "id": "CA-T3-06-24-PI-JS",
@@ -1216,7 +1253,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3610ef15ee05322d"
   },
   {
    "id": "CA-T3-07-35-PI-JS",
@@ -1248,7 +1286,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5634daa77bd4eb6e"
   },
   {
    "id": "CA-T3-08-46-PI-JS",
@@ -1280,7 +1319,8 @@
    },
    "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2952ecb134475353"
   },
   {
    "id": "CA-T3-09-59-PI-JS",
@@ -1312,7 +1352,8 @@
    },
    "seconds": 0.1,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d226fb941da77cc7"
   },
   {
    "id": "CA-T3-10-81-PI-JS",
@@ -1344,7 +1385,8 @@
    },
    "seconds": 0.14,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a59f0f93478c4d5e"
   },
   {
    "id": "CA-T3-11-110-PI-JS",
@@ -1376,7 +1418,8 @@
    },
    "seconds": 0.2,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6f97c7ef412b955d"
   },
   {
    "id": "CA-T3-12-168-PI-JS",
@@ -1408,7 +1451,8 @@
    },
    "seconds": 0.36,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2cc5137e3c47854f"
   },
   {
    "id": "CA-T3-13-172-PI-JS",
@@ -1440,7 +1484,8 @@
    },
    "seconds": 0.44,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9bc242b5d3923227"
   },
   {
    "id": "CA-T3-14-204-PI-JS",
@@ -1472,7 +1517,8 @@
    },
    "seconds": 0.55,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "cf3e1b9e042c9a4b"
   },
   {
    "id": "CA-T3-15-264-PI-JS",
@@ -1504,7 +1550,8 @@
    },
    "seconds": 0.82,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2d1869691ac6a224"
   },
   {
    "id": "CA-T3-16-304-PI-JS",
@@ -1536,7 +1583,8 @@
    },
    "seconds": 1.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6531ddf7a0981a5c"
   },
   {
    "id": "CA-T3-17-364-PI-JS",
@@ -1568,7 +1616,8 @@
    },
    "seconds": 1.54,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "05f6b2fe1ccb75a9"
   },
   {
    "id": "CA-T3-18-436-PI-JS",
@@ -1600,7 +1649,8 @@
    },
    "seconds": 1.98,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "600fecb4778eb565"
   },
   {
    "id": "CA-T3-19-487-PI-JS",
@@ -1632,7 +1682,8 @@
    },
    "seconds": 2.44,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5d86d3cb352f6c8c"
   },
   {
    "id": "CA-T3-20-552-PI-JS",
@@ -1664,7 +1715,8 @@
    },
    "seconds": 3.1,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "477490176e2269db"
   },
   {
    "id": "CA-C3-01-1-PI-MPC",
@@ -1696,7 +1748,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7a8ff214327461c3"
   },
   {
    "id": "CA-C3-02-4-PI-MPC",
@@ -1728,7 +1781,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5f85027d7348a96d"
   },
   {
    "id": "CA-C3-03-6-PI-MPC",
@@ -1760,7 +1814,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a97f63b8a2095b73"
   },
   {
    "id": "CA-C3-04-10-PI-MPC",
@@ -1792,7 +1847,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8969770008d481cd"
   },
   {
    "id": "CA-C3-05-13-PI-MPC",
@@ -1824,7 +1880,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "889072832f54726f"
   },
   {
    "id": "CA-C3-06-22-PI-MPC",
@@ -1856,7 +1913,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0e4b3d3668acb6eb"
   },
   {
    "id": "CA-C3-07-26-PI-MPC",
@@ -1888,7 +1946,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "86299b2d63f38831"
   },
   {
    "id": "CA-C3-08-42-PI-MPC",
@@ -1920,7 +1979,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f21b2507ca41f971"
   },
   {
    "id": "CA-C3-09-48-PI-MPC",
@@ -1952,7 +2012,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2b173135cd5402f3"
   },
   {
    "id": "CA-C3-10-71-PI-MPC",
@@ -1984,7 +2045,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d6a94e6f5b3f4b06"
   },
   {
    "id": "CA-C3-11-81-PI-MPC",
@@ -2016,7 +2078,8 @@
    },
    "seconds": 0.14,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "20544e2d7b80ff07"
   },
   {
    "id": "CA-C3-12-115-PI-MPC",
@@ -2048,7 +2111,8 @@
    },
    "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3008f9a51d84e911"
   },
   {
    "id": "CA-C3-13-126-PI-MPC",
@@ -2080,7 +2144,8 @@
    },
    "seconds": 0.27,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "483b5634bc627822"
   },
   {
    "id": "CA-C3-14-169-PI-MPC",
@@ -2112,7 +2177,8 @@
    },
    "seconds": 0.11,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "da832c2d5c38e0ba"
   },
   {
    "id": "CA-C3-15-186-PI-MPC",
@@ -2144,7 +2210,8 @@
    },
    "seconds": 0.53,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6b3354fb5431ae84"
   },
   {
    "id": "CA-C3-16-244-PI-MPC",
@@ -2176,7 +2243,8 @@
    },
    "seconds": 2.15,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "08900ff49d5506d9"
   },
   {
    "id": "CA-C3-17-265-PI-MPC",
@@ -2208,7 +2276,8 @@
    },
    "seconds": 1.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6cd4a8cecfdd24f5"
   },
   {
    "id": "CA-C3-18-326-PI-MPC",
@@ -2240,7 +2309,8 @@
    },
    "seconds": 0.25,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "86af00edd2b8d155"
   },
   {
    "id": "CA-C3-19-360-PI-MPC",
@@ -2272,7 +2342,8 @@
    },
    "seconds": 1.97,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ec0fe14f4d474c91"
   },
   {
    "id": "CA-C3-20-444-PI-MPC",
@@ -2304,7 +2375,8 @@
    },
    "seconds": 8.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2b3e9acee092a8f2"
   },
   {
    "id": "CA-C3-21-486-PI-MPC",
@@ -2336,7 +2408,8 @@
    },
    "seconds": 0.54,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "cc91385382f4c9af"
   },
   {
    "id": "CA-C3-21-494-PI-MPC",
@@ -2368,7 +2441,8 @@
    },
    "seconds": 0.5,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b8a1e04079abec8b"
   },
   {
    "id": "CA-C3-22-551-PI-MPC",
@@ -2400,7 +2474,8 @@
    },
    "seconds": 0.65,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "555d27dc6ed70e35"
   },
   {
    "id": "CA-C3-22-554-PI-MPC",
@@ -2432,7 +2507,8 @@
    },
    "seconds": 0.6,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1fcf75ee3327ecd6"
   },
   {
    "id": "CA-C3-22-558-PI-MPC",
@@ -2464,7 +2540,8 @@
    },
    "seconds": 0.6,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "33888132402ca77a"
   },
   {
    "id": "CA-C3-23-610-PI-MPC",
@@ -2496,7 +2573,8 @@
    },
    "seconds": 0.73,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "768ccdfe50e5705b"
   },
   {
    "id": "CA-C3-24-730-PI-MPC",
@@ -2528,7 +2606,8 @@
    },
    "seconds": 0.97,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c3a4ba756f464a08"
   },
   {
    "id": "CA-C3-24-743-PI-MPC",
@@ -2560,7 +2639,8 @@
    },
    "seconds": 1.17,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f812dc8a849cafe1"
   },
   {
    "id": "CA-C3-25-780-PI-MPC",
@@ -2592,7 +2672,8 @@
    },
    "seconds": 1.15,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "13f1d2008911c3ef"
   },
   {
    "id": "CA-C3-25-798-PI-MPC",
@@ -2624,7 +2705,8 @@
    },
    "seconds": 1.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4d558a4125ec2201"
   },
   {
    "id": "CA-C3-26-897-PI-MPC",
@@ -2656,7 +2738,8 @@
    },
    "seconds": 1.64,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a93d601691094a2e"
   },
   {
    "id": "CA-C3-26-922-PI-MPC",
@@ -2688,7 +2771,8 @@
    },
    "seconds": 1.93,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3d88ec8c8e7e058d"
   },
   {
    "id": "CA-C3-27-958-PI-MPC",
@@ -2720,7 +2804,8 @@
    },
    "seconds": 2.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c764b8a48dc78906"
   },
   {
    "id": "CA-C3-27-960-PI-MPC",
@@ -2752,7 +2837,8 @@
    },
    "seconds": 2.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9143d28ff2a5dff3"
   },
   {
    "id": "CA-C3-27-966-PI-MPC",
@@ -2784,7 +2870,8 @@
    },
    "seconds": 1.47,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d1bf820e2c3ed77c"
   },
   {
    "id": "CA-C3-28-1145-PI-MPC",
@@ -2816,7 +2903,8 @@
    },
    "seconds": 2.36,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1cee10f798b028fb"
   },
   {
    "id": "CA-C3-28-1177-PI-MPC",
@@ -2848,7 +2936,8 @@
    },
    "seconds": 2.34,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5958096cb2ac377e"
   },
   {
    "id": "CA-C3-29-1189-PI-MPC",
@@ -2880,7 +2969,8 @@
    },
    "seconds": 2.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "56339ddc1d1a94d7"
   },
   {
    "id": "CA-C3-29-1193-PI-MPC",
@@ -2912,7 +3002,8 @@
    },
    "seconds": 2.6,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "90f1c9dde51588d5"
   },
   {
    "id": "CA-C3-29-1223-PI-MPC",
@@ -2944,7 +3035,8 @@
    },
    "seconds": 2.34,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "85d0f34cc23c7d67"
   },
   {
    "id": "CA-C3-30-1324-PI-MPC",
@@ -2976,7 +3068,8 @@
    },
    "seconds": 3.44,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ab6918de5f01abae"
   },
   {
    "id": "CA-C3-30-1410-PI-MPC",
@@ -3008,7 +3101,8 @@
    },
    "seconds": 3.37,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2c5dfe90ad6723b1"
   },
   {
    "id": "CA-C1-01-1-PI-MPC",
@@ -3040,7 +3134,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f7090613eceb7753"
   },
   {
    "id": "CA-C1-02-2-PI-MPC",
@@ -3072,7 +3167,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a0f9a9bdc3fb1adf"
   },
   {
    "id": "CA-C1-03-2-PI-MPC",
@@ -3104,7 +3200,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "bccf4bcb2a39abd1"
   },
   {
    "id": "CA-C1-04-3-PI-MPC",
@@ -3136,7 +3233,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5b863d9e79377ff3"
   },
   {
    "id": "CA-C1-05-3-PI-MPC",
@@ -3168,7 +3266,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e76cf5f831b7c357"
   },
   {
    "id": "CA-C1-06-4-PI-MPC",
@@ -3200,7 +3299,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "35f613f63d705e19"
   },
   {
    "id": "CA-C1-07-4-PI-MPC",
@@ -3232,7 +3332,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "20bc8fc976028885"
   },
   {
    "id": "CA-C1-08-5-PI-MPC",
@@ -3264,7 +3365,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d4bcfc8f32868163"
   },
   {
    "id": "CA-C1-09-5-PI-MPC",
@@ -3296,7 +3398,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f40feb46bc4e8e14"
   },
   {
    "id": "CA-C1-10-6-PI-MPC",
@@ -3328,7 +3431,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "15ba77db55661464"
   },
   {
    "id": "CA-C1-11-6-PI-MPC",
@@ -3360,7 +3464,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "56f08dd3bbce3d63"
   },
   {
    "id": "CA-C1-12-7-PI-MPC",
@@ -3392,7 +3497,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6a8a756d2ce3c6a9"
   },
   {
    "id": "CA-C1-13-7-PI-MPC",
@@ -3424,7 +3530,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7189628c83469656"
   },
   {
    "id": "CA-C1-14-8-PI-MPC",
@@ -3456,7 +3563,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "76187c495d979b6b"
   },
   {
    "id": "CA-C1-15-8-PI-MPC",
@@ -3488,7 +3596,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9fcb6b92cd304844"
   },
   {
    "id": "CA-C1-16-9-PI-MPC",
@@ -3520,7 +3629,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2f1f19ba32bcf939"
   },
   {
    "id": "CA-C1-17-9-PI-MPC",
@@ -3552,7 +3662,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9f22aaf4b3962f80"
   },
   {
    "id": "CA-C1-18-10-PI-MPC",
@@ -3584,7 +3695,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "db49b7da11e354f8"
   },
   {
    "id": "CA-C1-19-10-PI-MPC",
@@ -3616,7 +3728,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "fc8fc914c7df835f"
   },
   {
    "id": "CA-C1-20-11-PI-MPC",
@@ -3648,7 +3761,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4875b133776f9489"
   },
   {
    "id": "CA-C1-21-11-PI-MPC",
@@ -3680,7 +3794,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a0c82f4bd5384d0e"
   },
   {
    "id": "CA-C1-22-12-PI-MPC",
@@ -3712,7 +3827,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2a6ca8dbab1ee90c"
   },
   {
    "id": "CA-C1-23-12-PI-MPC",
@@ -3744,7 +3860,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6ee66931b3cc647f"
   },
   {
    "id": "CA-C1-24-13-PI-MPC",
@@ -3776,7 +3893,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "bf412141c1ff2d8a"
   },
   {
    "id": "CA-C1-25-13-PI-MPC",
@@ -3808,7 +3926,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2483a2bdd0918804"
   },
   {
    "id": "CA-C1-26-14-PI-MPC",
@@ -3840,7 +3959,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "67afd9eecbc9a687"
   },
   {
    "id": "CA-C1-27-14-PI-MPC",
@@ -3872,7 +3992,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "73134b196300d8d6"
   },
   {
    "id": "CA-C1-28-15-PI-MPC",
@@ -3904,7 +4025,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "57e2324460797ec1"
   },
   {
    "id": "CA-C1-29-15-PI-MPC",
@@ -3936,7 +4058,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1d2e358c182c3311"
   },
   {
    "id": "CA-C1-30-16-PI-MPC",
@@ -3968,7 +4091,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3e444c9ac6fe04c7"
   },
   {
    "id": "CA-C2-01-1-PI-MPC",
@@ -4000,7 +4124,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e4e3e819b3b04df4"
   },
   {
    "id": "CA-C2-02-3-PI-MPC",
@@ -4032,7 +4157,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "82f673a0794878e4"
   },
   {
    "id": "CA-C2-03-4-PI-MPC",
@@ -4064,7 +4190,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2daaf06e39914cee"
   },
   {
    "id": "CA-C2-04-6-PI-MPC",
@@ -4096,7 +4223,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "37717bff22958988"
   },
   {
    "id": "CA-C2-05-7-PI-MPC",
@@ -4128,7 +4256,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "243c496d8d017f87"
   },
   {
    "id": "CA-C2-06-10-PI-MPC",
@@ -4160,7 +4289,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "55b271e89cb325a2"
   },
   {
    "id": "CA-C2-07-12-PI-MPC",
@@ -4192,7 +4322,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b075e98395cd1b1a"
   },
   {
    "id": "CA-C2-08-16-PI-MPC",
@@ -4224,7 +4355,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "439f2e7e2ffff51a"
   },
   {
    "id": "CA-C2-09-17-PI-MPC",
@@ -4256,7 +4388,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a2351945164e4bf7"
   },
   {
    "id": "CA-C2-10-22-PI-MPC",
@@ -4288,7 +4421,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "23c0ce7f5d7b52af"
   },
   {
    "id": "CA-C2-11-24-PI-MPC",
@@ -4320,7 +4454,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f64632b48cd96b82"
   },
   {
    "id": "CA-C2-12-31-PI-MPC",
@@ -4352,7 +4487,8 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "81dd391a9590692b"
   },
   {
    "id": "CA-C2-13-33-PI-MPC",
@@ -4384,7 +4520,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4e77ce85ad5dd1a3"
   },
   {
    "id": "CA-C2-14-40-PI-MPC",
@@ -4416,7 +4553,8 @@
    },
    "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "73dafdbe0c332cbb"
   },
   {
    "id": "CA-C2-15-43-PI-MPC",
@@ -4448,7 +4586,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e39d1e73ae79a924"
   },
   {
    "id": "CA-C2-16-51-PI-MPC",
@@ -4480,7 +4619,8 @@
    },
    "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5210891cbcc830e9"
   },
   {
    "id": "CA-C2-17-54-PI-MPC",
@@ -4512,7 +4652,8 @@
    },
    "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "49c920d9b3245210"
   },
   {
    "id": "CA-C2-18-64-PI-MPC",
@@ -4544,7 +4685,8 @@
    },
    "seconds": 0.15,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6ab023b0ab65f168"
   },
   {
    "id": "CA-C2-19-67-PI-MPC",
@@ -4576,7 +4718,8 @@
    },
    "seconds": 0.13,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e1097c187bfbee2f"
   },
   {
    "id": "CA-C2-20-77-PI-MPC",
@@ -4608,7 +4751,8 @@
    },
    "seconds": 0.18,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "56693adac5e115f9"
   },
   {
    "id": "CA-C2-21-81-PI-MPC",
@@ -4640,7 +4784,8 @@
    },
    "seconds": 0.17,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7fe0907738d018e8"
   },
   {
    "id": "CA-C2-22-92-PI-MPC",
@@ -4672,7 +4817,8 @@
    },
    "seconds": 0.25,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c0b3d98a0a1d9f4d"
   },
   {
    "id": "CA-C2-23-96-PI-MPC",
@@ -4704,7 +4850,8 @@
    },
    "seconds": 0.23,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1d03ddf5c3f51c5f"
   },
   {
    "id": "CA-C2-24-109-PI-MPC",
@@ -4736,7 +4883,8 @@
    },
    "seconds": 0.38,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "29572d3d058f489b"
   },
   {
    "id": "CA-C2-25-113-PI-MPC",
@@ -4768,7 +4916,8 @@
    },
    "seconds": 0.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b98f1e031bce8854"
   },
   {
    "id": "CA-C2-26-127-PI-MPC",
@@ -4800,7 +4949,8 @@
    },
    "seconds": 0.48,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7e2de7a301d7be14"
   },
   {
    "id": "CA-C2-27-131-PI-MPC",
@@ -4832,7 +4982,8 @@
    },
    "seconds": 0.4,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a03da963cb9e36a4"
   },
   {
    "id": "CA-C2-28-146-PI-MPC",
@@ -4864,7 +5015,8 @@
    },
    "seconds": 0.61,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "d4c16fd75a7804e0"
   },
   {
    "id": "CA-C2-29-150-PI-MPC",
@@ -4896,7 +5048,8 @@
    },
    "seconds": 0.52,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "69354b4b87113cc5"
   },
   {
    "id": "CA-C2-30-166-PI-MPC",
@@ -4928,7 +5081,8 @@
    },
    "seconds": 0.91,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6ea6b60bd895d34a"
   },
   {
    "id": "CA-C2-30-167-PI-MPC",
@@ -4960,7 +5114,8 @@
    },
    "seconds": 0.89,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "586ebd16bd303af8"
   },
   {
    "id": "CA-T3-01-1-PI-MPC",
@@ -4992,7 +5147,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "eaff9a85feb2616c"
   },
   {
    "id": "CA-T3-02-4-PI-MPC",
@@ -5024,7 +5180,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a5c7d98717dc7070"
   },
   {
    "id": "CA-T3-03-6-PI-MPC",
@@ -5056,7 +5213,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4ce5d80d91f82ee3"
   },
   {
    "id": "CA-T3-04-11-PI-MPC",
@@ -5088,7 +5246,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "dc39fcc8d58e162f"
   },
   {
    "id": "CA-T3-05-14-PI-MPC",
@@ -5120,7 +5279,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "81ef842c270772c6"
   },
   {
    "id": "CA-T3-06-23-PI-MPC",
@@ -5152,7 +5312,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1ed21c1364fe1907"
   },
   {
    "id": "CA-T3-07-31-PI-MPC",
@@ -5184,7 +5345,8 @@
    },
    "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "58fdeda60689bcd0"
   },
   {
    "id": "CA-T3-08-43-PI-MPC",
@@ -5216,7 +5378,8 @@
    },
    "seconds": 0.21,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "921fff95d890de45"
   },
   {
    "id": "CA-T3-09-56-PI-MPC",
@@ -5249,7 +5412,8 @@
    },
    "seconds": 0.47,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "32696df01718788e"
   },
   {
    "id": "CA-T3-10-74-PI-MPC",
@@ -5281,7 +5445,8 @@
    },
    "seconds": 0.3,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7ae9fb094fd7f2b7"
   },
   {
    "id": "CA-T3-10-75-PI-MPC",
@@ -5313,7 +5478,8 @@
    },
    "seconds": 0.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2ab49b3608e5ef7b"
   },
   {
    "id": "CA-T3-11-92-PI-MPC",
@@ -5345,7 +5511,8 @@
    },
    "seconds": 0.47,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c213ce951f1be82b"
   },
   {
    "id": "CA-T3-12-117-PI-MPC",
@@ -5377,7 +5544,8 @@
    },
    "seconds": 1.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ced474e9e5e458b4"
   },
   {
    "id": "CA-T3-13-142-PI-MPC",
@@ -5410,7 +5578,8 @@
    },
    "seconds": 3.12,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "112c13322567826a"
   },
   {
    "id": "CA-T3-14-173-PI-MPC",
@@ -5443,7 +5612,8 @@
    },
    "seconds": 4.34,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "38dfdbe324aacfd5"
   },
   {
    "id": "CA-T3-15-207-PI-MPC",
@@ -5475,7 +5645,8 @@
    },
    "seconds": 3.53,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a1ec23e4d2f62fcf"
   },
   {
    "id": "CA-T3-16-248-PI-MPC",
@@ -5507,7 +5678,8 @@
    },
    "seconds": 5.52,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "80ed0d0ef107c257"
   },
   {
    "id": "CA-T3-17-289-PI-MPC",
@@ -5539,7 +5711,8 @@
    },
    "seconds": 5.17,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b85d53d4a175e483"
   },
   {
    "id": "CA-T3-18-337-PI-MPC",
@@ -5572,7 +5745,8 @@
    },
    "seconds": 19.13,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0fdbd0114643cc5b"
   },
   {
    "id": "CA-T3-19-389-PI-MPC",
@@ -5605,7 +5779,8 @@
    },
    "seconds": 26.46,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "07733b6b75eeba20"
   },
   {
    "id": "CA-T3-20-446-PI-MPC",
@@ -5638,7 +5813,8 @@
    },
    "seconds": 32.51,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "afb6e3c95ca5e115"
   },
   {
    "id": "CA-T3-21-509-PI-MPC",
@@ -5670,7 +5846,8 @@
    },
    "seconds": 20.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3a7588f861a44966"
   },
   {
    "id": "CA-T3-22-580-PI-MPC",
@@ -5703,7 +5880,8 @@
    },
    "seconds": 65.91,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c079e3708bf96ec8"
   },
   {
    "id": "CA-T3-23-659-PI-MPC",
@@ -5735,7 +5913,8 @@
    },
    "seconds": 47.93,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "69c1009ae0c6f51e"
   },
   {
    "id": "CA-T3-24-766-PI-MPC",
@@ -5767,7 +5946,8 @@
    },
    "seconds": 5.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0747310c9c1f4030"
   },
   {
    "id": "CA-T3-25-871-PI-MPC",
@@ -5799,7 +5979,8 @@
    },
    "seconds": 56.55,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "bb46dc61f8d22ff5"
   },
   {
    "id": "CA-T3-25-872-PI-MPC",
@@ -5831,7 +6012,8 @@
    },
    "seconds": 8.46,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e2aa917136eea11c"
   },
   {
    "id": "CA-T3-26-950-PI-MPC",
@@ -5863,7 +6045,8 @@
    },
    "seconds": 7.88,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "fd074201253bfd34"
   },
   {
    "id": "CA-T3-27-1077-PI-MPC",
@@ -5895,7 +6078,8 @@
    },
    "seconds": 122.6,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "aee75ce270c9eb5f"
   },
   {
    "id": "CA-T3-27-1079-PI-MPC",
@@ -5927,7 +6111,8 @@
    },
    "seconds": 11.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9f896db19e7fae1e"
   },
   {
    "id": "CA-T3-28-1181-PI-MPC",
@@ -5959,7 +6144,8 @@
    },
    "seconds": 13.9,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7e650be724121e76"
   },
   {
    "id": "CA-T3-28-1336-PI-MPC",
@@ -5991,7 +6177,8 @@
    },
    "seconds": 17.39,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "5f031701620c562c"
   },
   {
    "id": "CA-T3-29-1480-PI-MPC",
@@ -6023,7 +6210,8 @@
    },
    "seconds": 22.33,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6936ec4f4cc0a929"
   },
   {
    "id": "CA-T3-29-1536-PI-MPC",
@@ -6055,7 +6243,8 @@
    },
    "seconds": 18.81,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "489e390cf15bc86f"
   },
   {
    "id": "CA-T3-30-1704-PI-MPC",
@@ -6087,7 +6276,8 @@
    },
    "seconds": 22.46,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1939ec8dbce184c7"
   },
   {
    "id": "CA-T2-01-1-PI-MPC",
@@ -6119,7 +6309,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "00a407deeafdd191"
   },
   {
    "id": "CA-T2-02-3-PI-MPC",
@@ -6151,7 +6342,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ed1bdfd20b4a6af6"
   },
   {
    "id": "CA-T2-03-4-PI-MPC",
@@ -6183,7 +6375,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "fd4089687803a958"
   },
   {
    "id": "CA-T2-04-6-PI-MPC",
@@ -6215,7 +6408,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "27fb93d36fc999ac"
   },
   {
    "id": "CA-T2-05-7-PI-MPC",
@@ -6247,7 +6441,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "87a71111e90a0a22"
   },
   {
    "id": "CA-T2-06-11-PI-MPC",
@@ -6279,7 +6474,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f5dd0c878999fcfd"
   },
   {
    "id": "CA-T2-07-12-PI-MPC",
@@ -6311,7 +6507,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "852867fdd8be05f6"
   },
   {
    "id": "CA-T2-08-16-PI-MPC",
@@ -6343,7 +6540,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "af2e3d7a5a0dc108"
   },
   {
    "id": "CA-T2-09-19-PI-MPC",
@@ -6375,7 +6573,8 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "db24a54c48c1c5f2"
   },
   {
    "id": "CA-T2-10-24-PI-MPC",
@@ -6407,7 +6606,8 @@
    },
    "seconds": 0.07,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1e4525783a317718"
   },
   {
    "id": "CA-T2-11-27-PI-MPC",
@@ -6439,7 +6639,8 @@
    },
    "seconds": 0.14,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f6d75dcadc2834b1"
   },
   {
    "id": "CA-T2-12-32-PI-MPC",
@@ -6471,7 +6672,8 @@
    },
    "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0b92d917bebb1afd"
   },
   {
    "id": "CA-T2-13-35-PI-MPC",
@@ -6503,7 +6705,8 @@
    },
    "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "56736b2fdb93e1dc"
   },
   {
    "id": "CA-T2-14-41-PI-MPC",
@@ -6535,7 +6738,8 @@
    },
    "seconds": 0.28,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "368e4075ecec6318"
   },
   {
    "id": "CA-T2-15-46-PI-MPC",
@@ -6567,7 +6771,8 @@
    },
    "seconds": 0.19,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9331e0b28c16d291"
   },
   {
    "id": "CA-T2-16-52-PI-MPC",
@@ -6599,7 +6804,8 @@
    },
    "seconds": 0.21,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "35fb6a673c9f1418"
   },
   {
    "id": "CA-T2-17-58-PI-MPC",
@@ -6631,7 +6837,8 @@
    },
    "seconds": 0.26,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7d3178b865e902ab"
   },
   {
    "id": "CA-T2-18-65-PI-MPC",
@@ -6663,7 +6870,8 @@
    },
    "seconds": 0.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "87358e7a158a9044"
   },
   {
    "id": "CA-T2-19-71-PI-MPC",
@@ -6695,7 +6903,8 @@
    },
    "seconds": 0.63,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ff4f7471f5992e0e"
   },
   {
    "id": "CA-T2-20-78-PI-MPC",
@@ -6727,7 +6936,8 @@
    },
    "seconds": 0.43,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4fa256f22b27359b"
   },
   {
    "id": "CA-T2-21-85-PI-MPC",
@@ -6759,7 +6969,8 @@
    },
    "seconds": 0.84,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "cb5b1dc358d199ec"
   },
   {
    "id": "CA-T2-22-93-PI-MPC",
@@ -6791,7 +7002,8 @@
    },
    "seconds": 0.99,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4163d961d5c62338"
   },
   {
    "id": "CA-T2-23-101-PI-MPC",
@@ -6823,7 +7035,8 @@
    },
    "seconds": 0.68,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e4fa7afa14db1727"
   },
   {
    "id": "CA-T2-24-109-PI-MPC",
@@ -6855,7 +7068,8 @@
    },
    "seconds": 0.8,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0adec8c07157db43"
   },
   {
    "id": "CA-T2-25-117-PI-MPC",
@@ -6887,7 +7101,8 @@
    },
    "seconds": 0.95,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "86df0bdbd2312281"
   },
   {
    "id": "CA-T2-26-127-PI-MPC",
@@ -6919,7 +7134,8 @@
    },
    "seconds": 1.22,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9994ff3cfa1310ef"
   },
   {
    "id": "CA-T2-27-136-PI-MPC",
@@ -6951,7 +7167,8 @@
    },
    "seconds": 1.22,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "0af76bd187a30056"
   },
   {
    "id": "CA-T2-28-146-PI-MPC",
@@ -6983,7 +7200,8 @@
    },
    "seconds": 1.52,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b8e8b20d94ad69f8"
   },
   {
    "id": "CA-T2-29-155-PI-MPC",
@@ -7015,7 +7233,8 @@
    },
    "seconds": 1.73,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1c42f095d6b1c4c8"
   },
   {
    "id": "CA-T2-30-166-PI-MPC",
@@ -7047,7 +7266,8 @@
    },
    "seconds": 3.1,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "6c6c21ae347eb4f2"
   },
   {
    "id": "CA-C3-06-21-PO-MPC",
@@ -7079,7 +7299,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3b1af6146f6591e7"
   },
   {
    "id": "CA-C3-12-114-PO-MPC",
@@ -7111,7 +7332,8 @@
    },
    "seconds": 0.52,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "a914f3edc541e522"
   },
   {
    "id": "CA-C3-16-243-PO-MPC",
@@ -7143,7 +7365,8 @@
    },
    "seconds": 1.74,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "017d99040bad85ff"
   },
   {
    "id": "CA-C3-17-263-PO-MPC",
@@ -7175,7 +7398,8 @@
    },
    "seconds": 1.1,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4d0278ee9f2ff287"
   },
   {
    "id": "CA-C3-19-358-PO-MPC",
@@ -7207,7 +7431,8 @@
    },
    "seconds": 1.6,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "88d38acab3537deb"
   },
   {
    "id": "CA-C3-20-443-PO-MPC",
@@ -7239,7 +7464,8 @@
    },
    "seconds": 9.27,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "fbcdeeb1e33934e2"
   },
   {
    "id": "CA-C3-21-474-PO-MPC",
@@ -7271,7 +7497,8 @@
    },
    "seconds": 2.73,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "041f10e1540d1f31"
   },
   {
    "id": "CA-C3-24-732-PO-MPC",
@@ -7303,7 +7530,8 @@
    },
    "seconds": 23.77,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7bab05ea632c4d24"
   },
   {
    "id": "CA-C3-25-774-PO-MPC",
@@ -7335,7 +7563,8 @@
    },
    "seconds": 9.47,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "b9a47107e5de811f"
   },
   {
    "id": "CA-C3-28-1141-PO-MPC",
@@ -7367,7 +7596,8 @@
    },
    "seconds": 81.57,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "052061892f098c50"
   },
   {
    "id": "CA-C3-29-1181-PO-MPC",
@@ -7399,7 +7629,8 @@
    },
    "seconds": 27.45,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1452f8ff054d5309"
   },
   {
    "id": "CA-C2-08-15-PO-MPC",
@@ -7431,7 +7662,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "90cbd99f958c5aa8"
   },
   {
    "id": "CA-T3-04-10-PO-MPC",
@@ -7463,7 +7695,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "172a95d2be32b43a"
   },
   {
    "id": "CA-T3-06-22-PO-MPC",
@@ -7495,7 +7728,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8448f354b93500cd"
   },
   {
    "id": "CA-T3-07-30-PO-MPC",
@@ -7527,7 +7761,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9ba4b6bccfea7407"
   },
   {
    "id": "CA-T3-08-42-PO-MPC",
@@ -7559,7 +7794,8 @@
    },
    "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7c2304e77881870e"
   },
   {
    "id": "CA-T3-09-55-PO-MPC",
@@ -7591,7 +7827,8 @@
    },
    "seconds": 0.18,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "38fcec699ee2c9f0"
   },
   {
    "id": "CA-T3-10-72-PO-MPC",
@@ -7623,7 +7860,8 @@
    },
    "seconds": 0.3,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8ae2fe6ee6ab8be1"
   },
   {
    "id": "CA-T3-12-114-PO-MPC",
@@ -7655,7 +7893,8 @@
    },
    "seconds": 0.69,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "69797dff56f8adbd"
   },
   {
    "id": "CA-T3-13-140-PO-MPC",
@@ -7687,7 +7926,8 @@
    },
    "seconds": 1.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "423f6464457228c5"
   },
   {
    "id": "CA-T3-14-170-PO-MPC",
@@ -7719,7 +7959,8 @@
    },
    "seconds": 1.61,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "950d4d1f50fd3ab2"
   },
   {
    "id": "CA-T3-15-204-PO-MPC",
@@ -7751,7 +7992,8 @@
    },
    "seconds": 2.39,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "852f3e6de3d23c08"
   },
   {
    "id": "CA-T3-16-243-PO-MPC",
@@ -7783,7 +8025,8 @@
    },
    "seconds": 3.38,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "161a86c52e9ecebe"
   },
   {
    "id": "CA-T3-17-285-PO-MPC",
@@ -7815,7 +8058,8 @@
    },
    "seconds": 4.55,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1b1b8d3c13e1f627"
   },
   {
    "id": "CA-T3-18-333-PO-MPC",
@@ -7847,7 +8091,8 @@
    },
    "seconds": 8.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f5e00208925e5772"
   },
   {
    "id": "CA-T3-19-386-PO-MPC",
@@ -7879,7 +8124,8 @@
    },
    "seconds": 12.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "534bbfd984e44ca2"
   },
   {
    "id": "CA-T3-20-444-PO-MPC",
@@ -7911,7 +8157,8 @@
    },
    "seconds": 11.41,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f2ac8f9c742da898"
   },
   {
    "id": "CA-T3-21-507-PO-MPC",
@@ -7943,7 +8190,8 @@
    },
    "seconds": 22.49,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4c1c3bf725509c43"
   },
   {
    "id": "CA-T3-22-576-PO-MPC",
@@ -7975,7 +8223,8 @@
    },
    "seconds": 23.17,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1145c688907533bc"
   },
   {
    "id": "CA-T3-23-652-PO-MPC",
@@ -8007,7 +8256,8 @@
    },
    "seconds": 35.51,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f43c1129feff5611"
   },
   {
    "id": "CA-T3-24-757-PO-MPC",
@@ -8039,7 +8289,8 @@
    },
    "seconds": 49.93,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "fb4d23eede712ab8"
   },
   {
    "id": "CA-T3-25-870-PO-MPC",
@@ -8071,7 +8322,8 @@
    },
    "seconds": 69.77,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c41c1d9604855b31"
   },
   {
    "id": "CA-T3-26-949-PO-MPC",
@@ -8103,7 +8355,8 @@
    },
    "seconds": 91.1,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3320505608716eb7"
   },
   {
    "id": "CA-T2-06-10-PO-MPC",
@@ -8135,7 +8388,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "9fe7eec424d492f7"
   },
   {
    "id": "CA-T2-10-23-PO-MPC",
@@ -8167,7 +8421,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2fdadaa1b9047e42"
   },
   {
    "id": "CA-T2-11-26-PO-MPC",
@@ -8199,7 +8454,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "16e3da31b24a40cf"
   },
   {
    "id": "CA-T2-12-31-PO-MPC",
@@ -8231,7 +8487,8 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c61c4a67f068a24e"
   },
   {
    "id": "CA-T2-14-40-PO-MPC",
@@ -8263,7 +8520,8 @@
    },
    "seconds": 0.13,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "da635f2ee140f843"
   },
   {
    "id": "CA-T2-17-57-PO-MPC",
@@ -8295,7 +8553,8 @@
    },
    "seconds": 0.24,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "e364dc23f9c2c22d"
   },
   {
    "id": "CA-T2-18-64-PO-MPC",
@@ -8327,7 +8586,8 @@
    },
    "seconds": 0.31,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ffb1660d588eb20a"
   },
   {
    "id": "CA-T2-19-70-PO-MPC",
@@ -8359,7 +8619,8 @@
    },
    "seconds": 0.37,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "bfc96bd9ffd59a51"
   },
   {
    "id": "CA-T2-01-1-PI-WV",
@@ -8391,7 +8652,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "42e4955899479d78"
   },
   {
    "id": "CA-T2-02-3-PI-WV",
@@ -8423,7 +8685,8 @@
    },
    "seconds": 0.0,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "7ac84acd6410a344"
   },
   {
    "id": "CA-T2-04-6-PI-WV",
@@ -8455,7 +8718,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "1d5d1b0d20926ab6"
   },
   {
    "id": "CA-T2-05-7-PI-WV",
@@ -8487,7 +8751,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "ad9f527b34671416"
   },
   {
    "id": "CA-T2-06-12-PI-WV",
@@ -8519,7 +8784,8 @@
    },
    "seconds": 0.01,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "74b488126fe5dab7"
   },
   {
    "id": "CA-T2-07-15-PI-WV",
@@ -8551,7 +8817,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "eec60a86aedef6b6"
   },
   {
    "id": "CA-T2-08-16-PI-WV",
@@ -8583,7 +8850,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "3adb7f1623c00011"
   },
   {
    "id": "CA-T2-09-19-PI-WV",
@@ -8615,7 +8883,8 @@
    },
    "seconds": 0.02,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "2571114796d0a5eb"
   },
   {
    "id": "CA-T2-10-25-PI-WV",
@@ -8647,7 +8916,8 @@
    },
    "seconds": 0.03,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "8f8a0f129dddcacb"
   },
   {
    "id": "CA-T2-11-28-PI-WV",
@@ -8679,7 +8949,8 @@
    },
    "seconds": 0.04,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c36cde7bd043cd20"
   },
   {
    "id": "CA-T2-12-33-PI-WV",
@@ -8711,7 +8982,8 @@
    },
    "seconds": 0.05,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "441eecaa8181ab8e"
   },
   {
    "id": "CA-T2-13-37-PI-WV",
@@ -8743,7 +9015,8 @@
    },
    "seconds": 0.06,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "eed036adc1131d68"
   },
   {
    "id": "CA-T2-14-42-PI-WV",
@@ -8775,7 +9048,8 @@
    },
    "seconds": 0.08,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "477ef66104a99aec"
   },
   {
    "id": "CA-T2-15-49-PI-WV",
@@ -8807,7 +9081,8 @@
    },
    "seconds": 0.09,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c5eef380faa3c5c2"
   },
   {
    "id": "CA-T2-16-55-PI-WV",
@@ -8839,7 +9114,8 @@
    },
    "seconds": 0.12,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "86de85c9d6b0f62d"
   },
   {
    "id": "CA-T2-17-60-PI-WV",
@@ -8871,7 +9147,8 @@
    },
    "seconds": 0.13,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "47354031cedbaee4"
   },
   {
    "id": "CA-T2-18-67-PI-WV",
@@ -8903,7 +9180,8 @@
    },
    "seconds": 0.16,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "4d5f1b91ecee8595"
   },
   {
    "id": "CA-T2-19-73-PI-WV",
@@ -8935,7 +9213,8 @@
    },
    "seconds": 0.18,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "f9d2ace609f613f1"
   },
   {
    "id": "CA-T2-20-79-PI-WV",
@@ -8967,7 +9246,8 @@
    },
    "seconds": 0.21,
    "ok_stored": true,
-   "ok_exist": true
+   "ok_exist": true,
+   "sha": "c82a8e00894cb539"
   }
  ]
 }

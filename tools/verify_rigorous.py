@@ -39,6 +39,7 @@ Exit code 1 if a checked rule fails part 1, or (with --strict) if part 2 cannot 
 
 import argparse
 import glob
+import hashlib
 import json
 import math
 import os
@@ -1607,14 +1608,15 @@ def prove(dom, n, X, W, Xq, zero_tol):
 
 
 def check_rule(path):
-    with open(path) as fh:
-        r = json.load(fh, parse_float=Fraction)
+    with open(path, "rb") as fh:
+        raw = fh.read()
+    r = json.loads(raw.decode("utf8"), parse_float=Fraction)
     dom = r["domain"]
     n = int(r["degree"])
     Xq = [[Fraction(v) for v in p] for p in r["nodes"]]
     Wq = [Fraction(v) for v in r["weights"]]
     t0 = time.time()
-    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"))
+    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"), sha=hashlib.sha256(raw).hexdigest()[:16])
     out["stored"] = stored_check(dom, n, Xq, Wq)
     X = [[float(v) for v in p] for p in Xq]
     W = [float(v) for v in Wq]

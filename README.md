@@ -130,7 +130,7 @@ python tools/verify_rigorous.py --changed origin/main             # only added o
 python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json
 ```
 
-The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week; a pull request fails if a changed rule does not pass, unless the rule has `"status": "needs_certificate"`.
+The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build shows it on the website (table "Certificates", column "interval proof") and on every rule page, as long as the rule file is unchanged since the check (the report stores a hash of each file). `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week; a pull request fails if a changed rule does not pass, unless the rule has `"status": "needs_certificate"`.
 
 Current result (all 280 rules, about 20 minutes on one core): the stored numbers of every rule pass, and for every rule an exact rule with the stored quality is proven to exist within 5·10⁻¹¹ of the stored numbers (173 in symmetry-reduced equations, 107 in all unknowns). Seven tetrahedron PI rules store a node about 10⁻¹⁵ outside the face x + y + z = 1 (accepted by the build's tolerance of 10⁻¹²); for them the proof places that node exactly on the face, and the proven exact rule lies inside.
 
