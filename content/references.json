@@ -117,5 +117,11 @@
     "y": "2005",
     "t": "A. Hinrichs, E. Novak: Cubature formulas for symmetric measures in higher dimensions with few points. arXiv:math/0509101 (2005). Section 2 gives Möller's bound for centrally symmetric weights in explicit form.",
     "u": "https://arxiv.org/abs/math/0509101"
+  },
+  {
+    "n": 20,
+    "y": "2011",
+    "t": "Z. Meng, Z. Luo: Constructing cubature formulas of degree 5 with few points. arXiv:1111.5094 (2011). States that for even degrees no lower bound beyond dim P_k is known (referring to the survey [4]).",
+    "u": "https://arxiv.org/abs/1111.5094"
   }
 ]
