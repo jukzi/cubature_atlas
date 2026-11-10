@@ -32,26 +32,32 @@ import dom
 import cubature_atlas as CA
 
 
-class PhysTetra(dom.Dom):
-    """Tetrahedron basis evaluated directly in physical coordinates (no Duffy map), so nodes may leave the domain."""
+class PhysDom(dom.Dom):
+    """Basis of the tetrahedron, triangle or square evaluated directly in physical coordinates (no Duffy map), so nodes may leave the domain."""
 
     def to_phys(self, Q):
         # Identity map: parameters are the physical coordinates.
         N = len(Q)
-        Jm = np.zeros((N, 3, 3))
-        Jm[:, 0, 0] = 1.0
-        Jm[:, 1, 1] = 1.0
-        Jm[:, 2, 2] = 1.0
+        Jm = np.zeros((N, self.d, self.d))
+        for k in range(self.d):
+            Jm[:, k, k] = 1.0
         return Q, Jm
 
 
-class TetraProb(dom.ProbG):
-    """Moment system on the tetrahedron with nodes in a box around the domain."""
+class GenProb(dom.ProbG):
+    """Moment system on the tetrahedron, triangle or square with nodes in a box around the domain."""
 
     def bounds(self, N, mode):
-        # Nodes in [-BOXOUT, 1 + BOXOUT]^3, weights >= 0.
-        lo = np.r_[np.full(3 * N, -BOXOUT), np.full(N, 0.0)]
-        hi = np.r_[np.full(3 * N, 1.0 + BOXOUT), np.full(N, 50.0)]
+        # Nodes in a box BOXOUT around the domain, weights >= 0.
+        d = self.d
+        if self.dom.name == "square":
+            a = -1.0 - BOXOUT
+            b = 1.0 + BOXOUT
+        else:
+            a = -BOXOUT
+            b = 1.0 + BOXOUT
+        lo = np.r_[np.full(d * N, a), np.full(N, 0.0)]
+        hi = np.r_[np.full(d * N, b), np.full(N, 50.0)]
         return lo, hi
 
 
@@ -164,12 +170,12 @@ def monomial_error(name, deg, X, W):
     err = 0.0
     for e in exps:
         v = np.sum(W * np.prod(X ** np.array(e), axis=1))
-        if name == "cube":
+        if name in ("cube", "square"):
             ex = 1.0
             for k in e:
                 ex *= (2.0 / (k + 1)) if k % 2 == 0 else 0.0
         else:
-            ex = math.prod(math.factorial(k) for k in e) / math.factorial(sum(e) + 3)
+            ex = math.prod(math.factorial(k) for k in e) / math.factorial(sum(e) + len(e))
         err = max(err, abs(v - ex))
     return err / CA.VOL[name]
 
@@ -195,12 +201,13 @@ def main():
     tl = float(sys.argv[3])
     seed = int(sys.argv[4])
     rng = np.random.default_rng(seed)
-    # Problem.
+    # Dimension of the domain.
+    D = 3 if name in ("cube", "tetra") else 2
     # Start rule.
     if len(sys.argv) > 5:
         A = np.load(sys.argv[5])
-        P = A[:, :3]
-        w = A[:, 3]
+        P = A[:, :D]
+        w = A[:, D]
     else:
         P, w = atlas_best_pi(name, deg)
     # Centrally symmetric search on the cube (environment CS=1).
@@ -214,16 +221,16 @@ def main():
     elif name == "cube":
         pr = CubeProb(deg, False, False)
     else:
-        pr = TetraProb(PhysTetra("tetra", deg))
+        pr = GenProb(PhysDom(name, deg))
     N = len(w)
-    print("start", name, "degree", deg, "N", N, "unknowns", 4 * N + len(tail), "moments", pr.M, "symmetric", sym, flush=True)
+    print("start", name, "degree", deg, "N", N, "unknowns", (D + 1) * N + len(tail), "moments", pr.M, "symmetric", sym, flush=True)
     x = np.r_[P.ravel(), w, tail]
     t0 = time.time()
     fails = 0
     # Stop when one node (pair) less would give fewer unknowns than moments (generic count reached).
-    while time.time() - t0 < tl and 4 * (N - 1) + len(tail) >= pr.M:
-        Qc = x[:3 * N].reshape(N, 3)
-        wc = x[3 * N:4 * N]
+    while time.time() - t0 < tl and (D + 1) * (N - 1) + len(tail) >= pr.M:
+        Qc = x[:D * N].reshape(N, D)
+        wc = x[D * N:(D + 1) * N]
         order = np.argsort(wc)
         # Candidates: smallest weights, closest pairs, random nodes.
         cands = [("del", int(k)) for k in order[:6]]
@@ -253,10 +260,10 @@ def main():
             scale = 2.0 if name == "cube" else 1.0
             Qn = Qn + rng.normal(0, scale * NOISE * rng.choice([0.002, 0.008, 0.03]), Qn.shape)
             Nn = len(wn)
-            if 4 * Nn + len(tail) < pr.M:
+            if (D + 1) * Nn + len(tail) < pr.M:
                 continue
             lo, hi = pr.bounds(Nn, "b")
-            xn = np.clip(np.r_[Qn.ravel(), wn, x[4 * N:]], lo, hi)
+            xn = np.clip(np.r_[Qn.ravel(), wn, x[(D + 1) * N:]], lo, hi)
             if os.environ.get("SOLVER", "lm") == "gn":
                 r = solve_gn_minnorm(pr, xn, Nn, MI)
             else:
