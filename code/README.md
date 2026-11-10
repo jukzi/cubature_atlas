@@ -23,7 +23,7 @@ The programs that produced and certified the rules, as published on the original
 | `cannon_cube.py` | Cube: start from a T_d- or O_h-invariant cannonball packing (FCC lattice) with equal weights, solve the symmetry-reduced system, then orbit elimination and LNS of `cubature_search.py` (`sym`, `cont` modes); free mode with exactly Z(n) nodes without symmetry; produced CA-C3-24-730 and CA-C3-22-551 |
 | `cannon_tetra.py` | Tetrahedron: start from a cannonball pile (K layers, S4-invariant), degree continuation from a low degree up to n, then orbit elimination of `simplex_cubature.py` with groups S and A; `--start` continues from a saved rule; produced CA-T3-28-1181 and CA-T3-29-1480 |
 | `cert_large.py` | Certificate for large simplex rules (tetrahedron degree 28 and up): same test as `certificate()`, with cached basis recursions and power iteration for the norms |
-| `po_elim.py` | Cube/tetrahedron PO search: node elimination from the PI rule with nodes allowed outside the domain (CS=1: centrally symmetric pairs on the cube); produced CA-C3-06-21-PO … CA-C3-29-1181-PO and CA-T3-12-114-PO … CA-T3-24-757-PO |
+| `po_elim.py` | Cube/tetrahedron/triangle/square PO search: node elimination from the PI rule with nodes allowed outside the domain (CS=1: centrally symmetric pairs on the cube); produced CA-C3-06-21-PO … CA-C3-29-1181-PO and CA-T3-12-114-PO … CA-T3-24-757-PO |
 | `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
 | `flat_ext_cube6.py` | Open question cube degree 6: exact flat-extension equations (75 quadrics in the 36 degree-7 moments) for a 20-node rule, written in msolve format; pure Python, no numpy needed |
 
