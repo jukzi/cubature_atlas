@@ -1,0 +1,29 @@
+{
+  "id": "CA-C3-02-4-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "cube",
+  "dimension": 3,
+  "degree": 2,
+  "points": 4,
+  "quality": "PI",
+  "origin": "sym",
+  "method": "numerical search with symmetry reduction (full symmetry group Oh or Td), certified in the symmetry-reduced system",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "verified",
+  "locked": true,
+  "residual_reported": 1e-15,
+  "certificate": {"N": 4, "M": 2, "p": 2, "res": 4.884981308350689e-15, "sigma": 1.4142135623730938, "h": 4.565037591084937e-14, "rad": 6.921080099277566e-15, "cert": true, "inside": true},
+  "symmetry": "full (Oh/Td)",
+  "nodes": [
+    [-0.5773502691896257, -0.5773502691896257, 0.5773502691896257],
+    [-0.5773502691896257, 0.5773502691896257, -0.5773502691896257],
+    [0.5773502691896257, -0.5773502691896257, -0.5773502691896257],
+    [0.5773502691896257, 0.5773502691896257, 0.5773502691896257]
+  ],
+  "weights": [
+    1.9999999999999991,
+    1.9999999999999991,
+    1.9999999999999991,
+    1.9999999999999991
+  ]
+}
