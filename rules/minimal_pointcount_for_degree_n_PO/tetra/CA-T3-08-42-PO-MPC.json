@@ -9,9 +9,9 @@
   "origin": "po_search",
   "method": "numerical search of this atlas with nodes allowed outside the domain (positive weights)",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
-  "status": "verified",
+  "status": "proven",
   "locked": true,
-  "certificate": {"N": 42, "M": 165, "p": 168, "res": 2.1313085702661808e-12, "sigma": 0.007493801675010691, "h": 0.1667305435126281, "rad": 5.229092669454535e-12, "cert": true, "inside": false, "positive": true},
+  "numerical_check": {"N": 42, "M": 165, "p": 168, "res": 2.1313085702661808e-12, "sigma": 0.007493801675010691, "h": 0.1667305435126281, "rad": 5.229092669454535e-12, "cert": true, "inside": false, "positive": true},
   "nodes": [
     [0.809797441877, 0.0618579411699, 0.0321913328323],
     [0.111944579533, 0.673555433058, 0.0838771189805],

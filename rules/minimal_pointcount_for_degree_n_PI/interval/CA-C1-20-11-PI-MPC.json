@@ -9,10 +9,10 @@
   "origin": "gauss_legendre",
   "method": "Gauss-Legendre rule, closed formula (numpy.polynomial.legendre.leggauss)",
   "author": "closed formula",
-  "status": "verified",
+  "status": "proven",
   "locked": true,
   "residual_reported": 0.0,
-  "certificate": {"N": 11, "M": 11, "p": 11, "res": 1.011234245872955e-14, "sigma": 2.2667701292504288, "h": 9.050440429218628e-13, "rad": 3.551238110694133e-15, "cert": true, "inside": true},
+  "numerical_check": {"N": 11, "M": 11, "p": 11, "res": 1.011234245872955e-14, "sigma": 2.2667701292504288, "h": 9.050440429218628e-13, "rad": 3.551238110694133e-15, "cert": true, "inside": true},
   "exact_degree": 21,
   "optimal": true,
   "nodes": [
