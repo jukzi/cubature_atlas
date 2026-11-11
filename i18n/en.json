@@ -246,5 +246,6 @@
   "ivSym": "symmetry-reduced equations, group of order {g}",
   "ivFull": "equations in all unknowns",
   "ivSumTpl": "Interval proof: for {iv} of the {all} degrees the rule in the table is proven to lie near an exact rule of its quality.",
-  "ivBtn": "Details of the interval proof"
+  "ivBtn": "Details of the interval proof",
+  "rpResidualOrtho": "Max. moment residual, orthonormal basis (build check)"
 }

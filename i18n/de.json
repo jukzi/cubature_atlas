@@ -224,7 +224,8 @@
     "ivSym": "1ef963c061b313e6",
     "ivFull": "09eda755f00289fe",
     "ivSumTpl": "c326c95979e264fb",
-    "ivBtn": "90aa2821946dc8f5"
+    "ivBtn": "90aa2821946dc8f5",
+    "rpResidualOrtho": "7378152182f4385c"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -473,5 +474,6 @@
   "ivSym": "symmetriereduzierte Gleichungen, Gruppe der Ordnung {g}",
   "ivFull": "Gleichungen in allen Unbekannten",
   "ivSumTpl": "Intervall-Beweis: Für {iv} der {all} Grade ist bewiesen, dass die Regel der Tabelle nahe einer exakten Regel ihrer Qualität liegt.",
-  "ivBtn": "Details des Intervall-Beweises"
+  "ivBtn": "Details des Intervall-Beweises",
+  "rpResidualOrtho": "Max. Momentenfehler, Orthonormalbasis (Build-Prüfung)"
 }

@@ -42,6 +42,7 @@ QUALITIES = {"PI", "PO", "NI", "NO"}
 
 # Tolerances of the build check
 RES_TOL = 1e-11          # max |sum w x^a - int x^a| / volume over all monomials up to the degree
+ORTHO_TOL = 1e-10        # max |sum w phi_k - int phi_k| over an orthonormal basis phi_k of P_n (sensitive to all moments alike)
 INSIDE_TOL = 1e-12       # a node counts as inside if its distance to the domain is below this
 ID_RE = re.compile(r"^CA-(C1|T2|C2|T3|C3)-(\d{2})-(\d+)-(PI|PO|NI|NO)-([A-Za-z0-9]+)(-[a-z])?$")
 FAMILY_RE = re.compile(r"^[A-Za-z0-9_]+$")
@@ -105,6 +106,129 @@ def moment_residual(dom, n, X, W):
         vals *= powers[c][exps[:, c]]
     q = vals @ W
     return float(np.max(np.abs(q - exact)) / VOL[dom])
+
+
+# ---------------------------------------------------------------- moments in an orthonormal basis
+
+def ortho_exponents(d, n):
+    return [t for t in product(range(n + 1), repeat=d) if sum(t) <= n]
+
+
+def legendre_table(n, x):
+    """Orthonormal Legendre polynomials sqrt((2k+1)/2) P_k(x), k = 0..n."""
+    P = [np.ones_like(x), x.copy()]
+    for k in range(1, n):
+        P.append(((2 * k + 1) * x * P[k] - k * P[k - 1]) / (k + 1))
+    P = P[: n + 1]
+    return [P[k] * math.sqrt((2 * k + 1) / 2) for k in range(n + 1)]
+
+
+def hom_legendre(n, x, s):
+    """s^i P_i((2x - s) / s) without dividing by s."""
+    Q = [np.ones_like(x), 2 * x - s]
+    for i in range(1, n):
+        Q.append(((2 * i + 1) * (2 * x - s) * Q[i] - i * s * s * Q[i - 1]) / (i + 1))
+    return Q[: n + 1]
+
+
+def hom_jacobi(n, a, y, t):
+    """t^j P_j^(a,0)((2y - t) / t) without dividing by t."""
+    R = [np.ones_like(y), (a + 2) * y - t]
+    for m in range(1, n):
+        an = 2 * (m + 1) * (m + a + 1) * (2 * m + a)
+        R.append(((2 * m + a + 1) * (((2 * m + a + 2) * (2 * m + a)) * (2 * y - t) + a * a * t) * R[m]
+                  - 2 * (m + a) * m * (2 * m + a + 2) * t * t * R[m - 1]) / an)
+    return R[: n + 1]
+
+
+def simplex_raw(dom, n, X, idx):
+    """Unnormalised orthogonal (Dubiner) basis on the reference triangle or tetrahedron, columns in idx order."""
+    if dom == "triangle":
+        x = X[:, 0]
+        y = X[:, 1]
+        Q = hom_legendre(n, x, 1 - y)
+        one = np.ones_like(y)
+        R = {}
+        cols = []
+        for i, j in idx:
+            if i not in R:
+                R[i] = hom_jacobi(n, 2 * i + 1, y, one)
+            cols.append(Q[i] * R[i][j])
+        return np.stack(cols, 1)
+    x = X[:, 0]
+    y = X[:, 1]
+    z = X[:, 2]
+    Q = hom_legendre(n, x, 1 - y - z)
+    one = np.ones_like(z)
+    R = {}
+    P = {}
+    cols = []
+    for i, j, k in idx:
+        if i not in R:
+            R[i] = hom_jacobi(n, 2 * i + 1, y, 1 - z)
+        if i + j not in P:
+            P[i + j] = hom_jacobi(n, 2 * (i + j) + 2, z, one)
+        cols.append(Q[i] * R[i][j] * P[i + j][k])
+    return np.stack(cols, 1)
+
+
+def simplex_reference_rule(dom, m):
+    """Collapsed Gauss-Legendre rule on the reference simplex."""
+    g, w = np.polynomial.legendre.leggauss(m)
+    u = (g + 1) / 2
+    wu = w / 2
+    if dom == "triangle":
+        A = np.array(list(product(u, u)))
+        Wt = np.array(list(product(wu, wu))).prod(1)
+        a = A[:, 0]
+        b = A[:, 1]
+        return np.c_[a * (1 - b), b], Wt * (1 - b)
+    A = np.array(list(product(u, u, u)))
+    Wt = np.array(list(product(wu, wu, wu))).prod(1)
+    a = A[:, 0]
+    b = A[:, 1]
+    c = A[:, 2]
+    return np.c_[a * (1 - b) * (1 - c), b * (1 - c), c], Wt * (1 - b) * (1 - c) ** 2
+
+
+_ortho_scale = {}
+
+
+def simplex_scale(dom, n):
+    """1 / norm of each basis function, from a collapsed Gauss rule that is exact for the squares."""
+    key = (dom, n)
+    if key in _ortho_scale:
+        return _ortho_scale[key]
+    idx = ortho_exponents(DIM[dom], n)
+    pts, wts = simplex_reference_rule(dom, n + 2)
+    sq = np.zeros(len(idx))
+    chunk = max(1, 4_000_000 // len(idx))
+    for a in range(0, len(pts), chunk):
+        B = simplex_raw(dom, n, pts[a:a + chunk], idx)
+        sq += (B * B * wts[a:a + chunk, None]).sum(0)
+    _ortho_scale[key] = (idx, 1 / np.sqrt(sq))
+    return _ortho_scale[key]
+
+
+def ortho_residual(dom, n, X, W):
+    """max_k |sum_i w_i phi_k(x_i) - int phi_k| for an orthonormal basis phi_k of P_n."""
+    d = DIM[dom]
+    if dom in BOX:
+        idx = ortho_exponents(d, n)
+        tab = [legendre_table(n, X[:, c]) for c in range(d)]
+        E = np.array(idx)
+        vals = np.ones((len(W), len(idx)))
+        for c in range(d):
+            T = np.stack(tab[c], 1)
+            vals *= T[:, E[:, c]]
+        target = np.zeros(len(idx))
+        target[0] = 2 ** (d / 2)
+    else:
+        idx, scale = simplex_scale(dom, n)
+        vals = simplex_raw(dom, n, X, idx) * scale
+        target = np.zeros(len(idx))
+        target[0] = math.sqrt(VOL[dom])
+    return float(np.abs(vals.T @ W - target).max())
 
 
 def margin(dom, X):
@@ -269,15 +393,19 @@ def check_rule(fam, dom, r, fn):
     if m.group(1) != SYM[dom] or int(m.group(2)) != n or int(m.group(3)) != len(W) or m.group(5) != fam.get("tag"):
         err("%s: id does not agree with domain/degree/points/family tag" % where)
     res = moment_residual(dom, n, X, W)
+    ores = ortho_residual(dom, n, X, W)
     marg = margin(dom, X)
     minw = float(W.min())
     q = quality(minw, marg)
     r["_res"] = res
+    r["_ores"] = ores
     r["_margin"] = marg
     r["_minw"] = minw
     r["_q"] = q
     if res > RES_TOL:
         err("%s: moment residual %.2e exceeds %.0e (rule is not exact to degree %d)" % (where, res, RES_TOL, n))
+    if ores > ORTHO_TOL:
+        err("%s: residual in the orthonormal basis %.2e exceeds %.0e (rule is not exact to degree %d)" % (where, ores, ORTHO_TOL, n))
     if r.get("quality") != q:
         err("%s: stored quality %s but the data give %s" % (where, r.get("quality"), q))
     if m.group(4) != q:
@@ -538,6 +666,7 @@ def rule_page(r, fam, best, lang, t):
 <tr><th>%s</th><td>%d</td></tr>
 <tr><th>%s</th><td>%s</td></tr>
 <tr><th>%s</th><td>%.2e</td></tr>
+<tr><th>%s</th><td>%.2e</td></tr>
 <tr><th>%s</th><td>%.6e</td></tr>
 <tr><th>%s</th><td>%.3e</td></tr>
 <tr><th>%s</th><td>%s</td></tr>
@@ -557,7 +686,7 @@ def rule_page(r, fam, best, lang, t):
        t["rpFamily"], html.escape(fam["name"][lang]), fam["id"],
        t["rpDomain"], html.escape(dname), SYM[r["domain"]],
        t["rpDegree"], r["degree"], t["rpPoints"], r["points"], t["rpQuality"], r["_q"],
-       t["rpResidual"], r["_res"], t["rpMinW"], r["_minw"], t["rpMargin"], r["_margin"],
+       t["rpResidual"], r["_res"], t["rpResidualOrtho"], r["_ores"], t["rpMinW"], r["_minw"], t["rpMargin"], r["_margin"],
        t["rpCert"], ctext, t["rpIv"], html.escape(iv_text(r.get("_iv"), t)), t["rpOrigin"], html.escape(r.get("method", r.get("source", ""))),
        up, rule_url(r, "en", ".json"), t["rpDownload"],
        t["rpCite"], html.escape(cite), t["rpNodes"], "\n".join(rows))
@@ -675,7 +804,9 @@ def main():
     for f in fams:
         doms = sorted({r["domain"] for r in f["rules"]}, key=DOMAINS.index)
         worst = max([r.get("_res", 0.0) for r in f["rules"]] or [0.0])
-        print("%-40s %-10s %4d rules  %s  max residual %.1e" % (f["id"], f["role"], len(f["rules"]), ",".join(doms), worst))
+        worst_o = max([r.get("_ores", 0.0) for r in f["rules"]] or [0.0])
+        print("%-40s %-10s %4d rules  %s  max residual monomial %.1e orthonormal %.1e" % (
+            f["id"], f["role"], len(f["rules"]), ",".join(doms), worst, worst_o))
     for w in warnings:
         print("WARNING:", w)
     if errors:

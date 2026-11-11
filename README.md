@@ -113,7 +113,7 @@ python tools/build_atlas.py                       # verify and build site/
 python tools/build_atlas.py --base origin/main    # also refuse changes to locked rules
 ```
 
-Every rule is checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+Every rule is checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11) and of an orthonormal basis of all polynomials up to its degree (Legendre products on the interval, square and cube, Dubiner basis on the triangle and tetrahedron; maximum error ≤ 1e-10). The orthonormal check treats every moment on the same scale; a node moved by 1e-9 already fails it, while the monomial check only notices changes of about 1e-7, the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
 
 ### Rigorous check with interval arithmetic
 
