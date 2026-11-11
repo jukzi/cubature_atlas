@@ -1,0 +1,38 @@
+{
+  "id": "minimal_pointcount_for_degree_n_PO",
+  "tag": "MPC",
+  "role": "po",
+  "quality": "PO",
+  "name": {
+    "en": "Minimal point count for degree n (PO)",
+    "de": "Minimale Knotenzahl für Grad n (PO)"
+  },
+  "short": {
+    "en": "Numerical search PO",
+    "de": "Numerische Suche PO"
+  },
+  "description": {
+    "en": "Rules with positive weights whose nodes may also lie outside the domain (PO), found by the numerical search of this atlas. Only rules with fewer nodes than the PI rule are stored; for the other searched degrees the PI rule is also the best PO rule.",
+    "de": "Regeln mit positiven Gewichten, deren Knoten auch außerhalb des Gebiets liegen dürfen (PO), gefunden von der numerischen Suche dieses Atlas. Gespeichert sind nur Regeln mit weniger Knoten als die PI-Regel; für die übrigen durchsuchten Grade ist die PI-Regel zugleich die beste PO-Regel."
+  },
+  "searched_degrees": {
+    "triangle": [
+      1,
+      30
+    ],
+    "tetra": [
+      1,
+      30
+    ],
+    "square": [
+      1,
+      30
+    ],
+    "cube": [
+      1,
+      30
+    ]
+  },
+  "references": [],
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz"
+}
