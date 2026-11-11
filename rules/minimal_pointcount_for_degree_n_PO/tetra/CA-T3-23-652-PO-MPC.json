@@ -9,9 +9,9 @@
  "origin": "po_search",
  "method": "numerical search of this atlas with nodes allowed outside the domain (positive weights): node elimination from the PI rule (code/po_elim.py)",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
- "status": "verified",
+ "status": "proven",
  "locked": false,
- "certificate": {
+ "numerical_check": {
   "N": 652,
   "M": 2600,
   "p": 2608,

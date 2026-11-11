@@ -7,11 +7,11 @@
  "points": 57,
  "quality": "PI",
  "origin": "found",
- "method": "numerical search of this atlas: node elimination from the previous PI rule (code/po_elim.py), certified",
+ "method": "numerical search of this atlas: node elimination from the previous PI rule (code/po_elim.py), checked numerically",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
- "status": "verified",
+ "status": "proven",
  "locked": false,
- "certificate": {
+ "numerical_check": {
   "N": 57,
   "M": 171,
   "p": 171,
