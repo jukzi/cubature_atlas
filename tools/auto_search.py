@@ -23,7 +23,8 @@ What it does
    degree: computes the Newton-Kantorovich certificate (code/cube_cert.py),
    writes the rule file into
    rules/minimal_pointcount_for_degree_n_PI/cube/, runs
-   `python tools/build_atlas.py --base origin/main` and requires `OK`.
+   `python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json <rule>` (interval proof)
+   and `python tools/build_atlas.py --base origin/main`, and requires both to succeed.
 5. Writes the pull-request title and body and, for GitHub Actions, the step
    outputs found / branch / title / rule_id.
 
@@ -229,15 +230,15 @@ def write_rule(degree, X, W, cert, group, mode):
         "points": int(len(X)),
         "quality": "PI",
         "origin": "sym",
-        "method": "automatic scheduled search (tools/auto_search.py, mode %s): code/cubature_search.py with symmetry reduction (group %s), orbit elimination and large-neighbourhood search; certified in the symmetry-reduced system" % (mode, group),
+        "method": "automatic scheduled search (tools/auto_search.py, mode %s): code/cubature_search.py with symmetry reduction (group %s), orbit elimination and large-neighbourhood search; checked numerically in the symmetry-reduced system and proven with interval arithmetic (tools/verify_rigorous.py)" % (mode, group),
         "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz; found by the automatic search in GitHub Actions",
-        "status": "verified" if ok else "needs_certificate",
+        "status": "proven",
         "locked": False,
         "residual_reported": 1e-15,
     }
     # Certificate block (only if the computation ran).
     if cert is not None and "sigma" in cert:
-        head["certificate"] = {"N": int(len(X)), "M": int(cert["M"]), "p": int(cert["p"]), "res": float(cert["resid"]), "sigma": float(cert["sigma"]), "h": float(cert["h"]), "rad": float(cert["radius"]), "cert": bool(cert["certified"]), "inside": bool(cert["inside"])}
+        head["numerical_check"] = {"N": int(len(X)), "M": int(cert["M"]), "p": int(cert["p"]), "res": float(cert["resid"]), "sigma": float(cert["sigma"]), "h": float(cert["h"]), "rad": float(cert["radius"]), "cert": bool(cert["certified"]), "inside": bool(cert["inside"])}
     # Symmetry group of the search.
     head["symmetry"] = group
     # Lines of the file in the layout of the existing rule files.
@@ -266,12 +267,18 @@ def write_rule(degree, X, W, cert, group, mode):
     return rid, path
 
 
-def build_check():
-    """Run the atlas check against origin/main; return (ok, last lines of the output)."""
+def build_check(rule_path):
+    """Prove the rule with interval arithmetic (recorded in reports/interval_proofs.json), then run the
+    atlas check against origin/main; return (ok, last lines of the output)."""
+    # Interval proof of the new rule; the build requires it.
+    proof = subprocess.run([sys.executable, "tools/verify_rigorous.py", "--strict", "--merge", "reports/interval_proofs.json", rule_path], cwd=ROOT, capture_output=True, text=True)
     # Run the build.
     res = subprocess.run([sys.executable, "tools/build_atlas.py", "--base", "origin/main"], cwd=ROOT, capture_output=True, text=True)
     # Combined output.
-    text = res.stdout + res.stderr
+    text = proof.stdout + proof.stderr + res.stdout + res.stderr
+    # A failed proof fails the check.
+    if proof.returncode != 0:
+        return False, "\n".join(text.strip().splitlines()[-6:])
     # Success marker.
     ok = res.returncode == 0 and re.search(r"^OK", text, re.M) is not None
     # Return the verdict and the tail of the output.
@@ -384,7 +391,7 @@ def main():
     # Write the rule file.
     rid, rpath = write_rule(degree, X, W, cert, group, mode)
     # Atlas check.
-    ok, tail = build_check()
+    ok, tail = build_check(rpath)
     # Report.
     log("build check: " + ("OK" if ok else "FAILED") + "\n" + tail)
     # Reject the rule if the check fails.

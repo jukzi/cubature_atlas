@@ -1,6 +1,6 @@
 # Code
 
-The programs that produced and certified the rules, as published on the original atlas page. They need numpy and scipy.
+The programs that produced the rules and checked them numerically, as published on the original atlas page. Their floating-point Newton–Kantorovich test is a numerical check, not a proof; the proofs come from `tools/verify_rigorous.py`. They need numpy and scipy.
 
 | File | Purpose |
 |---|---|
@@ -10,9 +10,9 @@ The programs that produced and certified the rules, as published on the original
 | `tetra3_positive.py` | Tetrahedron degree 3: exact proof that no 5-node rule with positive weights exists (nodes anywhere), fractions only |
 | `tetra5_bound.py` | Tetrahedron degree 5: exact proof that no 12-node rule exists for any real weights (Lagrangian-subspace elimination of the structural equations); `--selftest` validates the procedure on artificial data |
 | `moment_relaxation.py` | Numerical moment relaxation for odd degrees (triangle, tetrahedron): can the discrete Gram matrix of P_{k+1} be PSD of rank r? Used for the open question triangle degree 9 |
-| `cubature_atlas.py` | Basis, search, Newton–Kantorovich certificate |
-| `demo.py` | Find a rule, certify it, integrate |
-| `kubatur.py` | Triangle/tetrahedron search with certificate |
+| `cubature_atlas.py` | Basis, search, numerical Newton–Kantorovich check |
+| `demo.py` | Find a rule, check it numerically, integrate |
+| `kubatur.py` | Triangle/tetrahedron search with numerical check |
 | `dom.py`, `cs.py`, `fj.py` | Basis and solver (square, triangle, tetrahedron) |
 | `seed_sq.py`, `seed_cs.py` | Square, start from a lower degree |
 | `sqelim.py` | Square, node reduction (PI and PO) |
@@ -22,9 +22,9 @@ The programs that produced and certified the rules, as published on the original
 | `cannonball_start.py` | Tetrahedron search started from a cannonball packing of about Z(n) = (n+1)(n+2)(n+3)/24 equal balls (the counting value), degree continuation with bounded least squares (scipy trf), optional node elimination; produced CA-T3-10-74 |
 | `cannon_cube.py` | Cube: start from a T_d- or O_h-invariant cannonball packing (FCC lattice) with equal weights, solve the symmetry-reduced system, then orbit elimination and LNS of `cubature_search.py` (`sym`, `cont` modes); free mode with exactly Z(n) nodes without symmetry; produced CA-C3-24-730 and CA-C3-22-551 |
 | `cannon_tetra.py` | Tetrahedron: start from a cannonball pile (K layers, S4-invariant), degree continuation from a low degree up to n, then orbit elimination of `simplex_cubature.py` with groups S and A; `--start` continues from a saved rule; produced CA-T3-28-1181 and CA-T3-29-1480 |
-| `cert_large.py` | Certificate for large simplex rules (tetrahedron degree 28 and up): same test as `certificate()`, with cached basis recursions and power iteration for the norms |
+| `cert_large.py` | Numerical check for large simplex rules (tetrahedron degree 28 and up): same test as `certificate()`, with cached basis recursions and power iteration for the norms |
 | `po_elim.py` | Cube/tetrahedron/triangle/square PO search: node elimination from the PI rule with nodes allowed outside the domain (CS=1: centrally symmetric pairs on the cube); produced CA-C3-06-21-PO … CA-C3-29-1181-PO and CA-T3-12-114-PO … CA-T3-24-757-PO |
-| `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and certificate |
+| `cubature_search.py`, `verify_rules.py`, `cube_cert.py`, `run_cube_cert.py` | Cube: symmetric search and numerical check |
 | `flat_ext_cube6.py` | Open question cube degree 6: exact flat-extension equations (75 quadrics in the 36 degree-7 moments) for a 20-node rule, written in msolve format; pure Python, no numpy needed |
 
 `cubature_search.py` (version 3) produced the cube rules CA-C3-21-486 … CA-C3-30-1324. It searches in a chosen subgroup of the cube group (Oh, Td, Th, O, T, …): orbit elimination, large-neighbourhood search with simulated annealing, a rank-ILP target structure, and warm starts from stored rules (`--refine T --sources dir`). Run `python3 cubature_search.py --help` for the options; the module docstring describes the method and lists the literature.

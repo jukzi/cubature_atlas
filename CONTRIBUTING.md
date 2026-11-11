@@ -17,8 +17,8 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 - Do not store "best known" flags. They are computed.
 - Store at least 15 significant digits. The check requires all monomial moments to be correct to 1e-11 per volume.
 - `quality` must match the data (PI, PO, NI, NO), and the family's `quality` if the family sets one.
-- New rules of the atlas's own search should carry a Newton–Kantorovich certificate (`code/`). Without one, set `"status": "needs_certificate"`.
-- New and changed rules are also checked rigorously with interval arithmetic (`python tools/verify_rigorous.py --changed origin/main`, run automatically on every pull request). It must prove that an exact rule with the stored quality exists near the stored numbers; if it cannot, the pull request fails unless the rule has `"status": "needs_certificate"`.
+- **Every rule needs a proof.** Prove new and changed rules with interval arithmetic and record the proof in the report: `python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json <rule files>`, then commit the rule files together with `reports/interval_proofs.json`. The build fails for any rule without a proof of exactly its numbers, and every pull request re-runs the proof for the changed rules. There are no exceptions; a rule that cannot be proven is not added. Set `"status": "proven"`.
+- Floating-point checks (moment residuals, the Newton–Kantorovich test in `code/`) are useful during the search but are not proofs. Store their result as `"numerical_check"`, never as "certificate".
 - Fill in `origin`, `method` and `author`. AI-generated rules say so in `author`.
 
 ## Locking

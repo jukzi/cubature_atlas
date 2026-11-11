@@ -9,7 +9,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "69b0b520184ce474",
+   "sha": "e7b48f088fcb4f5b",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -42,7 +42,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "sha": "77d035028eee1e5a",
+   "sha": "f0c47f8a56a2a0f9",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -75,7 +75,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "8d27c5255452196a",
+   "sha": "4b152789ebb4182a",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -108,7 +108,7 @@
    "points": 34,
    "quality": "PI",
    "status": "verified",
-   "sha": "c28981b01f2e433d",
+   "sha": "284ae22ae252063e",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -141,7 +141,7 @@
    "points": 58,
    "quality": "PI",
    "status": "verified",
-   "sha": "aca0f59c6e54b3fc",
+   "sha": "15adde55225c6222",
    "stored": {
     "res_bound": 1.5543122344752201e-15,
     "res_ok": true,
@@ -174,7 +174,7 @@
    "points": 90,
    "quality": "PI",
    "status": "verified",
-   "sha": "ccab22c84d4fa89c",
+   "sha": "3ced87f62a68f215",
    "stored": {
     "res_bound": 1.5543122344752201e-15,
     "res_ok": true,
@@ -207,7 +207,7 @@
    "points": 148,
    "quality": "PI",
    "status": "verified",
-   "sha": "34dfb91c8b88376e",
+   "sha": "c43267ffe4df8a89",
    "stored": {
     "res_bound": 4.662936703425661e-15,
     "res_ok": true,
@@ -240,7 +240,7 @@
    "points": 199,
    "quality": "PI",
    "status": "verified",
-   "sha": "798dd3b9cbe47499",
+   "sha": "4afc0e1d7f937806",
    "stored": {
     "res_bound": 3.0337603089403166e-15,
     "res_ok": true,
@@ -273,7 +273,7 @@
    "points": 282,
    "quality": "PI",
    "status": "verified",
-   "sha": "ec56ab191f2b10e5",
+   "sha": "23b421cf7c6c4367",
    "stored": {
     "res_bound": 3.3473725635953268e-15,
     "res_ok": true,
@@ -306,7 +306,7 @@
    "points": 369,
    "quality": "PI",
    "status": "verified",
-   "sha": "db1ef7a2d6e740e1",
+   "sha": "f338ec1355e4b311",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -339,7 +339,7 @@
    "points": 495,
    "quality": "PI",
    "status": "verified",
-   "sha": "71385c0c338aa7f9",
+   "sha": "bcfb2eae7c42159d",
    "stored": {
     "res_bound": 4.626453300321525e-15,
     "res_ok": true,
@@ -372,7 +372,7 @@
    "points": 617,
    "quality": "PI",
    "status": "verified",
-   "sha": "4cb9e9ced022f2de",
+   "sha": "ec06d052a5d6307d",
    "stored": {
     "res_bound": 8.54871728961371e-15,
     "res_ok": true,
@@ -405,7 +405,7 @@
    "points": 828,
    "quality": "PI",
    "status": "verified",
-   "sha": "b66be3d3b695597e",
+   "sha": "d4d243a141011352",
    "stored": {
     "res_bound": 1.4876988529977107e-14,
     "res_ok": true,
@@ -439,7 +439,7 @@
    "points": 984,
    "quality": "PI",
    "status": "verified",
-   "sha": "9ac0fefba68f8b33",
+   "sha": "b38f3e320f44daa4",
    "stored": {
     "res_bound": 7.370680807231377e-15,
     "res_ok": true,
@@ -472,7 +472,7 @@
    "points": 1258,
    "quality": "PI",
    "status": "verified",
-   "sha": "0f02b0783d71bd4f",
+   "sha": "697a723f84b3dae6",
    "stored": {
     "res_bound": 9.58735755986641e-15,
     "res_ok": true,
@@ -505,7 +505,7 @@
    "points": 1478,
    "quality": "PI",
    "status": "verified",
-   "sha": "e44d538735a1de87",
+   "sha": "50d5e05c65fed7c3",
    "stored": {
     "res_bound": 2.053912595556541e-14,
     "res_ok": true,
@@ -538,7 +538,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "637893e13d155df4",
+   "sha": "0c75014d0efa7d17",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -571,7 +571,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "81634a68bfa88532",
+   "sha": "cf23c5b65ab83f8e",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -604,7 +604,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "sha": "41b1167a50e8b19c",
+   "sha": "3d06453ed0f2bef9",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -637,7 +637,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "6c086889bddbe9e4",
+   "sha": "c2c317d5031d6fc7",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -670,7 +670,7 @@
    "points": 20,
    "quality": "PI",
    "status": "verified",
-   "sha": "51d43b8d195cd1a3",
+   "sha": "da0a1e1331e4537a",
    "stored": {
     "res_bound": 1.8492152253912783e-15,
     "res_ok": true,
@@ -703,7 +703,7 @@
    "points": 28,
    "quality": "PI",
    "status": "verified",
-   "sha": "10572a8d43f3c94e",
+   "sha": "7bfedd9d22c6a120",
    "stored": {
     "res_bound": 2.6645352591003773e-15,
     "res_ok": true,
@@ -736,7 +736,7 @@
    "points": 37,
    "quality": "PI",
    "status": "verified",
-   "sha": "8f40ad6d20c2ea90",
+   "sha": "c3b0564e86cfd2d2",
    "stored": {
     "res_bound": 1.7359059339711753e-15,
     "res_ok": true,
@@ -769,7 +769,7 @@
    "points": 48,
    "quality": "PI",
    "status": "verified",
-   "sha": "6b285fc723543165",
+   "sha": "0dfb00df6fffe3c7",
    "stored": {
     "res_bound": 2.5141564177766386e-15,
     "res_ok": true,
@@ -802,7 +802,7 @@
    "points": 57,
    "quality": "PI",
    "status": "verified",
-   "sha": "5e20a512df542338",
+   "sha": "deb824f282a90744",
    "stored": {
     "res_bound": 3.710681935331644e-15,
     "res_ok": true,
@@ -835,7 +835,7 @@
    "points": 72,
    "quality": "PI",
    "status": "verified",
-   "sha": "a95f2f416d494777",
+   "sha": "25e1611f06a6f3d6",
    "stored": {
     "res_bound": 3.7929999852776056e-15,
     "res_ok": true,
@@ -868,7 +868,7 @@
    "points": 85,
    "quality": "PI",
    "status": "verified",
-   "sha": "e253af4d2aff95bc",
+   "sha": "2b01efc8114aa8cc",
    "stored": {
     "res_bound": 5.200890716358657e-15,
     "res_ok": true,
@@ -901,7 +901,7 @@
    "points": 101,
    "quality": "PI",
    "status": "verified",
-   "sha": "5e05b9eeb58551a7",
+   "sha": "793ea6c0734924c8",
    "stored": {
     "res_bound": 4.1367056264826666e-15,
     "res_ok": true,
@@ -934,7 +934,7 @@
    "points": 120,
    "quality": "PI",
    "status": "verified",
-   "sha": "6d5e761282652c03",
+   "sha": "3774c387411d64ad",
    "stored": {
     "res_bound": 6.068225349292749e-15,
     "res_ok": true,
@@ -967,7 +967,7 @@
    "points": 137,
    "quality": "PI",
    "status": "verified",
-   "sha": "b896927dd8bfcf6a",
+   "sha": "3e222dd48dd663ab",
    "stored": {
     "res_bound": 6.9483450975326966e-15,
     "res_ok": true,
@@ -1000,7 +1000,7 @@
    "points": 157,
    "quality": "PI",
    "status": "verified",
-   "sha": "72f582cd479f1ea6",
+   "sha": "6c707d02ea0ab466",
    "stored": {
     "res_bound": 7.803287638448462e-15,
     "res_ok": true,
@@ -1033,7 +1033,7 @@
    "points": 177,
    "quality": "PI",
    "status": "verified",
-   "sha": "0484dbdd1f97e18a",
+   "sha": "c308078579081132",
    "stored": {
     "res_bound": 8.089042673534173e-15,
     "res_ok": true,
@@ -1066,7 +1066,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "d2141bb0187705cf",
+   "sha": "2f9eb0439e682db1",
    "stored": {
     "res_bound": 3.830269434956793e-15,
     "res_ok": true,
@@ -1099,7 +1099,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "83cbe1220f6abe72",
+   "sha": "7aae06cbda3f4eea",
    "stored": {
     "res_bound": 9.825473767932642e-15,
     "res_ok": true,
@@ -1132,7 +1132,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "sha": "13658f9dfb47c054",
+   "sha": "e9f1a42bbc64ae3d",
    "stored": {
     "res_bound": 9.992007221626415e-15,
     "res_ok": true,
@@ -1165,7 +1165,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "646f3c27ca5a2f68",
+   "sha": "a42dc3c6f9f317bd",
    "stored": {
     "res_bound": 2.1982415887578112e-14,
     "res_ok": true,
@@ -1198,7 +1198,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "66aad0748d6b9ad9",
+   "sha": "b5330ac497373bd5",
    "stored": {
     "res_bound": 2.181588243388434e-14,
     "res_ok": true,
@@ -1231,7 +1231,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
-   "sha": "3610ef15ee05322d",
+   "sha": "975152cec2d95723",
    "stored": {
     "res_bound": 1.7486012637846228e-14,
     "res_ok": true,
@@ -1264,7 +1264,7 @@
    "points": 35,
    "quality": "PI",
    "status": "verified",
-   "sha": "5634daa77bd4eb6e",
+   "sha": "12aed94358f76c9a",
    "stored": {
     "res_bound": 4.146682996974962e-14,
     "res_ok": true,
@@ -1297,7 +1297,7 @@
    "points": 46,
    "quality": "PI",
    "status": "verified",
-   "sha": "2952ecb134475353",
+   "sha": "072a38a04ac6747e",
    "stored": {
     "res_bound": 1.0033640585049859e-14,
     "res_ok": true,
@@ -1330,7 +1330,7 @@
    "points": 59,
    "quality": "PI",
    "status": "verified",
-   "sha": "d226fb941da77cc7",
+   "sha": "78c2b99352b9a22c",
    "stored": {
     "res_bound": 3.5471625636773777e-14,
     "res_ok": true,
@@ -1363,7 +1363,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
-   "sha": "a59f0f93478c4d5e",
+   "sha": "85b3ee3ee4d21b05",
    "stored": {
     "res_bound": 5.195843755245735e-14,
     "res_ok": true,
@@ -1396,7 +1396,7 @@
    "points": 110,
    "quality": "PI",
    "status": "verified",
-   "sha": "6f97c7ef412b955d",
+   "sha": "9d7a970509140dbf",
    "stored": {
     "res_bound": 1.7486012637846228e-14,
     "res_ok": true,
@@ -1429,7 +1429,7 @@
    "points": 168,
    "quality": "PI",
    "status": "verified",
-   "sha": "2cc5137e3c47854f",
+   "sha": "b4a3a3a3d39de0e3",
    "stored": {
     "res_bound": 5.345723863570131e-14,
     "res_ok": true,
@@ -1462,7 +1462,7 @@
    "points": 172,
    "quality": "PI",
    "status": "verified",
-   "sha": "9bc242b5d3923227",
+   "sha": "541a3ea5f8b5a106",
    "stored": {
     "res_bound": 5.778710843173944e-14,
     "res_ok": true,
@@ -1495,7 +1495,7 @@
    "points": 204,
    "quality": "PI",
    "status": "verified",
-   "sha": "cf3e1b9e042c9a4b",
+   "sha": "117d87e79a319afc",
    "stored": {
     "res_bound": 6.994405055138491e-14,
     "res_ok": true,
@@ -1528,7 +1528,7 @@
    "points": 264,
    "quality": "PI",
    "status": "verified",
-   "sha": "2d1869691ac6a224",
+   "sha": "b95ae8553e0f9b7e",
    "stored": {
     "res_bound": 2.1382895454280525e-13,
     "res_ok": true,
@@ -1561,7 +1561,7 @@
    "points": 304,
    "quality": "PI",
    "status": "verified",
-   "sha": "6531ddf7a0981a5c",
+   "sha": "287c3440feba1b1f",
    "stored": {
     "res_bound": 2.4980018054066037e-13,
     "res_ok": true,
@@ -1594,7 +1594,7 @@
    "points": 364,
    "quality": "PI",
    "status": "verified",
-   "sha": "05f6b2fe1ccb75a9",
+   "sha": "70dfa4c676e7f910",
    "stored": {
     "res_bound": 6.994405055138491e-14,
     "res_ok": true,
@@ -1627,7 +1627,7 @@
    "points": 436,
    "quality": "PI",
    "status": "verified",
-   "sha": "600fecb4778eb565",
+   "sha": "c5adba0a3a9a43e3",
    "stored": {
     "res_bound": 2.934319454084291e-13,
     "res_ok": true,
@@ -1660,7 +1660,7 @@
    "points": 487,
    "quality": "PI",
    "status": "verified",
-   "sha": "5d86d3cb352f6c8c",
+   "sha": "657db100c29929b3",
    "stored": {
     "res_bound": 2.4980018054066037e-13,
     "res_ok": true,
@@ -1693,7 +1693,7 @@
    "points": 552,
    "quality": "PI",
    "status": "verified",
-   "sha": "477490176e2269db",
+   "sha": "475f1f52d003bd17",
    "stored": {
     "res_bound": 1.6153745008296038e-13,
     "res_ok": true,
@@ -1726,7 +1726,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "7a8ff214327461c3",
+   "sha": "e7b48f088fcb4f5b",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1759,7 +1759,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "5f85027d7348a96d",
+   "sha": "35b6a8c622445e98",
    "stored": {
     "res_bound": 1.4432899320127045e-15,
     "res_ok": true,
@@ -1792,7 +1792,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "a97f63b8a2095b73",
+   "sha": "1d2f5b4d11a89fba",
    "stored": {
     "res_bound": 4.607425552194402e-14,
     "res_ok": true,
@@ -1825,7 +1825,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
-   "sha": "8969770008d481cd",
+   "sha": "33ed404a778b0c9f",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1858,7 +1858,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
-   "sha": "889072832f54726f",
+   "sha": "321f4ddf9f20c7a9",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -1891,7 +1891,7 @@
    "points": 22,
    "quality": "PI",
    "status": "verified",
-   "sha": "0e4b3d3668acb6eb",
+   "sha": "34a5eff3a832e4b0",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1924,7 +1924,7 @@
    "points": 26,
    "quality": "PI",
    "status": "verified",
-   "sha": "86299b2d63f38831",
+   "sha": "8fd7d6b4a1d5a1bc",
    "stored": {
     "res_bound": 1.9984014443252834e-15,
     "res_ok": true,
@@ -1957,7 +1957,7 @@
    "points": 42,
    "quality": "PI",
    "status": "verified",
-   "sha": "f21b2507ca41f971",
+   "sha": "e79f55e34972f78c",
    "stored": {
     "res_bound": 2.2204460492503147e-15,
     "res_ok": true,
@@ -1990,7 +1990,7 @@
    "points": 48,
    "quality": "PI",
    "status": "verified",
-   "sha": "2b173135cd5402f3",
+   "sha": "2f01b41f7bf262e1",
    "stored": {
     "res_bound": 2.109423746787799e-15,
     "res_ok": true,
@@ -2023,7 +2023,7 @@
    "points": 71,
    "quality": "PI",
    "status": "verified",
-   "sha": "d6a94e6f5b3f4b06",
+   "sha": "de58251797555898",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -2056,7 +2056,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
-   "sha": "20544e2d7b80ff07",
+   "sha": "d4ee2375594c863a",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -2089,7 +2089,7 @@
    "points": 115,
    "quality": "PI",
    "status": "verified",
-   "sha": "3008f9a51d84e911",
+   "sha": "8a74078da5846990",
    "stored": {
     "res_bound": 2.6405496577263878e-14,
     "res_ok": true,
@@ -2122,7 +2122,7 @@
    "points": 126,
    "quality": "PI",
    "status": "verified",
-   "sha": "483b5634bc627822",
+   "sha": "15ed185355784b47",
    "stored": {
     "res_bound": 2.3095674678286235e-15,
     "res_ok": true,
@@ -2155,7 +2155,7 @@
    "points": 169,
    "quality": "PI",
    "status": "verified",
-   "sha": "da832c2d5c38e0ba",
+   "sha": "147088f3bcc88ea9",
    "stored": {
     "res_bound": 1.7363430029719585e-15,
     "res_ok": true,
@@ -2188,7 +2188,7 @@
    "points": 186,
    "quality": "PI",
    "status": "verified",
-   "sha": "6b3354fb5431ae84",
+   "sha": "8c4d91b95b4a59fb",
    "stored": {
     "res_bound": 2.5916480739891455e-15,
     "res_ok": true,
@@ -2221,7 +2221,7 @@
    "points": 244,
    "quality": "PI",
    "status": "verified",
-   "sha": "08900ff49d5506d9",
+   "sha": "fd168cac4c424c28",
    "stored": {
     "res_bound": 3.1755033251119984e-15,
     "res_ok": true,
@@ -2254,7 +2254,7 @@
    "points": 265,
    "quality": "PI",
    "status": "verified",
-   "sha": "6cd4a8cecfdd24f5",
+   "sha": "45bbec94193e4325",
    "stored": {
     "res_bound": 3.563144042512994e-15,
     "res_ok": true,
@@ -2287,7 +2287,7 @@
    "points": 326,
    "quality": "PI",
    "status": "verified",
-   "sha": "86af00edd2b8d155",
+   "sha": "a23ed1bcb9d9eaa5",
    "stored": {
     "res_bound": 2.7130939639005726e-15,
     "res_ok": true,
@@ -2320,7 +2320,7 @@
    "points": 360,
    "quality": "PI",
    "status": "verified",
-   "sha": "ec0fe14f4d474c91",
+   "sha": "44fe5f5aacd35ef5",
    "stored": {
     "res_bound": 3.756238755366769e-15,
     "res_ok": true,
@@ -2346,6 +2346,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C3-20-440-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-20-440-PI-MPC.json",
+   "domain": "cube",
+   "degree": 20,
+   "points": 440,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "966e4356dacc9a0a",
+   "stored": {
+    "res_bound": 3.3748985932822498e-15,
+    "res_ok": true,
+    "margin_exact": 0.0001324716773066,
+    "minw_exact": 0.0001937213365423973,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 8.898999967924966e-13,
+    "kratio": 0.6667052713655458,
+    "mode": "sym24",
+    "equations": 108,
+    "unknowns": 108,
+    "dist": 1.4238399948679947e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.65,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-C3-20-444-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-20-444-PI-MPC.json",
    "domain": "cube",
@@ -2353,7 +2386,7 @@
    "points": 444,
    "quality": "PI",
    "status": "verified",
-   "sha": "2b3e9acee092a8f2",
+   "sha": "ee132b2e52f08b57",
    "stored": {
     "res_bound": 4.189230060132567e-15,
     "res_ok": true,
@@ -2386,7 +2419,7 @@
    "points": 486,
    "quality": "PI",
    "status": "verified",
-   "sha": "cc91385382f4c9af",
+   "sha": "172ba6824d11d364",
    "stored": {
     "res_bound": 3.5252613409799914e-15,
     "res_ok": true,
@@ -2419,7 +2452,7 @@
    "points": 494,
    "quality": "PI",
    "status": "verified",
-   "sha": "b8a1e04079abec8b",
+   "sha": "1e54ad095647eb3b",
    "stored": {
     "res_bound": 3.1694549870904555e-15,
     "res_ok": true,
@@ -2452,7 +2485,7 @@
    "points": 551,
    "quality": "PI",
    "status": "verified",
-   "sha": "555d27dc6ed70e35",
+   "sha": "d4959473c6e2b599",
    "stored": {
     "res_bound": 3.535984778092231e-15,
     "res_ok": true,
@@ -2485,7 +2518,7 @@
    "points": 554,
    "quality": "PI",
    "status": "verified",
-   "sha": "1fcf75ee3327ecd6",
+   "sha": "f7d0944ed4f75bae",
    "stored": {
     "res_bound": 3.843137559491482e-15,
     "res_ok": true,
@@ -2518,7 +2551,7 @@
    "points": 558,
    "quality": "PI",
    "status": "verified",
-   "sha": "33888132402ca77a",
+   "sha": "dff589379752e935",
    "stored": {
     "res_bound": 3.719002339972523e-15,
     "res_ok": true,
@@ -2551,7 +2584,7 @@
    "points": 610,
    "quality": "PI",
    "status": "verified",
-   "sha": "768ccdfe50e5705b",
+   "sha": "5d9aba2cbe8070fa",
    "stored": {
     "res_bound": 4.2663779003778274e-15,
     "res_ok": true,
@@ -2584,7 +2617,7 @@
    "points": 730,
    "quality": "PI",
    "status": "verified",
-   "sha": "c3a4ba756f464a08",
+   "sha": "dbb01964f08cda6e",
    "stored": {
     "res_bound": 4.693783949298769e-15,
     "res_ok": true,
@@ -2617,7 +2650,7 @@
    "points": 743,
    "quality": "PI",
    "status": "verified",
-   "sha": "f812dc8a849cafe1",
+   "sha": "d69887efd93f6e96",
    "stored": {
     "res_bound": 4.214344984065351e-15,
     "res_ok": true,
@@ -2650,7 +2683,7 @@
    "points": 780,
    "quality": "PI",
    "status": "verified",
-   "sha": "13f1d2008911c3ef",
+   "sha": "f0145505d05933fb",
    "stored": {
     "res_bound": 5.01596902441294e-15,
     "res_ok": true,
@@ -2683,7 +2716,7 @@
    "points": 798,
    "quality": "PI",
    "status": "verified",
-   "sha": "4d558a4125ec2201",
+   "sha": "55325972657e6fcc",
    "stored": {
     "res_bound": 5.709330713277524e-15,
     "res_ok": true,
@@ -2716,7 +2749,7 @@
    "points": 897,
    "quality": "PI",
    "status": "verified",
-   "sha": "a93d601691094a2e",
+   "sha": "49169b2a91273552",
    "stored": {
     "res_bound": 5.213905271714101e-15,
     "res_ok": true,
@@ -2749,7 +2782,7 @@
    "points": 922,
    "quality": "PI",
    "status": "verified",
-   "sha": "3d88ec8c8e7e058d",
+   "sha": "a339793e2dc68daa",
    "stored": {
     "res_bound": 5.915393500553761e-15,
     "res_ok": true,
@@ -2782,7 +2815,7 @@
    "points": 958,
    "quality": "PI",
    "status": "verified",
-   "sha": "c764b8a48dc78906",
+   "sha": "566d45c305df7b58",
    "stored": {
     "res_bound": 6.707140607340773e-15,
     "res_ok": true,
@@ -2815,7 +2848,7 @@
    "points": 960,
    "quality": "PI",
    "status": "verified",
-   "sha": "9143d28ff2a5dff3",
+   "sha": "2860478adf20a250",
    "stored": {
     "res_bound": 5.268112452119008e-15,
     "res_ok": true,
@@ -2848,7 +2881,7 @@
    "points": 966,
    "quality": "PI",
    "status": "verified",
-   "sha": "d1bf820e2c3ed77c",
+   "sha": "9d963478fa933740",
    "stored": {
     "res_bound": 6.3193154021934e-15,
     "res_ok": true,
@@ -2874,6 +2907,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C3-28-1133-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1133-PI-MPC.json",
+   "domain": "cube",
+   "degree": 28,
+   "points": 1133,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "a64d9e94b3dda14b",
+   "stored": {
+    "res_bound": 6.127023411875827e-15,
+    "res_ok": true,
+    "margin_exact": 0.0025574095722083,
+    "minw_exact": 4.06712930213274e-05,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.1130744721888198e-12,
+    "kratio": 0.6669296094881219,
+    "mode": "sym24",
+    "equations": 249,
+    "unknowns": 249,
+    "dist": 3.5620298246674855e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 3.97,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-C3-28-1145-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1145-PI-MPC.json",
    "domain": "cube",
@@ -2881,7 +2947,7 @@
    "points": 1145,
    "quality": "PI",
    "status": "verified",
-   "sha": "1cee10f798b028fb",
+   "sha": "cd9d5fd9007b10ef",
    "stored": {
     "res_bound": 6.153639092902688e-15,
     "res_ok": true,
@@ -2914,7 +2980,7 @@
    "points": 1177,
    "quality": "PI",
    "status": "verified",
-   "sha": "5958096cb2ac377e",
+   "sha": "e7cc99efd5631c84",
    "stored": {
     "res_bound": 7.703090417051857e-15,
     "res_ok": true,
@@ -2947,7 +3013,7 @@
    "points": 1189,
    "quality": "PI",
    "status": "verified",
-   "sha": "56339ddc1d1a94d7",
+   "sha": "f096021e3054d1f7",
    "stored": {
     "res_bound": 6.655626816345845e-15,
     "res_ok": true,
@@ -2980,7 +3046,7 @@
    "points": 1193,
    "quality": "PI",
    "status": "verified",
-   "sha": "90f1c9dde51588d5",
+   "sha": "c446933d4f437a08",
    "stored": {
     "res_bound": 7.378349314140227e-15,
     "res_ok": true,
@@ -3013,7 +3079,7 @@
    "points": 1223,
    "quality": "PI",
    "status": "verified",
-   "sha": "85d0f34cc23c7d67",
+   "sha": "d402673610082e79",
    "stored": {
     "res_bound": 6.06105860352603e-15,
     "res_ok": true,
@@ -3046,7 +3112,7 @@
    "points": 1324,
    "quality": "PI",
    "status": "verified",
-   "sha": "ab6918de5f01abae",
+   "sha": "9d5055646e0728c4",
    "stored": {
     "res_bound": 6.766224437664431e-15,
     "res_ok": true,
@@ -3079,7 +3145,7 @@
    "points": 1410,
    "quality": "PI",
    "status": "verified",
-   "sha": "2c5dfe90ad6723b1",
+   "sha": "c7b38dae306c7f49",
    "stored": {
     "res_bound": 7.348356777450459e-15,
     "res_ok": true,
@@ -3112,7 +3178,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "f7090613eceb7753",
+   "sha": "121b4c48ed828348",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3145,7 +3211,7 @@
    "points": 2,
    "quality": "PI",
    "status": "verified",
-   "sha": "a0f9a9bdc3fb1adf",
+   "sha": "6706eeedb5b76be0",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3178,7 +3244,7 @@
    "points": 2,
    "quality": "PI",
    "status": "verified",
-   "sha": "bccf4bcb2a39abd1",
+   "sha": "b79301f738e9267f",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3211,7 +3277,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
-   "sha": "5b863d9e79377ff3",
+   "sha": "e807380ed858edd4",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3244,7 +3310,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
-   "sha": "e76cf5f831b7c357",
+   "sha": "8fbfd98f1126b7bb",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3277,7 +3343,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "35f613f63d705e19",
+   "sha": "e583ed45483f21f9",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3310,7 +3376,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "20bc8fc976028885",
+   "sha": "34dd949a0d82bdae",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3343,7 +3409,7 @@
    "points": 5,
    "quality": "PI",
    "status": "verified",
-   "sha": "d4bcfc8f32868163",
+   "sha": "bdc7da6eb0284672",
    "stored": {
     "res_bound": 8.881784197001262e-16,
     "res_ok": true,
@@ -3376,7 +3442,7 @@
    "points": 5,
    "quality": "PI",
    "status": "verified",
-   "sha": "f40feb46bc4e8e14",
+   "sha": "3526e8e531de3ad8",
    "stored": {
     "res_bound": 8.881784197001262e-16,
     "res_ok": true,
@@ -3409,7 +3475,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "15ba77db55661464",
+   "sha": "11458a2c64fbd7d5",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -3442,7 +3508,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "56f08dd3bbce3d63",
+   "sha": "db8db29ee451d672",
    "stored": {
     "res_bound": 1.1483869410966475e-15,
     "res_ok": true,
@@ -3475,7 +3541,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
-   "sha": "6a8a756d2ce3c6a9",
+   "sha": "bde9d220f90183d9",
    "stored": {
     "res_bound": 1.5543122344752203e-15,
     "res_ok": true,
@@ -3508,7 +3574,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
-   "sha": "7189628c83469656",
+   "sha": "bb9242679f0a2b0b",
    "stored": {
     "res_bound": 1.727784582072901e-15,
     "res_ok": true,
@@ -3541,7 +3607,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "sha": "76187c495d979b6b",
+   "sha": "d461fd71875c2b60",
    "stored": {
     "res_bound": 1.6965595595053185e-15,
     "res_ok": true,
@@ -3574,7 +3640,7 @@
    "points": 8,
    "quality": "PI",
    "status": "verified",
-   "sha": "9fcb6b92cd304844",
+   "sha": "f674f59b6a8a916e",
    "stored": {
     "res_bound": 1.6965595595053185e-15,
     "res_ok": true,
@@ -3607,7 +3673,7 @@
    "points": 9,
    "quality": "PI",
    "status": "verified",
-   "sha": "2f1f19ba32bcf939",
+   "sha": "44ec9604dd03efce",
    "stored": {
     "res_bound": 3.2335245592207708e-15,
     "res_ok": true,
@@ -3640,7 +3706,7 @@
    "points": 9,
    "quality": "PI",
    "status": "verified",
-   "sha": "9f22aaf4b3962f80",
+   "sha": "60cf4cb687975e7a",
    "stored": {
     "res_bound": 3.5717956370362505e-15,
     "res_ok": true,
@@ -3673,7 +3739,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
-   "sha": "db49b7da11e354f8",
+   "sha": "e9352e63fcbc739c",
    "stored": {
     "res_bound": 3.799044412389212e-15,
     "res_ok": true,
@@ -3706,7 +3772,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
-   "sha": "fc8fc914c7df835f",
+   "sha": "a92dfe452fb3474c",
    "stored": {
     "res_bound": 4.101753658947165e-15,
     "res_ok": true,
@@ -3739,7 +3805,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
-   "sha": "4875b133776f9489",
+   "sha": "1dca75dc9be19797",
    "stored": {
     "res_bound": 2.954234079588505e-15,
     "res_ok": true,
@@ -3772,7 +3838,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
-   "sha": "a0c82f4bd5384d0e",
+   "sha": "96858e4259611be6",
    "stored": {
     "res_bound": 3.242198176600655e-15,
     "res_ok": true,
@@ -3805,7 +3871,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "2a6ca8dbab1ee90c",
+   "sha": "495d940b2d939f33",
    "stored": {
     "res_bound": 3.66980751342894e-15,
     "res_ok": true,
@@ -3838,7 +3904,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "6ee66931b3cc647f",
+   "sha": "147d75ce8026f295",
    "stored": {
     "res_bound": 3.949097993061206e-15,
     "res_ok": true,
@@ -3871,7 +3937,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
-   "sha": "bf412141c1ff2d8a",
+   "sha": "6911e35be25253b2",
    "stored": {
     "res_bound": 3.799044412389212e-15,
     "res_ok": true,
@@ -3904,7 +3970,7 @@
    "points": 13,
    "quality": "PI",
    "status": "verified",
-   "sha": "2483a2bdd0918804",
+   "sha": "a841d650cebbfd93",
    "stored": {
     "res_bound": 4.05578348683378e-15,
     "res_ok": true,
@@ -3937,7 +4003,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "67afd9eecbc9a687",
+   "sha": "aa03480d345785b6",
    "stored": {
     "res_bound": 3.4928657188793035e-15,
     "res_ok": true,
@@ -3970,7 +4036,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "73134b196300d8d6",
+   "sha": "0ec5e879e8b6ff65",
    "stored": {
     "res_bound": 3.706236706424453e-15,
     "res_ok": true,
@@ -4003,7 +4069,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
-   "sha": "57e2324460797ec1",
+   "sha": "126d1efaeaa01ab3",
    "stored": {
     "res_bound": 7.12407563496776e-15,
     "res_ok": true,
@@ -4036,7 +4102,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
-   "sha": "1d2e358c182c3311",
+   "sha": "0326f95e797eed81",
    "stored": {
     "res_bound": 7.526965162263375e-15,
     "res_ok": true,
@@ -4069,7 +4135,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
-   "sha": "3e444c9ac6fe04c7",
+   "sha": "dd51d362482c0ba3",
    "stored": {
     "res_bound": 6.172146127525484e-15,
     "res_ok": true,
@@ -4102,7 +4168,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "e4e3e819b3b04df4",
+   "sha": "5cea36589dea1dc0",
    "stored": {
     "res_bound": 1.1102230246251575e-15,
     "res_ok": true,
@@ -4135,7 +4201,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
-   "sha": "82f673a0794878e4",
+   "sha": "e9e765c7c433072c",
    "stored": {
     "res_bound": 2.2204460492503147e-15,
     "res_ok": true,
@@ -4168,7 +4234,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "2daaf06e39914cee",
+   "sha": "fbfd97083d3eb1cd",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -4201,7 +4267,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "37717bff22958988",
+   "sha": "191b59cb970cbcf2",
    "stored": {
     "res_bound": 1.8873791418627677e-15,
     "res_ok": true,
@@ -4234,7 +4300,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
-   "sha": "243c496d8d017f87",
+   "sha": "ec43271407837500",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4267,7 +4333,7 @@
    "points": 10,
    "quality": "PI",
    "status": "verified",
-   "sha": "55b271e89cb325a2",
+   "sha": "fe3dcfd8ce816725",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4300,7 +4366,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "b075e98395cd1b1a",
+   "sha": "ddb5fe8a8835cae3",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4333,7 +4399,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
-   "sha": "439f2e7e2ffff51a",
+   "sha": "8dfaa400149e673e",
    "stored": {
     "res_bound": 1.3322676295501888e-15,
     "res_ok": true,
@@ -4366,7 +4432,7 @@
    "points": 17,
    "quality": "PI",
    "status": "verified",
-   "sha": "a2351945164e4bf7",
+   "sha": "51f6c38ea99865e5",
    "stored": {
     "res_bound": 1.379538844270557e-15,
     "res_ok": true,
@@ -4399,7 +4465,7 @@
    "points": 22,
    "quality": "PI",
    "status": "verified",
-   "sha": "23c0ce7f5d7b52af",
+   "sha": "6a15399ddafff696",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -4432,7 +4498,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
-   "sha": "f64632b48cd96b82",
+   "sha": "e88a2af43bbf1468",
    "stored": {
     "res_bound": 5.308253836489034e-15,
     "res_ok": true,
@@ -4465,7 +4531,7 @@
    "points": 31,
    "quality": "PI",
    "status": "verified",
-   "sha": "81dd391a9590692b",
+   "sha": "81582f870bf1a9eb",
    "stored": {
     "res_bound": 1.9662548499110885e-15,
     "res_ok": true,
@@ -4498,7 +4564,7 @@
    "points": 33,
    "quality": "PI",
    "status": "verified",
-   "sha": "4e77ce85ad5dd1a3",
+   "sha": "51e3089f3f767972",
    "stored": {
     "res_bound": 1.815577852989916e-15,
     "res_ok": true,
@@ -4531,7 +4597,7 @@
    "points": 40,
    "quality": "PI",
    "status": "verified",
-   "sha": "73dafdbe0c332cbb",
+   "sha": "31a33329db570f03",
    "stored": {
     "res_bound": 2.2251758812277835e-15,
     "res_ok": true,
@@ -4564,7 +4630,7 @@
    "points": 43,
    "quality": "PI",
    "status": "verified",
-   "sha": "e39d1e73ae79a924",
+   "sha": "635ceb813cced0e6",
    "stored": {
     "res_bound": 2.418800836706538e-15,
     "res_ok": true,
@@ -4597,7 +4663,7 @@
    "points": 51,
    "quality": "PI",
    "status": "verified",
-   "sha": "5210891cbcc830e9",
+   "sha": "ed6a5fbc9b402bc2",
    "stored": {
     "res_bound": 2.869801835406196e-15,
     "res_ok": true,
@@ -4630,7 +4696,7 @@
    "points": 54,
    "quality": "PI",
    "status": "verified",
-   "sha": "49c920d9b3245210",
+   "sha": "e3e4ee2008195c16",
    "stored": {
     "res_bound": 3.362544617746546e-15,
     "res_ok": true,
@@ -4663,7 +4729,7 @@
    "points": 64,
    "quality": "PI",
    "status": "verified",
-   "sha": "6ab023b0ab65f168",
+   "sha": "e7dd396f9dd3326e",
    "stored": {
     "res_bound": 3.5048054953038e-15,
     "res_ok": true,
@@ -4696,7 +4762,7 @@
    "points": 67,
    "quality": "PI",
    "status": "verified",
-   "sha": "e1097c187bfbee2f",
+   "sha": "0777eb6a3940887f",
    "stored": {
     "res_bound": 4.332634511577953e-15,
     "res_ok": true,
@@ -4729,7 +4795,7 @@
    "points": 77,
    "quality": "PI",
    "status": "verified",
-   "sha": "56693adac5e115f9",
+   "sha": "f18a25a3bb30d0e8",
    "stored": {
     "res_bound": 4.647954384654628e-15,
     "res_ok": true,
@@ -4762,7 +4828,7 @@
    "points": 81,
    "quality": "PI",
    "status": "verified",
-   "sha": "7fe0907738d018e8",
+   "sha": "2d3c0b747aaa6fb6",
    "stored": {
     "res_bound": 4.9271296678060675e-15,
     "res_ok": true,
@@ -4795,7 +4861,7 @@
    "points": 92,
    "quality": "PI",
    "status": "verified",
-   "sha": "c0b3d98a0a1d9f4d",
+   "sha": "5e74dd29aac236f4",
    "stored": {
     "res_bound": 5.654150751928642e-15,
     "res_ok": true,
@@ -4828,7 +4894,7 @@
    "points": 96,
    "quality": "PI",
    "status": "verified",
-   "sha": "1d03ddf5c3f51c5f",
+   "sha": "89a78a2c6d590c22",
    "stored": {
     "res_bound": 5.220088718108176e-15,
     "res_ok": true,
@@ -4861,7 +4927,7 @@
    "points": 109,
    "quality": "PI",
    "status": "verified",
-   "sha": "29572d3d058f489b",
+   "sha": "2b8f90b4a6fdb7bf",
    "stored": {
     "res_bound": 6.26662079433044e-15,
     "res_ok": true,
@@ -4894,7 +4960,7 @@
    "points": 113,
    "quality": "PI",
    "status": "verified",
-   "sha": "b98f1e031bce8854",
+   "sha": "8fd937fc49a80231",
    "stored": {
     "res_bound": 6.042136734517316e-15,
     "res_ok": true,
@@ -4920,6 +4986,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C2-26-126-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-26-126-PI-MPC.json",
+   "domain": "square",
+   "degree": 26,
+   "points": 126,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "03d1f2dfaee3a2e3",
+   "stored": {
+    "res_bound": 5.680356449156698e-15,
+    "res_ok": true,
+    "margin_exact": 0.0022540405260093,
+    "minw_exact": 0.0015736836075817802,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 2.7292269814121065e-12,
+    "kratio": 0.6679884161765106,
+    "mode": "full",
+    "equations": 378,
+    "unknowns": 378,
+    "dist": 2.6985033792165447e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.95,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-C2-26-127-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-26-127-PI-MPC.json",
    "domain": "square",
@@ -4927,7 +5026,7 @@
    "points": 127,
    "quality": "PI",
    "status": "verified",
-   "sha": "7e2de7a301d7be14",
+   "sha": "8f9e85d1dc0d8791",
    "stored": {
     "res_bound": 7.883172586253436e-15,
     "res_ok": true,
@@ -4960,7 +5059,7 @@
    "points": 131,
    "quality": "PI",
    "status": "verified",
-   "sha": "a03da963cb9e36a4",
+   "sha": "6da9960fc1ccce86",
    "stored": {
     "res_bound": 6.826941559268632e-15,
     "res_ok": true,
@@ -4993,7 +5092,7 @@
    "points": 146,
    "quality": "PI",
    "status": "verified",
-   "sha": "d4c16fd75a7804e0",
+   "sha": "f8283c93149fcfae",
    "stored": {
     "res_bound": 8.517649815174322e-15,
     "res_ok": true,
@@ -5026,7 +5125,7 @@
    "points": 150,
    "quality": "PI",
    "status": "verified",
-   "sha": "69354b4b87113cc5",
+   "sha": "a049402c21d18023",
    "stored": {
     "res_bound": 8.210720650473148e-15,
     "res_ok": true,
@@ -5059,7 +5158,7 @@
    "points": 166,
    "quality": "PI",
    "status": "verified",
-   "sha": "6ea6b60bd895d34a",
+   "sha": "f9f187fda1e57bd4",
    "stored": {
     "res_bound": 3.3382874194931836e-13,
     "res_ok": true,
@@ -5092,7 +5191,7 @@
    "points": 167,
    "quality": "PI",
    "status": "verified",
-   "sha": "586ebd16bd303af8",
+   "sha": "c5da67d1bea8ed7d",
    "stored": {
     "res_bound": 9.171872229128652e-15,
     "res_ok": true,
@@ -5125,7 +5224,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "eaff9a85feb2616c",
+   "sha": "2f9eb0439e682db1",
    "stored": {
     "res_bound": 3.830269434956793e-15,
     "res_ok": true,
@@ -5158,7 +5257,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "a5c7d98717dc7070",
+   "sha": "9fb36bb1a771671d",
    "stored": {
     "res_bound": 3.996802888650567e-15,
     "res_ok": true,
@@ -5191,7 +5290,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "4ce5d80d91f82ee3",
+   "sha": "59211e85e417a188",
    "stored": {
     "res_bound": 3.996802888650567e-15,
     "res_ok": true,
@@ -5224,7 +5323,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
-   "sha": "dc39fcc8d58e162f",
+   "sha": "199798730f2397ef",
    "stored": {
     "res_bound": 6.341281666433223e-15,
     "res_ok": true,
@@ -5257,7 +5356,7 @@
    "points": 14,
    "quality": "PI",
    "status": "verified",
-   "sha": "81ef842c270772c6",
+   "sha": "4a588f229c17bfbb",
    "stored": {
     "res_bound": 1.5820678100908493e-14,
     "res_ok": true,
@@ -5290,7 +5389,7 @@
    "points": 23,
    "quality": "PI",
    "status": "verified",
-   "sha": "1ed21c1364fe1907",
+   "sha": "f6a5b269f3fb5dc2",
    "stored": {
     "res_bound": 1.455086051649347e-14,
     "res_ok": true,
@@ -5323,7 +5422,7 @@
    "points": 31,
    "quality": "PI",
    "status": "verified",
-   "sha": "58fdeda60689bcd0",
+   "sha": "972c3aaea0099a95",
    "stored": {
     "res_bound": 9.992007221626415e-15,
     "res_ok": true,
@@ -5356,7 +5455,7 @@
    "points": 43,
    "quality": "PI",
    "status": "verified",
-   "sha": "921fff95d890de45",
+   "sha": "9081514e34c6aa1a",
    "stored": {
     "res_bound": 2.181588243388434e-14,
     "res_ok": true,
@@ -5382,6 +5481,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-09-55-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-09-55-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 9,
+   "points": 55,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "fa5c4697b249d143",
+   "stored": {
+    "res_bound": 1.9984014443252834e-15,
+    "res_ok": true,
+    "margin_exact": 0.005360806265319275,
+    "minw_exact": 0.0007625075469985428,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 5.3063862495110216e-14,
+    "kratio": 0.6666667187494753,
+    "mode": "sym2",
+    "equations": 139,
+    "unknowns": 139,
+    "dist": 1.3455431399296675e-13,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.29,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-09-56-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-09-56-PI-MPC.json",
    "domain": "tetra",
@@ -5389,7 +5521,7 @@
    "points": 56,
    "quality": "PI",
    "status": "verified",
-   "sha": "32696df01718788e",
+   "sha": "bc3f4d052378c36e",
    "stored": {
     "res_bound": 1.3072876114961225e-14,
     "res_ok": true,
@@ -5423,7 +5555,7 @@
    "points": 74,
    "quality": "PI",
    "status": "verified",
-   "sha": "7ae9fb094fd7f2b7",
+   "sha": "2ebb4269f5c9a346",
    "stored": {
     "res_bound": 3.3378317962356916e-15,
     "res_ok": true,
@@ -5456,7 +5588,7 @@
    "points": 75,
    "quality": "PI",
    "status": "verified",
-   "sha": "2ab49b3608e5ef7b",
+   "sha": "8c3d8f0aa1f5c35d",
    "stored": {
     "res_bound": 2.246119956694771e-14,
     "res_ok": true,
@@ -5489,7 +5621,7 @@
    "points": 92,
    "quality": "PI",
    "status": "verified",
-   "sha": "c213ce951f1be82b",
+   "sha": "840f09047c390802",
    "stored": {
     "res_bound": 2.3481216970822073e-14,
     "res_ok": true,
@@ -5522,7 +5654,7 @@
    "points": 117,
    "quality": "PI",
    "status": "verified",
-   "sha": "ced474e9e5e458b4",
+   "sha": "09c987964b635fd5",
    "stored": {
     "res_bound": 2.356448369766896e-14,
     "res_ok": true,
@@ -5555,7 +5687,7 @@
    "points": 142,
    "quality": "PI",
    "status": "verified",
-   "sha": "112c13322567826a",
+   "sha": "5fe3ea938b14099e",
    "stored": {
     "res_bound": 2.312807919423287e-14,
     "res_ok": true,
@@ -5589,7 +5721,7 @@
    "points": 173,
    "quality": "PI",
    "status": "verified",
-   "sha": "38dfdbe324aacfd5",
+   "sha": "10f0563de353b61b",
    "stored": {
     "res_bound": 5.345723863570131e-14,
     "res_ok": true,
@@ -5623,7 +5755,7 @@
    "points": 207,
    "quality": "PI",
    "status": "verified",
-   "sha": "a1ec23e4d2f62fcf",
+   "sha": "d78220812a6da5f3",
    "stored": {
     "res_bound": 2.0400348077487264e-14,
     "res_ok": true,
@@ -5656,7 +5788,7 @@
    "points": 248,
    "quality": "PI",
    "status": "verified",
-   "sha": "80ed0d0ef107c257",
+   "sha": "ebba451ed05d1d3e",
    "stored": {
     "res_bound": 4.5963233219481506e-14,
     "res_ok": true,
@@ -5689,7 +5821,7 @@
    "points": 289,
    "quality": "PI",
    "status": "verified",
-   "sha": "b85d53d4a175e483",
+   "sha": "2a8b5051a112b0b8",
    "stored": {
     "res_bound": 2.3481216970822073e-14,
     "res_ok": true,
@@ -5722,7 +5854,7 @@
    "points": 337,
    "quality": "PI",
    "status": "verified",
-   "sha": "0fdbd0114643cc5b",
+   "sha": "18fe1c91b240c91b",
    "stored": {
     "res_bound": 5.195843755245735e-14,
     "res_ok": true,
@@ -5756,7 +5888,7 @@
    "points": 389,
    "quality": "PI",
    "status": "verified",
-   "sha": "07733b6b75eeba20",
+   "sha": "51bbe090640e597b",
    "stored": {
     "res_bound": 6.05349104176867e-14,
     "res_ok": true,
@@ -5790,7 +5922,7 @@
    "points": 446,
    "quality": "PI",
    "status": "verified",
-   "sha": "afb6e3c95ca5e115",
+   "sha": "747b28aac57ebe30",
    "stored": {
     "res_bound": 3.559429861272798e-14,
     "res_ok": true,
@@ -5824,7 +5956,7 @@
    "points": 509,
    "quality": "PI",
    "status": "verified",
-   "sha": "3a7588f861a44966",
+   "sha": "84549c36351f4ab8",
    "stored": {
     "res_bound": 5.945244296867717e-14,
     "res_ok": true,
@@ -5857,7 +5989,7 @@
    "points": 580,
    "quality": "PI",
    "status": "verified",
-   "sha": "c079e3708bf96ec8",
+   "sha": "8ca6f0e479d687f9",
    "stored": {
     "res_bound": 4.219998661643497e-14,
     "res_ok": true,
@@ -5891,7 +6023,7 @@
    "points": 659,
    "quality": "PI",
    "status": "verified",
-   "sha": "69c1009ae0c6f51e",
+   "sha": "68dcea28feea280e",
    "stored": {
     "res_bound": 4.5963233219481506e-14,
     "res_ok": true,
@@ -5924,7 +6056,7 @@
    "points": 766,
    "quality": "PI",
    "status": "verified",
-   "sha": "0747310c9c1f4030",
+   "sha": "b758ff81924f3ea3",
    "stored": {
     "res_bound": 4.438299118890848e-15,
     "res_ok": true,
@@ -5957,7 +6089,7 @@
    "points": 832,
    "quality": "PI",
    "status": "verified",
-   "sha": "1c4638e05a7421fc",
+   "sha": "8e3a4f0cb215ff0c",
    "stored": {
     "res_bound": 4.837105047408189e-15,
     "res_ok": true,
@@ -5990,7 +6122,7 @@
    "points": 871,
    "quality": "PI",
    "status": "verified",
-   "sha": "bb46dc61f8d22ff5",
+   "sha": "4ce6a33d1d41f3ae",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -6023,7 +6155,7 @@
    "points": 872,
    "quality": "PI",
    "status": "verified",
-   "sha": "e2aa917136eea11c",
+   "sha": "24e929ac71d34a58",
    "stored": {
     "res_bound": 4.1835107712499744e-15,
     "res_ok": true,
@@ -6056,7 +6188,7 @@
    "points": 950,
    "quality": "PI",
    "status": "verified",
-   "sha": "fd074201253bfd34",
+   "sha": "a78c271d6b2e26b5",
    "stored": {
     "res_bound": 5.502024296346262e-15,
     "res_ok": true,
@@ -6082,6 +6214,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-27-1057-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-27-1057-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 27,
+   "points": 1057,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "33547955b56e420c",
+   "stored": {
+    "res_bound": 5.3179203948587814e-15,
+    "res_ok": true,
+    "margin_exact": 0.0005332207085368263,
+    "minw_exact": 2.7423270137925256e-06,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 3.0335743157358076e-13,
+    "kratio": 0.6666834404416395,
+    "mode": "sym24",
+    "equations": 298,
+    "unknowns": 302,
+    "dist": 3.038015212275201e-13,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 15.57,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-27-1077-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-27-1077-PI-MPC.json",
    "domain": "tetra",
@@ -6089,7 +6254,7 @@
    "points": 1077,
    "quality": "PI",
    "status": "verified",
-   "sha": "aee75ce270c9eb5f",
+   "sha": "40dc0a04796b2c98",
    "stored": {
     "res_bound": 6.8278716014447175e-15,
     "res_ok": true,
@@ -6122,7 +6287,7 @@
    "points": 1079,
    "quality": "PI",
    "status": "verified",
-   "sha": "9f896db19e7fae1e",
+   "sha": "b186f62dfe6c1298",
    "stored": {
     "res_bound": 5.588561903784698e-15,
     "res_ok": true,
@@ -6155,7 +6320,7 @@
    "points": 1180,
    "quality": "PI",
    "status": "verified",
-   "sha": "ad0147bdf08c50fd",
+   "sha": "b9e8267fa81ce984",
    "stored": {
     "res_bound": 1.2323475573339244e-14,
     "res_ok": true,
@@ -6188,7 +6353,7 @@
    "points": 1181,
    "quality": "PI",
    "status": "verified",
-   "sha": "7e650be724121e76",
+   "sha": "ae74b9ddc60c2cb2",
    "stored": {
     "res_bound": 6.455527663796428e-15,
     "res_ok": true,
@@ -6221,7 +6386,7 @@
    "points": 1336,
    "quality": "PI",
    "status": "verified",
-   "sha": "5f031701620c562c",
+   "sha": "59285b62a1286baa",
    "stored": {
     "res_bound": 5.374038845552167e-15,
     "res_ok": true,
@@ -6254,7 +6419,7 @@
    "points": 1340,
    "quality": "PI",
    "status": "verified",
-   "sha": "06570575772aa23c",
+   "sha": "a2e44269523c9f64",
    "stored": {
     "res_bound": 5.752051210401546e-15,
     "res_ok": true,
@@ -6287,7 +6452,7 @@
    "points": 1374,
    "quality": "PI",
    "status": "verified",
-   "sha": "52a5c4fbe93243e9",
+   "sha": "318181c44d39cf7a",
    "stored": {
     "res_bound": 5.739361280423137e-15,
     "res_ok": true,
@@ -6320,7 +6485,7 @@
    "points": 1480,
    "quality": "PI",
    "status": "verified",
-   "sha": "6936ec4f4cc0a929",
+   "sha": "fcc91bad0d09bfeb",
    "stored": {
     "res_bound": 7.469104493837665e-15,
     "res_ok": true,
@@ -6353,7 +6518,7 @@
    "points": 1536,
    "quality": "PI",
    "status": "verified",
-   "sha": "489e390cf15bc86f",
+   "sha": "33acf216ba4ada50",
    "stored": {
     "res_bound": 6.682285299006325e-15,
     "res_ok": true,
@@ -6386,7 +6551,7 @@
    "points": 1506,
    "quality": "PI",
    "status": "verified",
-   "sha": "09b4ad46124dfc63",
+   "sha": "dee57392ea9aa0dd",
    "stored": {
     "res_bound": 6.516689828422517e-15,
     "res_ok": true,
@@ -6419,7 +6584,7 @@
    "points": 1678,
    "quality": "PI",
    "status": "verified",
-   "sha": "37bbcfea41582d1d",
+   "sha": "d80767ca2fb5780c",
    "stored": {
     "res_bound": 7.686284191499921e-15,
     "res_ok": true,
@@ -6452,7 +6617,7 @@
    "points": 1704,
    "quality": "PI",
    "status": "verified",
-   "sha": "1939ec8dbce184c7",
+   "sha": "432c7c4e5b1831f4",
    "stored": {
     "res_bound": 7.053591058811414e-15,
     "res_ok": true,
@@ -6485,7 +6650,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "00a407deeafdd191",
+   "sha": "a0b54f5ba562459e",
    "stored": {
     "res_bound": 1.6764367671839873e-14,
     "res_ok": true,
@@ -6518,7 +6683,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
-   "sha": "ed1bdfd20b4a6af6",
+   "sha": "4695a08f922e6b22",
    "stored": {
     "res_bound": 6.192268919846816e-14,
     "res_ok": true,
@@ -6551,7 +6716,7 @@
    "points": 4,
    "quality": "PI",
    "status": "verified",
-   "sha": "fd4089687803a958",
+   "sha": "9fe16d9e9997a52a",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -6584,7 +6749,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "27fb93d36fc999ac",
+   "sha": "121242b16b0a04c8",
    "stored": {
     "res_bound": 1.901961661082698e-15,
     "res_ok": true,
@@ -6617,7 +6782,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
-   "sha": "87a71111e90a0a22",
+   "sha": "2fb017bf53ab443d",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -6650,7 +6815,7 @@
    "points": 11,
    "quality": "PI",
    "status": "verified",
-   "sha": "f5dd0c878999fcfd",
+   "sha": "ffa3e75854dff34b",
    "stored": {
     "res_bound": 2.8865798640254086e-15,
     "res_ok": true,
@@ -6683,7 +6848,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "852867fdd8be05f6",
+   "sha": "721243aeb3ccefc4",
    "stored": {
     "res_bound": 9.409140133698206e-15,
     "res_ok": true,
@@ -6716,7 +6881,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
-   "sha": "af2e3d7a5a0dc108",
+   "sha": "6df7591b6dd3e094",
    "stored": {
     "res_bound": 3.996802888650566e-15,
     "res_ok": true,
@@ -6749,7 +6914,7 @@
    "points": 19,
    "quality": "PI",
    "status": "verified",
-   "sha": "db24a54c48c1c5f2",
+   "sha": "c985a3e448839020",
    "stored": {
     "res_bound": 7.935058859986916e-15,
     "res_ok": true,
@@ -6782,7 +6947,7 @@
    "points": 24,
    "quality": "PI",
    "status": "verified",
-   "sha": "1e4525783a317718",
+   "sha": "db78d12c0ac47872",
    "stored": {
     "res_bound": 2.994349559970468e-15,
     "res_ok": true,
@@ -6815,7 +6980,7 @@
    "points": 27,
    "quality": "PI",
    "status": "verified",
-   "sha": "f6d75dcadc2834b1",
+   "sha": "6d287fb7126de274",
    "stored": {
     "res_bound": 5.468173656930646e-15,
     "res_ok": true,
@@ -6848,7 +7013,7 @@
    "points": 32,
    "quality": "PI",
    "status": "verified",
-   "sha": "0b92d917bebb1afd",
+   "sha": "13117c4d26e16a4b",
    "stored": {
     "res_bound": 8.301085513418022e-15,
     "res_ok": true,
@@ -6881,7 +7046,7 @@
    "points": 35,
    "quality": "PI",
    "status": "verified",
-   "sha": "56736b2fdb93e1dc",
+   "sha": "00574e86b06b7d01",
    "stored": {
     "res_bound": 5.3290705182007545e-15,
     "res_ok": true,
@@ -6914,7 +7079,7 @@
    "points": 41,
    "quality": "PI",
    "status": "verified",
-   "sha": "368e4075ecec6318",
+   "sha": "75d1c3ff59cc1c5f",
    "stored": {
     "res_bound": 5.818370958643464e-15,
     "res_ok": true,
@@ -6947,7 +7112,7 @@
    "points": 46,
    "quality": "PI",
    "status": "verified",
-   "sha": "9331e0b28c16d291",
+   "sha": "f92f32b8f244c37a",
    "stored": {
     "res_bound": 6.3467026772956506e-15,
     "res_ok": true,
@@ -6980,7 +7145,7 @@
    "points": 52,
    "quality": "PI",
    "status": "verified",
-   "sha": "35fb6a673c9f1418",
+   "sha": "de71391ece6dd138",
    "stored": {
     "res_bound": 7.549516567451069e-15,
     "res_ok": true,
@@ -7006,6 +7171,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T2-17-57-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-17-57-PI-MPC.json",
+   "domain": "triangle",
+   "degree": 17,
+   "points": 57,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "2b7aaa941818441b",
+   "stored": {
+    "res_bound": 3.404503241821735e-15,
+    "res_ok": true,
+    "margin_exact": 0.005614387104371891,
+    "minw_exact": 0.0016081331093897755,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.462855138221715e-13,
+    "kratio": 0.6666673830720726,
+    "mode": "full",
+    "equations": 171,
+    "unknowns": 171,
+    "dist": 1.4964679613957678e-12,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.45,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-17-58-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-17-58-PI-MPC.json",
    "domain": "triangle",
@@ -7013,7 +7211,7 @@
    "points": 58,
    "quality": "PI",
    "status": "verified",
-   "sha": "7d3178b865e902ab",
+   "sha": "9705aebe0babb7e0",
    "stored": {
     "res_bound": 4.920258536537941e-15,
     "res_ok": true,
@@ -7046,7 +7244,7 @@
    "points": 65,
    "quality": "PI",
    "status": "verified",
-   "sha": "87358e7a158a9044",
+   "sha": "ab24dc77b0653299",
    "stored": {
     "res_bound": 7.327471962526038e-15,
     "res_ok": true,
@@ -7072,6 +7270,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T2-19-70-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-19-70-PI-MPC.json",
+   "domain": "triangle",
+   "degree": 19,
+   "points": 70,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "f2aa6fde2f268d72",
+   "stored": {
+    "res_bound": 4.28272733032573e-15,
+    "res_ok": true,
+    "margin_exact": 0.000629747640481553,
+    "minw_exact": 0.0009249275917104152,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 9.146240701860782e-13,
+    "kratio": 0.666713200249781,
+    "mode": "full",
+    "equations": 210,
+    "unknowns": 210,
+    "dist": 9.797233278739463e-12,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.63,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-19-71-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-19-71-PI-MPC.json",
    "domain": "triangle",
@@ -7079,7 +7310,7 @@
    "points": 71,
    "quality": "PI",
    "status": "verified",
-   "sha": "ff4f7471f5992e0e",
+   "sha": "8cd37121579a8ca5",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -7112,7 +7343,7 @@
    "points": 78,
    "quality": "PI",
    "status": "verified",
-   "sha": "4fa256f22b27359b",
+   "sha": "31a43c92aef3469c",
    "stored": {
     "res_bound": 7.257025926368794e-15,
     "res_ok": true,
@@ -7145,7 +7376,7 @@
    "points": 85,
    "quality": "PI",
    "status": "verified",
-   "sha": "cb5b1dc358d199ec",
+   "sha": "3088bc5d29a537bb",
    "stored": {
     "res_bound": 8.129171706443293e-15,
     "res_ok": true,
@@ -7178,7 +7409,7 @@
    "points": 93,
    "quality": "PI",
    "status": "verified",
-   "sha": "4163d961d5c62338",
+   "sha": "c8aeec90ee172650",
    "stored": {
     "res_bound": 7.535171217456375e-15,
     "res_ok": true,
@@ -7204,6 +7435,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T2-23-100-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-23-100-PI-MPC.json",
+   "domain": "triangle",
+   "degree": 23,
+   "points": 100,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "690cd1bd9aa76a24",
+   "stored": {
+    "res_bound": 5.633308659228503e-15,
+    "res_ok": true,
+    "margin_exact": 0.0007890866642797433,
+    "minw_exact": 0.0005286392158802414,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.7760218788688548e-13,
+    "kratio": 0.6666693131584318,
+    "mode": "full",
+    "equations": 300,
+    "unknowns": 300,
+    "dist": 1.918530982747524e-12,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 1.35,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-23-101-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-23-101-PI-MPC.json",
    "domain": "triangle",
@@ -7211,7 +7475,7 @@
    "points": 101,
    "quality": "PI",
    "status": "verified",
-   "sha": "e4fa7afa14db1727",
+   "sha": "790158ca979dd160",
    "stored": {
     "res_bound": 8.037441426387441e-15,
     "res_ok": true,
@@ -7244,7 +7508,7 @@
    "points": 109,
    "quality": "PI",
    "status": "verified",
-   "sha": "0adec8c07157db43",
+   "sha": "e30ee7cfe1306042",
    "stored": {
     "res_bound": 1.0769163338864025e-14,
     "res_ok": true,
@@ -7277,7 +7541,7 @@
    "points": 117,
    "quality": "PI",
    "status": "verified",
-   "sha": "86df0bdbd2312281",
+   "sha": "71c80ee555f64c83",
    "stored": {
     "res_bound": 9.465017203162683e-15,
     "res_ok": true,
@@ -7310,7 +7574,7 @@
    "points": 127,
    "quality": "PI",
    "status": "verified",
-   "sha": "9994ff3cfa1310ef",
+   "sha": "1fbc3d88c8b3627f",
    "stored": {
     "res_bound": 1.1040205941051524e-14,
     "res_ok": true,
@@ -7343,7 +7607,7 @@
    "points": 136,
    "quality": "PI",
    "status": "verified",
-   "sha": "0af76bd187a30056",
+   "sha": "3208d8a799c28c06",
    "stored": {
     "res_bound": 1.0218535171941267e-14,
     "res_ok": true,
@@ -7376,7 +7640,7 @@
    "points": 146,
    "quality": "PI",
    "status": "verified",
-   "sha": "b8e8b20d94ad69f8",
+   "sha": "fda736a21f7f789e",
    "stored": {
     "res_bound": 1.3203216697851772e-14,
     "res_ok": true,
@@ -7409,7 +7673,7 @@
    "points": 155,
    "quality": "PI",
    "status": "verified",
-   "sha": "1c42f095d6b1c4c8",
+   "sha": "c22d3fe58539fe8a",
    "stored": {
     "res_bound": 1.4120305199074634e-14,
     "res_ok": true,
@@ -7442,7 +7706,7 @@
    "points": 166,
    "quality": "PI",
    "status": "verified",
-   "sha": "6c6c21ae347eb4f2",
+   "sha": "c0138dff81eb838c",
    "stored": {
     "res_bound": 1.4011161192172655e-14,
     "res_ok": true,
@@ -7475,7 +7739,7 @@
    "points": 21,
    "quality": "PO",
    "status": "verified",
-   "sha": "3b1af6146f6591e7",
+   "sha": "586faf939adb434e",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -7508,7 +7772,7 @@
    "points": 114,
    "quality": "PO",
    "status": "verified",
-   "sha": "a914f3edc541e522",
+   "sha": "079fa05406c98882",
    "stored": {
     "res_bound": 1.776356839400252e-15,
     "res_ok": true,
@@ -7541,7 +7805,7 @@
    "points": 243,
    "quality": "PO",
    "status": "verified",
-   "sha": "017d99040bad85ff",
+   "sha": "ea39a7a79068d638",
    "stored": {
     "res_bound": 2.5137263367976702e-15,
     "res_ok": true,
@@ -7574,7 +7838,7 @@
    "points": 263,
    "quality": "PO",
    "status": "verified",
-   "sha": "4d0278ee9f2ff287",
+   "sha": "2ecdcfa1238a2637",
    "stored": {
     "res_bound": 2.7245407671497672e-15,
     "res_ok": true,
@@ -7607,7 +7871,7 @@
    "points": 358,
    "quality": "PO",
    "status": "verified",
-   "sha": "88d38acab3537deb",
+   "sha": "63485d986250bcac",
    "stored": {
     "res_bound": 3.428839345429298e-15,
     "res_ok": true,
@@ -7640,7 +7904,7 @@
    "points": 443,
    "quality": "PO",
    "status": "verified",
-   "sha": "fbcdeeb1e33934e2",
+   "sha": "43652314f798de9b",
    "stored": {
     "res_bound": 3.629534848878257e-15,
     "res_ok": true,
@@ -7673,7 +7937,7 @@
    "points": 474,
    "quality": "PO",
    "status": "verified",
-   "sha": "041f10e1540d1f31",
+   "sha": "bdba3eb75ad911b2",
    "stored": {
     "res_bound": 3.781668431448797e-15,
     "res_ok": true,
@@ -7706,7 +7970,7 @@
    "points": 732,
    "quality": "PO",
    "status": "verified",
-   "sha": "7bab05ea632c4d24",
+   "sha": "2d3d2d6033bd72d2",
    "stored": {
     "res_bound": 5.026812475505894e-15,
     "res_ok": true,
@@ -7739,7 +8003,7 @@
    "points": 774,
    "quality": "PO",
    "status": "verified",
-   "sha": "b9a47107e5de811f",
+   "sha": "7f7d391e3b5d7907",
    "stored": {
     "res_bound": 5.3756955526614875e-15,
     "res_ok": true,
@@ -7772,7 +8036,7 @@
    "points": 1141,
    "quality": "PO",
    "status": "verified",
-   "sha": "052061892f098c50",
+   "sha": "48bf068c53cf3353",
    "stored": {
     "res_bound": 6.565806357358035e-15,
     "res_ok": true,
@@ -7805,7 +8069,7 @@
    "points": 1181,
    "quality": "PO",
    "status": "verified",
-   "sha": "1452f8ff054d5309",
+   "sha": "60fda18861ee0dcb",
    "stored": {
     "res_bound": 7.196858026221551e-15,
     "res_ok": true,
@@ -7838,7 +8102,7 @@
    "points": 15,
    "quality": "PO",
    "status": "verified",
-   "sha": "90cbd99f958c5aa8",
+   "sha": "efea7adb2ea476d0",
    "stored": {
     "res_bound": 8.838493088456084e-13,
     "res_ok": true,
@@ -7864,6 +8128,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C2-28-145-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/square/CA-C2-28-145-PO-MPC.json",
+   "domain": "square",
+   "degree": 28,
+   "points": 145,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "93427d3511e240cc",
+   "stored": {
+    "res_bound": 6.0731917152207376e-15,
+    "res_ok": true,
+    "margin_exact": -0.0042228219280882,
+    "minw_exact": 0.0006693584095492442,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 2.9221530598226488e-12,
+    "kratio": 0.6686563622048399,
+    "mode": "full",
+    "equations": 435,
+    "unknowns": 435,
+    "dist": 4.7711989517865574e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 0.81,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-04-10-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-04-10-PO-MPC.json",
    "domain": "tetra",
@@ -7871,7 +8168,7 @@
    "points": 10,
    "quality": "PO",
    "status": "verified",
-   "sha": "172a95d2be32b43a",
+   "sha": "35c795c6da690a45",
    "stored": {
     "res_bound": 6.349087922075118e-13,
     "res_ok": true,
@@ -7904,7 +8201,7 @@
    "points": 22,
    "quality": "PO",
    "status": "verified",
-   "sha": "8448f354b93500cd",
+   "sha": "ce2a380c7b39f02b",
    "stored": {
     "res_bound": 1.630728999101398e-12,
     "res_ok": true,
@@ -7937,7 +8234,7 @@
    "points": 30,
    "quality": "PO",
    "status": "verified",
-   "sha": "9ba4b6bccfea7407",
+   "sha": "8b2dcb7a01e0389c",
    "stored": {
     "res_bound": 4.377857126293408e-13,
     "res_ok": true,
@@ -7970,7 +8267,7 @@
    "points": 42,
    "quality": "PO",
    "status": "verified",
-   "sha": "7c2304e77881870e",
+   "sha": "5ca294afc6034a62",
    "stored": {
     "res_bound": 4.3799748780681334e-13,
     "res_ok": true,
@@ -8003,7 +8300,7 @@
    "points": 55,
    "quality": "PO",
    "status": "verified",
-   "sha": "38fcec699ee2c9f0",
+   "sha": "65402a9fcdb0d888",
    "stored": {
     "res_bound": 3.330669073875472e-15,
     "res_ok": true,
@@ -8036,7 +8333,7 @@
    "points": 72,
    "quality": "PO",
    "status": "verified",
-   "sha": "8ae2fe6ee6ab8be1",
+   "sha": "bfa5e35203799545",
    "stored": {
     "res_bound": 3.639156421328174e-13,
     "res_ok": true,
@@ -8062,6 +8359,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-11-91-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-11-91-PO-MPC.json",
+   "domain": "tetra",
+   "degree": 11,
+   "points": 91,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "a7ce2177b27befba",
+   "stored": {
+    "res_bound": 2.3314683517128307e-15,
+    "res_ok": true,
+    "margin_exact": -0.10498272194527564,
+    "minw_exact": 4.407289935335181e-06,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 7.643670713337829e-13,
+    "kratio": 0.6666814974209693,
+    "mode": "full",
+    "equations": 364,
+    "unknowns": 364,
+    "dist": 1.4583659329632158e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 0.57,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-12-114-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-12-114-PO-MPC.json",
    "domain": "tetra",
@@ -8069,7 +8399,7 @@
    "points": 114,
    "quality": "PO",
    "status": "verified",
-   "sha": "69797dff56f8adbd",
+   "sha": "9c1edb52b1fdfecd",
    "stored": {
     "res_bound": 3.747488057988684e-15,
     "res_ok": true,
@@ -8102,7 +8432,7 @@
    "points": 140,
    "quality": "PO",
    "status": "verified",
-   "sha": "423f6464457228c5",
+   "sha": "a62bfbf55d648dbf",
    "stored": {
     "res_bound": 5.162537064506981e-15,
     "res_ok": true,
@@ -8135,7 +8465,7 @@
    "points": 170,
    "quality": "PO",
    "status": "verified",
-   "sha": "950d4d1f50fd3ab2",
+   "sha": "0ee31cfce336783b",
    "stored": {
     "res_bound": 4.496403249731887e-15,
     "res_ok": true,
@@ -8168,7 +8498,7 @@
    "points": 204,
    "quality": "PO",
    "status": "verified",
-   "sha": "852f3e6de3d23c08",
+   "sha": "171702aa532ff5cf",
    "stored": {
     "res_bound": 3.4587779367082382e-15,
     "res_ok": true,
@@ -8201,7 +8531,7 @@
    "points": 243,
    "quality": "PO",
    "status": "verified",
-   "sha": "161a86c52e9ecebe",
+   "sha": "0320351d542b5f0c",
    "stored": {
     "res_bound": 4.2013706363051204e-15,
     "res_ok": true,
@@ -8234,7 +8564,7 @@
    "points": 285,
    "quality": "PO",
    "status": "verified",
-   "sha": "1b1b8d3c13e1f627",
+   "sha": "2cc232d751526cfb",
    "stored": {
     "res_bound": 6.994405055138491e-15,
     "res_ok": true,
@@ -8267,7 +8597,7 @@
    "points": 333,
    "quality": "PO",
    "status": "verified",
-   "sha": "f5e00208925e5772",
+   "sha": "c755373b1aff071f",
    "stored": {
     "res_bound": 4.829470157119434e-15,
     "res_ok": true,
@@ -8300,7 +8630,7 @@
    "points": 386,
    "quality": "PO",
    "status": "verified",
-   "sha": "534bbfd984e44ca2",
+   "sha": "133d97e7c8d5902e",
    "stored": {
     "res_bound": 3.5200329370552465e-15,
     "res_ok": true,
@@ -8333,7 +8663,7 @@
    "points": 444,
    "quality": "PO",
    "status": "verified",
-   "sha": "f2ac8f9c742da898",
+   "sha": "137252d49ea29c5e",
    "stored": {
     "res_bound": 6.328271240363397e-15,
     "res_ok": true,
@@ -8366,7 +8696,7 @@
    "points": 507,
    "quality": "PO",
    "status": "verified",
-   "sha": "4c1c3bf725509c43",
+   "sha": "056dc72090246082",
    "stored": {
     "res_bound": 3.998891334408807e-15,
     "res_ok": true,
@@ -8399,7 +8729,7 @@
    "points": 576,
    "quality": "PO",
    "status": "verified",
-   "sha": "1145c688907533bc",
+   "sha": "06e3b2894e4b9f75",
    "stored": {
     "res_bound": 8.826273045770001e-15,
     "res_ok": true,
@@ -8432,7 +8762,7 @@
    "points": 652,
    "quality": "PO",
    "status": "verified",
-   "sha": "f43c1129feff5611",
+   "sha": "4d620dc181a4b959",
    "stored": {
     "res_bound": 1.2323475573339244e-14,
     "res_ok": true,
@@ -8465,7 +8795,7 @@
    "points": 757,
    "quality": "PO",
    "status": "verified",
-   "sha": "fb4d23eede712ab8",
+   "sha": "c196ba38cfcd2f9e",
    "stored": {
     "res_bound": 7.494005416219813e-15,
     "res_ok": true,
@@ -8491,6 +8821,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-25-831-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-25-831-PO-MPC.json",
+   "domain": "tetra",
+   "degree": 25,
+   "points": 831,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "2b594683c536a992",
+   "stored": {
+    "res_bound": 8.992806499463774e-15,
+    "res_ok": true,
+    "margin_exact": -0.001442567198006382,
+    "minw_exact": 2.296774523464072e-06,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.723348347256079e-12,
+    "kratio": 0.6672832506045316,
+    "mode": "full",
+    "equations": 3276,
+    "unknowns": 3324,
+    "dist": 5.54698892681949e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 73.4,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-25-870-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-25-870-PO-MPC.json",
    "domain": "tetra",
@@ -8498,7 +8861,7 @@
    "points": 870,
    "quality": "PO",
    "status": "verified",
-   "sha": "c41c1d9604855b31",
+   "sha": "c230a3e2125d9265",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -8531,7 +8894,7 @@
    "points": 949,
    "quality": "PO",
    "status": "verified",
-   "sha": "3320505608716eb7",
+   "sha": "f78d5527a770b249",
    "stored": {
     "res_bound": 5.717910852630747e-15,
     "res_ok": true,
@@ -8557,6 +8920,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-27-1056-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-27-1056-PO-MPC.json",
+   "domain": "tetra",
+   "degree": 27,
+   "points": 1056,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "27af96b16fb22c9a",
+   "stored": {
+    "res_bound": 6.661338147750944e-15,
+    "res_ok": true,
+    "margin_exact": -0.012687327062452314,
+    "minw_exact": 3.271713605235285e-07,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.327405114762526e-12,
+    "kratio": 0.667110139528496,
+    "mode": "full",
+    "equations": 4060,
+    "unknowns": 4224,
+    "dist": 4.260663785135111e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 131.62,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-27-1076-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-27-1076-PO-MPC.json",
    "domain": "tetra",
@@ -8564,7 +8960,7 @@
    "points": 1076,
    "quality": "PO",
    "status": "verified",
-   "sha": "0c8022893c43b4c3",
+   "sha": "c6a7fdc661e1d00f",
    "stored": {
     "res_bound": 6.661338147750944e-15,
     "res_ok": true,
@@ -8590,6 +8986,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-28-1179-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-28-1179-PO-MPC.json",
+   "domain": "tetra",
+   "degree": 28,
+   "points": 1179,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "b55b36370066be73",
+   "stored": {
+    "res_bound": 1.2323475573339244e-14,
+    "res_ok": true,
+    "margin_exact": -0.0035120087234008,
+    "minw_exact": 7.091192431742541e-07,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.0855727014009089e-12,
+    "kratio": 0.6669638510296626,
+    "mode": "full",
+    "equations": 4495,
+    "unknowns": 4716,
+    "dist": 3.546141542385571e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 241.47,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-06-10-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-06-10-PO-MPC.json",
    "domain": "triangle",
@@ -8597,7 +9026,7 @@
    "points": 10,
    "quality": "PO",
    "status": "verified",
-   "sha": "9fe7eec424d492f7",
+   "sha": "fa004e73f2dd4a94",
    "stored": {
     "res_bound": 5.113687251423474e-13,
     "res_ok": true,
@@ -8630,7 +9059,7 @@
    "points": 23,
    "quality": "PO",
    "status": "verified",
-   "sha": "2fdadaa1b9047e42",
+   "sha": "f764da86fd759b65",
    "stored": {
     "res_bound": 7.159419541588613e-13,
     "res_ok": true,
@@ -8663,7 +9092,7 @@
    "points": 26,
    "quality": "PO",
    "status": "verified",
-   "sha": "16e3da31b24a40cf",
+   "sha": "b5f3cf013cc8a017",
    "stored": {
     "res_bound": 3.220823130770103e-13,
     "res_ok": true,
@@ -8696,7 +9125,7 @@
    "points": 31,
    "quality": "PO",
    "status": "verified",
-   "sha": "c61c4a67f068a24e",
+   "sha": "d26daa6608ef8f5e",
    "stored": {
     "res_bound": 6.432050869025801e-13,
     "res_ok": true,
@@ -8729,7 +9158,7 @@
    "points": 40,
    "quality": "PO",
    "status": "verified",
-   "sha": "da635f2ee140f843",
+   "sha": "b64db3fb9ac2cddd",
    "stored": {
     "res_bound": 4.960006201332888e-13,
     "res_ok": true,
@@ -8755,6 +9184,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T2-16-51-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-16-51-PO-MPC.json",
+   "domain": "triangle",
+   "degree": 16,
+   "points": 51,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "1113e4969f967423",
+   "stored": {
+    "res_bound": 4.100446475351315e-15,
+    "res_ok": true,
+    "margin_exact": -0.09214473517279557,
+    "minw_exact": 1.9270374553994412e-06,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.480283317382131e-13,
+    "kratio": 0.6666671948825889,
+    "mode": "full",
+    "equations": 153,
+    "unknowns": 153,
+    "dist": 1.9604953689915536e-12,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 0.39,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-17-57-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-17-57-PO-MPC.json",
    "domain": "triangle",
@@ -8762,7 +9224,7 @@
    "points": 57,
    "quality": "PO",
    "status": "verified",
-   "sha": "e364dc23f9c2c22d",
+   "sha": "9f794630ec87a4fe",
    "stored": {
     "res_bound": 3.856839638784716e-13,
     "res_ok": true,
@@ -8795,7 +9257,7 @@
    "points": 64,
    "quality": "PO",
    "status": "verified",
-   "sha": "ffb1660d588eb20a",
+   "sha": "24befb7d33525e77",
    "stored": {
     "res_bound": 4.910591078460383e-13,
     "res_ok": true,
@@ -8828,7 +9290,7 @@
    "points": 70,
    "quality": "PO",
    "status": "verified",
-   "sha": "bfc96bd9ffd59a51",
+   "sha": "20eeb2bc65f71b7e",
    "stored": {
     "res_bound": 5.181532591500789e-13,
     "res_ok": true,
@@ -8854,6 +9316,138 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T2-20-77-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-20-77-PO-MPC.json",
+   "domain": "triangle",
+   "degree": 20,
+   "points": 77,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "9d7684a06dc7a711",
+   "stored": {
+    "res_bound": 5.694773605046011e-15,
+    "res_ok": true,
+    "margin_exact": -0.0325118035069372,
+    "minw_exact": 1.0761113414515173e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 2.116700223623903e-12,
+    "kratio": 0.6669822652349136,
+    "mode": "full",
+    "equations": 231,
+    "unknowns": 231,
+    "dist": 3.3933400692022775e-11,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 0.55,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T2-22-92-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-22-92-PO-MPC.json",
+   "domain": "triangle",
+   "degree": 22,
+   "points": 92,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "2f30b5cc1fefb65b",
+   "stored": {
+    "res_bound": 6.142782883375967e-15,
+    "res_ok": true,
+    "margin_exact": -0.005352467323884915,
+    "minw_exact": 9.358563737111328e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 7.024456889981112e-13,
+    "kratio": 0.6667196015725679,
+    "mode": "full",
+    "equations": 276,
+    "unknowns": 276,
+    "dist": 7.19452469918619e-12,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 0.79,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T2-23-100-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-23-100-PO-MPC.json",
+   "domain": "triangle",
+   "degree": 23,
+   "points": 100,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "cc2c065c50e5b210",
+   "stored": {
+    "res_bound": 6.754571593650817e-15,
+    "res_ok": true,
+    "margin_exact": -0.02643745232054685,
+    "minw_exact": 2.2963513677206975e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.5416912326854373e-13,
+    "kratio": 0.6666688655996159,
+    "mode": "full",
+    "equations": 300,
+    "unknowns": 300,
+    "dist": 3.40373014736306e-12,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 1.02,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T2-28-145-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-28-145-PO-MPC.json",
+   "domain": "triangle",
+   "degree": 28,
+   "points": 145,
+   "quality": "PO",
+   "status": "verified",
+   "sha": "61b29ce9e11ca3f6",
+   "stored": {
+    "res_bound": 9.004498942267676e-15,
+    "res_ok": true,
+    "margin_exact": -0.010640442788881349,
+    "minw_exact": 6.0986785187612766e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 2.5505091244069955e-13,
+    "kratio": 0.6666752314867181,
+    "mode": "full",
+    "equations": 435,
+    "unknowns": 435,
+    "dist": 4.057795574958228e-12,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 2.15,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-01-1-PI-WV",
    "file": "rules/witherden_vincent_2015/triangle/CA-T2-01-1-PI-WV.json",
    "domain": "triangle",
@@ -8861,7 +9455,7 @@
    "points": 1,
    "quality": "PI",
    "status": "verified",
-   "sha": "42e4955899479d78",
+   "sha": "0b112bb60f670d41",
    "stored": {
     "res_bound": 1.665334536937736e-15,
     "res_ok": true,
@@ -8894,7 +9488,7 @@
    "points": 3,
    "quality": "PI",
    "status": "verified",
-   "sha": "7ac84acd6410a344",
+   "sha": "faa697fde02a24d4",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -8927,7 +9521,7 @@
    "points": 6,
    "quality": "PI",
    "status": "verified",
-   "sha": "1d5d1b0d20926ab6",
+   "sha": "b637821987243430",
    "stored": {
     "res_bound": 3.3306690738754716e-15,
     "res_ok": true,
@@ -8960,7 +9554,7 @@
    "points": 7,
    "quality": "PI",
    "status": "verified",
-   "sha": "ad9f527b34671416",
+   "sha": "9db7bca1ffa03118",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -8993,7 +9587,7 @@
    "points": 12,
    "quality": "PI",
    "status": "verified",
-   "sha": "74b488126fe5dab7",
+   "sha": "f2558ffab6b096de",
    "stored": {
     "res_bound": 3.3306690738754716e-15,
     "res_ok": true,
@@ -9026,7 +9620,7 @@
    "points": 15,
    "quality": "PI",
    "status": "verified",
-   "sha": "eec60a86aedef6b6",
+   "sha": "e8ef01aef3628dd0",
    "stored": {
     "res_bound": 3.552713678800504e-15,
     "res_ok": true,
@@ -9059,7 +9653,7 @@
    "points": 16,
    "quality": "PI",
    "status": "verified",
-   "sha": "3adb7f1623c00011",
+   "sha": "7293f4486f17c74e",
    "stored": {
     "res_bound": 8.881784197001259e-15,
     "res_ok": true,
@@ -9092,7 +9686,7 @@
    "points": 19,
    "quality": "PI",
    "status": "verified",
-   "sha": "2571114796d0a5eb",
+   "sha": "e0f325267ad24da8",
    "stored": {
     "res_bound": 5.773159728050817e-15,
     "res_ok": true,
@@ -9125,7 +9719,7 @@
    "points": 25,
    "quality": "PI",
    "status": "verified",
-   "sha": "8f8a0f129dddcacb",
+   "sha": "16fe69a22a48b764",
    "stored": {
     "res_bound": 2.8310687127941515e-15,
     "res_ok": true,
@@ -9158,7 +9752,7 @@
    "points": 28,
    "quality": "PI",
    "status": "verified",
-   "sha": "c36cde7bd043cd20",
+   "sha": "5eed421c77bf60f4",
    "stored": {
     "res_bound": 5.263151026113637e-15,
     "res_ok": true,
@@ -9191,7 +9785,7 @@
    "points": 33,
    "quality": "PI",
    "status": "verified",
-   "sha": "441eecaa8181ab8e",
+   "sha": "2a9ee9581ad02ce8",
    "stored": {
     "res_bound": 4.796727251510373e-15,
     "res_ok": true,
@@ -9224,7 +9818,7 @@
    "points": 37,
    "quality": "PI",
    "status": "verified",
-   "sha": "eed036adc1131d68",
+   "sha": "c64e8e1aee332ab4",
    "stored": {
     "res_bound": 9.325873406851321e-15,
     "res_ok": true,
@@ -9257,7 +9851,7 @@
    "points": 42,
    "quality": "PI",
    "status": "verified",
-   "sha": "477ef66104a99aec",
+   "sha": "1306bf45ae1c3225",
    "stored": {
     "res_bound": 4.884981308350692e-15,
     "res_ok": true,
@@ -9290,7 +9884,7 @@
    "points": 49,
    "quality": "PI",
    "status": "verified",
-   "sha": "c5eef380faa3c5c2",
+   "sha": "99a57d5ca8141be0",
    "stored": {
     "res_bound": 1.532107773982717e-14,
     "res_ok": true,
@@ -9323,7 +9917,7 @@
    "points": 55,
    "quality": "PI",
    "status": "verified",
-   "sha": "86de85c9d6b0f62d",
+   "sha": "dd26aa3e74a7e2ce",
    "stored": {
     "res_bound": 4.5895362163483936e-15,
     "res_ok": true,
@@ -9356,7 +9950,7 @@
    "points": 60,
    "quality": "PI",
    "status": "verified",
-   "sha": "47354031cedbaee4",
+   "sha": "413afa00a594fbd7",
    "stored": {
     "res_bound": 1.532107773982717e-14,
     "res_ok": true,
@@ -9389,7 +9983,7 @@
    "points": 67,
    "quality": "PI",
    "status": "verified",
-   "sha": "4d5f1b91ecee8595",
+   "sha": "dd18467cc1627cf3",
    "stored": {
     "res_bound": 8.625316173099816e-15,
     "res_ok": true,
@@ -9422,7 +10016,7 @@
    "points": 73,
    "quality": "PI",
    "status": "verified",
-   "sha": "f9d2ace609f613f1",
+   "sha": "4695b8ff5432d354",
    "stored": {
     "res_bound": 8.881784197001259e-15,
     "res_ok": true,
@@ -9455,7 +10049,7 @@
    "points": 79,
    "quality": "PI",
    "status": "verified",
-   "sha": "c82a8e00894cb539",
+   "sha": "f32d36dfe50ce571",
    "stored": {
     "res_bound": 7.287573322578573e-15,
     "res_ok": true,
