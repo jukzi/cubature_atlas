@@ -2082,6 +2082,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C3-12-114-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-12-114-PI-MPC.json",
+   "domain": "cube",
+   "degree": 12,
+   "points": 114,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "84cdbaf20915b896",
+   "stored": {
+    "res_bound": 5.773159728050817e-15,
+    "res_ok": true,
+    "margin_exact": 0.0005046842680522,
+    "minw_exact": 0.00797460303065821,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.2436628264780944e-12,
+    "kratio": 0.6666722585810912,
+    "mode": "full",
+    "equations": 455,
+    "unknowns": 456,
+    "dist": 9.959350140245133e-12,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 2.79,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-C3-12-115-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-12-115-PI-MPC.json",
    "domain": "cube",
