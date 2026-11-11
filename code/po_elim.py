@@ -89,6 +89,18 @@ class CubeProb(cs.Prob):
         return Pf, wf
 
 
+def duffy_inverse(name, P):
+    """Physical points of the triangle or tetrahedron -> Duffy parameters q in [0, 1]^d (inverse of dom.Dom.to_phys)."""
+    if name == "triangle":
+        v = P[:, 1]
+        u = P[:, 0] / (1.0 - v)
+        return np.c_[u, v]
+    w = P[:, 2]
+    v = P[:, 1] / (1.0 - w)
+    u = P[:, 0] / ((1.0 - v) * (1.0 - w))
+    return np.c_[u, v, w]
+
+
 def split_central(P, w):
     """Split a centrally symmetric rule into one node per pair (p, -p), the pair weight and the centre weight (or None)."""
     r = np.linalg.norm(P, axis=1)
@@ -114,6 +126,9 @@ BOXOUT = float(os.environ.get("BOXOUT", "0.5"))
 # Scale of the random perturbation (0 = none) and "small" = only delete the smallest weights.
 NOISE = float(os.environ.get("NOISE", "1"))
 CANDS = os.environ.get("CANDS", "all")
+# INSIDE=1: PI search (nodes stay in the closed domain, mode "d" of dom.ProbG).
+INSIDE = os.environ.get("INSIDE", "0") == "1"
+MODE = "d" if INSIDE else "b"
 # Nodes removed per deletion step.
 DELK = int(os.environ.get("DELK", "1"))
 # Iterations of the local solver per attempt.
@@ -220,6 +235,10 @@ def main():
             tail = np.array([c])
     elif name == "cube":
         pr = CubeProb(deg, False, False)
+    elif INSIDE and name in ("triangle", "tetra"):
+        # PI search: Duffy parameters in [0, 1] keep every node inside the domain.
+        pr = dom.ProbG(dom.Dom(name, deg))
+        P = duffy_inverse(name, P)
     else:
         pr = GenProb(PhysDom(name, deg))
     N = len(w)
@@ -262,12 +281,12 @@ def main():
             Nn = len(wn)
             if (D + 1) * Nn + len(tail) < pr.M:
                 continue
-            lo, hi = pr.bounds(Nn, "b")
+            lo, hi = pr.bounds(Nn, MODE)
             xn = np.clip(np.r_[Qn.ravel(), wn, x[(D + 1) * N:]], lo, hi)
             if os.environ.get("SOLVER", "lm") == "gn":
                 r = solve_gn_minnorm(pr, xn, Nn, MI)
             else:
-                r = pr.solve_lm(xn, Nn, "b", max_iter=MI)
+                r = pr.solve_lm(xn, Nn, MODE, max_iter=MI)
             if r.cost < 1e-24:
                 Xp, Wp = pr.full_points(r.x, Nn)
                 cert = ok_rule(name, deg, Xp, Wp)
