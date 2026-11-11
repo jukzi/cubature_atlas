@@ -227,10 +227,23 @@ def load_rules(fam):
             if r is None:
                 continue
             r["_path"] = path
-            with open(path, "rb") as fh:
-                r["_sha"] = hashlib.sha256(fh.read()).hexdigest()[:16]
+            with open(path, encoding="utf8") as fh:
+                r["_sha"] = content_sha(fh.read())
             check_rule(fam, dom, r, fn)
             fam["rules"].append(r)
+
+
+def content_sha(text):
+    """Same hash as tools/verify_rigorous.py: domain, degree, quality and the exact decimal strings of
+    nodes and weights. Metadata can change without invalidating a proof."""
+    r = json.loads(text, parse_float=str, parse_int=str)
+    core = {k: r.get(k) for k in ("domain", "degree", "quality", "nodes", "weights")}
+    blob = json.dumps(core, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf8")).hexdigest()[:16]
+
+
+# Keys that may change in a locked rule: they describe checks of the numbers, not the numbers themselves.
+LOCK_FREE_KEYS = {"status", "numerical_check", "certificate", "method"}
 
 
 def check_rule(fam, dom, r, fn):
@@ -285,6 +298,10 @@ def check_rule(fam, dom, r, fn):
     fq = fam.get("quality")
     if fq and q != fq:
         err("%s: family %s holds %s rules, this rule is %s" % (where, fam["id"], fq, q))
+    if "certificate" in r:
+        err("%s: the floating-point check is not a proof; store it as \"numerical_check\", not \"certificate\"" % where)
+    if r.get("status") != "proven":
+        err("%s: status must be \"proven\" (every rule needs an interval proof, see CONTRIBUTING.md)" % where)
 
 
 def attach_interval_proofs(fams):
@@ -303,6 +320,12 @@ def attach_interval_proofs(fams):
                             "q": ex.get("quality_proved"), "m": ex.get("mode")}
             else:
                 r["_iv"] = None
+            iv = r["_iv"]
+            if iv is None:
+                err("%s: no interval proof for these numbers in reports/interval_proofs.json; run "
+                    "python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json %s" % (rel(r["_path"]), rel(r["_path"])))
+            elif not iv["ok"] or iv["q"] != r.get("quality"):
+                err("%s: the interval proof does not prove the stored quality %s (proved: %s)" % (rel(r["_path"]), r.get("quality"), iv["q"]))
 
 
 def iv_text(iv, t):
@@ -345,8 +368,21 @@ def check_locked(base):
             old_rule = json.loads(old)
         except Exception:  # noqa: BLE001
             continue
-        if old_rule.get("locked"):
-            err("%s: rule is locked and must not be changed or deleted (status %s)" % (path, status))
+        if not old_rule.get("locked"):
+            continue
+        if status.startswith("M"):
+            try:
+                with open(os.path.join(ROOT, path), encoding="utf8") as fh:
+                    new_rule = json.load(fh)
+            except Exception:  # noqa: BLE001
+                new_rule = None
+            if new_rule is not None:
+                a = {k: v for k, v in old_rule.items() if k not in LOCK_FREE_KEYS}
+                b = {k: v for k, v in new_rule.items() if k not in LOCK_FREE_KEYS}
+                if a == b and new_rule.get("locked"):
+                    continue
+        err("%s: rule is locked and must not be changed or deleted (status %s); only %s may change" % (
+            path, status, ", ".join(sorted(LOCK_FREE_KEYS))))
 
 
 def check_i18n(strict):
@@ -444,7 +480,7 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
                 "q": r["_q"],
                 "origin": r.get("origin", ""),
                 "err": r["_res"],
-                "cert": r.get("certificate"),
+                "cert": r.get("numerical_check"),
                 "iv": r.get("_iv"),
                 "url": rule_url(r, lang),
                 "pts": pts,
@@ -506,7 +542,7 @@ def rule_page(r, fam, best, lang, t):
         bestline = '<p>%s <a href="%s%s">%s</a> (%d)</p>' % (t["rpSuper"], up, rule_url(br, lang), b[1], b[0])
     else:
         bestline = ""
-    cert = r.get("certificate")
+    cert = r.get("numerical_check")
     if cert:
         ctext = "h = %.2e, radius = %.2e, %s" % (cert.get("h", float("nan")), cert.get("rad", float("nan")),
                                                  t["rpYes"] if cert.get("cert") else t["rpNo"])

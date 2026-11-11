@@ -4,8 +4,8 @@ name: Interval proofs
 #  part 1 encloses the moment residual of the stored decimal numbers and checks nodes and weights exactly,
 #  part 2 proves with a Krawczyk test that an exact rule with the stored quality exists near the stored numbers.
 # Pull requests: the rule files added or changed against the base branch (all rules if the checker itself
-# changed). The job fails if the stored numbers do not pass, or if the existence proof fails for a rule
-# without "status": "needs_certificate".
+# changed). The job fails if the stored numbers do not pass or if the existence proof fails. Every rule
+# needs a proof; tools/build_atlas.py also requires a matching entry in reports/interval_proofs.json.
 # Weekly and on demand: all rules; the report is attached as an artifact. If the result differs from
 # reports/interval_proofs.json (new, changed or removed rule files, or a different verdict), the job opens
 # or updates a pull request with the new report from the branch auto/interval-report.

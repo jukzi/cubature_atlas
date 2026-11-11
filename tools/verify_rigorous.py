@@ -1619,7 +1619,7 @@ def check_rule(path):
     Xq = [[Fraction(v) for v in p] for p in r["nodes"]]
     Wq = [Fraction(v) for v in r["weights"]]
     t0 = time.time()
-    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"), sha=hashlib.sha256(raw).hexdigest()[:16])
+    out = dict(id=r["id"], file=os.path.relpath(path, ROOT).replace(os.sep, "/"), domain=dom, degree=n, points=len(Wq), quality=r.get("quality"), status=r.get("status"), sha=content_sha(raw.decode("utf8")))
     out["stored"] = stored_check(dom, n, Xq, Wq)
     X = [[float(v) for v in p] for p in Xq]
     W = [float(v) for v in Wq]
@@ -1655,6 +1655,46 @@ def verdict(res):
     return ok1, ok2
 
 
+def content_sha(text):
+    """Hash of what a proof depends on: domain, degree, quality and the exact decimal strings of nodes and
+    weights. Other metadata (names, status, numerical checks) can change without invalidating a proof."""
+    r = json.loads(text, parse_float=str, parse_int=str)
+    core = {k: r.get(k) for k in ("domain", "degree", "quality", "nodes", "weights")}
+    blob = json.dumps(core, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf8")).hexdigest()[:16]
+
+
+def missing_files(path):
+    """Rule files whose numbers have no successful proof in the report."""
+    proved = set()
+    if os.path.exists(path):
+        with open(path) as fh:
+            for e in json.load(fh).get("rules", []):
+                if e.get("ok_stored") and e.get("ok_exist") and e.get("exist", {}).get("quality_proved") == e.get("quality"):
+                    proved.add((e["id"], e.get("sha")))
+    out = []
+    for f in sorted(glob.glob(os.path.join(ROOT, "rules", "*", "*", "*.json"))):
+        with open(f, encoding="utf8") as fh:
+            text = fh.read()
+        rid = json.loads(text).get("id")
+        if (rid, content_sha(text)) not in proved:
+            out.append(f)
+    return out
+
+
+def merge_report(path, results):
+    """Replace the entries of the checked rules in an existing report; drop entries whose file is gone."""
+    old = []
+    if os.path.exists(path):
+        with open(path) as fh:
+            old = json.load(fh).get("rules", [])
+    new_ids = {r["id"] for r in results}
+    keep = [e for e in old if e["id"] not in new_ids and os.path.exists(os.path.join(ROOT, e["file"]))]
+    merged = sorted(keep + results, key=lambda e: e["file"])
+    write_report(path, merged)
+    return len(keep), len(results)
+
+
 def write_report(path, results):
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w") as fh:
@@ -1676,7 +1716,9 @@ def main():
     ap.add_argument("files", nargs="*", help="rule files (default: all)")
     ap.add_argument("--changed", help="only rule files added or changed against this git revision")
     ap.add_argument("--report", help="write the results as JSON to this file")
-    ap.add_argument("--strict", action="store_true", help="also fail if the existence proof does not succeed (except for rules with status needs_certificate)")
+    ap.add_argument("--strict", action="store_true", help="also fail if the existence proof does not succeed")
+    ap.add_argument("--merge", help="put the results of the checked rules into this report file, keeping the other entries")
+    ap.add_argument("--missing", help="only rule files without a successful proof of exactly their numbers in this report file")
     ap.add_argument("--update", help="rewrite this report file, but only if a result changed (new, changed or removed rule files, or a different verdict); run times and last digits of distances do not count")
     ap.add_argument("--summary", help="append a Markdown summary to this file (e.g. $GITHUB_STEP_SUMMARY)")
     args = ap.parse_args()
@@ -1684,6 +1726,8 @@ def main():
         files = [os.path.abspath(f) for f in args.files]
     elif args.changed:
         files = changed_files(args.changed)
+    elif args.missing:
+        files = missing_files(args.missing)
     else:
         files = sorted(f for f in glob.glob(os.path.join(ROOT, "rules", "*", "*", "*.json")))
     results = []
@@ -1699,7 +1743,7 @@ def main():
         res["ok_exist"] = ok2
         bad1 += not ok1
         bad2 += not ok2
-        hard2 += (not ok2) and res.get("status") != "needs_certificate"
+        hard2 += not ok2
         ex = res["exist"]
         if ex.get("proved"):
             info = "%s exact rule within %.1e, proven %s" % (ex["mode"], ex["dist"], ex["quality_proved"])
@@ -1720,6 +1764,9 @@ def main():
             print("report %s updated" % args.update)
         else:
             print("report %s unchanged" % args.update)
+    if args.merge:
+        kept, added = merge_report(args.merge, results)
+        print("report %s: %d entries kept, %d checked rules written" % (args.merge, kept, added))
     if args.summary:
         with open(args.summary, "a") as fh:
             fh.write("### Interval proofs (tools/verify_rigorous.py)\n\n")

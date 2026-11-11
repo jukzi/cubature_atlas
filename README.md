@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24037245.svg)](https://doi.org/10.5281/zenodo.24037245)
 
-**Best known quadrature and cubature rules with few points and positive weights** on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30, with certificates and source code.
+**Best known quadrature and cubature rules with few points and positive weights** on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30, each with a proof in interval arithmetic, and source code.
 
 Website: <https://jukzi.github.io/cubature_atlas/>
 
@@ -12,7 +12,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
   <sub>Figure A of the website (default view): the 2-point Gauss–Legendre rule integrates every polynomial of degree 3 exactly. The bars (width = weight, height = value at the node) always enclose the same area as the curve.</sub>
 </p>
 
-> **AI-generated.** The search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule is checked automatically by `tools/build_atlas.py` (all monomial moments, in floating point). The rules of the atlas's own search also carry a Newton–Kantorovich certificate, computed in floating point with an estimated Lipschitz constant, so it is strong evidence but not a proof. `tools/verify_rigorous.py` adds a rigorous check with interval arithmetic (see [Rigorous check](#rigorous-check-with-interval-arithmetic)). Please verify results before you rely on them.
+> **AI-generated.** The search, the computations, the proofs, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule has a computer-assisted proof with interval arithmetic (`tools/verify_rigorous.py`): an exact rule with the stored quality exists within about 10<sup>-10</sup> of the stored numbers. Floating-point checks (moment residuals, a numerical Newton–Kantorovich check) are only used during the search; they are not proofs.
 
 ## What is in here
 
@@ -25,7 +25,7 @@ Website: <https://jukzi.github.io/cubature_atlas/>
 | `content/en/`, `content/de/` | Documentation section of the website |
 | `content/references.json` | Bibliography |
 | `site_template/index.html` | The interactive page; the build inserts the data |
-| `code/` | Search, certificate and helper programs that produced the rules |
+| `code/` | Search programs that produced the rules, with numerical checks (not proofs) |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
 | `tools/verify_rigorous.py`, `.github/workflows/rigorous.yml` | Rigorous check with interval arithmetic: stored numbers and existence of an exact rule (Krawczyk test) |
 | `reports/interval_proofs.json` | Result of the rigorous check for all rules |
@@ -47,7 +47,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 
 Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
 
-The build computes the quality from the numbers and rejects a file whose stored quality is wrong. Example: the PO search had returned a degree-30 square rule with 166 nodes whose nodes all lie inside. That makes it a PI rule, so it now lives in the PI family, one node below the certified 167-node rule. Its Newton–Kantorovich certificate is still missing (`"status": "needs_certificate"`).
+The build computes the quality from the numbers and rejects a file whose stored quality is wrong. Example: the PO search had returned a degree-30 square rule with 166 nodes whose nodes all lie inside. That makes it a PI rule, so it now lives in the PI family, one node below the 167-node rule. Both are proven with interval arithmetic.
 
 ### Adding a family
 
@@ -94,9 +94,9 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
   "origin": "found",
   "method": "...",
   "author": "...",
-  "status": "verified",
+  "status": "proven",
   "locked": false,
-  "certificate": {"N": 4, "M": 10, "p": 12, "res": 1e-16, "sigma": 0.3, "h": 1e-14, "rad": 1e-16, "cert": true, "inside": true},
+  "numerical_check": {"N": 4, "M": 10, "p": 12, "res": 1e-16, "sigma": 0.3, "h": 1e-14, "rad": 1e-16, "cert": true, "inside": true},
   "nodes": [[x, y], ...],
   "weights": [w, ...]
 }
@@ -113,11 +113,11 @@ python tools/build_atlas.py                       # verify and build site/
 python tools/build_atlas.py --base origin/main    # also refuse changes to locked rules
 ```
 
-Every rule is checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+Every rule must have an interval proof in `reports/interval_proofs.json` for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
 
 ### Rigorous check with interval arithmetic
 
-`tools/build_atlas.py` works in floating point, and so do the Newton–Kantorovich certificates stored in the rule files. `tools/verify_rigorous.py` (Python, numpy) adds a check in which every rounding error is accounted for:
+`tools/build_atlas.py` works in floating point, and so does the numerical Newton–Kantorovich check stored in the rule files as `numerical_check`. Neither is a proof. The proof is `tools/verify_rigorous.py` (Python, numpy), in which every rounding error is accounted for:
 
 1. **Stored numbers.** The decimal numbers of the file are taken exactly. Node positions and weight signs are checked in exact rational arithmetic, and the moment residual of the stored rule is enclosed rigorously for every basis polynomial up to the degree (it must be ≤ 1e-11 per volume).
 2. **Existence of an exact rule.** A Krawczyk test (interval Newton method) proves that the moment equations have an exact solution within a small distance of the stored numbers, and that every rule in that neighbourhood has the stored quality (positive weights, nodes inside). Rules with symmetries are proven in the symmetry-reduced equations (signed permutations on square and cube, permutations of the barycentric coordinates on triangle and tetrahedron); nodes on the boundary are kept exactly on it.
@@ -127,12 +127,13 @@ Basis: Legendre products on boxes, the orthogonal Dubiner (PKD) basis on triangl
 ```bash
 python tools/verify_rigorous.py                                   # all rules
 python tools/verify_rigorous.py --changed origin/main             # only added or changed rule files
+python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json rules/.../<id>.json   # prove new rules and record the proofs
 python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json
 ```
 
-The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build shows it on the website (table "Certificates", column "interval proof") and on every rule page, as long as the rule file is unchanged since the check (the report stores a hash of each file). `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass, unless the rule has `"status": "needs_certificate"`.
+The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build requires an entry for every rule and shows it on the website (table "Proofs", column "interval proof") and on every rule page. The report stores a hash of what the proof depends on (domain, degree, quality and the exact decimal strings of nodes and weights), so a proof stays valid when only metadata change. `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass. There are no exceptions: every rule needs a proof.
 
-Current result (all 280 rules, about 20 minutes on one core): the stored numbers of every rule pass, and for every rule an exact rule with the stored quality is proven to exist within 5·10⁻¹¹ of the stored numbers (173 in symmetry-reduced equations, 107 in all unknowns). Seven tetrahedron PI rules store a node about 10⁻¹⁵ outside the face x + y + z = 1 (accepted by the build's tolerance of 10⁻¹²); for them the proof places that node exactly on the face, and the proven exact rule lies inside.
+Current result (all 306 rules): the stored numbers of every rule pass, and for every rule an exact rule with the stored quality is proven to exist within 1.1·10<sup>-10</sup> of the stored numbers. Seven tetrahedron PI rules store a node about 10<sup>-15</sup> outside the face x + y + z = 1 (accepted by the build's tolerance of 10<sup>-12</sup>); for them the proof places that node exactly on the face, and the proven exact rule lies inside. The largest proof (tetrahedron PO, degree 29, 1339 nodes) needs more than 7 GB of memory; it runs on the GitHub runners.
 
 The build writes `site/`: the English page, the German page under `de/`, one static page per rule (both languages, for search engines), `data/atlas.json`, a ZIP of all rules, and `sitemap.xml`. GitHub Actions run the check on every pull request and publish a live preview of the pull request under `pr-preview/pr-<number>/`. On every push to `main` they deploy `site/` to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/atlas.yml`).
 
@@ -147,8 +148,8 @@ Each slot (`tools/auto_search.py`):
 - runs `code/cubature_search.py`.
 
 If a rule has fewer nodes than every rule of the atlas and of the open automatic pull requests of at least that degree, the slot:
-- certifies it with `code/cube_cert.py`;
-- writes the rule file and runs `tools/build_atlas.py --base origin/main`;
+- checks it numerically with `code/cube_cert.py`;
+- writes the rule file, proves it with `tools/verify_rigorous.py --strict --merge reports/interval_proofs.json` and runs `tools/build_atlas.py --base origin/main`;
 - opens a pull request from `ai/auto-cube-nXX-mYYY` if the check prints `OK`.
 
 Settings:
@@ -158,7 +159,7 @@ Settings:
 The tetrahedron has its own workflow, `.github/workflows/auto_cannonball.yml`, started by hand (`workflow_dispatch`: degree, extra points, number of seeds, minutes, maxfev). Each job (`tools/auto_cannonball.py`):
 - runs `code/cannonball_start.py` for one seed: a cannonball packing of ceil(Z(n)) + extra balls, Z(n) = (n+1)(n+2)(n+3)/24, as start, degree continuation with bounded least squares, then node elimination until the budget is used up (a snapshot after every elimination round);
 - keeps all results as a workflow artifact;
-- takes the smallest exact PI result and, if it has fewer nodes than every tetrahedron rule of the atlas and of the open pull requests `ai/auto-tet-*` of at least that degree, certifies it with `code/cubature_atlas.py`, writes the rule file, runs `tools/build_atlas.py --base origin/main` and opens a pull request from `ai/auto-tet-nXX-mYYY` if the check prints `OK`.
+- takes the smallest exact PI result and, if it has fewer nodes than every tetrahedron rule of the atlas and of the open pull requests `ai/auto-tet-*` of at least that degree, checks it numerically with `code/cubature_atlas.py`, writes the rule file, proves it with `tools/verify_rigorous.py`, runs `tools/build_atlas.py --base origin/main` and opens a pull request from `ai/auto-tet-nXX-mYYY` if the check prints `OK`.
 
 The same settings as above apply.
 

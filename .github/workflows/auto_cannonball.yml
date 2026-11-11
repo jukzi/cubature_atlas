@@ -105,7 +105,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add "$RULE"
+          git add "$RULE" reports/interval_proofs.json
           git commit -m "$TITLE" -m "Found by the automatic cannonball search (tools/auto_cannonball.py), run ${{ github.run_id }}, seed ${{ matrix.seed }}." -m "Co-Authored-By: Claude <noreply@anthropic.com>"
           git push origin "$BRANCH"
           gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$BODY"
