@@ -4,6 +4,7 @@ Usage:
     python tools/build_atlas.py --check              # verify only (used on pull requests)
     python tools/build_atlas.py                      # verify and build site/
     python tools/build_atlas.py --base origin/main   # also refuse changes to locked rules
+    python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
     python tools/build_atlas.py --strict             # stale translations are errors, not warnings
     python tools/build_atlas.py --sync-hashes        # after updating German texts: mark them as current
 
@@ -210,7 +211,7 @@ def load_families():
     return fams
 
 
-def load_rules(fam):
+def load_rules(fam, only=None):
     fdir = os.path.join(RULES, fam["id"])
     for dom in sorted(os.listdir(fdir)):
         ddir = os.path.join(fdir, dom)
@@ -229,7 +230,8 @@ def load_rules(fam):
             r["_path"] = path
             with open(path, encoding="utf8") as fh:
                 r["_sha"] = content_sha(fh.read())
-            check_rule(fam, dom, r, fn)
+            if only is None or os.path.abspath(path) in only:
+                check_rule(fam, dom, r, fn)
             fam["rules"].append(r)
 
 
@@ -304,7 +306,7 @@ def check_rule(fam, dom, r, fn):
         err("%s: status must be \"proven\" (every rule needs an interval proof, see CONTRIBUTING.md)" % where)
 
 
-def attach_interval_proofs(fams):
+def attach_interval_proofs(fams, only=None):
     """Results of tools/verify_rigorous.py (reports/interval_proofs.json) for rule files that are unchanged since."""
     path = os.path.join(ROOT, "reports", "interval_proofs.json")
     rep = {}
@@ -313,6 +315,8 @@ def attach_interval_proofs(fams):
             rep[e["id"]] = e
     for f in fams:
         for r in f["rules"]:
+            if only is not None and os.path.abspath(r["_path"]) not in only:
+                continue   # --changed: rules this change does not touch are not checked here
             e = rep.get(r["id"])
             if e and e.get("sha") == r["_sha"]:
                 ex = e["exist"]
@@ -383,6 +387,27 @@ def check_locked(base):
                     continue
         err("%s: rule is locked and must not be changed or deleted (status %s); only %s may change" % (
             path, status, ", ".join(sorted(LOCK_FREE_KEYS))))
+
+
+def changed_rule_paths(base):
+    """Absolute paths of the rule files this change adds or modifies against `base`
+    (committed, staged, unstaged and new untracked files)."""
+    paths = set()
+    try:
+        out = subprocess.run(["git", "diff", "--name-status", base, "--", "rules"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout
+        for line in out.splitlines():
+            parts = line.split("\t")
+            if parts[0][:1] in ("A", "M", "R", "C") and parts[-1].endswith(".json"):
+                paths.add(os.path.abspath(os.path.join(ROOT, parts[-1])))
+        new = subprocess.run(["git", "ls-files", "--others", "--exclude-standard", "--", "rules"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout
+        for line in new.splitlines():
+            if line.endswith(".json"):
+                paths.add(os.path.abspath(os.path.join(ROOT, line)))
+    except Exception as e:  # noqa: BLE001
+        err("cannot determine the changed rules against %s (%s)" % (base, e))
+    return {p for p in paths if os.path.basename(p) != "family.json"}
 
 
 def check_i18n(strict):
@@ -694,16 +719,24 @@ def main():
     ap.add_argument("--check", action="store_true", help="verify only, do not build the site")
     ap.add_argument("--base", help="git revision to compare with; locked rules must be unchanged")
     ap.add_argument("--strict", action="store_true", help="treat stale translations as errors")
+    ap.add_argument("--changed", action="store_true",
+                    help="with --base: check only the rule files this change adds or modifies (before a commit); implies --check")
     ap.add_argument("--sync-hashes", action="store_true", help="record the current English texts as source of the German ones")
     args = ap.parse_args()
     if args.sync_hashes:
         sync_hashes()
         return
+    only = None
+    if args.changed:
+        if not args.base:
+            ap.error("--changed needs --base")
+        only = changed_rule_paths(args.base)
+        args.check = True
     fams = load_families()
     for f in fams:
-        load_rules(f)
+        load_rules(f, only)
     check_unique(fams)
-    attach_interval_proofs(fams)
+    attach_interval_proofs(fams, only)
     if args.base:
         check_locked(args.base)
     en, de, doc_en, doc_de, stale_doc = check_i18n(args.strict)
@@ -719,7 +752,10 @@ def main():
             print("ERROR:", e)
         print("%d error(s) in %d rules" % (len(errors), total))
         sys.exit(1)
-    print("OK: %d families, %d rules verified" % (len(fams), total))
+    if only is not None:
+        print("OK: %d changed rule file(s) checked; the other %d rules were not checked here (the check in CI verifies all rules)" % (len(only), total - len(only)))
+    else:
+        print("OK: %d families, %d rules verified" % (len(fams), total))
     if not args.check:
         n = build_site(fams, en, de, doc_en, doc_de, stale_doc)
         print("site/ built: %d pages in the sitemap" % n)

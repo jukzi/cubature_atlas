@@ -111,6 +111,7 @@ pip install numpy
 python tools/build_atlas.py --check               # verify all rules
 python tools/build_atlas.py                       # verify and build site/
 python tools/build_atlas.py --base origin/main    # also refuse changes to locked rules
+python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
 ```
 
 Every rule must have an interval proof in `reports/interval_proofs.json` for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
