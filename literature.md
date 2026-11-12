@@ -9,7 +9,7 @@ The three sections are:
 2. **Tried, not worthwhile**: the idea was tested and did not pay off. The note says what was tested and what came out.
 3. **Not used yet**: relevant, but not (or not yet fully) tried.
 
-Each section is sorted by date of appearance, oldest first. An entry has the usual citation, a link to the source, a short note on how it relates to the atlas, and the abstract. Abstracts are copied word for word from arXiv or from the metadata the publisher deposited at Crossref. Where neither carries an abstract, the entry says so and the link leads to the source.
+Each section is sorted by date of appearance, oldest first. An entry has the usual citation, a link to the source, a short note on how it relates to the atlas, and the abstract. Abstracts are copied word for word from arXiv, from the metadata the publisher deposited at Crossref, or from an open-access article. Where only a publisher's page has the abstract and it can be read, the entry gives a short summary in our own words instead; where the page cannot be read at all, the entry says so. The link leads to the source in every case.
 
 ## How to extend this file
 
@@ -29,14 +29,14 @@ Abstract: _none, the source is a book._
 - Link: <https://doi.org/10.1007/BF01462272>
 - Lower bounds for the number of nodes; computed for the triangle in `code/triangle_moeller.py`.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230.
 
 - Link: <https://doi.org/10.1007/978-3-0348-6288-2_17>
 - Lower bound used in `code/moeller_bound.py` and cited in the documentation.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Summary in our own words (the publisher's abstract is not reproduced): it recalls that Gauss formulae have the fewest nodes among all quadrature formulae of a given degree on an interval, and says that the multidimensional analogue needs lower bounds for the number of nodes together with information on how sharp they are.
 
 ### D. A. Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. Int. J. Numer. Methods Eng. 21 (1985) 1129–1148.
 
@@ -52,7 +52,7 @@ Abstract:
 - Link: <https://doi.org/10.1016/0377-0427(93)90027-9>
 - Compilation of known rules; cited in the documentation.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### R. Cools: Constructing cubature formulae: the science behind the art. Acta Numerica 6 (1997) 1–54.
 
@@ -68,21 +68,21 @@ Abstract:
 - Link: <https://doi.org/10.1016/S0377-0427(99)00229-0>
 - Compilation of known rules; cited in the documentation.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### R. Cools: An encyclopaedia of cubature formulas. J. Complexity 19 (2003) 445–453.
 
 - Link: <https://doi.org/10.1016/S0885-064X(03)00011-6>
 - The online database at KU Leuven (https://nines.cs.kuleuven.be/research/ecf/) asks to cite this article together with the two compilations above; cited in the documentation.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003) 1829–1840.
 
 - Link: <https://doi.org/10.1016/S0898-1221(03)90004-6>
 - Symmetric triangle rules; cited in the documentation.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Summary in our own words (the publisher's abstract is not reproduced): the paper constructs quadrature rules on triangles that have positive weights, full symmetry and rapid convergence, comparable to Gauss rules on intervals. A scheme that combines simple group theory with numerical optimisation gives such rules up to order 30; the approach formalises an older one by Lyness and Jespersen and extends to other regions, and example formulae and numerical results are shown.
 
 ### A. Hinrichs, E. Novak: Cubature formulas for symmetric measures in higher dimensions with few points. arXiv:math/0509101 (2005).
 
@@ -98,7 +98,7 @@ Abstract:
 - Link: <https://doi.org/10.1016/j.camwa.2009.10.027>
 - Origin of the node elimination idea used by the search programs in `code/`; its tetrahedron counts are tabulated in `code/simplex_cubature.py`.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### Z. Meng, Z. Luo: Constructing cubature formulae of degree 5 with few points. J. Comput. Appl. Math. 237 (2013) 354–362 (arXiv:1111.5094, 2011).
 
@@ -123,7 +123,7 @@ Abstract:
 - Link: <https://doi.org/10.1109/SAMPTA.2017.8024337>
 - Caratheodory–Tchakaloff subsampling, the idea behind the non-negative least squares start in `code/simplex_cubature.py`. The docstring there names a different venue and a DOI that does not resolve; this entry is the paper that could be verified.
 
-_No abstract in the open metadata (arXiv, Crossref); see the link._
+Summary in our own words (the publisher's abstract is not reproduced): the paper discusses Caratheodory-Tchakaloff subsampling, implemented by linear or quadratic programming, to compress multivariate discrete measures and to compress polynomial least squares problems.
 
 ### J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020) 2418–2436.
 
@@ -223,7 +223,7 @@ Abstract:
 - Link: <https://doi.org/10.1007/BF01932995>
 - The cheaper Jacobian of variable projection (Kaufman's approximation) was part of the same benchmark; same outcome. Not used.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: Several new quadrature formulas for polynomial integration in the triangle. arXiv:math/0501496 (2005).
 
@@ -250,7 +250,7 @@ Abstract:
 - Link: <https://doi.org/10.1007/s10957-005-6389-0>
 - Supports the minimum-norm steps for rank-deficient Jacobians that the search already uses; possible source of further regularisation ideas.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: A cardinal function algorithm for computing multivariate quadrature points. SIAM J. Numer. Anal. 45 (2007) 193–205.
 
@@ -266,7 +266,7 @@ Abstract:
 - Link: <https://doi.org/10.1016/j.cam.2007.04.050>
 - Asymmetric rules like the atlas rules. Their counts have not yet been compared with the atlas.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### J. W. Helton, J. Nie: A semidefinite approach for truncated K-moment problems. arXiv:1105.0410 (2011).
 
@@ -309,14 +309,16 @@ Abstract:
 - Link: <https://doi.org/10.1016/j.cam.2016.03.013>
 - Asymmetric triangle rules. Their counts have not yet been compared with the atlas.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract: _Abstract not available here: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it. See the link._
 
 ### A. Abdelfattah, A. Haidar, S. Tomov, J. Dongarra: Performance tuning and optimization techniques of fixed and variable size batched Cholesky factorization on GPUs. Procedia Computer Science 80 (2016) 119–130.
 
 - Link: <https://doi.org/10.1016/j.procs.2016.05.303>
 - Batched Cholesky kernels (MAGMA) for many small systems; relevant to the minimum-norm step on the GPU.
 
-Abstract: _No abstract in the open metadata (arXiv, Crossref); see the link._
+Abstract (open access, copied word for word):
+
+> Solving a large number of relatively small linear systems has recently drawn more attention in the HPC community, due to the importance of such computational workloads in many scientific applications, including sparse multifrontal solvers. Modern hardware accelerators and their architecture require a set of optimization techniques that are very different from the ones used in solving one relatively large matrix. In order to impose concurrency on such throughput-oriented architectures, a common practice is to batch the solution of these matrices as one task offloaded to the underlying hardware, rather than solving them individually.This paper presents a high performance batched Cholesky factorization on large sets of relatively small matrices using Graphics Processing Units (GPUs), and addresses both fixed and variable size batched problems. We investigate various algorithm designs and optimization techniques, and show that it is essential to combine kernel design with performance tuning in order to achieve the best possible performance. We compare our approaches against state-of-the-art CPU solutions as well as GPU-based solutions using existing libraries, and show that, on a K40c GPU for example, our kernels are more than 2 faster.
 
 ### A. Schwarz, A. Anders, C. Brower, H. Bayraktar, J. Gunnels, K. Clark, R. G. Xu, S. Rodriguez, S. Cayrols, P. Tabaszewski, V. Podlozhnyuk: Guaranteed DGEMM accuracy while using reduced precision tensor cores through extensions of the Ozaki scheme. arXiv:2511.13778 (2025); SCA/HPCAsia 2026.
 
