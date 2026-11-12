@@ -59,6 +59,8 @@ BOX = {"interval", "square", "cube"}
 RES_TOL = 1e-11
 U = 2.0 ** -53
 TINY = 2.0 ** -1000
+# Points per block in the basis enclosure (memory: the temporaries grow with block size x number of basis functions).
+POINT_BLOCK = int(os.environ.get("VR_POINT_BLOCK", "128"))
 INF = np.inf
 
 
@@ -1262,7 +1264,36 @@ def basis_tables(par, n, c0, cr):
 
 
 def basis_enclosure(par, n, c0, cr, want_grad):
-    """Legendre products on boxes (and for the stored-number check), the PKD basis on simplices."""
+    """Legendre products on boxes (and for the stored-number check), the PKD basis on simplices.
+
+    The enclosure of every point (column) depends only on that point, so the points are processed in
+    blocks of POINT_BLOCK and the columns are joined afterwards. The results are identical; only the
+    temporary arrays, which are many times larger than the result, exist for one block at a time."""
+    npts = c0.shape[0]
+    if npts <= POINT_BLOCK:
+        return basis_enclosure_block(par, n, c0, cr, want_grad)
+    vlo = []
+    vhi = []
+    glo = None
+    ghi = None
+    for s in range(0, npts, POINT_BLOCK):
+        (blo, bhi), bg = basis_enclosure_block(par, n, c0[s:s + POINT_BLOCK], cr[s:s + POINT_BLOCK], want_grad)
+        vlo.append(blo)
+        vhi.append(bhi)
+        if glo is None:
+            glo = [[] for _ in bg]
+            ghi = [[] for _ in bg]
+        for c, (a, b) in enumerate(bg):
+            glo[c].append(a)
+            ghi[c].append(b)
+        del blo, bhi, bg
+    val = (np.concatenate(vlo, axis=1), np.concatenate(vhi, axis=1))
+    grads = [(np.concatenate(glo[c], axis=1), np.concatenate(ghi[c], axis=1)) for c in range(len(glo))]
+    return val, grads
+
+
+def basis_enclosure_block(par, n, c0, cr, want_grad):
+    """Basis enclosure for one block of points."""
     if par.dom not in BOX and par.mode != "stored":
         return pkd_enclosure(par, n, c0, cr, want_grad)
     return phi_enclosure(par, basis_tables(par, n, c0, cr), want_grad)
