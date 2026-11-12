@@ -17,11 +17,11 @@ Every pull request that uses, tests or finds literature adds it here, in the rig
 
 ## 1. Used in the atlas
 
-### A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). <https://doi.org/10.2307/2005635>
+### A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). <https://archive.org/details/approximatecalcu0000stro_b8j7/>
 
-Conical product rule used as the reference quadrature in `code/simplex_cubature.py`. The link is the review in Math. Comp. 27 (1973), which confirms the book.
+Conical product rule used as the reference quadrature in `code/simplex_cubature.py`. The link is the Internet Archive record of the book (Prentice-Hall, Englewood Cliffs, N.J., 1971, xiii + 431 pages, ISBN 0130438936); the book is access-restricted there, so it can only be borrowed. A review in Math. Comp. 27 (1973) is at <https://doi.org/10.2307/2005635>.
 
-_No abstract, the source is a book._
+_No abstract: it is a book, and the Internet Archive record has no description._
 
 ### H. M. Möller: Kubaturformeln mit minimaler Knotenzahl. Numer. Math. 25 (1976) 185–200. <https://doi.org/10.1007/BF01462272>
 
