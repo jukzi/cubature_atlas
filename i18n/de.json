@@ -6,7 +6,7 @@
     "ai": "add8220370a7183b",
     "kw": "eeb5953e13ab1c8e",
     "viewH": "4e3ba4c1a693e120",
-    "viewSub": "c9b4065ae3dc0d84",
+    "viewSub": "a62cee55ccf46d47",
     "degree": "a6da9ba3abb4f90a",
     "weight": "20dd61049d86d843",
     "rotate": "306d409f8a1cf480",
@@ -239,7 +239,7 @@
     "Xiao–Gimbutas"
   ],
   "viewH": "Regel ansehen",
-  "viewSub": "Jeder Punkt ist ein Knoten der Regel. Größe und Farbe zeigen das Gewicht. Bei 3D-Gebieten dreht Ziehen auf dem Bild die Ansicht.",
+  "viewSub": "Jeder Punkt ist ein Knoten der Regel. Größe und Farbe zeigen das Gewicht. Bei „Größe nach Gewicht“ ist die Fläche eines Kreises (in 3D das Volumen einer Kugel) gleich dem Gewicht; der kleine Punkt markiert den Knoten. Eine gepunktete Linie führt von einem Knoten außerhalb des Gebiets zu dessen Mitte. Bei 3D-Gebieten dreht Ziehen auf dem Bild die Ansicht.",
   "degree": "Grad n",
   "weight": "Gewicht",
   "rotate": "Drehen",

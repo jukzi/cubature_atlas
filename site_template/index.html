@@ -6106,15 +6106,31 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   var items=r.pts.map(function(p,i){var q=dim===2?proj([p[0],p[1],dv2?dv2[i]*Hh:0]):proj(p);q.w=ws[i];q.i=i;if(d1)q.y-=d1.ev(p[0])*H1;return q;});items.sort(function(a,b){return a.z-b.z;});
   var nnr=st.pack?nnRadii(r,d,dim).map(function(v){return v*scale*(dim===1?1.1:1);}):null;
   var base=Math.max(2.2,Math.min(cw,chh)/(dim===1?24:(is3?Math.pow(r.n,1/3)*26:Math.sqrt(r.n)*13)));
-  items.forEach(function(q){var hasNeg=wmin<0,tt=hasNeg?Math.max(q.w,0)/(wmax||1):(wmax>wmin?(q.w-wmin)/(wmax-wmin):.5),c=hasNeg&&q.w<0?lerpc(NEGL,NEGD,Math.min(1,q.w/wmin)):lerpc(w0,w1,tt),rad=(dim===1&&d1?.5:1)*base*(st.size?Math.pow(Math.abs(q.w/wavg),dim===3?1/3:.5):1)*q.k;rad=Math.max(1.6,Math.min(rad,base*2.4));if(dim===1&&d1)rad=Math.min(rad,9);
+  var ctr=proj(dim===2?[d.c[0],d.c[1],0]:d.c);
+  items.forEach(function(q){var hasNeg=wmin<0,tt=hasNeg?Math.max(q.w,0)/(wmax||1):(wmax>wmin?(q.w-wmin)/(wmax-wmin):.5),c=hasNeg&&q.w<0?lerpc(NEGL,NEGD,Math.min(1,q.w/wmin)):lerpc(w0,w1,tt),rad=(dim===1&&d1?.5:1)*base*(st.size?Math.pow(Math.abs(q.w/wavg),dim===3?1/3:.5):1)*q.k;
+    var trueSize=st.size&&dim>=2&&!st.pack;
+    if(trueSize){var aw=Math.abs(q.w),R=dim===2?Math.sqrt(aw/Math.PI):Math.cbrt(3*aw/(4*Math.PI));rad=Math.max(.8,R*d.s*scale*q.k);}
+    else{rad=Math.max(1.6,Math.min(rad,base*2.4));if(dim===1&&d1)rad=Math.min(rad,9);}
     if(st.pack){packBall(ctx,q,nnr[q.i]*q.k,c);return;}
-    ctx.beginPath();ctx.arc(q.x,q.y,rad,0,6.2832);ctx.fillStyle='rgb('+c.map(Math.round).join(',')+')';ctx.fill();ctx.lineWidth=1;ctx.strokeStyle=surf;ctx.stroke();});}
+    var rgb='rgb('+c.map(Math.round).join(',')+')';
+    if(dim>=2&&!inDomain(st.dom,r.pts[q.i])){ctx.save();ctx.setLineDash([3,4]);ctx.lineWidth=1.2;ctx.strokeStyle=cssv('--ink');ctx.globalAlpha=.75;ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(ctr.x,ctr.y);ctx.stroke();ctx.restore();}
+    ctx.beginPath();ctx.arc(q.x,q.y,rad,0,6.2832);
+    if(trueSize){ctx.globalAlpha=.4;ctx.fillStyle=rgb;ctx.fill();ctx.globalAlpha=.9;ctx.lineWidth=1;ctx.strokeStyle=rgb;ctx.stroke();ctx.globalAlpha=1;
+      ctx.beginPath();ctx.arc(q.x,q.y,1.5,0,6.2832);ctx.fillStyle=cssv('--ink');ctx.fill();}
+    else{ctx.fillStyle=rgb;ctx.fill();ctx.lineWidth=1;ctx.strokeStyle=surf;ctx.stroke();}});}
+function inDomain(dm,p){var e=1e-12,x=p[0],y=p[1],z=p[2];
+  if(dm==='triangle')return x>=-e&&y>=-e&&1-x-y>=-e;
+  if(dm==='square')return Math.abs(x)<=1+e&&Math.abs(y)<=1+e;
+  if(dm==='tetra')return x>=-e&&y>=-e&&z>=-e&&1-x-y-z>=-e;
+  if(dm==='cube')return Math.abs(x)<=1+e&&Math.abs(y)<=1+e&&Math.abs(z)<=1+e;
+  return true;}
 var last=0,drag=null;
 function loop(ts){requestAnimationFrame(loop);var dt=ts-last;last=ts;if(dt>200)dt=16;if(DOM[st.dom].dim===3&&(st.auto||st.dance)&&!drag){if(st.auto)st.yaw+=dt*.00028;if(st.dance)st.tm=(st.tm||0)+dt*.0009;draw();}if(DOM[st.dom].dim<=2&&st.dance){st.tm=(st.tm||0)+dt*.0009;draw();}if(DOM[st.dom].dim>=2&&exV.auto&&!exDrag){exV.yaw+=dt*.00035;drawEx();}}
 cv.addEventListener('pointerdown',function(e){if(DOM[st.dom].dim<2)return;drag={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
 cv.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;var k2=DOM[st.dom].dim===2?'2':'';st['yaw'+k2]+=dx*.01;if(e.pointerType!=='touch')st['pitch'+k2]=Math.max(-Math.PI/2,Math.min(Math.PI/2,st['pitch'+k2]+dy*.01));draw();});
 ['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drag=null;});});
-function toggle(id,key){var b=$(id);b.onclick=function(){st[key]=!st[key];b.setAttribute('aria-pressed',st[key]);draw();};}
+function toggle(id,key){var b=$(id);b.onclick=function(){st[key]=!st[key];b.setAttribute('aria-pressed',st[key]);
+    var other=key==='size'?'pack':(key==='pack'?'size':null);if(other&&st[key]){st[other]=false;$('#b-'+other).setAttribute('aria-pressed',false);}draw();};}
 toggle('#b-dance','dance');$('#b-dance').addEventListener('click',function(){$('#dancenote').style.display=st.dance?'':'none';});toggle('#b-auto','auto');toggle('#b-size','size');toggle('#b-edge','edge');toggle('#b-persp','persp');toggle('#b-pack','pack');
 function setDeg(n){st.n=n;viewer();table();chart();certTable();exChart();}
 $('#deg').oninput=function(){setDeg(+this.value);};$('#deg2').oninput=function(){setDeg(+this.value);};
