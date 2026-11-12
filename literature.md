@@ -27,7 +27,7 @@ _No abstract: it is a book, and the Internet Archive record has no description._
 
 Lower bounds for the number of nodes; listed in the references of the documentation (`content/references.json`).
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230. <https://doi.org/10.1007/978-3-0348-6288-2_17>
 
@@ -45,7 +45,7 @@ Cited in the documentation as an early symmetric triangle collection.
 
 Compilation of known rules; cited in the documentation.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### R. Cools: Constructing cubature formulae: the science behind the art. Acta Numerica 6 (1997) 1–54. <https://doi.org/10.1017/S0962492900002701>
 
@@ -57,13 +57,13 @@ Survey of construction methods and of the theory of minimal rules; cited in the 
 
 Compilation of known rules; cited in the documentation.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### R. Cools: An encyclopaedia of cubature formulas. J. Complexity 19 (2003) 445–453. <https://doi.org/10.1016/S0885-064X(03)00011-6>
 
 The online database at KU Leuven (https://nines.cs.kuleuven.be/research/ecf/) asks to cite this article together with the two compilations above; cited in the documentation.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003) 1829–1840. <https://doi.org/10.1016/S0898-1221(03)90004-6>
 
@@ -81,7 +81,7 @@ Section 2 gives Möller's lower bound for centrally symmetric weights in explici
 
 Cited in the docstrings of `code/cubature_search.py` and `code/simplex_cubature.py` for the node elimination idea; the tetrahedron counts in `code/simplex_cubature.py` are taken from its rules as tabulated by J. Burkardt.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### Z. Meng, Z. Luo: Constructing cubature formulae of degree 5 with few points. J. Comput. Appl. Math. 237 (2013) 354–362 (arXiv:1111.5094, 2011). <https://arxiv.org/abs/1111.5094>
 
@@ -175,7 +175,7 @@ Variable projection: the weights are eliminated by a linear least squares solve.
 
 The cheaper Jacobian of variable projection (Kaufman's approximation) was part of the same benchmark; same outcome. Not used.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: Several new quadrature formulas for polynomial integration in the triangle. arXiv:math/0501496 (2005). <https://arxiv.org/abs/math/0501496>
 
@@ -195,7 +195,7 @@ Numerical validation of solutions of nonlinear systems. `tools/verify_rigorous.p
 
 Found in the literature search for rank-deficient nonlinear least squares problems; only title and metadata were seen, so it is not known yet whether it helps.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: A cardinal function algorithm for computing multivariate quadrature points. SIAM J. Numer. Anal. 45 (2007) 193–205. <https://doi.org/10.1137/050625801>
 
@@ -207,7 +207,7 @@ Different construction of quadrature points (cardinal functions instead of node 
 
 Asymmetric rules on the triangle and square, like the atlas rules. Only title and metadata were seen; the counts have not been compared with the atlas.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### J. W. Helton, J. Nie: A semidefinite approach for truncated K-moment problems. arXiv:1105.0410 (2011). <https://arxiv.org/abs/1105.0410>
 
@@ -237,7 +237,7 @@ A different route to quadratures, according to its title and abstract.
 
 Asymmetric rules on the triangle. Only title and metadata were seen; the counts have not been compared with the atlas.
 
-_No abstract: the publisher's page refuses automated access (HTTP 403) and no open source (arXiv, Crossref, Semantic Scholar, OpenAlex) carries it._
+> No abstract available
 
 ### A. Abdelfattah, A. Haidar, S. Tomov, J. Dongarra: Performance tuning and optimization techniques of fixed and variable size batched Cholesky factorization on GPUs. Procedia Computer Science 80 (2016) 119–130. <https://doi.org/10.1016/j.procs.2016.05.303>
 
