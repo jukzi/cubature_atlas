@@ -12,7 +12,7 @@
     "Xiao–Gimbutas"
   ],
   "viewH": "Inspect a rule",
-  "viewSub": "Each dot is a node of the rule. Size and colour show the weight. With size by weight, the area of a circle (in 3D the volume of a sphere, in 1D the diameter) equals the weight; the small dot marks the node. A dotted line leads from a node outside the domain to its centre. For 3D domains, dragging on the picture rotates the view.",
+  "viewSub": "Each dot is a node of the rule. Size and colour show the weight. With size by weight, the area of a circle (in 3D the volume of a ball, in 1D the diameter) equals the weight; the small dot marks the node. A dotted line leads from a node outside the domain to its centre. For 3D domains, dragging on the picture rotates the view.",
   "degree": "Degree n",
   "weight": "Weight",
   "rotate": "Rotate",
