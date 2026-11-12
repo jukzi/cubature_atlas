@@ -9151,6 +9151,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-29-1339-PO-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-29-1339-PO-MPC.json",
+   "domain": "tetra",
+   "degree": 29,
+   "points": 1339,
+   "quality": "PO",
+   "status": "proven",
+   "sha": "1fa1ce609d37aac0",
+   "stored": {
+    "res_bound": 6.820877136723312e-15,
+    "res_ok": true,
+    "margin_exact": -0.000644027284008724,
+    "minw_exact": 6.887842840522474e-11,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.0174919130988501e-12,
+    "kratio": 0.6844603848474424,
+    "mode": "full",
+    "equations": 4960,
+    "unknowns": 5356,
+    "dist": 8.535340812592427e-06,
+    "pos": true,
+    "inside": false,
+    "outside": true,
+    "quality_proved": "PO"
+   },
+   "seconds": 265.55,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-06-10-PO-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-06-10-PO-MPC.json",
    "domain": "triangle",
