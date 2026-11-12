@@ -10,10 +10,10 @@
   "method": "taken from the literature, moment equations re-checked by the build",
   "author": "Witherden–Vincent",
   "source": "F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015).",
-  "status": "verified",
+  "status": "proven",
   "locked": true,
   "symmetry": "full",
-  "certificate": null,
+  "numerical_check": null,
   "nodes": [
     [0.333333333333333, 0.333333333333333],
     [0.101286507323456, 0.797426985353087],
