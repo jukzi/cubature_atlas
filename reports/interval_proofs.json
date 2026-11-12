@@ -6015,6 +6015,40 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-16-246-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-16-246-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 16,
+   "points": 246,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "f445232a002167a5",
+   "stored": {
+    "res_bound": 2.495849494687631e-15,
+    "res_ok": true,
+    "margin_exact": -5.46e-17,
+    "minw_exact": 1.223583764411327e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 4.0461210114382643e-13,
+    "kratio": 0.6666777223934011,
+    "mode": "full",
+    "equations": 969,
+    "unknowns": 978,
+    "dist": 6.4742377075110746e-12,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI",
+    "snapped": 4.440892098500627e-16
+   },
+   "seconds": 16.4,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-16-248-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-16-248-PI-MPC.json",
    "domain": "tetra",
@@ -6110,6 +6144,40 @@
     "quality_proved": "PI"
    },
    "seconds": 4.27,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-T3-18-336-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-18-336-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 18,
+   "points": 336,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "324b9df4cc157fc6",
+   "stored": {
+    "res_bound": 4.9960036108132076e-15,
+    "res_ok": true,
+    "margin_exact": -4.2e-17,
+    "minw_exact": 1.2250071796317978e-05,
+    "quality_exact": "PO"
+   },
+   "exist": {
+    "proved": true,
+    "r": 7.15193092470843e-13,
+    "kratio": 0.6667102926606857,
+    "mode": "full",
+    "equations": 1330,
+    "unknowns": 1335,
+    "dist": 1.152657833380794e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI",
+    "snapped": 6.66133814775094e-16
+   },
+   "seconds": 31.23,
    "ok_stored": true,
    "ok_exist": true
   },
