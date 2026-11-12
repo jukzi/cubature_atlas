@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset=utf8>
-<!--__HEAD__--><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!--__HEAD__--><script>document.write('<base href="'+new URL('.',location.href).href+'">')</script><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <style>
 :root{--s-f0:#1F6FD6;--s-f1:#D9480F;--s-f2:#0CA678;--s-f3:#9C36B5;--s-f4:#E67700;--s-f5:#495057}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--s-f0:#74B0FF;--s-f1:#FF8A5B;--s-f2:#4FD1A5;--s-f3:#D08BEA;--s-f4:#FFB347;--s-f5:#ADB5BD}}
@@ -6747,11 +6747,15 @@ if(window.matchMedia)window.matchMedia('(prefers-color-scheme: dark)').addEventL
 new MutationObserver(function(){draw();drawEx();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 window.__selftest=function(){var out=[];['interval','triangle','square','tetra','cube'].forEach(function(dom){['sqrt','log','sin','cos','zsin','gosc','gprod','gcorner','ggauss'].forEach(function(k){var a=analytic(dom,k);if(a==null)return;var dim0=0,dim=DOM[dom].dim,r=refIntegral(dom,fdef(dom,k),dim===3?120:(dim===2?300:2000));out.push(dom+' '+k+' '+a+' '+r+' '+Math.abs(a-r));});});return out;};
 /* ---------- state in the URL ----------
-   Every setting the user can change (language, domain, degree, source, chart mode, hidden series, example function,
-   the view buttons) is kept in the query string and read back on load. Only values that differ from the defaults are written. */
+   Language, domain, rule source and degree are in the path (de/ prefix, then for example tetra/npi/8/); the other settings
+   are in the query string. Both are written back while the user changes things and are read on load.
+   The pages behind these paths are small stubs (tools/build_atlas.py) that send the browser to this page with the
+   settings in the query string; this page then writes the path again. */
+var URLROOT=document.baseURI,URLEN=LANG==='en'?URLROOT:new URL('../',URLROOT).href,URLDE=LANG==='de'?URLROOT:URLROOT+'de/';
 var URLTOG=['size','edge','dance','persp','pack','auto'],URLDEF={dom:st.dom,n:st.n,mode:st.mode,fn:st.fn,lang:LANG,exauto:exV.auto,drill:DRILL.on,tog:{}};
 URLTOG.forEach(function(k){URLDEF.tog[k]=st[k];});
 function urlDefSrc(dom){return DOM[dom].dim===1?'gauss':'found';}
+function srcCode(k){return k==='found'?'npi':(k==='out'?'npo':(isF(k)?k.slice(2):k));}
 function urlRead(){var q;try{q=new URLSearchParams(location.search);}catch(_){return;}
   var dm=q.get('dom');if(dm&&DOM[dm])st.dom=dm;
   st.src=q.get('src')||urlDefSrc(st.dom);
@@ -6762,23 +6766,21 @@ function urlRead(){var q;try{q=new URLSearchParams(location.search);}catch(_){re
   var h=q.get('hide');if(h)h.split(',').forEach(function(k){if(k)st.hide[k]=true;});
   URLTOG.forEach(function(k){var v=q.get(k);if(v==='0'||v==='1'){st[k]=v==='1';var b=$('#b-'+k);if(b)b.setAttribute('aria-pressed',st[k]);}});
   var e=q.get('exauto');if(e==='0'||e==='1'){exV.auto=e==='1';$('#b-exauto').setAttribute('aria-pressed',exV.auto);}
-  var dr=q.get('drill');if(dr==='0'||dr==='1'){DRILL.on=dr==='1';['#b-sub','#b-subE'].forEach(function(x){var b=$(x);if(b)b.setAttribute('aria-pressed',DRILL.on);});}
-  var lg=q.get('lang');if(lg==='de'||lg==='en')LANG=lg;}
-function urlState(){var q=[];
-  if(LANG!==URLDEF.lang)q.push('lang='+LANG);
-  if(st.dom!==URLDEF.dom)q.push('dom='+st.dom);
-  if(st.src!==urlDefSrc(st.dom))q.push('src='+encodeURIComponent(st.src));
-  if(st.n!==URLDEF.n)q.push('n='+st.n);
+  var dr=q.get('drill');if(dr==='0'||dr==='1'){DRILL.on=dr==='1';['#b-sub','#b-subE'].forEach(function(x){var b=$(x);if(b)b.setAttribute('aria-pressed',DRILL.on);});}}
+function urlState(){var q=[],root=LANG==='de'?URLDE:URLEN,path=root;
+  if(st.dom!==URLDEF.dom||st.src!==urlDefSrc(st.dom)||st.n!==URLDEF.n)path=root+st.dom+'/'+srcCode(st.src)+'/'+st.n+'/';
   if(st.mode!==URLDEF.mode)q.push('mode='+st.mode);
   if(st.fn!==URLDEF.fn)q.push('fn='+encodeURIComponent(st.fn));
   var hd=Object.keys(st.hide).filter(function(k){return st.hide[k];}).sort();if(hd.length)q.push('hide='+hd.map(encodeURIComponent).join(','));
   URLTOG.forEach(function(k){if(st[k]!==URLDEF.tog[k])q.push(k+'='+(st[k]?1:0));});
   if(exV.auto!==URLDEF.exauto)q.push('exauto='+(exV.auto?1:0));
   if(DRILL.on!==URLDEF.drill)q.push('drill='+(DRILL.on?1:0));
-  return q.join('&');}
+  return path+(q.length?'?'+q.join('&'):'');}
 var urlLast=null;
-function urlWrite(){var q=urlState();if(q===urlLast)return;urlLast=q;try{history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash);}catch(_){}}
-urlRead();urlLast=urlState();
+function urlWrite(){var u=urlState();if(u===urlLast)return;urlLast=u;try{history.replaceState(null,'',u+location.hash);}catch(_){}}
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented)return;
+  var id=decodeURIComponent(a.getAttribute('href').slice(1)),el=id&&document.getElementById(id);e.preventDefault();if(el)el.scrollIntoView();});
+urlRead();urlLast=location.search?null:urlState();
 setInterval(urlWrite,300);
 applyLang();refresh();requestAnimationFrame(loop);
 })();
