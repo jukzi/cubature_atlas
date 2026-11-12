@@ -6765,6 +6765,40 @@ window.addEventListener('resize',function(){draw();drawEx();});
 if(window.matchMedia)window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){draw();drawEx();});
 new MutationObserver(function(){draw();drawEx();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 window.__selftest=function(){var out=[];['interval','triangle','square','tetra','cube'].forEach(function(dom){['sqrt','log','sin','cos','zsin','gosc','gprod','gcorner','ggauss'].forEach(function(k){var a=analytic(dom,k);if(a==null)return;var dim0=0,dim=DOM[dom].dim,r=refIntegral(dom,fdef(dom,k),dim===3?120:(dim===2?300:2000));out.push(dom+' '+k+' '+a+' '+r+' '+Math.abs(a-r));});});return out;};
+/* ---------- state in the URL ----------
+   Every setting the user can change (language, domain, degree, source, chart mode, hidden series, example function,
+   the view buttons) is kept in the query string and read back on load. Only values that differ from the defaults are written. */
+var URLTOG=['size','edge','dance','persp','pack','auto'],URLDEF={dom:st.dom,n:st.n,mode:st.mode,fn:st.fn,lang:LANG,exauto:exV.auto,drill:DRILL.on,tog:{}};
+URLTOG.forEach(function(k){URLDEF.tog[k]=st[k];});
+function urlDefSrc(dom){return DOM[dom].dim===1?'gauss':'found';}
+function urlRead(){var q;try{q=new URLSearchParams(location.search);}catch(_){return;}
+  var dm=q.get('dom');if(dm&&DOM[dm])st.dom=dm;
+  st.src=q.get('src')||urlDefSrc(st.dom);
+  var n=parseInt(q.get('n'),10);if(n>=1)st.n=Math.min(n,MX());
+  var md=q.get('mode');if(md==='abs'||md==='rel')st.mode=md;
+  Array.prototype.forEach.call(document.querySelectorAll('input[name=mode]'),function(i){i.checked=i.value===st.mode;});
+  var fn=q.get('fn');if(fn)st.fn=fn;
+  var h=q.get('hide');if(h)h.split(',').forEach(function(k){if(k)st.hide[k]=true;});
+  URLTOG.forEach(function(k){var v=q.get(k);if(v==='0'||v==='1'){st[k]=v==='1';var b=$('#b-'+k);if(b)b.setAttribute('aria-pressed',st[k]);}});
+  var e=q.get('exauto');if(e==='0'||e==='1'){exV.auto=e==='1';$('#b-exauto').setAttribute('aria-pressed',exV.auto);}
+  var dr=q.get('drill');if(dr==='0'||dr==='1'){DRILL.on=dr==='1';['#b-sub','#b-subE'].forEach(function(x){var b=$(x);if(b)b.setAttribute('aria-pressed',DRILL.on);});}
+  var lg=q.get('lang');if(lg==='de'||lg==='en')LANG=lg;}
+function urlState(){var q=[];
+  if(LANG!==URLDEF.lang)q.push('lang='+LANG);
+  if(st.dom!==URLDEF.dom)q.push('dom='+st.dom);
+  if(st.src!==urlDefSrc(st.dom))q.push('src='+encodeURIComponent(st.src));
+  if(st.n!==URLDEF.n)q.push('n='+st.n);
+  if(st.mode!==URLDEF.mode)q.push('mode='+st.mode);
+  if(st.fn!==URLDEF.fn)q.push('fn='+encodeURIComponent(st.fn));
+  var hd=Object.keys(st.hide).filter(function(k){return st.hide[k];}).sort();if(hd.length)q.push('hide='+hd.map(encodeURIComponent).join(','));
+  URLTOG.forEach(function(k){if(st[k]!==URLDEF.tog[k])q.push(k+'='+(st[k]?1:0));});
+  if(exV.auto!==URLDEF.exauto)q.push('exauto='+(exV.auto?1:0));
+  if(DRILL.on!==URLDEF.drill)q.push('drill='+(DRILL.on?1:0));
+  return q.join('&');}
+var urlLast=null;
+function urlWrite(){var q=urlState();if(q===urlLast)return;urlLast=q;try{history.replaceState(null,'',location.pathname+(q?'?'+q:'')+location.hash);}catch(_){}}
+urlRead();urlLast=urlState();
+setInterval(urlWrite,300);
 applyLang();refresh();requestAnimationFrame(loop);
 })();
 
