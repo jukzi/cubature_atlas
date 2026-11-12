@@ -6087,7 +6087,7 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   if(dim===2&&!st.pack){var cl2=cells2(r,d),neg2=cssv('--bad'),wm2=Math.max.apply(null,r.pts.map(function(p){return Math.abs(lastCol(p));}));ctx.save();
     cl2.forEach(function(poly,k){if(poly.length<3)return;var w=lastCol(r.pts[k]),c=lerpc(w0,w1,Math.abs(w)/wm2).map(Math.round).join(',');ctx.beginPath();poly.forEach(function(v,m){var q=proj(v);if(m===0)ctx.moveTo(q.x,q.y);else ctx.lineTo(q.x,q.y);});ctx.closePath();
       ctx.fillStyle=w<0?neg2:'rgba('+c+',1)';ctx.globalAlpha=w<0?.3:.22;ctx.fill();ctx.globalAlpha=.55;ctx.strokeStyle=w<0?neg2:'rgba('+c+',1)';ctx.lineWidth=1;ctx.stroke();});ctx.restore();}
-  if(dim===3&&st.dance&&!st.pack){var cl3d=cells3(r,st.dom),dv3=dancePoly3(r,st.tm||0);drawCells3(ctx,cl3d,dv3,proj,st.yaw,st.pitch,cssv('--ink'));}
+  if(dim===3&&st.dance&&!st.pack&&!st.size){var cl3d=cells3(r,st.dom),dv3=dancePoly3(r,st.tm||0);drawCells3(ctx,cl3d,dv3,proj,st.yaw,st.pitch,cssv('--ink'));}
   var dv2=null,Hh=.55;
   if(dim===2&&st.dance){dv2=dancePoly2(r,st.tm||0);var cl2b=cells2(r,d);
     if(!st.pack)drawCols(ctx,cl2b,dv2,function(x,y,v){return proj([x,y,v==null?0:v*Hh]);},.38,.14,cssv('--ink'));}
