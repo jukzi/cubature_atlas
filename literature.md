@@ -39,7 +39,7 @@ _No abstract: it is a book, and the Internet Archive record has no description._
 
 Lower bounds for the number of nodes; listed in the references of the documentation (`content/references.json`).
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: for double integrals the paper derives a lower bound for the number of nodes of a cubature formula of degree 2s-1. A formula of that degree attaining the bound exists exactly when a certain condition holds, and under this condition all such minimal formulas can be constructed. Examples and a generalisation to n dimensions are given.
 
 ### H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230. <https://doi.org/10.1007/978-3-0348-6288-2_17>
 
@@ -57,13 +57,13 @@ Cited in the documentation as an early symmetric triangle collection.
 
 Orthonormal Proriol–Koornwinder–Dubiner basis, used for the independent check of the rules in `code/simplex_cubature.py`.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper obtains multidimensional spectral methods as warped products of one-dimensional ones, which generalises tensor products. Applications are spectral approximation on a disk and on a triangle, with the disk method used for Navier-Stokes simulation in a periodic pipe and the triangle method in a spectral element scheme; the approximation degree of the triangle method is computed in a new way.
 
 ### R. Cools, P. Rabinowitz: Monomial cubature rules since “Stroud”: a compilation. J. Comput. Appl. Math. 48 (1993) 309–326. <https://doi.org/10.1016/0377-0427(93)90027-9>
 
 Compilation of known rules; cited in the documentation.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: a bibliography of references to cubature rules that appeared after Stroud's book (1971), for the standard regions n-cube, n-simplex, n-sphere and the whole space.
 
 ### R. E. Curto, L. A. Fialkow: Solution of the truncated complex moment problem for flat data. Mem. Amer. Math. Soc. 119 (1996), no. 568. <https://doi.org/10.1090/memo/0568>
 
@@ -87,7 +87,7 @@ Compilation of known rules; cited in the documentation.
 
 The online database at KU Leuven (https://nines.cs.kuleuven.be/research/ecf/) asks to cite this article together with the two compilations above; cited in the documentation.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the author began collecting published cubature formulas for standard regions about 13 years earlier; the paper describes how this collection is made available to a wide audience through the World Wide Web.
 
 ### S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003) 1829–1840. <https://doi.org/10.1016/S0898-1221(03)90004-6>
 
@@ -167,7 +167,7 @@ Addendum to the previous entry.
 
 Fully symmetric tetrahedron counts up to degree 20, tabulated for comparison in `code/simplex_cubature.py`.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper gives fully symmetric quadrature rules with positive weights and nodes inside the simplex (PI type): up to order 20 on the tetrahedron, 16 on the 4-simplex and 10 on the 5- and 6-simplexes. The node counts do not exceed the known ones and most rules are new. They were computed with modified Levenberg-Marquardt methods for nonlinear equations with convex constraints, first in FORTRAN to 25 digits and then refined to 50 digits in MAPLE.
 
 ### A. Slobodkins, J. Tausch: A node elimination algorithm for cubature of high-dimensional polytopes. Comput. Math. Appl. 144 (2023) 229–236 (arXiv:2207.10737, 2022). <https://arxiv.org/abs/2207.10737>
 
@@ -211,7 +211,7 @@ Variable projection: the weights are eliminated by a linear least squares solve.
 
 The cheaper Jacobian of variable projection (Kaufman's approximation) was part of the same benchmark; same outcome. Not used.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper treats separable nonlinear least squares problems, in which a linear and a nonlinear set of parameters appear. Golub and Pereyra reduced the problem to one nonlinear problem in the nonlinear parameters only. The paper proposes a new way of determining these parameters that proved computationally more efficient than the Golub-Pereyra scheme.
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: Several new quadrature formulas for polynomial integration in the triangle. arXiv:math/0501496 (2005). <https://arxiv.org/abs/math/0501496>
 
@@ -231,7 +231,7 @@ Numerical validation of solutions of nonlinear systems. `tools/verify_rigorous.p
 
 Found in the literature search for rank-deficient nonlinear least squares problems; only title and metadata were seen, so it is not known yet whether it helps.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: Levenberg-Marquardt and similar methods run into trouble when the Jacobian is rank-deficient or very ill-conditioned at the solution. The paper studies uniformly rank-deficient problems, where the Jacobian has the same deficient rank near a solution, so the solution is not locally unique, and presents two techniques, a minimum-norm solution and Tikhonov regularisation, with optimality conditions, algorithms, convergence results and numerical experiments. The ideas extend to more general rank-deficient or ill-conditioned problems.
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: A cardinal function algorithm for computing multivariate quadrature points. SIAM J. Numer. Anal. 45 (2007) 193–205. <https://doi.org/10.1137/050625801>
 
@@ -243,7 +243,7 @@ Different construction of quadrature points (cardinal functions instead of node 
 
 Asymmetric rules on the triangle and square, like the atlas rules. Only title and metadata were seen; the counts have not been compared with the atlas.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper presents five new cubature formulas for exact integration of polynomials: degrees 10, 11 and 12 on the triangle and degrees 10 and 12 on the square. The points were computed with a cardinal function algorithm that imposes no symmetry. The formulas have positive weights, no points outside the domain, and fewer points than previously known results.
 
 ### J. W. Helton, J. Nie: A semidefinite approach for truncated K-moment problems. arXiv:1105.0410 (2011). <https://arxiv.org/abs/1105.0410>
 
@@ -273,7 +273,7 @@ A different route to quadratures, according to its title and abstract.
 
 Asymmetric rules on the triangle. Only title and metadata were seen; the counts have not been compared with the atlas.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper presents a method for computing cubature rules based on least-squares minimisation and orthogonal bases, applicable to any integration domain. It is tested on asymmetric rules on the triangle, including how to optimise the computation of the basis and its derivatives, and gives three new rules with fewer points than known rules of the same degree.
 
 ### A. Abdelfattah, A. Haidar, S. Tomov, J. Dongarra: Performance tuning and optimization techniques of fixed and variable size batched Cholesky factorization on GPUs. Procedia Computer Science 80 (2016) 119–130. <https://doi.org/10.1016/j.procs.2016.05.303>
 
