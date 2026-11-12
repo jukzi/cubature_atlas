@@ -329,6 +329,8 @@ def run_elim(name, deg, tl, rng, P, w):
         rng.shuffle(cands)
         if CANDS == "small":
             cands = [("del", int(k)) for k in order[:8]]
+        if CANDS == "large":
+            cands = [("del", int(k)) for k in order[-8:]]
         done = False
         if SOLVER == "chord":
             # One factorization per accepted rule; every deletion candidate costs only rank-1 downdates and chord steps.

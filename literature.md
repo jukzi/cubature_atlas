@@ -47,6 +47,12 @@ Compilation of known rules; cited in the documentation.
 
 > No abstract available
 
+### R. E. Curto, L. A. Fialkow: Solution of the truncated complex moment problem for flat data. Mem. Amer. Math. Soc. 119 (1996), no. 568. <https://doi.org/10.1090/memo/0568>
+
+Flat extension theorem: a positive definite moment matrix M(k) with a flat extension M(k+1) (same rank) has a finitely atomic representing measure with rank M(k) atoms. Used in `code/flat_ext_square8.py` (and `code/flat_ext_cube6.py`): a rule of degree 2k with dim P_k nodes and positive weights exists exactly if M(k) of the domain has a flat extension. For the square, degree 8, 15 nodes this gives 10 quadratic equations in the 10 degree-9 moments; numerically (multistart, and total-degree homotopy with 1024 paths) they have 16 finite solutions, 8 real, all images of CA-C2-08-15-PO under the symmetries of the square (a node outside), so no PI rule with 15 nodes appears; an exact count (msolve) is still open.
+
+> No abstract available (memoir; in short: the authors introduce a matrix approach to the truncated complex moment problem and solve it for moment matrices of flat data type)
+
 ### R. Cools: Constructing cubature formulae: the science behind the art. Acta Numerica 6 (1997) 1–54. <https://doi.org/10.1017/S0962492900002701>
 
 Survey of construction methods and of the theory of minimal rules; cited in the documentation.
