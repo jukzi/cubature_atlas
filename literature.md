@@ -5,9 +5,9 @@ Every entry was looked up in the source (DOI, arXiv or publisher metadata) when 
 
 The three sections are:
 
-1. **Used in the atlas**: the work is cited in the documentation or the code, or its rules or algorithm are part of the atlas.
-2. **Tried, not worthwhile**: the idea was tested and did not pay off. The note says what was tested and what came out.
-3. **Not used yet**: relevant, but not (or not yet fully) tried.
+1. [**Used in the atlas**](#1-used-in-the-atlas): the work is cited in the documentation or the code, or its rules or algorithm are part of the atlas.
+2. [**Tried, not worthwhile**](#2-tried-not-worthwhile): the idea was tested and did not pay off. The note says what was tested and what came out.
+3. [**Not used yet**](#3-not-used-yet): relevant, but not (or not yet fully) tried.
 
 Each section is sorted by date of appearance, oldest first. An entry has the usual citation with the link to the source, a short note on how it relates to the atlas, and the abstract. Abstracts are copied word for word from arXiv, from the metadata the publisher deposited at Crossref, or from an open-access article. Where only a publisher's page has the abstract and it can be read, the entry gives a short summary in our own words instead; where the page cannot be read at all, the entry says so. The link leads to the source in every case.
 
