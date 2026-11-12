@@ -9,19 +9,8 @@
  "origin": "found",
  "method": "numerical search of this atlas: orbit search with the rotation group A4 (code/simplex_cubature.py), certified",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
- "status": "verified",
+ "status": "proven",
  "locked": false,
- "certificate": {
-  "N": 91,
-  "M": 364,
-  "p": 364,
-  "res": 7.26993972144179e-16,
-  "sigma": 0.005856975776971437,
-  "h": 1.0802976072603232e-06,
-  "rad": 1.853302975308971e-14,
-  "cert": true,
-  "inside": true
- },
  "nodes": [
   [
    0.12784529011937265,
@@ -571,5 +560,16 @@
   0.0002754369378624865,
   0.0002754369378624865,
   0.0023592804733080946
- ]
+ ],
+ "numerical_check": {
+  "N": 91,
+  "M": 364,
+  "p": 364,
+  "res": 7.26993972144179e-16,
+  "sigma": 0.005856975776971437,
+  "h": 1.0802976072603232e-06,
+  "rad": 1.853302975308971e-14,
+  "cert": true,
+  "inside": true
+ }
 }
