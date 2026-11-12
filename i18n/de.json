@@ -67,6 +67,7 @@
     "f4": "ca43f6cabb081962",
     "f4s": "8fc009b3c4386973",
     "chartLbl": "cf2351f9bca81831",
+    "chartCut": "275ccd9311819350",
     "notes": "534253cb41af12d7",
     "exH": "7c73b04fcf74e0aa",
     "exSub": "e53ed96698d0b1e9",
@@ -300,6 +301,7 @@
   "f4": "Abstand zum Abzählwert",
   "f4s": "Grad 1 bis 20, größte Differenz",
   "chartLbl": "Knotenzahl über dem Grad",
+  "chartCut": "Die Kurve des Gauß-Produkts ist oben abgeschnitten.",
   "notes": {
     "interval": "Im Intervall ist die Gauß-Legendre-Formel optimal: Abzählwert, untere Schranke und Gauß-Produkt stimmen überein, mehr als ⌈(n+1)/2⌉ Knoten spart keine Regel ein.",
     "triangle": "Die Regeln liegen höchstens 2 Knoten über dem Abzählwert und sind nie größer als die Regeln von Xiao und Gimbutas. Bei den Graden 3, 7, 10, 15, 17 und 18 bis 20 liegen sie darunter. Der Vergleich ist nur bedingt fair, denn die Literaturregeln sind voll symmetrisch. Bei den ungeraden Graden 3, 5 und 7 erreichen die Regeln die untere Schranke von Möller (4, 7 und 12 Knoten), sie sind also minimal.",
