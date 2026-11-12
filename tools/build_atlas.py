@@ -20,6 +20,7 @@ import re
 import shutil
 import subprocess
 import sys
+import urllib.parse
 import zipfile
 from itertools import product
 
@@ -644,6 +645,41 @@ def index_page(fams, lang, t):
 BYID = {}
 
 
+def write_stubs(fams):
+    """Small redirect pages for the paths <domain>/<source>/<degree>/ (also below de/).
+    The application keeps language, domain, source and degree in such a path (tetra/npi/8/ is the numerical search PI,
+    degree 8, on the tetrahedron). A static host has no page behind these paths, so each gets a stub that sends the
+    browser to the application with the same settings in the query string; the application writes the path again."""
+    codes = {"npi": "found", "npo": "out", "lit": "lit", "gauss": "gauss"}
+    count = 0
+    for lang in ("en", "de"):
+        base = SITE if lang == "en" else os.path.join(SITE, "de")
+        for dom in DOMAINS:
+            if dom == "interval":
+                srcs = {"gauss": "gauss", "lob": "lob", "cc": "cc", "nc": "nc"}
+            else:
+                srcs = dict(codes)
+            for f in fams:
+                if f["role"] not in ("pi", "po") and any(r["domain"] == dom for r in f["rules"]):
+                    srcs[f["id"]] = "f:" + f["id"]
+            pages = [([dom], "dom=%s" % dom)]
+            for code, key in srcs.items():
+                pages.append(([dom, code], "dom=%s&src=%s" % (dom, urllib.parse.quote(key))))
+                for n in range(1, MAXN + 1):
+                    pages.append(([dom, code, str(n)], "dom=%s&src=%s&n=%d" % (dom, urllib.parse.quote(key), n)))
+            for parts, query in pages:
+                up = "../" * len(parts)
+                target = "%s?%s" % (up, query)
+                d = os.path.join(base, *parts)
+                os.makedirs(d, exist_ok=True)
+                with open(os.path.join(d, "index.html"), "w", encoding="utf8") as fh:
+                    fh.write('<!doctype html><meta charset=utf8><meta name=robots content=noindex><title>Cubature Atlas</title>'
+                             "<script>location.replace('%s'+(location.search?'&'+location.search.slice(1):''))</script>"
+                             '<noscript><a href="%s">Cubature Atlas</a></noscript>\n' % (target, target))
+                count += 1
+    return count
+
+
 def build_site(fams, en, de, doc_en, doc_de, stale_doc):
     if os.path.exists(SITE):
         shutil.rmtree(SITE)
@@ -709,6 +745,7 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
         fh.write("User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % BASE_URL)
     with open(os.path.join(SITE, ".nojekyll"), "w") as fh:
         fh.write("")
+    write_stubs(fams)
     return len(urls)
 
 
