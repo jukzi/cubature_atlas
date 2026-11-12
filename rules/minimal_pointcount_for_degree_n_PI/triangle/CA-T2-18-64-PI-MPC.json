@@ -9,19 +9,8 @@
  "origin": "found",
  "method": "numerical search of this atlas: node elimination from the previous PI rule (code/po_elim.py), certified",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
- "status": "verified",
+ "status": "proven",
  "locked": false,
- "certificate": {
-  "N": 64,
-  "M": 190,
-  "p": 192,
-  "res": 7.067522736156039e-15,
-  "sigma": 0.02011448846787188,
-  "h": 1.5467186739388566e-05,
-  "rad": 2.918041013157142e-12,
-  "cert": true,
-  "inside": true
- },
  "nodes": [
   [
    0.24875964073372878,
@@ -345,5 +334,16 @@
   0.008763794436841077,
   0.012755876922593775,
   0.014157275613755346
- ]
+ ],
+ "numerical_check": {
+  "N": 64,
+  "M": 190,
+  "p": 192,
+  "res": 7.067522736156039e-15,
+  "sigma": 0.02011448846787188,
+  "h": 1.5467186739388566e-05,
+  "rad": 2.918041013157142e-12,
+  "cert": true,
+  "inside": true
+ }
 }
