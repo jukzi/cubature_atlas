@@ -1,6 +1,6 @@
 # Instructions for AI agents working on this repository
 
-Read README.md and CONTRIBUTING.md first. In short:
+Read README.md, CONTRIBUTING.md and DEVELOPMENT.md (file format, checks, proofs, automatic search) first. In short:
 
 - Work on a new branch from the latest `main`; never push to `main`. Open one pull request per improvement.
 - Never modify or delete a rule file with `"locked": true`. Add a new file with a new id instead.

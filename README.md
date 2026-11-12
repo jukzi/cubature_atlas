@@ -2,172 +2,107 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24037245.svg)](https://doi.org/10.5281/zenodo.24037245)
 
-**Best known quadrature and cubature rules with few points and positive weights** on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30, each with a proof in interval arithmetic, and source code.
+**How few points do you need to integrate a polynomial exactly?** The Cubature Atlas collects the answers for the interval, triangle, square, tetrahedron and cube, for every degree from 1 to 30. Every rule has positive weights, and **every rule comes with a computer-assisted proof**.
 
-Website: <https://jukzi.github.io/cubature_atlas/>
+**→ Explore it on the website: <https://jukzi.github.io/cubature_atlas/>** (interactive viewer, tables, charts, downloads)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme_gallery_dark.png">
+  <img src="assets/readme_gallery_light.png" alt="Four rules of the atlas: triangle degree 20 with 78 nodes, square degree 20 with 77 nodes, tetrahedron degree 12 with 116 nodes, cube degree 12 with 114 nodes. Marker area proportional to the weight.">
+</picture>
+
+## The idea in one picture
+
+A cubature rule replaces an integral by a weighted sum over a few points:
+
+∫ f(x) dx ≈ w₁ f(x₁) + w₂ f(x₂) + … + w_N f(x_N)
+
+A rule of **degree n** gets this exactly right for every polynomial up to degree n. Fewer points means less work every time the rule is used, which is why finite-element codes, simulations and numerical libraries care about rules that are as small as possible.
 
 <p align="center">
-  <a href="https://jukzi.github.io/cubature_atlas/"><img src="assets/figure_a_interval_gauss_n2.gif" width="640" alt="Figure A of the atlas page: the 2-point Gauss–Legendre rule on the interval integrates every polynomial of degree 3 exactly. A randomly changing cubic is shown with its area; the two bars (width = weight, height = value at the node) always have the same total area."></a>
+  <a href="https://jukzi.github.io/cubature_atlas/"><img src="assets/figure_a_interval_gauss_n2.gif" width="560" alt="The 2-point Gauss–Legendre rule integrates every cubic exactly: a randomly changing cubic is shown with its area, and two bars (width = weight, height = value at the node) always have the same total area."></a>
   <br>
-  <sub>Figure A of the website (default view): the 2-point Gauss–Legendre rule integrates every polynomial of degree 3 exactly. The bars (width = weight, height = value at the node) always enclose the same area as the curve.</sub>
+  <sub>Two points are enough for every cubic on an interval: the bars (width = weight, height = value at the node) always enclose the same area as the curve.</sub>
 </p>
 
-> **AI-generated.** The search, the computations, the proofs, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.). Every rule has a computer-assisted proof with interval arithmetic (`tools/verify_rigorous.py`): an exact rule with the stored quality exists within about 10<sup>-10</sup> of the stored numbers. Floating-point checks (moment residuals, a numerical Newton–Kantorovich check) are only used during the search; they are not proofs.
+In one dimension the answer has been known since Gauss. On triangles, squares, tetrahedra and cubes it is a hard, mostly open search problem, and the published tables stop at moderate degrees.
 
-## What is in here
+## What makes this atlas different
 
-| Path | Content |
-|---|---|
-| `rules/<family>/family.json` | Name and description of a rule family, in English and German |
-| `rules/<family>/<domain>/<id>.json` | One rule per file: metadata, nodes, weights |
-| `literature.md` | Literature on the topic: used in the atlas, tried but not worthwhile, not used yet (with links and abstracts) |
-| `reference_data/literature_counts.json` | Node counts from the literature without stored points (Xiao–Gimbutas, symmetric rules) |
-| `i18n/en.json`, `i18n/de.json` | Texts of the website (English is the source) |
-| `content/en/`, `content/de/` | Documentation section of the website |
-| `content/references.json` | Bibliography |
-| `site_template/index.html` | The interactive page; the build inserts the data |
-| `code/` | Search programs that produced the rules, with numerical checks (not proofs) |
-| `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
-| `tools/verify_rigorous.py`, `.github/workflows/rigorous.yml` | Rigorous check with interval arithmetic: stored numbers and existence of an exact rule (Krawczyk test) |
-| `reports/interval_proofs.json` | Result of the rigorous check for all rules |
-| `tools/make_readme_gif.py`, `assets/` | Records figure A of the built page as the animated GIF of this README (Playwright, Pillow) |
-| `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
-| `tools/auto_cannonball.py`, `.github/workflows/auto_cannonball.yml` | Automatic search for smaller tetrahedron rules from a cannonball start, started by hand; opens a pull request when it finds one |
+**Complete.** All 5 domains × 30 degrees = 150 cells are filled, with over 300 rules in total.
 
-## Rule families
+**Proven, not just computed.** Floating-point searches can be wrong in the last digits, or worse. Here every rule is checked with interval arithmetic: the proof shows that an *exact* rule, with positive weights and with its nodes where the file says they are, exists within about 10<sup>-10</sup> of the stored numbers (`tools/verify_rigorous.py`). A rule without such a proof is not accepted.
 
-Each family is one directory under `rules/`. The family name, including its translation, is stored in the directory's `family.json`.
+**Smaller than the published rules, and never larger.** In 100 of the 150 cells there is a published rule to compare with (Xiao–Gimbutas, and the fully symmetric rules of Witherden–Vincent, Jaśkowiec–Sukumar and Diallo–Worku). The atlas matches it everywhere and **needs fewer nodes in 78 of these cells**: for example, degree 20 on the tetrahedron takes 446 nodes instead of 552.
 
-| Directory | Role | Content |
-|---|---|---|
-| `minimal_pointcount_for_degree_n_PI` | `pi` | Smallest rules of the atlas's own search: positive weights, nodes in the closed domain |
-| `minimal_pointcount_for_degree_n_PO` | `po` | Positive weights, at least one node genuinely outside the domain |
-| `witherden_vincent_2015` | `literature` | Fully symmetric triangle rules (reproduced for comparison) |
-| `jaskowiec_sukumar_2020` | `literature` | Fully symmetric tetrahedron rules (reproduced for comparison) |
-| `diallo_worku_2026` | `literature` | Fully symmetric square and cube rules (reproduced for comparison) |
+**Often provably optimal.** In **54 cells** the number of nodes equals a proven lower bound, so no rule with positive weights can do better.
 
-Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme_map_dark.png">
+  <img src="assets/readme_map_light.png" alt="Map of the 150 cells, domains in rows and degrees 1 to 30 in columns: provably optimal cells, cells where the atlas has fewer nodes than the published rules, cells with the same number, and cells without a published comparison.">
+</picture>
 
-The build computes the quality from the numbers and rejects a file whose stored quality is wrong. Example: the PO search had returned a degree-30 square rule with 166 nodes whose nodes all lie inside. That makes it a PI rule, so it now lives in the PI family, one node below the 167-node rule. Both are proven with interval arithmetic.
+### How close to the limit?
 
-### Adding a family
+A natural yardstick is the **counting value Z**: the number of equations divided by the unknowns per node. A rule with fewer than Z nodes is only possible thanks to special structure such as symmetry. From degree 8 on, the atlas stays within about 10 % of Z, mostly within 1–2 %, and on the cube it even goes *below* Z in ten cells. The published rules (orange) are typically 5–30 % above it; the proven lower bound (dashed) shows how much room theory still leaves.
 
-1. Create `rules/<family_id>/family.json` (letters, digits and `_` only):
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme_efficiency_dark.png">
+  <img src="assets/readme_efficiency_light.png" alt="Nodes divided by the counting value Z for degrees 1 to 30 on triangle, square, tetrahedron and cube: the atlas stays close to 1, the published rules lie above it, and the proven lower bound lies below.">
+</picture>
 
-   ```json
-   {
-     "id": "my_new_family",
-     "tag": "MNF",
-     "role": "own",
-     "quality": "PI",
-     "name":        {"en": "My new family", "de": "Meine neue Familie"},
-     "short":       {"en": "My family",     "de": "Meine Familie"},
-     "description": {"en": "What the rules are and where they come from.", "de": "Was die Regeln sind und woher sie kommen."},
-     "references": []
-   }
-   ```
+| Degree 20 | Atlas | best published | tensor-product Gauss |
+|---|---:|---:|---:|
+| Triangle | 78 | 79 | 121 |
+| Square | 77 | 81 | 121 |
+| Tetrahedron | 446 | 552 | 1331 |
+| Cube | 440 | 495 | 1331 |
 
-2. Put the rules into `rules/<family_id>/<domain>/` (domains: `interval`, `triangle`, `square`, `tetra`, `cube`).
-3. Run `python tools/build_atlas.py`. A family with role `own` automatically shows up on the website as a new selectable type: a button in the viewer, a column in the table, a series in both charts, and an entry in the documentation. A family with role `literature` joins the "Literature" column instead.
+### Sometimes the best rule steps outside
 
-Roles: `pi` and `po` exist once each (the atlas's own best rules), `literature` for published rules, `own` for everything else. `quality` is optional; if it is set, every rule in the family must have it.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme_outside_dark.png">
+  <img align="right" width="230" src="assets/readme_outside_light.png" alt="The degree-8 square rule with 15 nodes; one node lies just outside the square.">
+</picture>
 
-## Rule files
+Allowing nodes **outside** the domain (quality *PO*) saves nodes in 40 cells. The degree-8 square rule on the right needs only 15 nodes, but one of them sits just outside the square. With all nodes inside, the best known rule has 16 nodes. These rules are useful whenever the integrand is defined beyond the domain, and they are kept in their own family.
 
-File name = id + `.json`. The id has the form
+<br clear="right">
 
-```
-CA-<domain>-<degree, 2 digits>-<points>-<quality>-<family tag>[-a]
-CA-T2-13-35-PI-MPC
+## Use a rule
+
+Every rule is a small JSON file with nodes and weights; the website offers each one as a download (and all of them as a ZIP).
+
+```python
+import json, math
+
+rule = json.load(open("rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json"))
+f = lambda x, y: math.exp(x) * math.cos(y)
+approx = sum(w * f(x, y) for (x, y), w in zip(rule["nodes"], rule["weights"]))
+print(approx)   # 0.668254268891508..., error about 4e-15 with 78 points
 ```
 
-with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1), `C2` square [−1,1]², `T3` tetrahedron (0,0,0),(1,0,0),(0,1,0),(0,0,1), `C3` cube [−1,1]³. Published ids are never reused or renamed; a better rule gets a new id.
+Domains: interval [−1,1], triangle (0,0),(1,0),(0,1), square [−1,1]<sup>2</sup>, tetrahedron (0,0,0),(1,0,0),(0,1,0),(0,0,1), cube [−1,1]<sup>3</sup>. The weights sum to the volume.
 
-```json
-{
-  "id": "CA-T2-03-4-PI-MPC",
-  "family": "minimal_pointcount_for_degree_n_PI",
-  "domain": "triangle",
-  "dimension": 2,
-  "degree": 3,
-  "points": 4,
-  "quality": "PI",
-  "origin": "found",
-  "method": "...",
-  "author": "...",
-  "status": "proven",
-  "locked": false,
-  "numerical_check": {"N": 4, "M": 10, "p": 12, "res": 1e-16, "sigma": 0.3, "h": 1e-14, "rad": 1e-16, "cert": true, "inside": true},
-  "nodes": [[x, y], ...],
-  "weights": [w, ...]
-}
-```
+## Open questions
 
-"Best known" is not stored. The build and the page compute it: for each domain and degree, the rule with the fewest nodes among all rules of at least that degree.
+The atlas marks the places where the truth is not known yet. Three examples:
 
-## Verification and build
+- **Triangle, degree 9:** is 19 nodes minimal? The proven lower bound is 17.
+- **Cube, degree 6:** are 22 nodes inside (21 with nodes outside) minimal? The lower bound is 20.
+- **Square, degree 8:** a 15-node rule inside the square would be optimal. Numerically, the only 15-node rules are the one shown above and its mirror images, with a node outside; an exact proof is still missing.
 
-```bash
-pip install numpy
-python tools/build_atlas.py --check               # verify all rules
-python tools/build_atlas.py                       # verify and build site/
-python tools/build_atlas.py --base origin/main    # also refuse changes to locked rules
-python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
-```
+Ideas, better rules and proofs are welcome.
 
-Every rule must have an interval proof in `reports/interval_proofs.json` for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+## How it was made
 
-### Rigorous check with interval arithmetic
+> **AI-generated.** The search, the computations, the proofs, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by Dr. rer. nat. Jörg Kubitz (Dipl.-Math.).
 
-`tools/build_atlas.py` works in floating point, and so does the numerical Newton–Kantorovich check stored in the rule files as `numerical_check`. Neither is a proof. The proof is `tools/verify_rigorous.py` (Python, numpy), in which every rounding error is accounted for:
+The rules come from numerical searches: symmetric orbit searches, node elimination from larger rules, cannonball-packing starts, and combinations of these (see [code/README.md](code/README.md)). Their results are accepted only after the interval proof. The website and the per-rule pages are generated from the rule files on every change.
 
-1. **Stored numbers.** The decimal numbers of the file are taken exactly. Node positions and weight signs are checked in exact rational arithmetic, and the moment residual of the stored rule is enclosed rigorously for every basis polynomial up to the degree (it must be ≤ 1e-11 per volume).
-2. **Existence of an exact rule.** A Krawczyk test (interval Newton method) proves that the moment equations have an exact solution within a small distance of the stored numbers, and that every rule in that neighbourhood has the stored quality (positive weights, nodes inside). Rules with symmetries are proven in the symmetry-reduced equations (signed permutations on square and cube, permutations of the barycentric coordinates on triangle and tetrahedron); nodes on the boundary are kept exactly on it.
+## Contributing
 
-Basis: Legendre products on boxes, the orthogonal Dubiner (PKD) basis on triangle and tetrahedron. Basis values at the centres of the interval boxes are computed exactly with fractions; matrix products are enclosed with rigorous error bounds that hold for any BLAS.
-
-```bash
-python tools/verify_rigorous.py                                   # all rules
-python tools/verify_rigorous.py --changed origin/main             # only added or changed rule files
-python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json rules/.../<id>.json   # prove new rules and record the proofs
-python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json
-```
-
-The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build requires an entry for every rule and shows it on the website (table "Proofs", column "interval proof") and on every rule page. The report stores a hash of what the proof depends on (domain, degree, quality and the exact decimal strings of nodes and weights), so a proof stays valid when only metadata change. `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass. There are no exceptions: every rule needs a proof.
-
-Current result (all 306 rules): the stored numbers of every rule pass, and for every rule an exact rule with the stored quality is proven to exist within 1.1·10<sup>-10</sup> of the stored numbers. Seven tetrahedron PI rules store a node about 10<sup>-15</sup> outside the face x + y + z = 1 (accepted by the build's tolerance of 10<sup>-12</sup>); for them the proof places that node exactly on the face, and the proven exact rule lies inside. The largest proof (tetrahedron PO, degree 29, 1339 nodes) needs more than 7 GB of memory; it runs on the GitHub runners.
-
-The build writes `site/`: the English page, the German page under `de/`, one static page per rule (both languages, for search engines), `data/atlas.json`, a ZIP of all rules, and `sitemap.xml`. GitHub Actions run the check on every pull request and publish a live preview of the pull request under `pr-preview/pr-<number>/`. On every push to `main` they deploy `site/` to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/atlas.yml`).
-
-## Automatic search
-
-Once a day, `.github/workflows/auto_search.yml` runs three parallel slots of about 150 minutes each (`workflow_dispatch` allows other values).
-
-Each slot (`tools/auto_search.py`):
-- picks a cube degree at random, weighted towards high degrees;
-- picks the symmetry group Td or Oh;
-- picks the mode: a warm-start large-neighbourhood search from the best atlas rules, or a fresh search;
-- runs `code/cubature_search.py`.
-
-If a rule has fewer nodes than every rule of the atlas and of the open automatic pull requests of at least that degree, the slot:
-- checks it numerically with `code/cube_cert.py`;
-- writes the rule file, proves it with `tools/verify_rigorous.py --strict --merge reports/interval_proofs.json` and runs `tools/build_atlas.py --base origin/main`;
-- opens a pull request from `ai/auto-cube-nXX-mYYY` if the check prints `OK`.
-
-Settings:
-- **Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"** must be enabled.
-- Pull requests opened with the default `GITHUB_TOKEN` do not start the pull-request checks and the preview. With a repository secret `AUTO_SEARCH_TOKEN` (a fine-grained token with *Contents* and *Pull requests* write access to this repository) they do.
-
-The tetrahedron has its own workflow, `.github/workflows/auto_cannonball.yml`, started by hand (`workflow_dispatch`: degree, extra points, number of seeds, minutes, maxfev). Each job (`tools/auto_cannonball.py`):
-- runs `code/cannonball_start.py` for one seed: a cannonball packing of ceil(Z(n)) + extra balls, Z(n) = (n+1)(n+2)(n+3)/24, as start, degree continuation with bounded least squares, then node elimination until the budget is used up (a snapshot after every elimination round);
-- keeps all results as a workflow artifact;
-- takes the smallest exact PI result and, if it has fewer nodes than every tetrahedron rule of the atlas and of the open pull requests `ai/auto-tet-*` of at least that degree, checks it numerically with `code/cubature_atlas.py`, writes the rule file, proves it with `tools/verify_rigorous.py`, runs `tools/build_atlas.py --base origin/main` and opens a pull request from `ai/auto-tet-nXX-mYYY` if the check prints `OK`.
-
-The same settings as above apply.
-
-## Translations
-
-English is the source. `i18n/de.json` stores, for each key, a hash of the English text it was translated from (`_source`), and `content/de/documentation.html` does the same in its first line. If an English text changes, the build warns that the German one is stale (`--strict` turns this into an error), and the German page shows a notice. After updating the German text, run `python tools/build_atlas.py --sync-hashes`.
+Pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) describes the workflow; [DEVELOPMENT.md](DEVELOPMENT.md) describes the rule files, the families, the checks and proofs, the automatic searches and the translations; [literature.md](literature.md) lists the literature used and tried.
 
 ## Citing
 
