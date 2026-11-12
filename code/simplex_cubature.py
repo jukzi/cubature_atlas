@@ -52,9 +52,10 @@ Method (overview)
 6.  Initial rule.  A positive rule is obtained from many random candidate orbits by
     non-negative least squares; by Caratheodory / Tchakaloff the basic solution has
     at most (number of equations) orbits.
-    Tchakaloff (1957); Caratheodory-Tchakaloff subsampling: Piazzon, Sommariva,
-    Vianello, Dolomites Res. Notes Approx. 10 (2017),
-    https://doi.org/10.14658/pupj-drna-2017-Special_Issue-5
+    V. Tchakaloff, Bull. Sci. Math. (2) 81 (1957) 123-134; Caratheodory-Tchakaloff
+    subsampling: Piazzon, Sommariva, Vianello, "Caratheodory-Tchakaloff least squares",
+    2017 International Conference on Sampling Theory and Applications (SampTA) 672-676,
+    https://doi.org/10.1109/SAMPTA.2017.8024337
 
 7.  Node elimination.  Repeatedly remove an orbit or merge two barycentric values of
     an orbit (e.g. S1111 -> S211, which halves its points) and re-solve; accept the
@@ -101,8 +102,9 @@ from scipy.special import roots_jacobi
 #   Jaskowiec, Sukumar, IJNME 122 (2021) 148-171,
 #       https://doi.org/10.1002/nme.6528               (n <= 20)
 #   Chuluunbaatar et al., Comput. Math. Appl. 124 (2022) 89-97,
-#       https://doi.org/10.1016/j.camwa.2022.08.011    (n <= 20)
-#   Worku, Hicken, Zingg, arXiv:2409.02027             (n <= 40)
+#       https://doi.org/10.1016/j.camwa.2022.08.016    (n <= 20)
+#   Worku, Hicken, Zingg, J. Comput. Appl. Math. 472 (2026) 116782,
+#       arXiv:2409.02027                               (n <= 40)
 # ---------------------------------------------------------------------------
 LITERATURE_SYM_TET = {
     1: 1, 2: 4, 3: 8, 4: 14, 5: 14, 6: 24, 7: 35, 8: 46, 9: 59, 10: 79,

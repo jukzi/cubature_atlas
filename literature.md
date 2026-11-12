@@ -17,6 +17,18 @@ Every pull request that uses, tests or finds literature adds it here, in the rig
 
 ## 1. Used in the atlas
 
+### V. Tchakaloff: Formules de cubature mécanique à coefficients non négatifs. Bull. Sci. Math. (2) 81 (1957) 123–134. <https://arxiv.org/abs/math/0502473>
+
+Tchakaloff's theorem: a positive rule with at most as many nodes as dim P_k exists; the idea behind the non-negative least squares start in `code/simplex_cubature.py`. The paper itself could not be read online; the link is the paper of Bayer and Teichmann (Proc. AMS 134 (2006)), whose bibliography confirms this reference.
+
+> No abstract available
+
+### S. L. Sobolev: The formulas of mechanical cubature on the surface of a sphere. Sibirsk. Mat. Zh. 3 (1962) 769–796. <https://mathnet.ru/eng/smj4866>
+
+Cited in `code/cubature_search.py` for the fact that a rule invariant under a finite group is exact as soon as it is exact for the invariant polynomials.
+
+> No abstract available
+
 ### A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). <https://archive.org/details/approximatecalcu0000stro_b8j7/>
 
 Conical product rule used as the reference quadrature in `code/simplex_cubature.py`. The link is the Internet Archive record of the book (Prentice-Hall, Englewood Cliffs, N.J., 1971, xiii + 431 pages, ISBN 0130438936); the book is access-restricted there, so it can only be borrowed. A review in Math. Comp. 27 (1973) is at <https://doi.org/10.2307/2005635>.
@@ -40,6 +52,12 @@ Summary in our own words, the publisher's abstract is not reproduced: it recalls
 Cited in the documentation as an early symmetric triangle collection.
 
 > Gaussian quadrature is required for the computation of matrices based on the isoparametric formulztion of the finite element method. A brief review of existing quadrature rules for the triangle is given, and the method for the determination of high degree efficient symmetrical rules for the triangle is discussed. New quadrature rules of degree 12–20 are presented, and a short FORTRAN program is included.
+
+### M. Dubiner: Spectral methods on triangles and other domains. J. Sci. Comput. 6 (1991) 345–390. <https://doi.org/10.1007/BF01060030>
+
+Orthonormal Proriol–Koornwinder–Dubiner basis, used for the independent check of the rules in `code/simplex_cubature.py`.
+
+> No abstract available
 
 ### R. Cools, P. Rabinowitz: Monomial cubature rules since “Stroud”: a compilation. J. Comput. Appl. Math. 48 (1993) 309–326. <https://doi.org/10.1016/0377-0427(93)90027-9>
 
@@ -103,7 +121,7 @@ Orbit parametrisation and orthonormal-basis moment equations (`code/cubature_sea
 
 ### F. Piazzon, A. Sommariva, M. Vianello: Caratheodory-Tchakaloff least squares. 2017 International Conference on Sampling Theory and Applications (SampTA), IEEE (2017) 672–676. <https://doi.org/10.1109/SAMPTA.2017.8024337>
 
-Caratheodory–Tchakaloff subsampling, the idea behind the non-negative least squares start in `code/simplex_cubature.py`. The docstring there names a different venue and a DOI that does not resolve; this entry is the paper that could be verified.
+Caratheodory–Tchakaloff subsampling, the idea behind the non-negative least squares start in `code/simplex_cubature.py`. The docstring named a different venue and a DOI that does not resolve; it now cites this paper.
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper discusses Caratheodory-Tchakaloff subsampling, implemented by linear or quadratic programming, to compress multivariate discrete measures and to compress polynomial least squares problems.
 
@@ -127,6 +145,12 @@ Fully symmetric tetrahedron rules, family `jaskowiec_sukumar_2020`.
                     p
                     is increased, though in some cases nonmonotonic convergence is observed.
 
+### P. D. Brubeck, Y. Nakatsukasa, L. N. Trefethen: Vandermonde with Arnoldi. SIAM Review 63 (2021) 405–415. <https://doi.org/10.1137/19M130100X>
+
+Idea of the Arnoldi-type construction of the polynomial basis in `code/simplex_cubature.py`.
+
+> Vandermonde matrices are exponentially ill-conditioned, rendering the familiar “polyval(polyfit)” algorithm for polynomial interpolation and least-squares fitting ineffective at higher degrees. We show that Arnoldi orthogonalization fixes the problem. This amounts to on-the-fly construction of discrete orthogonal polynomials by Stieltjes orthogonalization.
+
 ### J. Jaśkowiec, N. Sukumar: High-order symmetric cubature rules for tetrahedra and pyramids. Int. J. Numer. Methods Eng. 122 (2021) 148–171. <https://doi.org/10.1002/nme.6528>
 
 Fully symmetric tetrahedron rules up to degree 20, family `jaskowiec_sukumar_2020`.
@@ -138,6 +162,12 @@ Fully symmetric tetrahedron rules up to degree 20, family `jaskowiec_sukumar_202
 Addendum to the previous entry.
 
 > In Jaśkowiec and Sukumar (Int J Numer Methods Eng, doi: 10.1002/nme.6528, 2020), we presented high‐order (p = 2–20) symmetric cubatures rules for tetrahedra and pyramids. This algorithm was sensitive to the initial location of the cubature nodes, and it did not converge for p > 11 over prisms and hexahedra (cubes). In this addendum, we resolve this issue and obtain high‐order symmetric rules over prisms and cubes. For the prism, we use the initial guess for the cubature rule as the tensor product of a cubature rule over a triangle and a univariate Gauss quadrature rule, and for the cube the initial guess is the tensor product of univariate Gauss quadrature rules. Verification and convergence tests are presented to affirm the accuracy of the cubature rules. On applying the cubature algorithm described in Jaśkowiec and Sukumar (Int J Numer Methods Eng, 121(11), 2418–2436, 2020), we also construct nonsymmetric high‐order (p = 2–20) cubature rules over prisms, cubes, and pyramids. In the supplementary materials, all cubature rules (128 digits of precision) are provided in a text file and in  format.
+
+### G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, …, 6-simplexes. Comput. Math. Appl. 124 (2022) 89–97. <https://doi.org/10.1016/j.camwa.2022.08.016>
+
+Fully symmetric tetrahedron counts up to degree 20, tabulated for comparison in `code/simplex_cubature.py`.
+
+> No abstract available
 
 ### A. Slobodkins, J. Tausch: A node elimination algorithm for cubature of high-dimensional polytopes. Comput. Math. Appl. 144 (2023) 229–236 (arXiv:2207.10737, 2022). <https://arxiv.org/abs/2207.10737>
 
