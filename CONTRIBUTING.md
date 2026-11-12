@@ -12,7 +12,7 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 
 ## Rules for rule files
 
-- One rule per file, in `rules/<family>/<domain>/<id>.json`. See the README for the format and the id scheme.
+- One rule per file, in `rules/<family>/<domain>/<id>.json`. See [DEVELOPMENT.md](DEVELOPMENT.md) for the format and the id scheme.
 - **Never change or delete a file with `"locked": true`.** The check rejects it. A better rule is a new file with a new id. The old one stays; the page shows the best one automatically.
 - Do not store "best known" flags. They are computed.
 - Store at least 15 significant digits. The check requires all monomial moments to be correct to 1e-11 per volume.
