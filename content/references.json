@@ -123,5 +123,11 @@
     "y": "2011",
     "t": "Z. Meng, Z. Luo: Constructing cubature formulas of degree 5 with few points. arXiv:1111.5094 (2011). States that for even degrees no lower bound beyond dim P_k is known (referring to the survey [4]).",
     "u": "https://arxiv.org/abs/1111.5094"
+  },
+  {
+    "n": 21,
+    "y": "2026",
+    "t": "J. Pinkse: Positive weight Hermite and Legendre quadrature rules. arXiv:2609.26840 (2026). Rules for the uniform weight on the cube up to five dimensions; the data (80 digits, CC BY 4.0) are on Zenodo, doi:10.5281/zenodo.22881864.",
+    "u": "https://arxiv.org/abs/2609.26840"
   }
 ]

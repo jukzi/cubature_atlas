@@ -9915,6 +9915,72 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C3-21-476-PI-PK",
+   "file": "rules/pinkse_2026/cube/CA-C3-21-476-PI-PK.json",
+   "domain": "cube",
+   "degree": 21,
+   "points": 476,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "7827d1bba5d7c596",
+   "stored": {
+    "res_bound": 3.863819139448117e-15,
+    "res_ok": true,
+    "margin_exact": 9.994749979e-07,
+    "minw_exact": 0.0007147186647804805,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 2.3871893419084555e-12,
+    "kratio": 0.6668150597077145,
+    "mode": "sym2",
+    "equations": 946,
+    "unknowns": 952,
+    "dist": 1.9099790694744087e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 19.49,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C3-29-1184-PI-PK",
+   "file": "rules/pinkse_2026/cube/CA-C3-29-1184-PI-PK.json",
+   "domain": "cube",
+   "degree": 29,
+   "points": 1184,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "88d60932c1be7c37",
+   "stored": {
+    "res_bound": 7.26642264518784e-15,
+    "res_ok": true,
+    "margin_exact": 9.817142392e-07,
+    "minw_exact": 9.030193815642108e-05,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 5.066672922230005e-12,
+    "kratio": 0.6697057971162892,
+    "mode": "sym2",
+    "equations": 2360,
+    "unknowns": 2368,
+    "dist": 8.106687777809358e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 43.15,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T2-01-1-PI-WV",
    "file": "rules/witherden_vincent_2015/triangle/CA-T2-01-1-PI-WV.json",
    "domain": "triangle",
