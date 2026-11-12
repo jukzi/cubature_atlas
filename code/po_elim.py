@@ -19,6 +19,7 @@ import json
 import math
 import time
 import numpy as np
+from scipy.linalg import solve_triangular
 
 # Line-search solver with Cholesky steps, shared with the other programs.
 os.environ["CUB_LM"] = "1"
@@ -129,6 +130,10 @@ CANDS = os.environ.get("CANDS", "all")
 # INSIDE=1: PI search (nodes stay in the closed domain, mode "d" of dom.ProbG).
 INSIDE = os.environ.get("INSIDE", "0") == "1"
 MODE = "d" if INSIDE else "b"
+# Solver: lm (default), lmstop (LM with early stop), chord (rank-1 downdates + chord steps, then lmstop), gn.
+SOLVER = os.environ.get("SOLVER", "lm")
+# Number of smallest-weight (and of random) nodes tried per chord round.
+CHORDK = int(os.environ.get("CHORDK", "30"))
 # Nodes removed per deletion step.
 DELK = int(os.environ.get("DELK", "1"))
 # Iterations of the local solver per attempt.
@@ -162,6 +167,78 @@ def solve_gn_minnorm(pr, x0, N, iters):
     out.x = x
     out.cost = 0.5 * float(r @ r)
     return out
+
+
+def chol_downdate(U, v):
+    """Rank-1 downdate of an upper Cholesky factor in place: U^T U - v v^T. Returns False if it is not positive definite."""
+    v = v.copy()
+    n = len(v)
+    for k in range(n):
+        d = U[k, k] * U[k, k] - v[k] * v[k]
+        if d <= 0.0:
+            return False
+        r = math.sqrt(d)
+        c = r / U[k, k]
+        s = v[k] / U[k, k]
+        U[k, k] = r
+        if k + 1 < n:
+            U[k, k + 1:] = (U[k, k + 1:] - s * v[k + 1:]) / c
+            v[k + 1:] = c * v[k + 1:] - s * U[k, k + 1:]
+    return True
+
+
+def chord_factor(pr, x, N):
+    """Jacobian J at x and upper Cholesky factor U of J J^T + lam I (computed once per accepted rule)."""
+    J = pr.jac(x, N)
+    G = J @ J.T
+    lam = 1e-13 * np.trace(G) / len(G)
+    G[np.diag_indices_from(G)] += lam
+    U = np.linalg.cholesky(G).T.copy()
+    return J, U
+
+
+def solve_chord(pr, J, U, x, N, cols, iters):
+    """Delete the unknowns cols (one node): rank-1 downdates of U, then chord steps x <- x - J'^T (J' J'^T)^-1 r with fixed J'.
+    Early stop when the residual does not halve within 3 steps. Returns (x', cost) or (None, inf)."""
+    Ud = U.copy()
+    for c in cols:
+        if not chol_downdate(Ud, J[:, c]):
+            return None, np.inf
+    keep = np.delete(np.arange(len(x)), cols)
+    Jd = J[:, keep]
+    xn = x[keep].copy()
+    lo, hi = pr.bounds(N - 1, MODE)
+    r = pr.res(xn, N - 1)
+    hist = [float(r @ r)]
+    for it in range(iters):
+        y = solve_triangular(Ud, solve_triangular(Ud, r, trans="T"))
+        xn = xn - Jd.T @ y
+        if np.any(xn < lo) or np.any(xn > hi):
+            return None, np.inf
+        r = pr.res(xn, N - 1)
+        hist.append(float(r @ r))
+        if hist[-1] < 1e-22:
+            break
+        # Early stop on stagnation: the squared residual must drop by 4 (residual by 2) within 3 steps.
+        if len(hist) > 3 and hist[-1] > 0.25 * hist[-4]:
+            return None, np.inf
+    return xn, 0.5 * hist[-1]
+
+
+def solve_lm_stop(pr, x0, N, maxit):
+    """Levenberg-Marquardt in blocks of 15 iterations; stop as soon as a block reduces the cost by less than a factor 10."""
+    x = x0
+    best = np.inf
+    done = 0
+    r = None
+    while done < maxit:
+        r = pr.solve_lm(x, N, MODE, max_iter=15)
+        done += 15
+        if r.cost < 1e-24 or r.cost > 0.1 * best:
+            break
+        best = r.cost
+        x = r.x
+    return r
 
 
 def atlas_best_pi(name, deg):
@@ -209,22 +286,10 @@ def ok_rule(name, deg, X, W):
     return c
 
 
-def main():
-    # Arguments.
-    name = sys.argv[1]
-    deg = int(sys.argv[2])
-    tl = float(sys.argv[3])
-    seed = int(sys.argv[4])
-    rng = np.random.default_rng(seed)
-    # Dimension of the domain.
+def run_elim(name, deg, tl, rng, P, w):
+    """Node elimination from the rule (P, w); saves every accepted rule; returns (N, nodes, weights) of the last accepted rule."""
     D = 3 if name in ("cube", "tetra") else 2
-    # Start rule.
-    if len(sys.argv) > 5:
-        A = np.load(sys.argv[5])
-        P = A[:, :D]
-        w = A[:, D]
-    else:
-        P, w = atlas_best_pi(name, deg)
+    best = (len(w), None, None)
     # Centrally symmetric search on the cube (environment CS=1).
     sym = name == "cube" and os.environ.get("CS", "0") == "1"
     tail = np.zeros(0)
@@ -246,6 +311,8 @@ def main():
     x = np.r_[P.ravel(), w, tail]
     t0 = time.time()
     fails = 0
+    Jc = None
+    Uc = None
     # Stop when one node (pair) less would give fewer unknowns than moments (generic count reached).
     while time.time() - t0 < tl and (D + 1) * (N - 1) + len(tail) >= pr.M:
         Qc = x[:D * N].reshape(N, D)
@@ -263,6 +330,42 @@ def main():
         if CANDS == "small":
             cands = [("del", int(k)) for k in order[:8]]
         done = False
+        if SOLVER == "chord":
+            # One factorization per accepted rule; every deletion candidate costs only rank-1 downdates and chord steps.
+            if fails == 0 or Jc is None:
+                Jc, Uc = chord_factor(pr, x, N)
+            ks = [int(k) for k in order[:CHORDK]]
+            ks += [int(k) for k in rng.choice(N, min(CHORDK, N), replace=False) if int(k) not in ks]
+            for k in ks:
+                cols = [D * k + j for j in range(D)] + [D * N + k]
+                xs, cost = solve_chord(pr, Jc, Uc, x, N, cols, MI)
+                if xs is None or cost > 1e-16:
+                    continue
+                if cost > 1e-24:
+                    rr = pr.solve_lm(xs, N - 1, MODE, max_iter=10)
+                    xs = rr.x
+                    cost = rr.cost
+                if cost < 1e-24:
+                    Xp, Wp = pr.full_points(xs, N - 1)
+                    cert = ok_rule(name, deg, Xp, Wp)
+                    if cert is not None:
+                        np.save("po_%s_d%d_n%d.npy" % (name, deg, len(Wp)), np.c_[Xp, Wp])
+                        best = (len(Wp), Xp, Wp)
+                        x = xs
+                        N = N - 1
+                        done = True
+                        fails = 0
+                        Jc = None
+                        print("  -> %d nodes (chord) t=%.0fs" % (len(Wp), time.time() - t0), flush=True)
+                        break
+                if time.time() - t0 > tl:
+                    break
+            if not done:
+                fails += 1
+                print("  round without success at %d (#%d) t=%.0fs" % (N, fails, time.time() - t0), flush=True)
+                # The chord candidates are deterministic: after a failed round fall back to the perturbed LM round.
+            else:
+                continue
         for kind, c in cands:
             if kind == "del":
                 # Remove node c and the DELK - 1 nodes with the smallest weights besides it.
@@ -283,8 +386,10 @@ def main():
                 continue
             lo, hi = pr.bounds(Nn, MODE)
             xn = np.clip(np.r_[Qn.ravel(), wn, x[(D + 1) * N:]], lo, hi)
-            if os.environ.get("SOLVER", "lm") == "gn":
+            if SOLVER == "gn":
                 r = solve_gn_minnorm(pr, xn, Nn, MI)
+            elif SOLVER in ("lmstop", "chord"):
+                r = solve_lm_stop(pr, xn, Nn, MI)
             else:
                 r = pr.solve_lm(xn, Nn, MODE, max_iter=MI)
             if r.cost < 1e-24:
@@ -292,6 +397,7 @@ def main():
                 cert = ok_rule(name, deg, Xp, Wp)
                 if cert is not None:
                     np.save("po_%s_d%d_n%d.npy" % (name, deg, len(Wp)), np.c_[Xp, Wp])
+                    best = (len(Wp), Xp, Wp)
                     x = r.x
                     N = Nn
                     done = True
@@ -304,6 +410,27 @@ def main():
             fails += 1
             print("  round without success at %d (#%d) t=%.0fs" % (N, fails, time.time() - t0), flush=True)
     print("END", name, deg, N, flush=True)
+    return best
+
+
+def main():
+    # Arguments.
+    name = sys.argv[1]
+    deg = int(sys.argv[2])
+    tl = float(sys.argv[3])
+    seed = int(sys.argv[4])
+    rng = np.random.default_rng(seed)
+    # Dimension of the domain.
+    D = 3 if name in ("cube", "tetra") else 2
+    # Start rule.
+    if len(sys.argv) > 5:
+        A = np.load(sys.argv[5])
+        P = A[:, :D]
+        w = A[:, D]
+    else:
+        P, w = atlas_best_pi(name, deg)
+    best = run_elim(name, deg, tl, rng, P, w)
+
 
 
 if __name__ == "__main__":
