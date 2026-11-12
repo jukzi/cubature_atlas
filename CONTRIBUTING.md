@@ -25,6 +25,10 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 
 After review, the maintainer sets `"locked": true` on rules that are published or cited. Literature rules are locked from the start.
 
+## Literature
+
+`literature.md` lists the literature on the topic in three sections: used in the atlas, tried but not worthwhile, not used yet. Every pull request that uses, tests or finds a publication extends it (right section, sorted by date, with link and abstract, in English). Check each reference against its DOI or arXiv page; never invent a citation.
+
 ## Translations
 
 English texts are the source (`i18n/en.json`, `content/en/`). If you change an English text, update the German one in the same pull request (`i18n/de.json`, `content/de/`) and then run `python tools/build_atlas.py --sync-hashes`. Do not run `--sync-hashes` without actually updating the translation.
