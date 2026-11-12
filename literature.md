@@ -99,7 +99,7 @@ Section 2 gives Möller's lower bound for centrally symmetric weights in explici
 
 Cited in the docstrings of `code/cubature_search.py` and `code/simplex_cubature.py` for the node elimination idea; the tetrahedron counts in `code/simplex_cubature.py` are taken from its rules as tabulated by J. Burkardt.
 
-> No abstract available
+Summary in our own words, the publisher's abstract is not reproduced: the paper presents a numerical algorithm that constructs efficient high-order quadrature rules in two and more dimensions. The rules have positive weights and interior nodes, like Gauss rules in one dimension, and can be generated with different degrees of symmetry adapted to the domain. Examples are rules for polynomials on triangles, squares and cubes up to degree 50, which are described as near optimal in the number of nodes, many of them new. (Read on ResearchGate, https://www.researchgate.net/publication/220513533.)
 
 ### Z. Meng, Z. Luo: Constructing cubature formulae of degree 5 with few points. J. Comput. Appl. Math. 237 (2013) 354–362 (arXiv:1111.5094, 2011). <https://arxiv.org/abs/1111.5094>
 
