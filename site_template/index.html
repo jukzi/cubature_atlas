@@ -6108,8 +6108,8 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   var base=Math.max(2.2,Math.min(cw,chh)/(dim===1?24:(is3?Math.pow(r.n,1/3)*26:Math.sqrt(r.n)*13)));
   var ctr=proj(dim===2?[d.c[0],d.c[1],0]:d.c);
   items.forEach(function(q){var hasNeg=wmin<0,tt=hasNeg?Math.max(q.w,0)/(wmax||1):(wmax>wmin?(q.w-wmin)/(wmax-wmin):.5),c=hasNeg&&q.w<0?lerpc(NEGL,NEGD,Math.min(1,q.w/wmin)):lerpc(w0,w1,tt),rad=(dim===1&&d1?.5:1)*base*(st.size?Math.pow(Math.abs(q.w/wavg),dim===3?1/3:.5):1)*q.k;
-    var trueSize=st.size&&dim>=2&&!st.pack;
-    if(trueSize){var aw=Math.abs(q.w),R=dim===2?Math.sqrt(aw/Math.PI):Math.cbrt(3*aw/(4*Math.PI));rad=Math.max(.8,R*d.s*scale*q.k);}
+    var trueSize=st.size&&!st.pack;
+    if(trueSize){var aw=Math.abs(q.w),R=dim===1?aw/2:(dim===2?Math.sqrt(aw/Math.PI):Math.cbrt(3*aw/(4*Math.PI)));rad=Math.max(.8,R*(dim===1?1.1:d.s)*scale*q.k);}
     else{rad=Math.max(1.6,Math.min(rad,base*2.4));if(dim===1&&d1)rad=Math.min(rad,9);}
     if(st.pack){packBall(ctx,q,nnr[q.i]*q.k,c);return;}
     var rgb='rgb('+c.map(Math.round).join(',')+')';
