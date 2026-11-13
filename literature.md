@@ -241,7 +241,7 @@ Different construction of quadrature points (cardinal functions instead of node 
 
 ### M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. <https://doi.org/10.1016/j.cam.2007.04.050>
 
-Asymmetric rules on the triangle and square, like the atlas rules. Only title and metadata were seen; the counts have not been compared with the atlas.
+Asymmetric rules on the triangle and square, like the atlas rules (full text read). Five rules with positive weights and no points outside, each with fewer points than the best earlier ones in Cools's database: triangle degrees 10, 11, 12 with 24, 27, 32 points; square degrees 10 and 12 with 22 and 31 points. These counts enter the column N_Lit (the same triangle counts appear in Table 1 of Xiao–Gimbutas 2010, which is later).
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper presents five new cubature formulas for exact integration of polynomials: degrees 10, 11 and 12 on the triangle and degrees 10 and 12 on the square. The points were computed with a cardinal function algorithm that imposes no symmetry. The formulas have positive weights, no points outside the domain, and fewer points than previously known results.
 

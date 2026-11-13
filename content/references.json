@@ -153,5 +153,11 @@
     "y": "1971",
     "t": "A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). Positive interior rules for the square with 4, 7 and 12 points for the degrees 3, 5 and 7, as listed in Table 1 of [23]; for the cube 6 and 13 points for the degrees 3 and 5, as listed in Table 2 of [21].",
     "u": "https://archive.org/details/approximatecalcu0000stro_b8j7/"
+  },
+  {
+    "n": 26,
+    "y": "2008",
+    "t": "M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. Positive interior rules with 24, 27, 32 points on the triangle (degrees 10, 11, 12) and 22, 31 points on the square (degrees 10, 12).",
+    "u": "https://doi.org/10.1016/j.cam.2007.04.050"
   }
 ]
