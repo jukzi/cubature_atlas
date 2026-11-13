@@ -89,6 +89,26 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-18-436-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-19-487-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-20-552-PI-JS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-02-4-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-03-6-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-04-11-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-05-14-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-06-23-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-07-31-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-08-44-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-09-57-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-10-74-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-11-94-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-12-117-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-13-144-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-14-175-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-15-207-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-16-247-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-17-288-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-18-338-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-19-390-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-19-392-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-20-448-PI-JN.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-01-1-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-02-4-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-03-6-PI-MPC.html</loc></url>
@@ -467,6 +487,26 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-18-436-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-19-487-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-20-552-PI-JS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-02-4-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-03-6-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-04-11-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-05-14-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-06-23-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-07-31-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-08-44-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-09-57-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-10-74-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-11-94-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-12-117-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-13-144-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-14-175-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-15-207-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-16-247-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-17-288-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-18-338-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-19-390-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-19-392-PI-JN.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-20-448-PI-JN.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-01-1-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-02-4-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-03-6-PI-MPC.html</loc></url>
