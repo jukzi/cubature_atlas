@@ -9,7 +9,7 @@ Everything needed to add rules, run the checks and the proofs, and work on the w
 | `rules/<family>/family.json` | Name and description of a rule family, in English and German |
 | `rules/<family>/<domain>/<id>.json` | One rule per file: metadata, nodes, weights |
 | `literature.md` | Literature on the topic: used in the atlas, tried but not worthwhile, not used yet (with links and abstracts) |
-| `reference_data/literature_counts.json` | Node counts from the literature without stored points (Xiao–Gimbutas, symmetric rules) |
+| `reference_data/literature_counts.json` | Node counts from the literature without stored points (Xiao–Gimbutas, symmetric rules, Pinkse) |
 | `i18n/en.json`, `i18n/de.json` | Texts of the website (English is the source) |
 | `content/en/`, `content/de/` | Documentation section of the website |
 | `content/references.json` | Bibliography |
