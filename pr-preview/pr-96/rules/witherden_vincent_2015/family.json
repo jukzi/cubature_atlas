@@ -16,7 +16,7 @@
     "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015). Knoten und Gewichte wie veröffentlicht (15 Stellen); der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    9
+    17
   ],
   "author": "Witherden–Vincent"
 }
