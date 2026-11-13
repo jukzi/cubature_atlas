@@ -6652,6 +6652,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-T3-25-824-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-25-824-PI-MPC.json",
+   "domain": "tetra",
+   "degree": 25,
+   "points": 824,
+   "quality": "PI",
+   "status": "verified",
+   "sha": "2fdb7bdfe0a68b67",
+   "stored": {
+    "res_bound": 5.0050852598456526e-15,
+    "res_ok": true,
+    "margin_exact": 9.99992591428287e-07,
+    "minw_exact": 2.045849295656666e-06,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.0938389737096991e-12,
+    "kratio": 0.6669286736499864,
+    "mode": "full",
+    "equations": 3276,
+    "unknowns": 3296,
+    "dist": 3.5006899476802573e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 104.65,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-25-832-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-25-832-PI-MPC.json",
    "domain": "tetra",
