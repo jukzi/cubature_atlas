@@ -5690,7 +5690,7 @@ Object.keys(DOM).forEach(function(k){DOM[k].cols.forEach(function(c){while(c.arr
 ['square','cube'].forEach(function(dm){var c=DOM[dm].cols.filter(function(x){return x.k==='sym';})[0];
   for(var n=21;n<=MAXN;n++){var b=null;LIT[dm].forEach(function(r){if(r.deg>=n&&(b==null||r.n<b))b=r.n;});c.arr[n-1]=b;}});
 Object.keys(DOM).forEach(function(k){var m=0;for(var n=1;n<=MAXN;n++){var r=DATA[k][n];if(r&&r.src!=='gauss')m=n;else if(r){delete DATA[k][n];}}DOM[k].maxn=m;});
-var SRCREF=ATLAS_SRCREF,EXTRA=['st','mo','ch','os','ta','cb','wk'];
+var SRCREF=ATLAS_SRCREF,EXTRA=['st','mo','ch','os','ta','cb','wk','js'];
 Object.keys(DOM).forEach(function(k){var cs=DOM[k].cols,xg=cs.filter(function(c){return c.k==='xg';})[0],sy=cs.filter(function(c){return c.k==='sym';})[0],pk=cs.filter(function(c){return c.k==='pk';})[0],fs=cs.filter(function(c){return c.k==='fs';})[0];
   if(!xg&&!sy&&!pk)return;var arr=[],src=[];
   for(var n=1;n<=MAXN;n++){var xv=xg?xg.arr[n-1]:null,sv=sy?sy.arr[n-1]:null,pv=pk?pk.arr[n-1]:null,fv=fs?fs.arr[n-1]:null,v=null,rf=[];
