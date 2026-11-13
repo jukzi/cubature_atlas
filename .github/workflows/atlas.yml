@@ -63,6 +63,7 @@ jobs:
           source-dir: site
           preview-branch: gh-pages
           umbrella-dir: pr-preview
+          qr-code: false
           action: deploy
 
   remove-preview:
