@@ -1,75 +1,141 @@
 [
   {
     "n": 1,
+    "y": "1971",
+    "t": "A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). Positive interior rules for the square with 4, 7 and 12 points for the degrees 3, 5 and 7, as listed in Table 1 of [12]; for the cube 6 and 13 points for the degrees 3 and 5, as listed in Table 2 of [25].",
+    "u": "https://archive.org/details/approximatecalcu0000stro_b8j7/"
+  },
+  {
+    "n": 2,
     "y": "1976",
     "t": "H. M. Möller: Kubaturformeln mit minimaler Knotenzahl. Numerische Mathematik 25 (1976).",
     "u": "https://portal.mardi4nfdi.de/wiki/Publication:1222930"
   },
   {
-    "n": 2,
+    "n": 3,
+    "y": "1979",
+    "t": "H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230.",
+    "u": "https://doi.org/10.1007/978-3-0348-6288-2_17"
+  },
+  {
+    "n": 4,
     "y": "1985",
     "t": "D. A. Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. Int. J. Numer. Methods Eng. 21 (1985).",
     "u": "https://people.sc.fsu.edu/~jburkardt/m_src/triangle_dunavant_rule/triangle_dunavant_rule.html"
   },
   {
-    "n": 3,
+    "n": 5,
+    "y": "1988",
+    "t": "R. Cools, A. Haegemans: Another step forward in searching for cubature formulae with a minimal number of knots for the square. Computing 40 (1988) 139–146. Positive interior rules with 24 and 33 points for the degrees 11 and 13, as listed in Table 1 of [12].",
+    "u": "https://doi.org/10.1007/bf02247942"
+  },
+  {
+    "n": 6,
     "y": "1993",
     "t": "R. Cools, P. Rabinowitz: Monomial cubature rules since “Stroud”: a compilation. J. Comput. Appl. Math. 48 (1993).",
     "u": "https://portal.mardi4nfdi.de/wiki/Publication:1318438"
   },
   {
-    "n": 4,
+    "n": 7,
     "y": "1997",
     "t": "R. Cools: Constructing cubature formulae: the science behind the art. Acta Numerica 6 (1997).",
     "u": "https://doi.org/10.1017/S0962492900002701"
   },
   {
-    "n": 5,
+    "n": 8,
     "y": "1999",
     "t": "R. Cools: Monomial cubature rules since “Stroud”: a compilation – part 2. J. Comput. Appl. Math. 112 (1999) 21–27.",
     "u": "http://dx.doi.org/10.1016/S0377-0427(99)00229-0"
   },
   {
-    "n": 6,
+    "n": 9,
     "y": "2003",
     "t": "S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003).",
     "u": "https://portal.mardi4nfdi.de/wiki/Publication:1827222"
   },
   {
-    "n": 7,
+    "n": 10,
     "y": "2003",
-    "t": "R. Cools: An Encyclopaedia of Cubature Formulas. J. Complexity 19 (2003) 445–453. The online database at KU Leuven asks to cite this article together with [3] and [5] (page retrieved 2026-11-06).",
+    "t": "R. Cools: An Encyclopaedia of Cubature Formulas. J. Complexity 19 (2003) 445–453. The online database at KU Leuven asks to cite this article together with [6] and [8] (page retrieved 2026-11-06).",
     "u": "http://dx.doi.org/10.1016/S0885-064X(03)00011-6",
     "u2": "https://nines.cs.kuleuven.be/research/ecf/",
     "l2": "Database"
   },
   {
-    "n": 8,
+    "n": 11,
+    "y": "2005",
+    "t": "A. Hinrichs, E. Novak: Cubature formulas for symmetric measures in higher dimensions with few points. arXiv:math/0509101 (2005). Section 2 gives Möller's bound for centrally symmetric weights in explicit form.",
+    "u": "https://arxiv.org/abs/math/0509101"
+  },
+  {
+    "n": 12,
+    "y": "2006",
+    "t": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Positive interior rules with 44, 56, 68 and 81 points for the degrees 15, 17, 19, 21 (Tables 1 and 7).",
+    "u": "https://doi.org/10.1016/j.cam.2005.04.005"
+  },
+  {
+    "n": 13,
+    "y": "2008",
+    "t": "M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. Positive interior rules with 24, 27, 32 points on the triangle (degrees 10, 11, 12) and 22, 31 points on the square (degrees 10, 12).",
+    "u": "https://doi.org/10.1016/j.cam.2007.04.050"
+  },
+  {
+    "n": 14,
     "y": "2010",
     "t": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663–676.",
     "u": "https://portal.mardi4nfdi.de/wiki/Publication:980255"
   },
   {
-    "n": 9,
+    "n": 15,
+    "y": "2011",
+    "t": "Z. Meng, Z. Luo: Constructing cubature formulas of degree 5 with few points. arXiv:1111.5094 (2011). States that for even degrees no lower bound beyond dim P_k is known (referring to the survey [7]).",
+    "u": "https://arxiv.org/abs/1111.5094"
+  },
+  {
+    "n": 16,
+    "y": "2012",
+    "t": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Rules for the degrees 24 to 55 and new rules for the degrees 15, 17, 19, 23 (Tables 1 and 2).",
+    "u": "https://doi.org/10.1016/j.cam.2012.05.021"
+  },
+  {
+    "n": 17,
     "y": "2015",
     "t": "F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015).",
     "u": "https://arxiv.org/abs/1409.1865"
   },
   {
-    "n": 10,
+    "n": 18,
     "y": "2020",
     "t": "J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020).",
     "u": "https://www.osti.gov/biblio/1596161"
   },
   {
-    "n": 11,
+    "n": 19,
     "y": "2021",
     "t": "J. Jaśkowiec, N. Sukumar: High-order symmetric cubature rules for tetrahedra and pyramids. Int. J. Numer. Methods Eng. (2021), with addendum.",
     "u": "https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.6528",
     "u2": "https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.6600"
   },
   {
-    "n": 12,
+    "n": 20,
+    "y": "2022",
+    "t": "G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, …, 6-simplexes. Comput. Math. Appl. 124 (2022) 89–97. Tetrahedron rules up to degree 20.",
+    "u": "https://doi.org/10.1016/j.camwa.2022.08.016"
+  },
+  {
+    "n": 21,
+    "y": "2024",
+    "t": "Y. Xu: Minimal cubature rules and Koornwinder polynomials. arXiv:2407.09903 (2024). Theorem 3.1 states Möller's bound with the structural matrices of the three-term relation.",
+    "u": "https://arxiv.org/abs/2407.09903"
+  },
+  {
+    "n": 22,
+    "y": "2024",
+    "t": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. arXiv:2409.02027 (2024), J. Comput. Appl. Math. 472 (2026) 116782. Tetrahedron rules up to degree 40.",
+    "u": "https://arxiv.org/abs/2409.02027"
+  },
+  {
+    "n": 23,
     "y": "2025",
     "t": "V. Kaarnioja: Explicit solutions of Genz test integrals. Appl. Math. Lett. 163 (2025). Closed-form values for the Genz test families (Genz 1984), used here for the Genz examples.",
     "u": "https://www.sciencedirect.com/science/article/pii/S0893965924004646",
@@ -77,99 +143,33 @@
     "l2": "Preprint"
   },
   {
-    "n": 13,
+    "n": 24,
     "y": "2026",
     "t": "M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026).",
     "u": "https://arxiv.org/abs/2601.14488"
   },
   {
-    "n": 14,
-    "y": "",
-    "t": "A. Sommariva: Cubature rules on the triangle (simplex). University of Padova, online sets with 26 cited sources; the page shows no date (retrieved 2026-11-06).",
-    "u": "https://www.math.unipd.it/~alvise/SETS_CUBATURE_TRIANGLE/rules_triangle.html"
-  },
-  {
-    "n": 15,
-    "y": "",
-    "t": "J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection (link not re-checked in this session).",
-    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/cube_arbq_rule/cube_arbq_rule.html"
-  },
-  {
-    "n": 16,
-    "y": "",
-    "t": "Ackley function (Wikipedia article on the test function of D. H. Ackley, 1987); link given by the client, not re-fetched.",
-    "u": "https://en.wikipedia.org/wiki/Ackley_function"
-  },
-  {
-    "n": 17,
-    "y": "1979",
-    "t": "H. M. Möller: Lower bounds for the number of nodes in cubature formulae. In: G. Hämmerlin (ed.), Numerische Integration, ISNM 45, Birkhäuser, Basel (1979) 221–230.",
-    "u": "https://doi.org/10.1007/978-3-0348-6288-2_17"
-  },
-  {
-    "n": 18,
-    "y": "2024",
-    "t": "Y. Xu: Minimal cubature rules and Koornwinder polynomials. arXiv:2407.09903 (2024). Theorem 3.1 states Möller's bound with the structural matrices of the three-term relation.",
-    "u": "https://arxiv.org/abs/2407.09903"
-  },
-  {
-    "n": 19,
-    "y": "2005",
-    "t": "A. Hinrichs, E. Novak: Cubature formulas for symmetric measures in higher dimensions with few points. arXiv:math/0509101 (2005). Section 2 gives Möller's bound for centrally symmetric weights in explicit form.",
-    "u": "https://arxiv.org/abs/math/0509101"
-  },
-  {
-    "n": 20,
-    "y": "2011",
-    "t": "Z. Meng, Z. Luo: Constructing cubature formulas of degree 5 with few points. arXiv:1111.5094 (2011). States that for even degrees no lower bound beyond dim P_k is known (referring to the survey [4]).",
-    "u": "https://arxiv.org/abs/1111.5094"
-  },
-  {
-    "n": 21,
+    "n": 25,
     "y": "2026",
     "t": "J. Pinkse: Positive weight Hermite and Legendre quadrature rules. arXiv:2609.26840 (2026). Rules for the uniform weight on the cube up to five dimensions; the data (80 digits, CC BY 4.0) are on Zenodo, doi:10.5281/zenodo.22881864.",
     "u": "https://arxiv.org/abs/2609.26840"
   },
   {
-    "n": 22,
-    "y": "2012",
-    "t": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Rules for the degrees 24 to 55 and new rules for the degrees 15, 17, 19, 23 (Tables 1 and 2).",
-    "u": "https://doi.org/10.1016/j.cam.2012.05.021"
-  },
-  {
-    "n": 23,
-    "y": "2006",
-    "t": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Positive interior rules with 44, 56, 68 and 81 points for the degrees 15, 17, 19, 21 (Tables 1 and 7).",
-    "u": "https://doi.org/10.1016/j.cam.2005.04.005"
-  },
-  {
-    "n": 24,
-    "y": "1988",
-    "t": "R. Cools, A. Haegemans: Another step forward in searching for cubature formulae with a minimal number of knots for the square. Computing 40 (1988) 139–146. Positive interior rules with 24 and 33 points for the degrees 11 and 13, as listed in Table 1 of [23].",
-    "u": "https://doi.org/10.1007/bf02247942"
-  },
-  {
-    "n": 25,
-    "y": "1971",
-    "t": "A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). Positive interior rules for the square with 4, 7 and 12 points for the degrees 3, 5 and 7, as listed in Table 1 of [23]; for the cube 6 and 13 points for the degrees 3 and 5, as listed in Table 2 of [21].",
-    "u": "https://archive.org/details/approximatecalcu0000stro_b8j7/"
-  },
-  {
     "n": 26,
-    "y": "2008",
-    "t": "M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. Positive interior rules with 24, 27, 32 points on the triangle (degrees 10, 11, 12) and 22, 31 points on the square (degrees 10, 12).",
-    "u": "https://doi.org/10.1016/j.cam.2007.04.050"
+    "y": "",
+    "t": "A. Sommariva: Cubature rules on the triangle (simplex). University of Padova, online sets with 26 cited sources; the page shows no date (retrieved 2026-11-06).",
+    "u": "https://www.math.unipd.it/~alvise/SETS_CUBATURE_TRIANGLE/rules_triangle.html"
   },
   {
     "n": 27,
-    "y": "2022",
-    "t": "G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, …, 6-simplexes. Comput. Math. Appl. 124 (2022) 89–97. Tetrahedron rules up to degree 20.",
-    "u": "https://doi.org/10.1016/j.camwa.2022.08.016"
+    "y": "",
+    "t": "J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection (link not re-checked in this session).",
+    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/cube_arbq_rule/cube_arbq_rule.html"
   },
   {
     "n": 28,
-    "y": "2024",
-    "t": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. arXiv:2409.02027 (2024), J. Comput. Appl. Math. 472 (2026) 116782. Tetrahedron rules up to degree 40.",
-    "u": "https://arxiv.org/abs/2409.02027"
+    "y": "",
+    "t": "Ackley function (Wikipedia article on the test function of D. H. Ackley, 1987); link given by the client, not re-fetched.",
+    "u": "https://en.wikipedia.org/wiki/Ackley_function"
   }
 ]

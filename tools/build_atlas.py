@@ -411,6 +411,20 @@ def changed_rule_paths(base):
     return {p for p in paths if os.path.basename(p) != "family.json"}
 
 
+def check_references():
+    """content/references.json must be sorted by year (undated entries last) and numbered 1, 2, 3, ..."""
+    refs = load_json(os.path.join(ROOT, "content", "references.json"))
+    numbers = [r["n"] for r in refs]
+    if numbers != list(range(1, len(refs) + 1)):
+        err("content/references.json: the numbers n must be 1, 2, 3, ... in the order of the list")
+    keys = []
+    for r in refs:
+        year = str(r.get("y", "")).strip()
+        keys.append((0, int(year)) if year.isdigit() else (1, 0))
+    if keys != sorted(keys):
+        err("content/references.json is not sorted by year (undated entries last); run python tools/sort_references.py")
+
+
 def check_i18n(strict):
     en = load_json(os.path.join(ROOT, "i18n", "en.json")) or {}
     de = load_json(os.path.join(ROOT, "i18n", "de.json")) or {}
@@ -776,8 +790,9 @@ def main():
     attach_interval_proofs(fams, only)
     if args.base:
         check_locked(args.base)
+    check_references()
     en, de, doc_en, doc_de, stale_doc = check_i18n(args.strict)
-    total = sum(len(f["rules"]) for f in fams)
+    total =sum(len(f["rules"]) for f in fams)
     for f in fams:
         doms = sorted({r["domain"] for r in f["rules"]}, key=DOMAINS.index)
         worst = max([r.get("_res", 0.0) for r in f["rules"]] or [0.0])

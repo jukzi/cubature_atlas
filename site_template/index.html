@@ -5874,7 +5874,7 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
   /* literature column: citations sit in a zero-width span right of the number; reserve their width as padding */
   var lw=0;document.querySelectorAll('#tbl td.litn .mk').forEach(function(m){var w=0;Array.prototype.forEach.call(m.children,function(c){w+=c.getBoundingClientRect().width+4;});lw=Math.max(lw,w);});
   if(lw)document.querySelectorAll('#tbl td.litn, #tbl th[data-src="lit"]').forEach(function(c){c.style.paddingRight=Math.ceil(lw+16)+'px';});
-  $('#srcnote').innerHTML=t('srcNote').replace('[13]',cite(13));$('#srcnote').style.display=st.dom==='interval'?'none':'';}
+  $('#srcnote').innerHTML=t('srcNote').replace('[24]',cite(24));$('#srcnote').style.display=st.dom==='interval'?'none':'';}
 function el(tag,a,p){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
 function legend(){var L=$('#legend');L.innerHTML='';allKeys(st.dom).forEach(function(k){var w=SERSTY[k];
   var b=document.createElement('button');b.className='lg';b.setAttribute('aria-pressed',!st.hide[k]);
