@@ -139,7 +139,19 @@
   {
     "n": 23,
     "y": "2006",
-    "t": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Node counts as listed in Table 1 of [22].",
+    "t": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Positive interior rules with 44, 56, 68 and 81 points for the degrees 15, 17, 19, 21 (Tables 1 and 7).",
     "u": "https://doi.org/10.1016/j.cam.2005.04.005"
+  },
+  {
+    "n": 24,
+    "y": "1988",
+    "t": "R. Cools, A. Haegemans: Another step forward in searching for cubature formulae with a minimal number of knots for the square. Computing 40 (1988) 139–146. Positive interior rules with 24 and 33 points for the degrees 11 and 13, as listed in Table 1 of [23].",
+    "u": "https://doi.org/10.1007/bf02247942"
+  },
+  {
+    "n": 25,
+    "y": "1971",
+    "t": "A. H. Stroud: Approximate Calculation of Multiple Integrals. Prentice-Hall, Englewood Cliffs (1971). Positive interior rules for the square with 4, 7 and 12 points for the degrees 3, 5 and 7, as listed in Table 1 of [23].",
+    "u": "https://archive.org/details/approximatecalcu0000stro_b8j7/"
   }
 ]

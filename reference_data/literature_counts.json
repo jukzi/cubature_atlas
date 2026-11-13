@@ -1,5 +1,5 @@
 {
-  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n, k=pk: smallest rule of Pinkse (arXiv:2609.26840, centrally symmetric, positive weights) with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n. Square only, from Tables 1 and 2 of Festa-Sommariva (2012): k=co: Cools Encyclopaedia (2003), k=os: Omelyan-Solovyan (2006), k=fs: Festa-Sommariva (2012); smallest count of a listed rule with degree >= n, only degrees listed there.",
+  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n, k=pk: smallest rule of Pinkse (arXiv:2609.26840, centrally symmetric, positive weights) with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n. k=xg for the square and the cube: Xiao-Gimbutas (2010), Tables 3 and 4 (positive weights, nodes inside or on the boundary, non-symmetric; the cube rule of degree 14 has a negative weight and is left out). Square only, from Tables 1, 2 and 7 of Festa-Sommariva (2012) and Omelyan-Solovyan (2006), positive weights and nodes inside: k=st Stroud (1971), k=mo Moeller (1976), k=ch Cools-Haegemans (1988), k=os Omelyan-Solovyan (2006), k=fs Festa-Sommariva (2012); smallest count of a listed rule with degree >= n, only degrees listed there.",
   "domains": {
     "interval": [],
     "triangle": [
@@ -44,25 +44,29 @@
         ],
         "arr": [
           1,
+          3,
           4,
-          4,
+          6,
           7,
-          7,
+          10,
           12,
-          12,
-          17,
-          17,
-          24,
-          24,
-          33,
-          33,
-          44,
-          44,
-          55,
-          55,
-          68,
-          68,
-          81
+          16,
+          18,
+          22,
+          27,
+          31,
+          35,
+          40,
+          45,
+          52,
+          57,
+          64,
+          71,
+          78,
+          85,
+          93,
+          101,
+          109
         ]
       },
       {
@@ -135,66 +139,6 @@
         ]
       },
       {
-        "k": "co",
-        "a": "e-co",
-        "refs": [
-          7
-        ],
-        "arr": [
-          3,
-          3,
-          4,
-          6,
-          7,
-          10,
-          12,
-          15,
-          17,
-          24,
-          24,
-          33,
-          33,
-          44,
-          44,
-          57,
-          57,
-          68,
-          68
-        ]
-      },
-      {
-        "k": "os",
-        "a": "e-os",
-        "refs": [
-          23
-        ],
-        "arr": [
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          44,
-          56,
-          56,
-          68,
-          68,
-          81,
-          81,
-          100,
-          100
-        ]
-      },
-      {
         "k": "fs",
         "a": "e-fs",
         "refs": [
@@ -231,6 +175,92 @@
           146,
           153,
           167
+        ]
+      },
+      {
+        "k": "st",
+        "a": "e-st",
+        "refs": [
+          25
+        ],
+        "arr": [
+          4,
+          4,
+          4,
+          7,
+          7,
+          12,
+          12
+        ]
+      },
+      {
+        "k": "mo",
+        "a": "e-mo",
+        "refs": [
+          1
+        ],
+        "arr": [
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17,
+          17
+        ]
+      },
+      {
+        "k": "ch",
+        "a": "e-ch",
+        "refs": [
+          24
+        ],
+        "arr": [
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          24,
+          33,
+          33
+        ]
+      },
+      {
+        "k": "os",
+        "a": "e-os",
+        "refs": [
+          23
+        ],
+        "arr": [
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          56,
+          56,
+          68,
+          68,
+          81,
+          81
         ]
       }
     ],
@@ -295,6 +325,30 @@
       }
     ],
     "cube": [
+      {
+        "k": "xg",
+        "a": "e-xg",
+        "refs": [
+          8
+        ],
+        "arr": [
+          1,
+          4,
+          6,
+          10,
+          13,
+          22,
+          28,
+          42,
+          54,
+          74,
+          90,
+          116,
+          141,
+          206,
+          206
+        ]
+      },
       {
         "k": "sym",
         "a": "e-sym",
