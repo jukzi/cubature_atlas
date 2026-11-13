@@ -1,5 +1,5 @@
 {
-  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n.",
+  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n, k=pk: smallest rule of Pinkse (arXiv:2609.26840, centrally symmetric, positive weights) with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n.",
   "domains": {
     "interval": [],
     "triangle": [
@@ -94,6 +94,45 @@
           72,
           85
         ]
+      },
+      {
+        "k": "pk",
+        "a": "e-lit",
+        "refs": [
+          21
+        ],
+        "arr": [
+          1,
+          4,
+          4,
+          7,
+          7,
+          12,
+          12,
+          17,
+          17,
+          24,
+          24,
+          33,
+          33,
+          43,
+          43,
+          54,
+          54,
+          67,
+          67,
+          81,
+          81,
+          96,
+          96,
+          113,
+          113,
+          131,
+          131,
+          150,
+          150,
+          171
+        ]
       }
     ],
     "tetra": [
@@ -185,6 +224,45 @@
           369,
           369,
           495
+        ]
+      },
+      {
+        "k": "pk",
+        "a": "e-lit",
+        "refs": [
+          21
+        ],
+        "arr": [
+          1,
+          6,
+          6,
+          13,
+          13,
+          26,
+          26,
+          48,
+          48,
+          82,
+          82,
+          128,
+          128,
+          188,
+          188,
+          266,
+          266,
+          360,
+          360,
+          476,
+          476,
+          612,
+          612,
+          776,
+          776,
+          964,
+          964,
+          1184,
+          1184,
+          1432
         ]
       }
     ]

@@ -103,6 +103,7 @@
   "srcFound": "Numerical search PI",
   "srcLitB": "Literature",
   "tabW": "Table",
+  "trophy": "Fewest nodes in this row (a tie goes to literature first, then N_PI, then N_PO)",
   "tab1": "Number of nodes per degree",
   "nOdd": "n odd",
   "nEven": "n even",
