@@ -165,7 +165,7 @@ Summary in our own words, the publisher's abstract is not reproduced: the paper 
 
 ### A. Slobodkins, J. Tausch: A node elimination algorithm for cubature of high-dimensional polytopes. Comput. Math. Appl. 144 (2023) 229–236 (arXiv:2207.10737, 2022). <https://arxiv.org/abs/2207.10737>
 
-Ranking of the nodes by the norm of the minimum-norm linearised correction, used in `code/` and in the GPU search. Its tetrahedron counts for degrees 15, 17 and 23 are below the earlier atlas counts and served as targets. Abstract of the arXiv version.
+Ranking of the nodes by the norm of the minimum-norm linearised correction, used in `code/` and in the GPU search. Its tetrahedron counts for degrees 15, 17 and 23 served as search targets. Abstract of the arXiv version.
 
 > Node elimination is a numerical approach to obtain cubature rules for the approximation of multivariate integrals. Beginning with a known cubature rule, nodes are selected for elimination, and a new, more efficient rule is constructed by iteratively solving the moment equations. This paper introduces a new criterion for selecting which nodes to eliminate that is based on a linearization of the moment equation. In addition, a penalized iterative solver is introduced, that ensures that weights are positive and nodes are inside the integration domain. A strategy for constructing an initial quadrature rule for various polytopes in several space dimensions is described. High efficiency rules are presented for two, three and four dimensional polytopes. The new rules are compared with rules that are obtained by combining tensor products of one dimensional quadrature rules and domain transformations, as well as with known analytically constructed cubature rules.
 
@@ -215,7 +215,7 @@ Summary in our own words, the publisher's abstract is not reproduced: the paper 
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: Several new quadrature formulas for polynomial integration in the triangle. arXiv:math/0501496 (2005). <https://arxiv.org/abs/math/0501496>
 
-Asymmetric triangle rules. Their node counts were compared with the atlas on 2026-11-12 and none is below the atlas count (for example degree 13: 36 nodes against 35 in the atlas; degree 25: 120 against 117). Nothing to add. Abstract of the arXiv version.
+Asymmetric triangle rules. Their node counts were compared with the triangle counts of Xiao–Gimbutas (2010, Table 1) on 2026-11-12 and none is lower (for example degree 13: 36 nodes against 35; degree 25: 120 against 118). Nothing to add. Abstract of the arXiv version.
 
 > We present several new quadrature formulas in the triangle for exact integration of polynomials. The points were computed numerically with a cardinal function algorithm which imposes that the number of quadrature points $N$ be equal to the dimension of a lower dimensional polynomial space. Quadrature forumulas are presented for up to degree $d=25$, all which have positive weights and contain no points outside the triangle. Seven of these quadrature formulas improve on previously known results.
 
@@ -241,7 +241,7 @@ Different construction of quadrature points (cardinal functions instead of node 
 
 ### M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. <https://doi.org/10.1016/j.cam.2007.04.050>
 
-Asymmetric rules on the triangle and square, like the atlas rules (full text read). Five rules with positive weights and no points outside, each with fewer points than the best earlier ones in Cools's database: triangle degrees 10, 11, 12 with 24, 27, 32 points; square degrees 10 and 12 with 22 and 31 points. These counts enter the column N_Lit (the same triangle counts appear in Table 1 of Xiao–Gimbutas 2010, which is later).
+Asymmetric rules on the triangle and square, without imposed symmetry (full text read). Five rules with positive weights and no points outside, each with fewer points than the best earlier ones in Cools's database: triangle degrees 10, 11, 12 with 24, 27, 32 points; square degrees 10 and 12 with 22 and 31 points. These counts enter the column N_Lit (the same triangle counts appear in Table 1 of Xiao–Gimbutas 2010, which is later).
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper presents five new cubature formulas for exact integration of polynomials: degrees 10, 11 and 12 on the triangle and degrees 10 and 12 on the square. The points were computed with a cardinal function algorithm that imposes no symmetry. The formulas have positive weights, no points outside the domain, and fewer points than previously known results.
 
@@ -277,7 +277,7 @@ A different route to quadratures, according to its title and abstract.
 
 ### S.-A. Papanicolopulos: Efficient computation of cubature rules with application to new asymmetric rules on the triangle. J. Comput. Appl. Math. 304 (2016) 73–83. <https://doi.org/10.1016/j.cam.2016.03.013>
 
-Asymmetric rules on the triangle. Only title and metadata were seen; the counts have not been compared with the atlas.
+Asymmetric rules on the triangle. Only title and metadata were seen; the counts were not read.
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper presents a method for computing cubature rules based on least-squares minimisation and orthogonal bases, applicable to any integration domain. It is tested on asymmetric rules on the triangle, including how to optimise the computation of the basis and its derivatives, and gives three new rules with fewer points than known rules of the same degree.
 
@@ -301,7 +301,7 @@ Least squares construction of cubature formulas that are provably positive and e
 
 ### Z. A. Worku, J. E. Hicken, D. W. Zingg: Quadrature rules on triangles and tetrahedra for multidimensional summation-by-parts operators. J. Sci. Comput. 101 (2024), arXiv:2311.15576 (2023). <https://arxiv.org/abs/2311.15576>
 
-Fully symmetric positive-weight rules on triangles and tetrahedra with matching facet nodes for diagonal-E operators; the counts are above the PI counts of the atlas and the rules are symmetric. Only the abstract was read. Abstract of the arXiv version.
+Fully symmetric positive-weight rules on triangles and tetrahedra with matching facet nodes for diagonal-E operators; the rules are fully symmetric and carry the facet-node constraint of the operators. Only the abstract was read; the counts are not used. Abstract of the arXiv version.
 
 > Multidimensional diagonal-norm summation-by-parts (SBP) operators with collocated volume and facet nodes, known as diagonal-$ \mathsf{E} $ operators, are attractive for entropy-stable discretizations from an efficiency standpoint. However, there is a limited number of such operators, and those currently in existence often have a relatively high node count for a given polynomial order due to a scarcity of suitable quadrature rules. We present several new symmetric positive-weight quadrature rules on triangles and tetrahedra that are suitable for construction of diagonal-$ \mathsf{E} $ SBP operators. For triangles, quadrature rules of degree one through twenty with facet nodes that correspond to the Legendre-Gauss-Lobatto (LGL) and Legendre-Gauss (LG) quadrature rules are derived. For tetrahedra, quadrature rules of degree one through ten are presented along with the corresponding facet quadrature rules. All of the quadrature rules are provided in a supplementary data repository. The quadrature rules are used to construct novel SBP diagonal-$ \mathsf{E} $ operators, whose accuracy and maximum timestep restrictions are studied numerically.
 
