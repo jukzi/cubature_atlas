@@ -265,7 +265,7 @@ Geodesic acceleration and Broyden updates could save Jacobian evaluations, which
 
 ### M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. <https://doi.org/10.1016/j.cam.2012.05.021>
 
-Node elimination on the square, cited by later work next to Xiao–Gimbutas. Its counts for degrees 15, 17, 19 and 23 (43, 54, 67, 96 points) are exactly the PI counts of the atlas; its rules for degrees 24 to 30 have not been compared with the atlas (their counts are not in the abstract).
+Node elimination on the square, cited by later work next to Xiao–Gimbutas. Its counts for degrees 15, 17, 19 and 23 (43, 54, 67, 96 points) are exactly the PI counts of the atlas; its counts for degrees 24 to 30 (109, 113, 127, 132, 146, 153, 167 points; Table 2, full text read) equal the PI counts of the atlas at degrees 24 and 25 and are above them elsewhere. Table 1 also lists the counts of Cools's Encyclopaedia and of Omelyan–Solovyan (2006, degrees 15 to 23: 44, 56, 68, 81, 100); the column N_Lit of the square uses these, credited to the earliest publication.
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper introduces a numerical method for computing cubature rules on the square [-1,1]^2 that are almost minimal, that is with few points for the degree of precision. The rules for all degrees from 24 to 55 are new, and new rules are also given for degrees 15, 17, 19 and 23, with 43, 54, 67 and 96 points.
 
