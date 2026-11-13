@@ -5942,7 +5942,7 @@ function viewer(){srcButtons();figTitles();var r=viewRule(),d=DOM[st.dom];if(r&&
   $('#wlo').innerHTML=sci(wmin);$('#whi').innerHTML=sci(wmax);
   var rampEl=document.querySelector('.ramp');if(rampEl)rampEl.style.background=wmin<0?'linear-gradient(90deg,rgb('+NEGD+') 0%,rgb('+NEGL+') '+(100*-wmin/(wmax-wmin))+'%,var(--w0) '+(100*-wmin/(wmax-wmin))+'%,var(--w1) 100%)':'';
   var names=['x','y','z'].slice(0,d.dim).concat(['w']),iw=Math.max(2,String(r.pts.length).length),sp='                    ';
-  $('#ptxt').textContent=(sp+'#').slice(-iw)+';'+names.map(function(s){return (sp+s).slice(-18);}).join(';')+'\n'+r.pts.map(function(p,i){return (sp+(i+1)).slice(-iw)+';'+p.map(pad).join(';');}).join('\n');
+  $('#ptxt').textContent=(sp+'#').slice(-iw)+';'+names.map(function(s){return (sp+s).slice(-18);}).join(';')+'\n'+r.pts.slice().sort(function(p,q){return lastCol(p)-lastCol(q);}).map(function(p,i){return (sp+(i+1)).slice(-iw)+';'+p.map(pad).join(';');}).join('\n');
   draw();drawEx();}
 
 /* ---------- dancing polynomial: zero set of a degree-n polynomial through all nodes (2D) ---------- */
