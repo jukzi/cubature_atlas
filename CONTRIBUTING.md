@@ -27,7 +27,7 @@ After review, the maintainer sets `"locked": true` on rules that are published o
 
 ## Literature
 
-`literature.md` lists the literature on the topic in three sections: used in the atlas, tried but not worthwhile, not used yet. Every pull request that uses, tests or finds a publication extends it (right section, sorted by date, with link and abstract, in English). Check each reference against its DOI or arXiv page; never invent a citation.
+`literature.md` lists the literature on the topic in three sections: used in the atlas, tried but not worthwhile, not used yet. Every pull request that uses, tests or finds a publication extends it (right section, sorted by date, with link and abstract, in English). Check each reference against its DOI or arXiv page; never invent a citation. The bibliography of the website (`content/references.json`) is sorted by year, oldest first, undated entries last: after adding an entry run `python tools/sort_references.py` (it renumbers all citations), then `python tools/build_atlas.py --sync-hashes`; the build refuses an unsorted list. In the literature column N_Lit the earliest publication that reached a node count is credited.
 
 ## Translations
 

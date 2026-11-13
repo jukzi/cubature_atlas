@@ -12,7 +12,8 @@ Everything needed to add rules, run the checks and the proofs, and work on the w
 | `reference_data/literature_counts.json` | Node counts from the literature without stored points (Xiao–Gimbutas, symmetric rules, Pinkse) |
 | `i18n/en.json`, `i18n/de.json` | Texts of the website (English is the source) |
 | `content/en/`, `content/de/` | Documentation section of the website |
-| `content/references.json` | Bibliography |
+| `content/references.json` | Bibliography, sorted by year (undated last); the position is the citation number `[n]`; after adding an entry run `tools/sort_references.py` |
+| `tools/sort_references.py` | Sorts the bibliography by year and renumbers every use of the numbers |
 | `site_template/index.html` | The interactive page; the build inserts the data |
 | `code/` | Search programs that produced the rules, with numerical checks (not proofs) |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
