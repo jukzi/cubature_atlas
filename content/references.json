@@ -159,5 +159,17 @@
     "y": "2008",
     "t": "M. A. Taylor: Asymmetric cubature formulas for polynomial integration in the triangle and square. J. Comput. Appl. Math. 218 (2008) 184–191. Positive interior rules with 24, 27, 32 points on the triangle (degrees 10, 11, 12) and 22, 31 points on the square (degrees 10, 12).",
     "u": "https://doi.org/10.1016/j.cam.2007.04.050"
+  },
+  {
+    "n": 27,
+    "y": "2022",
+    "t": "G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, …, 6-simplexes. Comput. Math. Appl. 124 (2022) 89–97. Tetrahedron rules up to degree 20.",
+    "u": "https://doi.org/10.1016/j.camwa.2022.08.016"
+  },
+  {
+    "n": 28,
+    "y": "2024",
+    "t": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. arXiv:2409.02027 (2024), J. Comput. Appl. Math. 472 (2026) 116782. Tetrahedron rules up to degree 40.",
+    "u": "https://arxiv.org/abs/2409.02027"
   }
 ]

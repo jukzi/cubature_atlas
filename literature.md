@@ -159,7 +159,7 @@ Addendum to the previous entry.
 
 ### G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, …, 6-simplexes. Comput. Math. Appl. 124 (2022) 89–97. <https://doi.org/10.1016/j.camwa.2022.08.016>
 
-Fully symmetric tetrahedron counts up to degree 20, tabulated for comparison in `code/simplex_cubature.py`.
+Fully symmetric tetrahedron counts up to degree 20, tabulated for comparison in `code/simplex_cubature.py` (as quoted in Table 2 of Worku–Hicken–Zingg, arXiv:2409.02027: 79, 98, 123, 145, 175, 209, 248, 284, 343, 383, 441 at degrees 10 to 20). They enter the column N_Lit of the tetrahedron. They are below the atlas PI counts at degrees 17 (284 against 285), 19 (383 against 386) and 20 (441 against 444); the rules themselves are not stored in the atlas.
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper gives fully symmetric quadrature rules with positive weights and nodes inside the simplex (PI type): up to order 20 on the tetrahedron, 16 on the 4-simplex and 10 on the 5- and 6-simplexes. The node counts do not exceed the known ones and most rules are new. They were computed with modified Levenberg-Marquardt methods for nonlinear equations with convex constraints, first in FORTRAN to 25 digits and then refined to 50 digits in MAPLE.
 
