@@ -133,7 +133,13 @@
   {
     "n": 22,
     "y": "2012",
-    "t": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Node counts 43, 54, 67 and 96 for the degrees 15, 17, 19 and 23.",
+    "t": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Rules for the degrees 24 to 55 and new rules for the degrees 15, 17, 19, 23 (Tables 1 and 2).",
     "u": "https://doi.org/10.1016/j.cam.2012.05.021"
+  },
+  {
+    "n": 23,
+    "y": "2006",
+    "t": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Node counts as listed in Table 1 of [22].",
+    "u": "https://doi.org/10.1016/j.cam.2005.04.005"
   }
 ]

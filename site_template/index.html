@@ -5694,7 +5694,9 @@ var SRCREF=ATLAS_SRCREF;
 Object.keys(DOM).forEach(function(k){var cs=DOM[k].cols,xg=cs.filter(function(c){return c.k==='xg';})[0],sy=cs.filter(function(c){return c.k==='sym';})[0],pk=cs.filter(function(c){return c.k==='pk';})[0],fs=cs.filter(function(c){return c.k==='fs';})[0];
   if(!xg&&!sy&&!pk)return;var arr=[],src=[];
   for(var n=1;n<=MAXN;n++){var xv=xg?xg.arr[n-1]:null,sv=sy?sy.arr[n-1]:null,pv=pk?pk.arr[n-1]:null,fv=fs?fs.arr[n-1]:null,v=null,rf=[];
-    [xv,sv,pv,fv].forEach(function(a){if(a!=null&&(v==null||a<v))v=a;});
+    var more=cs.filter(function(c){return c.k==='os'||c.k==='co';});
+    [xv,sv,pv,fv].concat(more.map(function(c){return c.arr[n-1];})).forEach(function(a){if(a!=null&&(v==null||a<v))v=a;});
+    more.forEach(function(c){if(c.arr[n-1]!=null&&c.arr[n-1]===v){c.refs.forEach(function(x){if(rf.indexOf(x)<0)rf.push(x);});}});
     if(xv!=null&&xv===v){rf=rf.concat(xg.refs.slice(0,1));}
     if(sv!=null&&sv===v){var lr=litRule(k,n),r2=(lr&&lr.n===sv&&SRCREF[lr.src])?SRCREF[lr.src]:sy.refs;r2.forEach(function(x){if(rf.indexOf(x)<0)rf.push(x);});}
     if(pv!=null&&pv===v){pk.refs.forEach(function(x){if(rf.indexOf(x)<0)rf.push(x);});}
@@ -5704,7 +5706,7 @@ Object.keys(DOM).forEach(function(k){var cs=DOM[k].cols,xg=cs.filter(function(c)
     var ym=Math.min.apply(null,rf.map(yr));
     rf=rf.filter(function(x){return yr(x)===ym;});
     arr.push(v);src.push(rf);}
-  DOM[k].cols=cs.filter(function(c){return c.k!=='xg'&&c.k!=='sym'&&c.k!=='pk'&&c.k!=='fs';});DOM[k].cols.push({k:'lit',a:'e-lit',refs:[],arr:arr,src:src});});
+  DOM[k].cols=cs.filter(function(c){return c.k!=='xg'&&c.k!=='sym'&&c.k!=='pk'&&c.k!=='fs'&&c.k!=='os'&&c.k!=='co';});DOM[k].cols.push({k:'lit',a:'e-lit',refs:[],arr:arr,src:src});});
 function MX(dom){return DOM[dom||st.dom].maxn;}
 var GROUPS=[['1D',['interval']],['2D',['triangle','square']],['3D',['tetra','cube']]];
 var SERCOL={found:'--s-found',abz:'--s-abz',low:'--s-low',gauss:'--s-gauss',xg:'--s-xg',sym:'--s-sym',lit:'--s-sym',out:'--s-out',lob:'--s-abz',cc:'--s-xg',nc:'--s-low'};

@@ -1,5 +1,5 @@
 {
-  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n, k=pk: smallest rule of Pinkse (arXiv:2609.26840, centrally symmetric, positive weights) with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n. k=fs: Festa-Sommariva (2012), counts of their rules of degree 15, 17, 19, 23 only (smallest with degree >= n; none above degree 23 listed).",
+  "_comment": "Node counts of literature rules without stored points. k=xg: Xiao-Gimbutas, k=sym: smallest fully symmetric rule with degree >= n, k=pk: smallest rule of Pinkse (arXiv:2609.26840, centrally symmetric, positive weights) with degree >= n. refs = reference numbers in content/references.json. arr[n-1] = node count for degree n. Square only, from Tables 1 and 2 of Festa-Sommariva (2012): k=co: Cools Encyclopaedia (2003), k=os: Omelyan-Solovyan (2006), k=fs: Festa-Sommariva (2012); smallest count of a listed rule with degree >= n, only degrees listed there.",
   "domains": {
     "interval": [],
     "triangle": [
@@ -135,35 +135,102 @@
         ]
       },
       {
+        "k": "co",
+        "a": "e-co",
+        "refs": [
+          7
+        ],
+        "arr": [
+          3,
+          3,
+          4,
+          6,
+          7,
+          10,
+          12,
+          15,
+          17,
+          24,
+          24,
+          33,
+          33,
+          44,
+          44,
+          57,
+          57,
+          68,
+          68
+        ]
+      },
+      {
+        "k": "os",
+        "a": "e-os",
+        "refs": [
+          23
+        ],
+        "arr": [
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          44,
+          56,
+          56,
+          68,
+          68,
+          81,
+          81,
+          100,
+          100
+        ]
+      },
+      {
         "k": "fs",
         "a": "e-fs",
         "refs": [
           22
         ],
         "arr": [
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
+          40,
           43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
-          43,
+          52,
           54,
-          54,
+          64,
           67,
-          67,
+          78,
+          81,
+          93,
           96,
-          96,
-          96,
-          96
+          109,
+          113,
+          127,
+          132,
+          146,
+          153,
+          167
         ]
       }
     ],
