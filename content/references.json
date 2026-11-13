@@ -129,5 +129,11 @@
     "y": "2026",
     "t": "J. Pinkse: Positive weight Hermite and Legendre quadrature rules. arXiv:2609.26840 (2026). Rules for the uniform weight on the cube up to five dimensions; the data (80 digits, CC BY 4.0) are on Zenodo, doi:10.5281/zenodo.22881864.",
     "u": "https://arxiv.org/abs/2609.26840"
+  },
+  {
+    "n": 22,
+    "y": "2012",
+    "t": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Node counts 43, 54, 67 and 96 for the degrees 15, 17, 19 and 23.",
+    "u": "https://doi.org/10.1016/j.cam.2012.05.021"
   }
 ]
