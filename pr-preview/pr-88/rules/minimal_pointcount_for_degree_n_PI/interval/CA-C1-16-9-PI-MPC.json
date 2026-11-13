@@ -1,0 +1,40 @@
+{
+  "id": "CA-C1-16-9-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "interval",
+  "dimension": 1,
+  "degree": 16,
+  "points": 9,
+  "quality": "PI",
+  "origin": "gauss_legendre",
+  "method": "Gauss-Legendre rule, closed formula (numpy.polynomial.legendre.leggauss)",
+  "author": "closed formula",
+  "status": "proven",
+  "locked": true,
+  "residual_reported": 0.0,
+  "numerical_check": {"N": 9, "M": 9, "p": 9, "res": 7.217199561518175e-15, "sigma": 2.0574214499314554, "h": 8.672781211899548e-13, "rad": 3.1212359185192333e-15, "cert": true, "inside": true},
+  "exact_degree": 17,
+  "optimal": true,
+  "nodes": [
+    [-0.9681602395076261],
+    [-0.8360311073266358],
+    [-0.6133714327005904],
+    [-0.3242534234038089],
+    [0.0],
+    [0.3242534234038089],
+    [0.6133714327005904],
+    [0.8360311073266358],
+    [0.9681602395076261]
+  ],
+  "weights": [
+    0.08127438836157416,
+    0.18064816069485737,
+    0.2606106964029356,
+    0.3123470770400029,
+    0.33023935500125984,
+    0.3123470770400029,
+    0.2606106964029356,
+    0.18064816069485737,
+    0.08127438836157416
+  ]
+}
