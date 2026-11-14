@@ -44,6 +44,7 @@
   "colN": "Degree",
   "colFound": "PI numerical",
   "fmlBtn": "Show formulas",
+  "zoomReset": "Reset zoom (Ctrl + mouse wheel zooms, middle mouse button or Alt + drag moves)",
   "methBtn": "How this rule was computed",
   "optPosBtn": "Minimal with positive weights",
   "optPosStar": "Minimal among rules with positive weights: proven in the documentation (section lower bound), although N is above L. L holds for any weights and is reached here only with a negative weight.",

@@ -104,6 +104,12 @@ canvas.cv{width:100%;aspect-ratio:1/1;max-height:640px;display:block;background:
 input[type=range]{width:100%;accent-color:var(--accent)}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 .figbox{position:relative}
+.figbox.zoomed{overflow:hidden}
+.figbox>.legend{position:relative;z-index:3}
+.zreset{position:absolute;top:8px;right:46px;z-index:4;height:30px;padding:0 9px;font:600 12px var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.85}
+.zreset:hover,.zreset:focus-visible{opacity:1}
+.zreset[hidden]{display:none}
+.figbox.zoomed svg.ch{cursor:grab}
 .fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.75}
 .fsb:hover,.fsb:focus-visible{opacity:1}
 .fsb svg{width:16px;height:16px;display:block}
@@ -6083,7 +6089,9 @@ function nnRadii(r,d,dim){var key=st.dom+'|'+dim;if(r._nn&&r._nn.key===key&&r._n
 function packBall(c,q,rad,col,al){if(al==null)al=1;if(!(rad>0.3))rad=0.3;var rgb=col.map(Math.round),hi=rgb.map(function(x){return Math.round(x+(255-x)*.65);}),g=c.createRadialGradient(q.x-rad*.35,q.y-rad*.35,rad*.08,q.x,q.y,rad);
   g.addColorStop(0,'rgba('+hi.join(',')+','+(.55*al)+')');g.addColorStop(1,'rgba('+rgb.join(',')+','+(.42*al)+')');
   c.beginPath();c.arc(q.x,q.y,rad,0,6.2832);c.fillStyle=g;c.fill();c.lineWidth=.8;c.strokeStyle='rgba('+rgb.join(',')+','+(.7*al)+')';c.stroke();}
-function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRatio||1,2),cw=cv.clientWidth,chh=cv.clientHeight;
+/* zoom factor of a figure (1 to 3) for the resolution of its canvas, see the zoom block at the end */
+function zq(el){return el&&el.__zm?Math.min(Math.max(el.__zm.z,1),3):1;}
+function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRatio||1,2)*zq(cv),cw=cv.clientWidth,chh=cv.clientHeight;
   if(!cw)return;
   if(cv.width!==Math.round(cw*dpr)||cv.height!==Math.round(chh*dpr)){cv.width=Math.round(cw*dpr);cv.height=Math.round(chh*dpr);}
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cw,chh);
@@ -6326,7 +6334,7 @@ function exGeom(){var dom=st.dom,key=dom+'|'+st.fn;if(exCache[key])return exCach
     g.C=C;}
   exCache[key]=g;return g;}
 function setTx(e,s){if(e.textContent!==s)e.textContent=s;}
-function drawEx(){var dom=st.dom,d=DOM[dom],dim=d.dim,f=fdef(dom,st.fn),dpr=Math.min(window.devicePixelRatio||1,2),cw=ex.clientWidth,chh=ex.clientHeight;if(!cw)return;
+function drawEx(){var dom=st.dom,d=DOM[dom],dim=d.dim,f=fdef(dom,st.fn),dpr=Math.min(window.devicePixelRatio||1,2)*zq(ex),cw=ex.clientWidth,chh=ex.clientHeight;if(!cw)return;
   if(ex.width!==Math.round(cw*dpr)||ex.height!==Math.round(chh*dpr)){ex.width=Math.round(cw*dpr);ex.height=Math.round(chh*dpr);}
   ectx.setTransform(dpr,0,0,dpr,0,0);ectx.clearRect(0,0,cw,chh);setTx($('#exformula'),exprText(dom,st.fn));
   var w0=parse(cssv('--w0')),w1=parse(cssv('--w1')),ink=cssv('--ink'),surf=cssv('--surface'),edge=cssv('--edge'),r=viewRule()||{pts:[],n:0,deg:0},cap=$('#excap');
@@ -6694,6 +6702,56 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   var b=$('#b-compE');
   b.setAttribute('aria-pressed',COMP.on);
   b.onclick=function(){COMP.on=!COMP.on;b.setAttribute('aria-pressed',COMP.on);exChartN();};})();
+(function(){
+  /* Zoom of every figure (A to E): Ctrl + mouse wheel (also the pinch gesture of a trackpad) zooms around the pointer,
+     dragging with the middle mouse button or with Alt pressed moves the figure (plain dragging too for the charts), the button
+     "100 %" resets. The element is scaled by CSS; canvases are redrawn with a finer resolution after a zoom (zq) so they stay sharp. */
+  var MAXZ=12;
+  ['#fbA','#fbB','#fbC','#fbD','#fbE'].forEach(function(q){
+    var box=$(q),el=box&&box.querySelector('svg.ch, canvas.cv');
+    if(!el)return;
+    var s=el.__zm={z:1,x:0,y:0},isCv=el.tagName.toLowerCase()==='canvas',timer=0,drag=null;
+    el.style.transformOrigin='0 0';
+    var btn=document.createElement('button');
+    btn.type='button';btn.className='zreset';btn.hidden=true;btn.textContent='100 %';
+    btn.setAttribute('aria-label',t('zoomReset'));btn.title=t('zoomReset');
+    box.appendChild(btn);
+    function clamp(){
+      if(s.z<=1){s.z=1;s.x=0;s.y=0;return;}
+      var r=el.getBoundingClientRect(),w=r.width/(s.__last||1),h=r.height/(s.__last||1);   /* size without the zoom (SVG elements have no offsetWidth) */
+      s.x=Math.min(0,Math.max(w*(1-s.z),s.x));
+      s.y=Math.min(0,Math.max(h*(1-s.z),s.y));}
+    function apply(){
+      clamp();
+      el.style.transform=s.z===1?'':'translate('+s.x+'px,'+s.y+'px) scale('+s.z+')';
+      s.__last=s.z;
+      box.classList.toggle('zoomed',s.z>1);
+      btn.hidden=s.z===1;
+      if(isCv){clearTimeout(timer);timer=setTimeout(function(){if(el.id==='cv')draw();else drawEx();},140);}}
+    function origin(){var r=el.getBoundingClientRect();return {l:r.left-s.x,t:r.top-s.y};}
+    box.addEventListener('wheel',function(e){
+      if(!(e.ctrlKey||e.metaKey))return;
+      e.preventDefault();
+      var o=origin(),k=Math.exp(-e.deltaY*(e.deltaMode===1?0.08:0.0025)),z2=Math.min(MAXZ,Math.max(1,s.z*k));
+      if(z2===s.z)return;
+      var ux=(e.clientX-o.l-s.x)/s.z,uy=(e.clientY-o.t-s.y)/s.z;
+      s.x=(e.clientX-o.l)-ux*z2;s.y=(e.clientY-o.t)-uy*z2;s.z=z2;
+      apply();},{passive:false});
+    box.addEventListener('pointerdown',function(e){
+      var mid=e.button===1,alt=e.altKey&&e.button===0,chart=!isCv&&s.z>1&&e.button===0&&e.target.closest('svg.ch');
+      if(!(mid||alt||chart))return;
+      e.preventDefault();e.stopPropagation();
+      drag={x:e.clientX,y:e.clientY,sx:s.x,sy:s.y};
+      try{box.setPointerCapture(e.pointerId);}catch(_){}},true);
+    box.addEventListener('pointermove',function(e){
+      if(!drag)return;
+      s.x=drag.sx+e.clientX-drag.x;s.y=drag.sy+e.clientY-drag.y;apply();});
+    var end=function(e){if(drag){drag=null;try{box.releasePointerCapture(e.pointerId);}catch(_){}}};
+    box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
+    btn.onclick=function(){s.z=1;s.x=0;s.y=0;apply();};
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&s.z>1&&document.activeElement&&box.contains(document.activeElement)){s.z=1;apply();}});
+  });
+})();
 (function(){
   /* Full-screen button for every figure (A to E). Hidden where the browser offers no element full screen. */
   var de=document.documentElement;
