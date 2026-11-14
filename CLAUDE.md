@@ -11,7 +11,7 @@ Read README.md, CONTRIBUTING.md and DEVELOPMENT.md (file format, checks, proofs,
 - Every reference you add must be checked to exist; never invent citations.
 - Code conventions: pure Python, a single file per program, English comments, one statement per line.
 - Every rule needs an interval proof: run `python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json <rule files>` and commit the updated report with the rules. Never call a floating-point check a certificate or a proof; it is a numerical check.
-- Every new rule you found by a search needs a `reproduce` field (`script` in the repository, `seed`, `command`); draw the starting points from a generator seeded with the stored seed, and save every solution of a run together with its seed.
+- Give every new rule you found by a search a `reproduce` field (`script` in the repository, `seed`, `command`); draw the starting points from a generator seeded with the stored seed, and save every solution of a run together with its seed. The build does not require it.
 - State in the pull request description what was computed, how it was proven, and what is still open.
 - Tooltips on the website: never hover only (`title` alone). Every tooltip needs a clickable, keyboard-reachable ⓘ (or marker) in addition to hover, so it also works on touch screens; use the shared popup (`td .oq` / `th .hw` with `data-tip`).
 - Exponents on the website: never Unicode superscript characters (⁰ ¹ ² ³ ⁴ … ⁻); depending on the font some of them slip down. In HTML use `<sup>`; in plain text (e.g. popups filled with `textContent`) write `10^-14` or `1e-14`.
