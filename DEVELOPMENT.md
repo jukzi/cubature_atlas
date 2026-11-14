@@ -85,6 +85,7 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
   "origin": "found",
   "method": "...",
   "author": "...",
+  "reproduce": {"script": "code/<program>.py", "seed": 12345, "command": "python code/<program>.py ..."},
   "status": "proven",
   "locked": false,
   "numerical_check": {"N": 4, "M": 10, "p": 12, "res": 1e-16, "sigma": 0.3, "h": 1e-14, "rad": 1e-16, "cert": true, "inside": true},
@@ -92,6 +93,8 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
   "weights": [w, ...]
 }
 ```
+
+`reproduce` is required for every new rule with `origin` `"found"` (the build refuses it otherwise; existing rules are exempt): `script` is a file of the repository, `seed` an integer or a list of integers, `command` the call that gives the same rule again.
 
 "Best known" is not stored. The build and the page compute it: for each domain and degree, the rule with the fewest nodes among all rules of at least that degree.
 
