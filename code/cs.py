@@ -92,17 +92,19 @@ class Prob:
             free = ~(((x <= lo + 1e-13) & (g > 0)) | ((x >= hi - 1e-13) & (g < 0)))
             Jf = J[:, free]
             ok = False
+            # Gram matrix once per iteration; each damping attempt only adds to its diagonal.
+            wide = Jf.shape[1] >= M
+            A0 = Jf @ Jf.T if wide else Jf.T @ Jf
+            k = A0.shape[0]
+            t0 = np.trace(A0) / k + 1e-30
+            rhs = -r if wide else -(Jf.T @ r)
             for _ in range(14):
                 try:
-                    if Jf.shape[1] >= M:
-                        A = Jf @ Jf.T
-                        A[np.diag_indices(M)] += mu * (np.trace(A) / M + 1e-30)
-                        d = Jf.T @ cho_solve(cho_factor(A, lower=True), -r)
-                    else:
-                        A = Jf.T @ Jf
-                        k = A.shape[0]
-                        A[np.diag_indices(k)] += mu * (np.trace(A) / k + 1e-30)
-                        d = cho_solve(cho_factor(A, lower=True), -(Jf.T @ r))
+                    A = A0.copy()
+                    A[np.diag_indices(k)] += mu * t0
+                    d = cho_solve(cho_factor(A, lower=True, overwrite_a=True), rhs)
+                    if wide:
+                        d = Jf.T @ d
                 except (LinAlgError, ValueError):
                     mu *= 10; continue
                 xn = x.copy(); xn[free] += d; xn = np.clip(xn, lo, hi)
