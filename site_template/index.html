@@ -187,6 +187,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
         <button class="btn" id="b-size" aria-pressed="true" data-i="sizeW"></button>
         <button class="btn" id="b-pack" aria-pressed="false" data-i="packBtn"></button>
         <button class="btn" id="b-edge" aria-pressed="true" data-i="edge"></button>
+        <button class="btn" id="b-cells" aria-pressed="true" data-i="cellsBtn"></button>
         <button class="btn" id="b-dance" aria-pressed="true" data-i="danceBtn"></button>
         <button class="btn" id="b-persp" aria-pressed="true" data-i="perspBtn"></button>
       </div>
@@ -5767,7 +5768,7 @@ function docHTML(){var de=LANG==='de',h=[];
 var REFS=ATLAS.refs;
 
 /* ---------- Zustand ---------- */
-var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:true,size:true,edge:true,dance:true,persp:true,pack:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
+var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:true,size:true,edge:true,cells:true,dance:true,persp:true,pack:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
 function fmt(x){return x.toLocaleString(LANG==='de'?'de-DE':'en-US',{useGrouping:false});}
 function dec(x,k){var s=x.toFixed(k);return LANG==='de'?s.replace('.',','):s;}
 function sci(x){if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));return dec(x/Math.pow(10,e),1)+'·10<sup>'+String(e).replace('-','−')+'</sup>';}
@@ -6110,10 +6111,10 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   if(!r)return;
   var d1=null;
   if(dim===1&&st.dance){ctx.save();ctx.strokeStyle=cssv('--s-out');ctx.lineWidth=2;ctx.globalAlpha=.9;d1=drawDance1(ctx,r,proj,st.tm||0,chh*.22);ctx.restore();}
-  if(dim===2&&!st.pack){var cl2=cells2(r,d),neg2=cssv('--bad'),wm2=Math.max.apply(null,r.pts.map(function(p){return Math.abs(lastCol(p));}));ctx.save();
+  if(dim===2&&!st.pack&&st.cells){var cl2=cells2(r,d),neg2=cssv('--bad'),wm2=Math.max.apply(null,r.pts.map(function(p){return Math.abs(lastCol(p));}));ctx.save();
     cl2.forEach(function(poly,k){if(poly.length<3)return;var w=lastCol(r.pts[k]),c=lerpc(w0,w1,Math.abs(w)/wm2).map(Math.round).join(',');ctx.beginPath();poly.forEach(function(v,m){var q=proj(v);if(m===0)ctx.moveTo(q.x,q.y);else ctx.lineTo(q.x,q.y);});ctx.closePath();
       ctx.fillStyle=w<0?neg2:'rgba('+c+',1)';ctx.globalAlpha=w<0?.3:.22;ctx.fill();ctx.globalAlpha=.55;ctx.strokeStyle=w<0?neg2:'rgba('+c+',1)';ctx.lineWidth=1;ctx.stroke();});ctx.restore();}
-  if(dim===3&&st.dance&&!st.pack&&!st.size){var cl3d=cells3(r,st.dom),dv3=dancePoly3(r,st.tm||0);drawCells3(ctx,cl3d,dv3,proj,st.yaw,st.pitch,cssv('--ink'));}
+  if(dim===3&&st.dance&&st.cells&&!st.pack&&!st.size){var cl3d=cells3(r,st.dom),dv3=dancePoly3(r,st.tm||0);drawCells3(ctx,cl3d,dv3,proj,st.yaw,st.pitch,cssv('--ink'));}
   var dv2=null,Hh=.55;
   if(dim===2&&st.dance){dv2=dancePoly2(r,st.tm||0);var cl2b=cells2(r,d);
     if(!st.pack)drawCols(ctx,cl2b,dv2,function(x,y,v){return proj([x,y,v==null?0:v*Hh]);},.38,.14,cssv('--ink'));}
@@ -6158,7 +6159,7 @@ cv.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-d
 ['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drag=null;});});
 function toggle(id,key){var b=$(id);b.onclick=function(){st[key]=!st[key];b.setAttribute('aria-pressed',st[key]);
     var other=key==='size'?'pack':(key==='pack'?'size':null);if(other&&st[key]){st[other]=false;$('#b-'+other).setAttribute('aria-pressed',false);}draw();};}
-toggle('#b-dance','dance');$('#b-dance').addEventListener('click',function(){$('#dancenote').style.display=st.dance?'':'none';});toggle('#b-auto','auto');toggle('#b-size','size');toggle('#b-edge','edge');toggle('#b-persp','persp');toggle('#b-pack','pack');
+toggle('#b-dance','dance');$('#b-dance').addEventListener('click',function(){$('#dancenote').style.display=st.dance?'':'none';});toggle('#b-auto','auto');toggle('#b-size','size');toggle('#b-edge','edge');toggle('#b-cells','cells');toggle('#b-persp','persp');toggle('#b-pack','pack');
 function setDeg(n){st.n=n;viewer();table();chart();certTable();exChart();}
 $('#deg').oninput=function(){setDeg(+this.value);};$('#deg2').oninput=function(){setDeg(+this.value);};
 Array.prototype.forEach.call(document.querySelectorAll('input[name=mode]'),function(i){i.onchange=function(){st.mode=i.value;chart();};});
