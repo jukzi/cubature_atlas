@@ -20,6 +20,7 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 - **Every rule needs a proof.** Prove new and changed rules with interval arithmetic and record the proof in the report: `python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json <rule files>`, then commit the rule files together with `reports/interval_proofs.json`. The build fails for any rule without a proof of exactly its numbers, and every pull request re-runs the proof for the changed rules. There are no exceptions; a rule that cannot be proven is not added. Set `"status": "proven"`.
 - Floating-point checks (moment residuals, the Newton–Kantorovich test in `code/`) are useful during the search but are not proofs. Store their result as `"numerical_check"`, never as "certificate".
 - Fill in `origin`, `method` and `author`. AI-generated rules say so in `author`.
+- **Make a found rule reproducible.** Give a new rule with `origin` `"found"` the field `"reproduce": {"script": "code/<program>.py", "seed": 12345, "command": "python code/<program>.py ..."}`. The script is a file of this repository (add it in the same pull request), `seed` is the integer (or the list of integers) that starts the search which found the rule, and `command` is the call that gives the same rule again (with the batch index or starting point if the seed alone does not select it). The build does not check or require the field; it is there so that anybody can find the rule again.
 
 ## Locking
 
