@@ -75,6 +75,7 @@
   "f4": "Gap to counting value",
   "f4s": "degrees 1 to 20, largest difference",
   "chartLbl": "Number of nodes over degree",
+  "isoNote": "💪 marks the degrees where the counting value Z is a whole number: there are exactly as many moment equations as unknowns (the coordinates and weights of Z nodes), so a rule with Z nodes would be an isolated solution without a free parameter.",
   "notes": {
     "interval": "On the interval the Gauss–Legendre rule is optimal: counting value, lower bound and Gauss product coincide, so no rule needs fewer than ⌈(n+1)/2⌉ nodes.",
     "triangle": "The rules are at most 2 nodes above the counting value and never larger than the Xiao–Gimbutas rules. At degrees 3, 7, 10, 15, 17 and 18 to 20 they are smaller. The comparison is only partly fair, because the literature rules are fully symmetric. At the odd degrees 3, 5 and 7 the rules reach Möller's lower bound (4, 7 and 12 nodes), so they are minimal.",
