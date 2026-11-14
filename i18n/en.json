@@ -27,6 +27,7 @@
   "danceNote": "A dancing polynomial of degree {n} sets the height of the nodes. The columns stand on a partition of the domain; the base area is the weight and the height the polynomial value at the node (green positive, red negative). Dragging rotates the view, which starts as a top view of the domain.",
   "sizeW": "Size by weight",
   "edge": "Domain edge",
+  "cellsBtn": "Voronoi cells",
   "perspBtn": "Perspective",
   "packBtn": "Sphere packing",
   "plist": "Point list with weights",
