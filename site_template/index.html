@@ -105,6 +105,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 .figbox{position:relative}
 .figbox.zoomed{overflow:hidden}
+.zwrap{display:block;width:100%;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.zwrap>canvas.cv{background:transparent;border:0;border-radius:0}
+.figbox:fullscreen .zwrap{width:min(100%,calc(100vh - 60px));border:0}
+.figbox:fullscreen .zwrap>canvas.cv{width:100%}
 .figbox>.legend{position:relative;z-index:3}
 .figbox.zoomed svg.ch{cursor:grab}
 .fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.75}
@@ -6708,6 +6712,7 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
     if(!el)return;
     var s=el.__zm={z:1,x:0,y:0},isCv=el.tagName.toLowerCase()==='canvas',timer=0,drag=null;
     el.style.transformOrigin='0 0';
+    if(isCv){var fr=document.createElement('div');fr.className='zwrap';el.parentNode.insertBefore(fr,el);fr.appendChild(el);}   /* the frame with the white background stays, only the picture moves */
     function apply(){
       var moved=s.z>1||s.x!==0||s.y!==0;                 /* no limits: the figure may be moved anywhere, also without zoom */
       el.style.transform=moved?'translate('+s.x+'px,'+s.y+'px) scale('+s.z+')':'';
