@@ -94,7 +94,7 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
 }
 ```
 
-`reproduce` is required for every new rule with `origin` `"found"` (the build refuses it otherwise; existing rules are exempt): `script` is a file of the repository, `seed` an integer or a list of integers, `command` the call that gives the same rule again.
+`reproduce` is optional and not checked by the build; give it to every new rule with `origin` `"found"`: `script` is a file of the repository, `seed` an integer or a list of integers, `command` the call that gives the same rule again.
 
 "Best known" is not stored. The build and the page compute it: for each domain and degree, the rule with the fewest nodes among all rules of at least that degree.
 
