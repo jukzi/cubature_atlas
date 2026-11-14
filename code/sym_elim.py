@@ -17,7 +17,8 @@ Groups: c1, c2rot, c2mir, c3, d2, s3, a4, s4.
 Output files: sym_<group>_d<degree>_n<N>.npy (columns x, y, z, w), one per accepted node count;
 the invariant basis is cached as symU_<group>_d<degree>.npy in the working directory.
 Environment: MI (LM iterations per candidate, default 40), NCAND (candidates per round, default 8),
-EXTTOL and EXTIT (further iterations for nearly converged candidates, default 1e-8 and 60), CANDS (mixed or large).
+EXTTOL and EXTIT (further iterations for nearly converged candidates, default 1e-8 and 60),
+EXT2TOL and EXT2IT (a second, longer continuation, default off and 500), CANDS (mixed or large).
 """
 
 # Imports.
@@ -42,6 +43,9 @@ NCAND = int(os.environ.get("NCAND", "8"))
 # Candidates with a cost below EXTTOL get EXTIT further iterations.
 EXTTOL = float(os.environ.get("EXTTOL", "1e-8"))
 EXTIT = int(os.environ.get("EXTIT", "60"))
+# Candidates still below EXT2TOL after that get EXT2IT more (off by default).
+EXT2TOL = float(os.environ.get("EXT2TOL", "0"))
+EXT2IT = int(os.environ.get("EXT2IT", "500"))
 
 # Generators of the subgroups as permutations of the barycentric coordinates (lambda'_i = lambda_p[i]).
 GENS = {
@@ -424,6 +428,9 @@ def main():
             if 1e-24 <= cost < EXTTOL:
                 # Nearly converged: continue instead of giving up.
                 xs, cost = pr.solve_lm(xs, EXTIT)
+            if 1e-24 <= cost < EXT2TOL:
+                # Very close: a second, longer continuation.
+                xs, cost = pr.solve_lm(xs, EXT2IT)
             ws = xs[pr.off[-1]:]
             if cost < 1e-24 and ws.min() <= 1e-14 * ws.max():
                 # Orbits whose weight went to zero are removed as well, then the rest is polished.
