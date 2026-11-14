@@ -411,6 +411,50 @@ def changed_rule_paths(base):
     return {p for p in paths if os.path.basename(p) != "family.json"}
 
 
+def added_rule_paths(base):
+    """Absolute paths of the rule files that are new against `base` (added in a commit or the index, or untracked)."""
+    paths = set()
+    try:
+        out = subprocess.run(["git", "diff", "--name-status", base, "--", "rules"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout
+        for line in out.splitlines():
+            parts = line.split("\t")
+            if parts[0][:1] == "A" and parts[-1].endswith(".json"):
+                paths.add(os.path.abspath(os.path.join(ROOT, parts[-1])))
+        new = subprocess.run(["git", "ls-files", "--others", "--exclude-standard", "--", "rules"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout
+        for line in new.splitlines():
+            if line.endswith(".json"):
+                paths.add(os.path.abspath(os.path.join(ROOT, line)))
+    except Exception as e:  # noqa: BLE001
+        err("cannot determine the added rules against %s (%s)" % (base, e))
+    return paths
+
+
+def check_reproduce(fams, base):
+    """A newly added rule that was found by a search (origin "found") must say how to find it again: the field "reproduce" with
+    "script" (a file in this repository), "seed" (integer or list of integers) and "command" (the call that reproduces the rule)."""
+    added = added_rule_paths(base)
+    for f in fams:
+        for r in f["rules"]:
+            if os.path.abspath(r["_path"]) not in added or r.get("origin") != "found":
+                continue
+            where = rel(r["_path"])
+            rep = r.get("reproduce")
+            if not isinstance(rep, dict):
+                err("%s: a new rule with origin \"found\" needs the field \"reproduce\" with \"script\", \"seed\" and \"command\" (see CONTRIBUTING.md)" % where)
+                continue
+            script = rep.get("script")
+            if not isinstance(script, str) or not script or not os.path.isfile(os.path.join(ROOT, script)):
+                err("%s: reproduce.script must name a file of this repository (the script that finds the rule)" % where)
+            seed = rep.get("seed")
+            seeds = seed if isinstance(seed, list) else [seed]
+            if not seeds or any(isinstance(s, bool) or not isinstance(s, int) for s in seeds):
+                err("%s: reproduce.seed must be an integer or a list of integers" % where)
+            if not isinstance(rep.get("command"), str) or not rep["command"].strip():
+                err("%s: reproduce.command must be the command line that reproduces the rule" % where)
+
+
 def check_references():
     """content/references.json must be sorted by year (undated entries last) and numbered 1, 2, 3, ..."""
     refs = load_json(os.path.join(ROOT, "content", "references.json"))
@@ -791,6 +835,7 @@ def main():
     attach_interval_proofs(fams, only)
     if args.base:
         check_locked(args.base)
+        check_reproduce(fams, args.base)
     check_references()
     en, de, doc_en, doc_de, stale_doc = check_i18n(args.strict)
     total =sum(len(f["rules"]) for f in fams)
