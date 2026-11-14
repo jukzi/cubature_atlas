@@ -8735,35 +8735,36 @@
    "ok_exist": true
   },
   {
-   "id": "CA-T3-27-1028-PI-MPC",
-   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-27-1028-PI-MPC.json",
+   "id": "CA-T3-27-1026-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-27-1026-PI-MPC.json",
    "domain": "tetra",
    "degree": 27,
-   "points": 1028,
+   "points": 1026,
    "quality": "PI",
    "status": "proven",
-   "sha": "120e1dd546be7c9d",
+   "sha": "ec12c09e8ca2d164",
    "stored": {
-    "res_bound": 5.924590963143771e-15,
+    "res_bound": 6.353415357567952e-15,
     "res_ok": true,
-    "margin_exact": -2.5e-17,
-    "minw_exact": 2.938151346586974e-06,
-    "quality_exact": "PO"
+    "margin_exact": 0.0,
+    "minw_exact": 2.737256252551617e-06,
+    "quality_exact": "PI"
    },
    "exist": {
     "proved": true,
-    "r": 1.7433727652127647e-12,
-    "kratio": 0.6679791841252912,
-    "mode": "sym3",
-    "equations": 1706,
-    "unknowns": 1719,
-    "dist": 1.8817066924148485e-12,
+    "r": 3.0238407260098423e-12,
+    "kratio": 0.6685826377727956,
+    "mode": "full",
+    "equations": 4060,
+    "unknowns": 4100,
+    "dist": 9.981030194840892e-11,
     "pos": true,
     "inside": true,
     "outside": false,
-    "quality_proved": "PI"
+    "quality_proved": "PI",
+    "snapped": 4.440892098500627e-16
    },
-   "seconds": 316.7,
+   "seconds": 360.53,
    "ok_stored": true,
    "ok_exist": true
   },
