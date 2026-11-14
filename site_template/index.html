@@ -106,9 +106,6 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .figbox{position:relative}
 .figbox.zoomed{overflow:hidden}
 .figbox>.legend{position:relative;z-index:3}
-.zreset{position:absolute;top:8px;right:46px;z-index:4;height:30px;padding:0 9px;font:600 12px var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.85}
-.zreset:hover,.zreset:focus-visible{opacity:1}
-.zreset[hidden]{display:none}
 .figbox.zoomed svg.ch{cursor:grab}
 .fsb{position:absolute;top:8px;right:8px;z-index:3;width:30px;height:30px;padding:6px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer;opacity:.75}
 .fsb:hover,.fsb:focus-visible{opacity:1}
@@ -6704,18 +6701,13 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
   b.onclick=function(){COMP.on=!COMP.on;b.setAttribute('aria-pressed',COMP.on);exChartN();};})();
 (function(){
   /* Zoom of every figure (A to E): Ctrl + mouse wheel (also the pinch gesture of a trackpad) zooms around the pointer,
-     dragging with the middle mouse button or with Alt pressed moves the figure (plain dragging too for the charts), the button
-     "100 %" resets. The element is scaled by CSS; canvases are redrawn with a finer resolution after a zoom (zq) so they stay sharp. */
+     dragging with Ctrl, Alt or the middle mouse button moves the figure (plain dragging too for the charts), Escape resets. The element is scaled by CSS; canvases are redrawn with a finer resolution after a zoom (zq) so they stay sharp. */
   var MAXZ=12;
   ['#fbA','#fbB','#fbC','#fbD','#fbE'].forEach(function(q){
     var box=$(q),el=box&&box.querySelector('svg.ch, canvas.cv');
     if(!el)return;
     var s=el.__zm={z:1,x:0,y:0},isCv=el.tagName.toLowerCase()==='canvas',timer=0,drag=null;
     el.style.transformOrigin='0 0';
-    var btn=document.createElement('button');
-    btn.type='button';btn.className='zreset';btn.hidden=true;btn.textContent='100 %';
-    btn.setAttribute('aria-label',t('zoomReset'));btn.title=t('zoomReset');
-    box.appendChild(btn);
     function clamp(){
       if(s.z<=1){s.z=1;s.x=0;s.y=0;return;}
       var r=el.getBoundingClientRect(),w=r.width/(s.__last||1),h=r.height/(s.__last||1);   /* size without the zoom (SVG elements have no offsetWidth) */
@@ -6726,7 +6718,6 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
       el.style.transform=s.z===1?'':'translate('+s.x+'px,'+s.y+'px) scale('+s.z+')';
       s.__last=s.z;
       box.classList.toggle('zoomed',s.z>1);
-      btn.hidden=s.z===1;
       if(isCv){clearTimeout(timer);timer=setTimeout(function(){if(el.id==='cv')draw();else drawEx();},140);}}
     function origin(){var r=el.getBoundingClientRect();return {l:r.left-s.x,t:r.top-s.y};}
     box.addEventListener('wheel',function(e){
@@ -6748,7 +6739,6 @@ function drillStart(){if(!DRILL.raf&&DRILL.on&&!document.hidden){DRILL.last=0;DR
       s.x=drag.sx+e.clientX-drag.x;s.y=drag.sy+e.clientY-drag.y;apply();});
     var end=function(e){if(drag){drag=null;try{box.releasePointerCapture(e.pointerId);}catch(_){}}};
     box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
-    btn.onclick=function(){s.z=1;s.x=0;s.y=0;apply();};
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&s.z>1&&document.activeElement&&box.contains(document.activeElement)){s.z=1;apply();}});
   });
 })();
