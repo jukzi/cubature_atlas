@@ -5635,7 +5635,7 @@ function famRule(k,dom,n){var x=famOf(k),b=null;if(!x)return null;(x.f.rules[dom
   ATLAS.families.slice().sort(function(a,b){return ORDER[a.role]-ORDER[b.role];}).forEach(function(f){var R=f.rules||{};
     if(f.role==='pi'){Object.keys(R).forEach(function(d){for(var n=1;n<=MAXN;n++){var b=null;
       R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n||(r.n===b.n&&r.deg===n&&b.deg!==n)))b=r;});
-      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
+      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv,method:b.method};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
     else if(f.role==='po'){Object.keys(R).forEach(function(d){OUTR[d]={};for(var n=1;n<=MAXN;n++){var b=null;
         R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n))OUTR[d][n]=b.pts;}});
       var S=f.searched_degrees||{},doms={};Object.keys(S).concat(Object.keys(R)).forEach(function(d){doms[d]=1;});
@@ -5831,6 +5831,8 @@ var LPOS={tetra:{3:6}};
 function optStar(v,low,n){if(v!=null&&n!=null&&v!==low&&LPOS[st.dom]&&LPOS[st.dom][n]===v)return '<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optPosBtn')+'" data-tip="'+escA(t('optPosStar'))+'">☆</span>';
   return (v!=null&&low!=null&&v===low)?'<span class="oq star" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+t('optBtn')+'" data-tip="'+escA(t('optStar'))+'">★</span>':'';}
 function starCell(v,low,n){var s=optStar(v,low,n);return s?'<span class="mk">'+s+'</span>':'';}
+/* N_PI cell: info symbol with the method of the rule (id and the field "method" of the rule file), same popup */
+function methMark(dom,n){var r=DATA[dom]&&DATA[dom][n];return r&&r.method?'<span class="oq" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('methBtn'))+'" data-tip="'+escA(r.id+'\n'+r.method)+'">ⓘ</span>':'';}
 var HPSEL='th .hw, td .oq';
 function hpopClose(){var p=$('#hpop');if(p)p.style.display='none';hpopFor=null;hpopPin=false;}
 function hpopShow(el){var p=$('#hpop');
@@ -5865,7 +5867,7 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     var TR=function(k){return (!iv&&tw===k)?'<span class="trophy" title="'+t('trophy')+'">🏆</span>':'';};
     if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
-    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n);cells+='<td class="found">'+TR('found')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
       if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':TR('lit')+fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i],n)+'</td>';}

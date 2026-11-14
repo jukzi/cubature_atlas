@@ -524,6 +524,7 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
                 "iv": r.get("_iv"),
                 "url": rule_url(r, lang),
                 "pts": pts,
+                "method": r.get("method", "") if f.get("role") == "pi" else "",
             })
             del d
         out_f.append({k: f[k] for k in ("id", "tag", "role", "name", "short", "description", "references") if k in f} |
