@@ -16,7 +16,8 @@ Usage:
 Groups: c1, c2rot, c2mir, c3, d2, s3, a4, s4.
 Output files: sym_<group>_d<degree>_n<N>.npy (columns x, y, z, w), one per accepted node count;
 the invariant basis is cached as symU_<group>_d<degree>.npy in the working directory.
-Environment: MI (LM iterations per candidate, default 40), NCAND (candidates per round, default 8).
+Environment: MI (LM iterations per candidate, default 40), NCAND (candidates per round, default 8),
+EXTTOL and EXTIT (further iterations for nearly converged candidates, default 1e-8 and 60), CANDS (mixed or large).
 """
 
 # Imports.
@@ -38,6 +39,9 @@ import cubature_atlas as CA
 # Iterations and candidates.
 MI = int(os.environ.get("MI", "40"))
 NCAND = int(os.environ.get("NCAND", "8"))
+# Candidates with a cost below EXTTOL get EXTIT further iterations.
+EXTTOL = float(os.environ.get("EXTTOL", "1e-8"))
+EXTIT = int(os.environ.get("EXTIT", "60"))
 
 # Generators of the subgroups as permutations of the barycentric coordinates (lambda'_i = lambda_p[i]).
 GENS = {
@@ -417,9 +421,9 @@ def main():
             old = (pr.ob, pr.off, pr.n, pr.size)
             xn = pr.setup(new)
             xs, cost = pr.solve_lm(xn, MI)
-            if 1e-24 <= cost < 1e-8:
+            if 1e-24 <= cost < EXTTOL:
                 # Nearly converged: continue instead of giving up.
-                xs, cost = pr.solve_lm(xs, 60)
+                xs, cost = pr.solve_lm(xs, EXTIT)
             ws = xs[pr.off[-1]:]
             if cost < 1e-24 and ws.min() <= 1e-14 * ws.max():
                 # Orbits whose weight went to zero are removed as well, then the rest is polished.
