@@ -89,7 +89,8 @@ tbody tr.sel-row{cursor:pointer}
 tbody tr.sel-row:hover{background:var(--soft)}
 tbody tr[aria-selected="true"]{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
 td.found{font-weight:700;color:var(--s-found)}
-td .trophy{font-size:.8em;margin-right:3px;cursor:help}
+td .trophy{font-size:.8em;margin-right:3px}
+td .iso{margin-right:3px}
 td.dim{color:var(--muted)}
 .delta-ok{color:var(--good)} .delta-up{color:var(--muted)}
 .viewer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
@@ -210,7 +211,6 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   </div>
   <div class="figtag fi" id="tcap1" style="margin-top:18px"></div>
   <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
-  <p class="sub" id="isonote" style="font-size:13px;margin-top:8px"></p>
   <p class="sub" id="srcnote" style="font-size:13px;margin-top:8px"></p>
 </section>
 
@@ -5866,16 +5866,14 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
   var A={found:'e-found',abz:'e-abz',low:'e-low',gauss:'e-gauss',lit:'e-lit',out:'e-out',delta:'e-delta'};
   $('#tbl thead').innerHTML='<tr>'+heads.map(function(h){var txt=hdr(h,h[1]&&(!iv||isF(h[1]))?'#'+(isF(h[1])?'fam-'+h[1].slice(2):A[h[1]]):null);return '<th'+(h[1]&&(['out','found','lit','gauss','lob','cc','nc'].indexOf(h[1])>=0||isF(h[1]))?' class="'+(st.src===h[1]?'selcol ':'')+'pick" data-src="'+h[1]+'"':'')+'>'+txt+'</th>';}).join('')+'</tr>';
   document.querySelectorAll('#tbl th.pick').forEach(function(th){th.onclick=function(e){if(e.target.closest&&e.target.closest('a'))return;st.src=th.getAttribute('data-src');viewer();table();drawEx();exChart();};});
-  $('#tcap1').textContent=t('tabW')+' 1: '+t('tab1')+' – '+d.lab[LANG];
-  $('#isonote').textContent=iv?'':t('isoNote');
-  var tb=$('#tbl tbody');tb.innerHTML='';$('#tbl').style.width=iv?'auto':'';$('#tbl').style.minWidth=iv?'260px':'';
+  $('#tcap1').textContent=t('tabW')+' 1: '+t('tab1')+' – '+d.lab[LANG];  var tb=$('#tbl tbody');tb.innerHTML='';$('#tbl').style.width=iv?'auto':'';$('#tbl').style.minWidth=iv?'260px':'';
   for(var n=1;n<=MX();n++){var i=n-1,tr=document.createElement('tr');tr.className='sel-row';tr.setAttribute('aria-selected',n===st.n);
     var dl=f[i]-d.abz[i];var dtxt=dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'));
     var cells='<td>'+n+'</td>';
     /* trophy: the fewest nodes of the row among N_Lit, N_PI and N_PO; on a tie the first of these wins */
     var tw=null,tv=null;[['lit',lit?lit.arr[i]:null],['found',f[i]],['out',po?po.arr[i]:null]].forEach(function(c){if(c[1]!=null&&(tv==null||c[1]<tv)){tv=c[1];tw=c[0];}});
-    var TR=function(k){return (!iv&&tw===k)?'<span class="trophy" title="'+t('trophy')+'">🏆</span>':'';};
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+(isoZ(st.dom,n)?'<span class="iso" aria-hidden="true">⌖</span>':'')+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    var TR=function(k){return (!iv&&tw===k)?'<span class="oq trophy" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('trophyBtn'))+'" data-tip="'+escA(t('trophy'))+'">🏆</span>':'';};
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+(isoZ(st.dom,n)?'<span class="oq iso" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('isoBtn'))+'" data-tip="'+escA(t('isoTip'))+'">⌖</span>':'')+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
     else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl<=0?'delta-ok':'delta-up')+'">'+dtxt+'</td>';
