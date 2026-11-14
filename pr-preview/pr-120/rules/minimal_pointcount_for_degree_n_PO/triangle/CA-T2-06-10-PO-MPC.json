@@ -1,0 +1,39 @@
+{
+  "id": "CA-T2-06-10-PO-MPC",
+  "family": "minimal_pointcount_for_degree_n_PO",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 6,
+  "points": 10,
+  "quality": "PO",
+  "origin": "po_search",
+  "method": "numerical search of this atlas with nodes allowed outside the domain (positive weights)",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "proven",
+  "locked": true,
+  "numerical_check": {"N": 10, "M": 28, "p": 30, "res": 4.646906250847762e-12, "sigma": 0.14317629895130968, "h": 2.524489633760279e-06, "rad": 2.059469687680667e-12, "cert": true, "inside": false, "positive": true},
+  "nodes": [
+    [0.0196018957365, 0.38327679314],
+    [0.844426099309, 0.0468339353083],
+    [0.241624531328, 0.345000256033],
+    [0.333408192395, 0.593331293261],
+    [0.0708096866191, 0.738546950023],
+    [1.22919967363, 0.276916278071],
+    [0.0992921544088, 0.0788688646719],
+    [0.625268895898, 0.259341261857],
+    [0.454955837534, 0.0681831816393],
+    [0.0662370758047, 0.961037014233]
+  ],
+  "weights": [
+    0.0327194648956,
+    0.0332185272545,
+    0.109545981186,
+    0.0615056244134,
+    0.0574888645428,
+    0.000111897283742,
+    0.0486313037295,
+    0.0784696801099,
+    0.0712870920273,
+    0.00702156455723
+  ]
+}
