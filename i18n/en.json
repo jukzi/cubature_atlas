@@ -75,7 +75,7 @@
   "f4": "Gap to counting value",
   "f4s": "degrees 1 to 20, largest difference",
   "chartLbl": "Number of nodes over degree",
-  "isoTip": "The counting value Z is a whole number at this degree: there are exactly as many moment equations as unknowns (the coordinates and weights of Z nodes), so a rule with Z nodes would be an isolated solution without a free parameter.",
+  "isoTip": "Z needs no rounding up at this degree: the number of moments is divisible by the number of unknowns per node (d + 1), so there are exactly as many moment equations as unknowns for Z nodes (their coordinates and weights). A rule with Z nodes would be an isolated solution without a free parameter.",
   "isoBtn": "Isolated solution",
   "trophyBtn": "Fewest nodes in this row",
   "notes": {
