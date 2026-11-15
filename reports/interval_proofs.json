@@ -7131,6 +7131,138 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C2-31-171-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-31-171-PI-MPC.json",
+   "domain": "square",
+   "degree": 31,
+   "points": 171,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "1ebf1d15f4da7ed9",
+   "stored": {
+    "res_bound": 7.862925534198743e-15,
+    "res_ok": true,
+    "margin_exact": 0.0006241438372088,
+    "minw_exact": 0.0004498459991852818,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.0148934154268319e-11,
+    "kratio": 0.7003901091268459,
+    "mode": "sym2",
+    "equations": 256,
+    "unknowns": 256,
+    "dist": 8.708448743071396e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.99,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C2-32-187-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-32-187-PI-MPC.json",
+   "domain": "square",
+   "degree": 32,
+   "points": 187,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "67f9fa317a394484",
+   "stored": {
+    "res_bound": 7.86751984090465e-15,
+    "res_ok": true,
+    "margin_exact": 9.02807050469e-05,
+    "minw_exact": 0.0003442190977328361,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 1.0770768410424469e-11,
+    "kratio": 0.7158231552678559,
+    "mode": "full",
+    "equations": 561,
+    "unknowns": 561,
+    "dist": 1.7233229456679153e-10,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.9,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C2-33-193-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-33-193-PI-MPC.json",
+   "domain": "square",
+   "degree": 33,
+   "points": 193,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "5fbbf21043d62028",
+   "stored": {
+    "res_bound": 8.805115009780539e-15,
+    "res_ok": true,
+    "margin_exact": 0.003233602826817,
+    "minw_exact": 0.0006584178120679199,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 3.972754939458015e-12,
+    "kratio": 0.6724736709939726,
+    "mode": "sym2",
+    "equations": 289,
+    "unknowns": 289,
+    "dist": 3.178203951566413e-11,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 0.61,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C2-34-211-PI-MPC",
+   "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-34-211-PI-MPC.json",
+   "domain": "square",
+   "degree": 34,
+   "points": 211,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "f631196423688ae3",
+   "stored": {
+    "res_bound": 9.36749533532998e-15,
+    "res_ok": true,
+    "margin_exact": 0.0003361285035781,
+    "minw_exact": 0.00039487327883995754,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 8.665013289681026e-12,
+    "kratio": 0.7027426930318682,
+    "mode": "full",
+    "equations": 630,
+    "unknowns": 633,
+    "dist": 2.772804252697929e-10,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 1.08,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-T3-01-1-PI-MPC",
    "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-01-1-PI-MPC.json",
    "domain": "tetra",
