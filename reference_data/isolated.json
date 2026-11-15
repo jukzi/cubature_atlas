@@ -1,0 +1,25 @@
+{
+  "note": "Rules whose moment system is square ((d + 1) N = M) with a regular Jacobian (sigma_min/sigma_max > 1e-9, float64), i.e. isolated solutions. Computed once; the build only reads this file. Domains not listed were not computed.",
+  "domains": {
+    "triangle": [
+    {"quality": "PI", "degree": 1, "points": 1},
+    {"quality": "PI", "degree": 5, "points": 7},
+    {"quality": "PI", "degree": 7, "points": 12},
+    {"quality": "PO", "degree": 11, "points": 26},
+    {"quality": "PI", "degree": 13, "points": 35},
+    {"quality": "PO", "degree": 14, "points": 40},
+    {"quality": "PO", "degree": 16, "points": 51},
+    {"quality": "PI", "degree": 17, "points": 57},
+    {"quality": "PO", "degree": 17, "points": 57},
+    {"quality": "PI", "degree": 19, "points": 70},
+    {"quality": "PO", "degree": 19, "points": 70},
+    {"quality": "PO", "degree": 20, "points": 77},
+    {"quality": "PO", "degree": 22, "points": 92},
+    {"quality": "PI", "degree": 23, "points": 100},
+    {"quality": "PO", "degree": 23, "points": 100},
+    {"quality": "PI", "degree": 25, "points": 117},
+    {"quality": "PO", "degree": 28, "points": 145},
+    {"quality": "PI", "degree": 29, "points": 155}
+    ]
+  }
+}
