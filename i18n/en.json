@@ -75,7 +75,7 @@
   "f4": "Gap to counting value",
   "f4s": "degrees 1 to 20, largest difference",
   "chartLbl": "Number of nodes over degree",
-  "isoTip": "Z needs no rounding up at this degree: the number of moments is divisible by the number of unknowns per node (d + 1), so there are exactly as many moment equations as unknowns for Z nodes (their coordinates and weights). A rule with Z nodes would be an isolated solution without a free parameter.",
+  "isoTip": "Isolated solution: the moment system is square (as many equations as unknowns, d + 1 per node) and its Jacobian at this rule is regular, so the rule has no free parameter and is locally unique.",
   "isoBtn": "Isolated solution",
   "trophyBtn": "Fewest nodes in this row",
   "notes": {

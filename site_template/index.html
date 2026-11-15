@@ -5875,10 +5875,10 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     /* trophy: the fewest nodes of the row among N_Lit, N_PI and N_PO; on a tie the first of these wins */
     var tw=null,tv=null;[['lit',lit?lit.arr[i]:null],['found',f[i]],['out',po?po.arr[i]:null]].forEach(function(c){if(c[1]!=null&&(tv==null||c[1]<tv)){tv=c[1];tw=c[0];}});
     var TR=function(k){return (!iv&&tw===k)?'<span class="oq trophy" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('trophyBtn'))+'" data-tip="'+escA(t('trophy'))+'">🏆</span>':'';};
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+(isoZ(st.dom,n)?'<span class="oq iso" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('isoBtn'))+'" data-tip="'+escA(t('isoTip'))+'">⌖</span>':'')+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO',po.arr[i])+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
     else if(f[i]==null){cells+='<td class="found dim">–</td>';}
-    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI',f[i])+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl==null?'dim':(dl<=0?'delta-ok':'delta-up'))+'">'+dtxt+'</td>';
       if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':TR('lit')+fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i],n)+'</td>';}
@@ -5893,13 +5893,11 @@ function legend(){var L=$('#legend');L.innerHTML='';allKeys(st.dom).forEach(func
   var b=document.createElement('button');b.className='lg';b.setAttribute('aria-pressed',!st.hide[k]);
   b.innerHTML=legSvg(k,SERCOL[k],w[0],w[1])+legLabel(k);
   b.onclick=function(){st.hide[k]=!st.hide[k];legend();chart();};L.appendChild(b);});}
-/* Counting value Z is a whole number: as many moment equations as unknowns (d + 1 per node), so a rule with Z nodes would be an isolated solution.
-   For square and cube the displayed Z is the smaller of the plain and the symmetric count; the test uses the count that gives the displayed value. */
-function isoZ(dom,n){var d=DOM[dom].dim,M,z=DOM[dom].abz[n-1],u=d+1;
-  if(d===1)M=n+1;else if(d===2)M=(n+1)*(n+2)/2;else M=(n+1)*(n+2)*(n+3)/6;
-  if(z*u===M)return true;
-  if(dom==='square'||dom==='cube'){var e=0;for(var j=0;j<=n;j+=2)e+=binom(j+d-1,d-1);return z*u===2*e;}
-  return false;}
+/* Isolated solution: stored result (reference_data/isolated.json, computed once, not in the browser) for the rule of this quality at exactly this degree with this node count. */
+function isoMark(dom,n,q,cnt){var L=(ATLAS.isolated&&ATLAS.isolated[dom])||[];
+  for(var j=0;j<L.length;j++)if(L[j].quality===q&&L[j].degree===n&&L[j].points===cnt)
+    return '<span class="oq iso" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('isoBtn'))+'" data-tip="'+escA(t('isoTip'))+'">⌖</span>';
+  return '';}
 function chart(){var svg=$('#chart');svg.innerHTML='';svg.setAttribute('aria-label',t('chartLbl'));var W=900,H=420,m={l:58,r:20,t:14,b:40},pw=W-m.l-m.r,ph=H-m.t-m.b,d=DOM[st.dom],rel=st.mode==='rel',data=[];
   allKeys(st.dom).forEach(function(k){if(st.hide[k])return;var v=seriesOf(st.dom,k);if(rel)v=v.map(function(x,i){return x==null?null:x/d.abz[i];});data.push({k:k,v:v});});
   var mx=0,mn=rel?1e9:0,others=data.filter(function(o){return o.k!=='gauss';}),scaleOn=others.length?others:data,gmax=0;
