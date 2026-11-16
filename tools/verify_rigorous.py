@@ -61,6 +61,10 @@ U = 2.0 ** -53
 TINY = 2.0 ** -1000
 # Points per block in the basis enclosure (memory: the temporaries grow with block size x number of basis functions).
 POINT_BLOCK = int(os.environ.get("VR_POINT_BLOCK", "128"))
+# Rows per block in the matrix products of the Krawczyk test (memory: a few arrays of block size x number of equations).
+ROW_BLOCK = int(os.environ.get("VR_ROW_BLOCK", "512"))
+# Largest system (equations x unknowns) the existence proof is attempted for.
+MAX_SYSTEM = float(os.environ.get("VR_MAX_SYSTEM", "1e8"))
 INF = np.inf
 
 
@@ -1234,15 +1238,65 @@ def float_residual(par, n, u):
     return F
 
 
+def refine_residual(par, n, u, exact):
+    """Residual used to improve the centre: the exact one where it is available, otherwise floating point.
+
+    With a floating-point residual the centre can only be improved down to the rounding noise of the residual
+    times the norm of the inverse Jacobian; for an ill-conditioned rule that leaves a Newton step which is too
+    large for the Krawczyk test. With the exact residual the centre converges to the nearest floats."""
+    if exact_centre_applies(par):
+        return exact_centre_residual(par, n, u, exact)[0]
+    return float_residual(par, n, u)
+
+
+def householder_apply(h, tau, E):
+    """Q E for the QR factorisation in the raw form of numpy (h, tau): Q = H_0 H_1 ... H_{K-1},
+    H_i = I - tau_i v_i v_i^T, v_i = (0, ..., 0, 1, h[i, i+1:]). E is changed in place and returned.
+
+    Q itself (a square matrix of the size of the long side) is never formed."""
+    for i in range(len(tau) - 1, -1, -1):
+        v = h[i, i:].copy()
+        v[0] = 1.0
+        if E.ndim == 1:
+            E[i:] -= (tau[i] * (v @ E[i:])) * v
+        else:
+            E[i:] -= np.outer(tau[i] * v, v @ E[i:])
+    return E
+
+
+def min_norm_solver(J):
+    """Function f -> minimum-norm solution of J x = f (floating point, not part of the proof).
+
+    One QR factorisation of J^T (kept as Householder reflectors) serves all right-hand sides of the chord
+    iteration: x = Q (R^-T f, 0). If J has more rows than columns or is numerically rank deficient, the
+    singular value decomposition of lstsq is used instead."""
+    M, q = J.shape
+    if M <= q:
+        h, tau = np.linalg.qr(J.T, mode="raw")
+        Rt = np.tril(h[:, :M])
+        dg = np.abs(np.diag(Rt))
+        if dg.size > 0 and dg.min() > 1e-12 * dg.max():
+            def solve(f):
+                x = np.zeros(q)
+                x[:M] = np.linalg.solve(Rt, f)
+                return householder_apply(h, tau, x)
+            return solve
+        del h, tau, Rt
+    return lambda f: np.linalg.lstsq(J, f, rcond=None)[0]
+
+
 def refine(par, n, exact, steps=4):
-    """Chord-Newton steps (minimum norm) on the centre in floating point; returns the shift."""
+    """Chord-Newton steps (minimum norm) on the centre (not part of the proof); returns the shift."""
     u = par.u0.copy()
     Jm, Jr = jacobian(par, n, u, np.zeros(len(u)))
-    fm = float_residual(par, n, u)
+    del Jr
+    solve = min_norm_solver(Jm)
+    del Jm
+    fm = refine_residual(par, n, u, exact)
     best = float(np.max(np.abs(fm)))
     for _ in range(steps):
-        un = u - np.linalg.lstsq(Jm, fm, rcond=None)[0]
-        fn = float_residual(par, n, un)
+        un = u - solve(fm)
+        fn = refine_residual(par, n, un, exact)
         val = float(np.max(np.abs(fn)))
         if not np.isfinite(val) or val >= best:
             break
@@ -1324,10 +1378,20 @@ def phi_enclosure(par, tabs, want_grad):
 def residual(par, n, u, ru, exact):
     """Enclosure (mid, rad) of F(u') = sum_p w_p phi(x_p) - integral, for all u' in u +- ru."""
     w0, wr, c0, cr = par.points(u, ru)
-    (flo, fhi), _ = basis_enclosure(par, n, c0, cr, False)
     wlo = dn(w0 - wr)
     whi = up(w0 + wr)
-    plo, phi = iv_mul(flo, fhi, wlo[None, :], whi[None, :])
+    # the products are filled per block of points: only the two result arrays have the full size
+    npts = c0.shape[0]
+    plo = None
+    phi = None
+    for s in range(0, npts, POINT_BLOCK):
+        e = min(s + POINT_BLOCK, npts)
+        (flo, fhi), _ = basis_enclosure_block(par, n, c0[s:e], cr[s:e], False)
+        if plo is None:
+            plo = np.empty((flo.shape[0], npts))
+            phi = np.empty((flo.shape[0], npts))
+        plo[:, s:e], phi[:, s:e] = iv_mul(flo, fhi, wlo[None, s:e], whi[None, s:e])
+        del flo, fhi
     # math.fsum is correctly rounded, so one outward step encloses the exact sum of the bounds
     slo = dn(np.array([math.fsum(row) for row in plo]))
     shi = up(np.array([math.fsum(row) for row in phi]))
@@ -1417,47 +1481,66 @@ def exact_centre_residual(par, n, u, exact):
     return to_midrad(np.array(lo), np.array(hi))
 
 
+def exact_centre_applies(par):
+    return par.dom in BOX and not par.cons and len(par.idx) * par.const.shape[0] <= EXACT_PAIRS
+
+
 def centre_residual(par, n, u, exact):
     """Enclosure of F at the centre: exact summation on boxes (if not too large), otherwise interval arithmetic."""
-    if par.dom in BOX and not par.cons and len(par.idx) * par.const.shape[0] <= EXACT_PAIRS:
+    if exact_centre_applies(par):
         return exact_centre_residual(par, n, u, exact)
     return residual(par, n, u, np.zeros(len(u)), exact)
 
 
 def jacobian(par, n, u, ru):
-    """Enclosure (mid, rad) of dF/du over the box u +- ru: shape (equations, unknowns)."""
+    """Enclosure (mid, rad) of dF/du over the box u +- ru: shape (equations, unknowns).
+
+    The basis enclosure is computed per block of points and added to the result at once, so the enclosures of
+    values and gradients (several arrays of equations x points) never exist for all points together."""
     d = DIM[par.dom]
     w0, wr, c0, cr = par.points(u, ru)
-    (flo, fhi), grads = basis_enclosure(par, n, c0, cr, True)
     q = len(u)
     M = len(par.idx)
     Jm = np.zeros((M, q))
     Jabs = np.zeros((M, q))
     Jr = np.zeros((M, q))
     cnt = np.zeros(q)
-    m, r = to_midrad(flo, fhi)
-    np.add.at(Jm.T, par.widx, m.T)
-    np.add.at(Jabs.T, par.widx, np.abs(m).T)
-    np.add.at(Jr.T, par.widx, r.T)
-    np.add.at(cnt, par.widx, 1)
     wlo = dn(w0 - wr)
     whi = up(w0 + wr)
-    for c in range(d):
-        glo, ghi = grads[c]
-        for t in range(par.kidx.shape[2]):
-            free = par.kidx[:, c, t] >= 0
-            if not np.any(free):
-                continue
-            sg = par.coef[:, c, t]
-            tlo, thi = iv_mul(glo, ghi, (sg * wlo)[None, :], (sg * whi)[None, :])
-            m, r = to_midrad(tlo[:, free], thi[:, free])
-            cols = par.kidx[free, c, t]
-            np.add.at(Jm.T, cols, m.T)
-            np.add.at(Jabs.T, cols, np.abs(m).T)
-            np.add.at(Jr.T, cols, r.T)
-            np.add.at(cnt, cols, 1)
+    npts = c0.shape[0]
+    for s in range(0, npts, POINT_BLOCK):
+        e = min(s + POINT_BLOCK, npts)
+        (flo, fhi), grads = basis_enclosure_block(par, n, c0[s:e], cr[s:e], True)
+        m, r = to_midrad(flo, fhi)
+        del flo, fhi
+        np.add.at(Jm.T, par.widx[s:e], m.T)
+        np.add.at(Jabs.T, par.widx[s:e], np.abs(m).T)
+        np.add.at(Jr.T, par.widx[s:e], r.T)
+        np.add.at(cnt, par.widx[s:e], 1)
+        for c in range(d):
+            glo, ghi = grads[c]
+            for t in range(par.kidx.shape[2]):
+                free = par.kidx[s:e, c, t] >= 0
+                if not np.any(free):
+                    continue
+                sg = par.coef[s:e, c, t]
+                tlo, thi = iv_mul(glo, ghi, (sg * wlo[s:e])[None, :], (sg * whi[s:e])[None, :])
+                m, r = to_midrad(tlo[:, free], thi[:, free])
+                cols = par.kidx[s:e, c, t][free]
+                np.add.at(Jm.T, cols, m.T)
+                np.add.at(Jabs.T, cols, np.abs(m).T)
+                np.add.at(Jr.T, cols, r.T)
+                np.add.at(cnt, cols, 1)
+        del grads, m, r
+    # Jr = up(Jr * (1 + gamma(k + 2)) + gamma(k) * Jabs * (1 + gamma(k + 2)) + k * TINY), in place
     k = max(1.0, float(cnt.max()))
-    Jr = up(Jr * (1 + gamma(k + 2)) + gamma(k) * Jabs * (1 + gamma(k + 2)) + k * TINY)
+    Jr *= (1 + gamma(k + 2))
+    Jabs *= gamma(k)
+    Jabs *= (1 + gamma(k + 2))
+    Jr += Jabs
+    del Jabs
+    Jr += k * TINY
+    np.nextafter(Jr, INF, out=Jr)
     if par.cons:
         Cm = np.zeros((len(par.cons), q))
         for i, row in enumerate(par.cons):
@@ -1492,14 +1575,32 @@ def pivot_columns(J, M):
     (a heuristic; the proof itself does not depend on the choice)."""
     q = J.shape[1]
     Js = J / np.maximum(np.linalg.norm(J, axis=0), 1e-300)
-    Q = np.linalg.qr(Js.T, mode="complete")[0]
-    N = Q[:, M:]
+    # orthonormal basis of the null space of Js: the last q - M columns of Q in Js^T = Q R, obtained by
+    # applying the Householder reflectors to unit vectors (Q, a q x q matrix, is not formed)
+    h, tau = np.linalg.qr(Js.T, mode="raw")
+    del Js
+    N = np.zeros((q, q - M))
+    N[np.arange(M, q), np.arange(q - M)] = 1.0
+    N = householder_apply(h, tau, N)
+    del h, tau
     drop = set(greedy_pivots(N.T, q - M))
     return np.array([j for j in range(q) if j not in drop])
 
 
+def abs_matvec(C, v):
+    """|C| v for a float matrix C and a vector v, in blocks of rows (no copy of |C|)."""
+    out = np.empty(C.shape[0])
+    for s in range(0, C.shape[0], ROW_BLOCK):
+        out[s:s + ROW_BLOCK] = np.abs(C[s:s + ROW_BLOCK]) @ v
+    return out
+
+
 def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
-    """Try to prove a zero of F near u0. Returns a dict with the result."""
+    """Try to prove a zero of F near u0. Returns a dict with the result.
+
+    Memory: besides the Jacobian enclosure (two arrays equations x unknowns) only the approximate inverse C and
+    the selected columns of the Jacobian (midpoint, radius) are held as full matrices. The product C A is
+    formed per block of rows and reduced to its row sums at once."""
     u0 = par.u0
     q = len(u0)
     M = len(par.idx) + len(par.cons)
@@ -1508,6 +1609,7 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     zero = np.zeros(q)
     Fm, Fr = centre_residual(par, n, u0, exact)
     J0m, J0r = jacobian(par, n, u0, zero)
+    del J0r
     # Scale the unknowns so that all Jacobian columns have comparable size: the Krawczyk box is a cube
     # in the scaled variables. A node with a tiny weight then gets a correspondingly wider box for its
     # coordinates, which hardly influence the moments. Powers of two keep the scaling exact.
@@ -1522,20 +1624,25 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
         sel = np.arange(q)
     # z -> u = u0 + V z with V[sel[k], k] = vs[k]; the products below are exact (powers of two)
     vs = sc[sel]
-    A0 = J0m[:, sel] * vs
+    A0 = J0m[:, sel]
+    del J0m
+    A0 *= vs
+    rows_a0 = abs_matvec(A0, np.ones(A0.shape[1]))
     try:
         C = np.linalg.inv(A0)
     except np.linalg.LinAlgError:
         return dict(proved=False, reason="singular Jacobian")
+    del A0
     if not np.all(np.isfinite(C)):
         return dict(proved=False, reason="singular Jacobian")
     # rounding errors of C A alone are about gamma(M) |C| |A|; if that is not small the test cannot succeed
-    cond = float(np.max(np.abs(C) @ (np.abs(A0) @ np.ones(A0.shape[1]))))
+    cond = float(np.max(abs_matvec(C, rows_a0)))
     if not np.isfinite(cond) or gamma(M) * cond > 0.25:
         return dict(proved=False, reason="Jacobian too ill-conditioned in this basis (cond ~ %.1e)" % cond, cond=cond)
-    absC = np.abs(C)
-    CGm, CGr = mm(C, Fm)
-    CGr = up(CGr + up((absC @ Fr) * (1 + gamma(M + 2)) + M * TINY))
+    # enclosure of C F (as mm(C, Fm) plus the radius of F)
+    CGm = C @ Fm
+    CGr = up(gamma(M) * up(abs_matvec(C, np.abs(Fm)) * (1.0 + gamma(M + 2)) + M * TINY) + M * TINY)
+    CGr = up(CGr + up(abs_matvec(C, Fr) * (1 + gamma(M + 2)) + M * TINY))
     # size of the Newton step including its enclosure error; the box must be larger than that
     delta = float(np.max(np.abs(CGm) + CGr))
     last = None
@@ -1545,13 +1652,39 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
         ru = np.zeros(q)
         ru[sel] = vs * rz
         Jm, Jr = jacobian(par, n, u0, ru)
-        Am = Jm[:, sel] * vs
-        Ar = Jr[:, sel] * vs
-        CAm, CAr = mm(C, Am)
-        CAr = up(CAr + up((absC @ Ar) * (1 + gamma(M + 2)) + M * TINY))
-        Bm = np.eye(M) - CAm
-        Br = up(CAr + up(np.abs(Bm) * 2 * U) + TINY)
-        row = up(((np.abs(Bm) + Br) @ rz) * (1 + gamma(M + 2)) + M * TINY)
+        Am = Jm[:, sel]
+        del Jm
+        Am *= vs
+        Ar = Jr[:, sel]
+        del Jr
+        Ar *= vs
+        # The test needs row = (|I - C Am| + rad) rz, where rad bounds the rounding error of the product C Am
+        # (gamma(M) |C| |Am|) and the width of the Jacobian (|C| Ar). Only the first term needs the matrix
+        # product; the two radius terms are |C| (|Am| rz) and |C| (Ar rz), i.e. matrix-vector products.
+        g = 1.0 + gamma(M + 2)
+        va = up(abs_matvec(Am, rz) * g + M * TINY)
+        vr = up((Ar @ rz) * g + M * TINY)
+        del Ar
+        row = np.empty(M)
+        for s in range(0, M, ROW_BLOCK):
+            e = min(s + ROW_BLOCK, M)
+            Cb = C[s:e]
+            aCb = np.abs(Cb)
+            # |I - C Am|, midpoint only
+            Bm = Cb @ Am
+            np.negative(Bm, out=Bm)
+            Bm[np.arange(e - s), np.arange(s, e)] += 1.0
+            np.abs(Bm, out=Bm)
+            b = up((Bm @ rz) * g + M * TINY)
+            # rounding of the subtraction I - C Am (2 U |Bm| per entry)
+            sub = up(b * 4 * U + M * TINY)
+            # rounding of the product C Am
+            prod = up(gamma(M) * up((aCb @ va) * g + M * TINY) + M * M * TINY)
+            # width of the Jacobian over the box
+            wid = up((aCb @ vr) * g + M * TINY)
+            row[s:e] = up(up(up(b + sub) + prod) + wid)
+            del Bm, aCb
+        del Am
         K = up(up(np.abs(CGm) + CGr) + row)
         last = float(np.max(K) / r)
         if np.all(K < r):
@@ -1685,7 +1818,7 @@ def prove(dom, n, X, W, Xq, zero_tol):
             res = dict(proved=False, mode=mode, equations=M, unknowns=q, reason="more equations (%d) than unknowns (%d)" % (M, q))
             tried.append(res)
             continue
-        if q * M > 6e7:
+        if q * M > MAX_SYSTEM:
             res = dict(proved=False, mode=mode, equations=M, unknowns=q, reason="system too large (%d x %d)" % (M, q))
             tried.append(res)
             continue
