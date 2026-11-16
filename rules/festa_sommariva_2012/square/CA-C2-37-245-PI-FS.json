@@ -14,6 +14,7 @@
   "locked": true,
   "symmetry": "group of order 4",
   "numerical_check": null,
+  "numerical_check": {"N": 245, "M": 361, "p": 367, "res": 4.4814846278384834e-14, "sigma": 0.002012514481424194, "h": 0.0003560432415256549, "rad": 4.758129878622949e-13, "cert": true, "inside": true},
   "nodes": [
     [
       0.1688689515698905,
