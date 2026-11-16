@@ -1,0 +1,22 @@
+{
+  "id": "diallo_worku_2026",
+  "tag": "DW",
+  "role": "literature",
+  "quality": "PI",
+  "name": {
+    "en": "Diallo–Worku (fully symmetric, literature)",
+    "de": "Diallo–Worku (voll symmetrisch, Literatur)"
+  },
+  "short": {
+    "en": "Diallo–Worku",
+    "de": "Diallo–Worku"
+  },
+  "description": {
+    "en": "Fully symmetric PI rules from the literature, reproduced for comparison: M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026). Nodes and weights as published (15 digits); the build re-checks the moment equations.",
+    "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026). Knoten und Gewichte wie veröffentlicht (15 Stellen); der Build rechnet die Momentengleichungen nach."
+  },
+  "references": [
+    24
+  ],
+  "author": "Diallo–Worku"
+}
