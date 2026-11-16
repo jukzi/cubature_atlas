@@ -3307,6 +3307,39 @@
    "ok_exist": true
   },
   {
+   "id": "CA-C2-48-417-PI-FS",
+   "file": "rules/festa_sommariva_2012/square/CA-C2-48-417-PI-FS.json",
+   "domain": "square",
+   "degree": 48,
+   "points": 417,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "0ce04160df516bec",
+   "stored": {
+    "res_bound": 1.9788992412806704e-14,
+    "res_ok": true,
+    "margin_exact": 0.0016206780645734,
+    "minw_exact": 0.00014990443237536337,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 6.529362580084106e-12,
+    "kratio": 0.7688080771990203,
+    "mode": "full",
+    "equations": 1225,
+    "unknowns": 1251,
+    "dist": 1.0446980128134571e-10,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 9.15,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
    "id": "CA-C2-49-427-PI-FS",
    "file": "rules/festa_sommariva_2012/square/CA-C2-49-427-PI-FS.json",
    "domain": "square",
@@ -3336,6 +3369,39 @@
     "quality_proved": "PI"
    },
    "seconds": 22.37,
+   "ok_stored": true,
+   "ok_exist": true
+  },
+  {
+   "id": "CA-C2-50-454-PI-FS",
+   "file": "rules/festa_sommariva_2012/square/CA-C2-50-454-PI-FS.json",
+   "domain": "square",
+   "degree": 50,
+   "points": 454,
+   "quality": "PI",
+   "status": "proven",
+   "sha": "70947c1c84d828f1",
+   "stored": {
+    "res_bound": 1.9681814739952216e-14,
+    "res_ok": true,
+    "margin_exact": 0.0017359327376048,
+    "minw_exact": 0.0001055411719932975,
+    "quality_exact": "PI"
+   },
+   "exist": {
+    "proved": true,
+    "r": 9.690089357897254e-12,
+    "kratio": 0.9412905269914822,
+    "mode": "full",
+    "equations": 1326,
+    "unknowns": 1362,
+    "dist": 1.2403314378108487e-09,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+   },
+   "seconds": 10.91,
    "ok_stored": true,
    "ok_exist": true
   },

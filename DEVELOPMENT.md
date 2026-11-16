@@ -35,7 +35,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `jaskowiec_sukumar_2020` | `literature` | Fully symmetric tetrahedron rules (reproduced for comparison) |
 | `diallo_worku_2026` | `literature` | Fully symmetric square and cube rules (reproduced for comparison) |
 | `pinkse_2026` | `literature` | Cube rules of degree 21 and 29 with fewer nodes than the atlas (reproduced for comparison) |
-| `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 47 and 49 (reproduced for comparison) |
+| `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 50 (reproduced for comparison; degrees 48 and 50 moved away from the boundary for the proof) |
 | `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 31 to 40 (reproduced for comparison) |
 
 Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
@@ -129,6 +129,8 @@ python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangl
 ```
 
 The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build requires an entry for every rule and shows it on the website (table "Proofs", column "interval proof") and on every rule page. The report stores a hash of what the proof depends on (domain, degree, quality and the exact decimal strings of nodes and weights), so a proof stays valid when only metadata change. `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request and for all rules once a week (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass. There are no exceptions: every rule needs a proof.
+
+If the Krawczyk test fails for a rule whose nodes lie very close to the boundary, move the nodes inward and solve again: the second derivatives of the basis polynomials are large near the boundary and the test loses there. For a square rule with more unknowns than equations `code/push_inward.py` does this without changing degree or node count.
 
 For every rule the stored numbers pass, and an exact rule with the stored quality is proven to exist within about 10<sup>-10</sup> of the stored numbers (the per-rule distance is in the report). Some tetrahedron PI rules store a node about 10<sup>-15</sup> outside the face x + y + z = 1 (accepted by the build's tolerance of 10<sup>-12</sup>); for them the proof places that node exactly on the face, and the proven exact rule lies inside. The basis enclosure is computed in blocks of points (`VR_POINT_BLOCK`, default 128); the largest proofs (tetrahedron, degree 29, about 1340 nodes) then need about 3.6 GB of memory.
 

@@ -109,7 +109,7 @@ States that for even degrees no lower bound beyond dim P_k is known; cited in th
 
 ### M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. <https://doi.org/10.1016/j.cam.2012.05.021>
 
-Node elimination on the square. Its node counts are in the column N_Lit of the square, together with the counts of earlier rules that it tabulates (Stroud 1971, Möller 1976, Cools–Haegemans 1988, Omelyan–Solovyan 2006); rules with negative weights or nodes outside are not counted. Its rules of the degrees 31 to 47 and 49 are stored in the family `festa_sommariva_2012`; for the degrees 48 and 50 the interval proof did not succeed, so their counts stand in N_Lit without a stored rule (numbers as printed in J. Burkardt's square_minimal_rule).
+Node elimination on the square. Its node counts are in the column N_Lit of the square, together with the counts of earlier rules that it tabulates (Stroud 1971, Möller 1976, Cools–Haegemans 1988, Omelyan–Solovyan 2006); rules with negative weights or nodes outside are not counted. Its rules of the degrees 31 to 50 are stored in the family `festa_sommariva_2012` (numbers as printed in J. Burkardt's square_minimal_rule); the rules of the degrees 48 and 50 were moved away from the boundary so that the interval proof succeeds.
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper introduces a numerical method for computing cubature rules on the square [-1,1]^2 that are almost minimal, that is with few points for the degree of precision. The rules for all degrees from 24 to 55 are new, and new rules are also given for degrees 15, 17, 19 and 23, with 43, 54, 67 and 96 points.
 
