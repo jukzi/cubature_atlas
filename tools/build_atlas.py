@@ -538,7 +538,6 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
         "refs": refs,
         "gj": gj_tables(),
         "litcounts": lc,
-        "isolated": load_json(os.path.join(ROOT, "reference_data", "isolated.json"))["domains"],
         "links": {"repo": REPO_URL, "data": ("" if lang == "en" else "../") + "data/atlas.json",
                   "zip": ("" if lang == "en" else "../") + "downloads/cubature_atlas_rules.zip"},
         "families": out_f,

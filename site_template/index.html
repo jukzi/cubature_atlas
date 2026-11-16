@@ -5628,7 +5628,7 @@ for n in degs:
 (function(){
 'use strict';
 var ATLAS=/*__ATLAS__*/null;
-var MAXN=ATLAS.maxn,GJ=ATLAS.gj,DATA={},CERT={},LIT={},OUT={},OUTR={},FAMX=[],ATLAS_SRCN={},ATLAS_SRCREF={};
+var MAXN=ATLAS.maxn,GJ=ATLAS.gj,DATA={},CERT={},LIT={},OUT={},OUTR={},OUTC={},FAMX=[],ATLAS_SRCN={},ATLAS_SRCREF={};
 /* Data loader: every rule comes from rules/<family>/<domain>/<id>.json (see tools/build_atlas.py).
    role pi -> column PI (DATA, CERT), role po -> column PO (OUT, OUTR), role literature -> column Lit (LIT),
    role own -> a family of its own: button in the viewer, column in the table, series in the charts. */
@@ -5646,7 +5646,7 @@ function famRule(k,dom,n){var x=famOf(k),b=null;if(!x)return null;(x.f.rules[dom
       R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n||(r.n===b.n&&r.deg===n&&b.deg!==n)))b=r;});
       if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv,method:b.method};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
     else if(f.role==='po'){Object.keys(R).forEach(function(d){OUTR[d]={};for(var n=1;n<=MAXN;n++){var b=null;
-        R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n))OUTR[d][n]=b.pts;}});
+        R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n)){OUTR[d][n]=b.pts;if(b.cert&&b.deg===n){OUTC[d]=OUTC[d]||{};OUTC[d][n]=b.cert;}}}});
       var S=f.searched_degrees||{},doms={};Object.keys(S).concat(Object.keys(R)).forEach(function(d){doms[d]=1;});
       Object.keys(doms).forEach(function(d){OUT[d]=[];for(var n=1;n<=MAXN;n++){var v=null,o=OUTR[d]&&OUTR[d][n],pi=DATA[d]&&DATA[d][n];
         if(o)v=o.length;else if(S[d]&&n>=S[d][0]&&n<=S[d][1]&&pi)v=pi.n;OUT[d].push(v);}});}
@@ -5875,10 +5875,10 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     /* trophy: the fewest nodes of the row among N_Lit, N_PI and N_PO; on a tie the first of these wins */
     var tw=null,tv=null;[['lit',lit?lit.arr[i]:null],['found',f[i]],['out',po?po.arr[i]:null]].forEach(function(c){if(c[1]!=null&&(tv==null||c[1]<tv)){tv=c[1];tw=c[0];}});
     var TR=function(k){return (!iv&&tw===k)?'<span class="oq trophy" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('trophyBtn'))+'" data-tip="'+escA(t('trophy'))+'">🏆</span>':'';};
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO',po.arr[i])+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
     else if(f[i]==null){cells+='<td class="found dim">–</td>';}
-    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI',f[i])+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl==null?'dim':(dl<=0?'delta-ok':'delta-up'))+'">'+dtxt+'</td>';
       if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':TR('lit')+fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i],n)+'</td>';}
@@ -5893,11 +5893,11 @@ function legend(){var L=$('#legend');L.innerHTML='';allKeys(st.dom).forEach(func
   var b=document.createElement('button');b.className='lg';b.setAttribute('aria-pressed',!st.hide[k]);
   b.innerHTML=legSvg(k,SERCOL[k],w[0],w[1])+legLabel(k);
   b.onclick=function(){st.hide[k]=!st.hide[k];legend();chart();};L.appendChild(b);});}
-/* Isolated solution: stored result (reference_data/isolated.json, computed once, not in the browser) for the rule of this quality at exactly this degree with this node count. */
-function isoMark(dom,n,q,cnt){var L=(ATLAS.isolated&&ATLAS.isolated[dom])||[];
-  for(var j=0;j<L.length;j++)if(L[j].quality===q&&L[j].degree===n&&L[j].points===cnt)
-    return '<span class="oq iso" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('isoBtn'))+'" data-tip="'+escA(t('isoTip'))+'">⌖</span>';
-  return '';}
+/* Isolated solution, read from the numerical_check stored in the rule file: as many equations as unknowns (p = M) and a nonzero smallest singular value of the Jacobian.
+   Only for triangle and tetrahedron: for the box domains the stored check is the reduced symmetric system, which says less. A rule counts at exactly its own degree. */
+function isoMark(dom,n,q){var c=q==='PO'&&OUTR[dom]&&OUTR[dom][n]?(OUTC[dom]||{})[n]:(CERT[dom]||{})[n];
+  if(!c||(dom!=='triangle'&&dom!=='tetra')||c.p!==c.M||!(c.sigma>1e-9))return '';
+  return '<span class="oq iso" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('isoBtn'))+'" data-tip="'+escA(t('isoTip'))+'">⌖</span>';}
 function chart(){var svg=$('#chart');svg.innerHTML='';svg.setAttribute('aria-label',t('chartLbl'));var W=900,H=420,m={l:58,r:20,t:14,b:40},pw=W-m.l-m.r,ph=H-m.t-m.b,d=DOM[st.dom],rel=st.mode==='rel',data=[];
   allKeys(st.dom).forEach(function(k){if(st.hide[k])return;var v=seriesOf(st.dom,k);if(rel)v=v.map(function(x,i){return x==null?null:x/d.abz[i];});data.push({k:k,v:v});});
   var mx=0,mn=rel?1e9:0,others=data.filter(function(o){return o.k!=='gauss';}),scaleOn=others.length?others:data,gmax=0;
