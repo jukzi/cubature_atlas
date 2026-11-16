@@ -11,6 +11,7 @@
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
  "locked": false,
+ "numerical_check": {"N": 657, "M": 2600, "p": 2628, "res": 3.608224830031759e-15, "sigma": 0.0053679574166398975, "h": 0.0001335171349062048, "rad": 1.5577570277882392e-13, "cert": true, "inside": false},
  "nodes": [
   [
    0.13495518184347077,

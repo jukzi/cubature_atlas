@@ -14,6 +14,7 @@
   "locked": true,
   "symmetry": "full",
   "numerical_check": null,
+  "numerical_check": {"N": 201, "M": 289, "p": 301, "res": 1.1685097334179773e-14, "sigma": 0.010381421696117128, "h": 5.518221151457506e-06, "rad": 1.972878441394288e-13, "cert": true, "inside": true},
   "nodes": [
     [
       0.0,
