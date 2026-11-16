@@ -14,6 +14,7 @@
   "numerical_check": null,
   "exact_degree": 39,
   "optimal": true,
+  "numerical_check": {"N": 20, "M": 20, "p": 20, "res": 2.373960271352061e-14, "sigma": 3.7645434862560205, "h": 3.854553654105399e-12, "rad": 8.459795491729278e-15, "cert": true, "inside": true},
   "nodes": [
     [
       -0.993128599185095
