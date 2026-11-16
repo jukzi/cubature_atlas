@@ -12,9 +12,10 @@ Elimination: delete one whole orbit (largest weights first), add Gaussian noise,
 Levenberg-Marquardt; an accepted rule is expanded to all nodes and checked with monomials.
 
 Usage:
-    python3 sym_elim.py <group> <degree> <seconds> <seed> <start.npy>
+    python3 sym_elim.py <group> <degree> <seconds> <seed> <start.npy> [--out <directory>]
 Groups: c1, c2rot, c2mir, c3, d2, s3, a4, s4.
-Output files: sym_<group>_d<degree>_n<N>.npy (columns x, y, z, w), one per accepted node count;
+Output files: sym_<group>_d<degree>_n<N>.npy (columns x, y, z, w) and sym_<group>_d<degree>_n<N>.json (seed, start file,
+command, settings), one pair per accepted node count, in the --out directory (default: the working directory);
 the invariant basis is cached as symU_<group>_d<degree>.npy in the working directory.
 Environment: MI (LM iterations per candidate, default 40), NCAND (candidates per round, default 8),
 EXTTOL and EXTIT (further iterations for nearly converged candidates, default 1e-8 and 60),
@@ -26,6 +27,7 @@ import os
 import sys
 import time
 import itertools
+import json
 import numpy as np
 from scipy.linalg import cho_factor, cho_solve, LinAlgError
 
@@ -388,11 +390,22 @@ def expand(G, pr, x):
 
 def main():
     # Arguments.
-    gname = sys.argv[1]
-    deg = int(sys.argv[2])
-    tl = float(sys.argv[3])
-    rng = np.random.default_rng(int(sys.argv[4]))
-    A = np.load(sys.argv[5])
+    argv = list(sys.argv)
+    # Optional --out <directory>: the solutions and one JSON file per solution go there.
+    out_dir = "."
+    if "--out" in argv:
+        k = argv.index("--out")
+        out_dir = argv[k + 1]
+        del argv[k:k + 2]
+        os.makedirs(out_dir, exist_ok=True)
+    gname = argv[1]
+    deg = int(argv[2])
+    tl = float(argv[3])
+    seed = int(argv[4])
+    rng = np.random.default_rng(seed)
+    A = np.load(argv[5])
+    start_file = argv[5]
+    settings = {"MI": MI, "NCAND": NCAND, "EXTTOL": EXTTOL, "EXTIT": EXTIT, "EXT2TOL": EXT2TOL, "EXT2IT": EXT2IT, "CANDS": os.environ.get("CANDS", "mixed")}
     G = make_group(GENS[gname])
     U = invariant_basis(G, deg, "symU_%s_d%d.npy" % (gname, deg))
     pr = SymProb(deg, U)
@@ -443,11 +456,21 @@ def main():
                 xs, cost = pr.solve_lm(xn, 20)
             if cost < 1e-24 and xs[pr.off[-1]:].min() > 0:
                 Xp, Wp = expand(G, pr, xs)
+                # Nodes on a face may come out at -1e-16 by rounding: clip the barycentric coordinates.
+                L = bary(Xp)
+                L = np.maximum(L, 0.0)
+                L = L / L.sum(1, keepdims=True)
+                Xp = L[:, 1:]
                 err = po_elim.monomial_error("tetra", deg, Xp, Wp)
                 mar = CA.margin("tetra", Xp)
                 if err < 1e-11 and mar >= 0:
                     x = xs
-                    np.save("sym_%s_d%d_n%d.npy" % (gname, deg, len(Wp)), np.c_[Xp, Wp])
+                    base = os.path.join(out_dir, "sym_%s_d%d_n%d" % (gname, deg, len(Wp)))
+                    np.save(base + ".npy", np.c_[Xp, Wp])
+                    # Seed, start and call that found this rule, so the step can be played again.
+                    info = {"script": "code/sym_elim.py", "group": gname, "degree": deg, "nodes": len(Wp), "seed": seed, "start": start_file, "seconds_limit": tl, "found_after_seconds": round(time.time() - t0, 1), "settings": settings, "command": " ".join(argv)}
+                    with open(base + ".json", "w") as fh:
+                        json.dump(info, fh, indent=1)
                     print("  -> %d nodes (deleted orbit of size %d, sigma %.3f) err %.1e t=%.0fs" % (len(Wp), old[3][c], sig, err, time.time() - t0), flush=True)
                     done = True
                     break
