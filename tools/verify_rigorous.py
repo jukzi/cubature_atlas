@@ -1355,6 +1355,75 @@ def residual(par, n, u, ru, exact):
     return fm, fr
 
 
+# Largest number of (basis function, point) pairs for which the residual at the centre is summed exactly.
+EXACT_PAIRS = int(os.environ.get("VR_EXACT_PAIRS", "4000000"))
+
+
+def exact_centre_residual(par, n, u, exact):
+    """Enclosure (mid, rad) of F(u) at the single point u on a box domain, from exact integer arithmetic.
+
+    The floats u are dyadic rationals, so with Q_k = k! P_k (recurrence Q_{k+1} = (2k+1) x Q_k - k^2 Q_{k-1})
+    every term w_p Q_a(x_p) Q_b(y_p) ... is an integer over a common power of two. The sum is exact; only the
+    final conversion to a float interval rounds. The interval residual of residual() carries the rounding
+    errors of the basis values (about 1e-14 at high degree), which made the Krawczyk box needlessly large."""
+    d = DIM[par.dom]
+    npts = par.const.shape[0]
+    wq = [Fraction(float(u[k])) for k in par.widx]
+    cq = []
+    for p_ in range(npts):
+        row = []
+        for c in range(d):
+            v = Fraction(float(par.const[p_, c]))
+            for t in range(par.kidx.shape[2]):
+                k = int(par.kidx[p_, c, t])
+                if k >= 0:
+                    v += Fraction(float(par.coef[p_, c, t])) * Fraction(float(u[k]))
+            row.append(v)
+        cq.append(row)
+    E = 0
+    for v in wq:
+        E = max(E, v.denominator.bit_length() - 1)
+    for row in cq:
+        for v in row:
+            E = max(E, v.denominator.bit_length() - 1)
+    one = 1 << E
+    wi = [int(v * one) for v in wq]
+    tabs = []
+    for c in range(d):
+        col = []
+        for p_ in range(npts):
+            x = int(cq[p_][c] * one)
+            Q = [1, x]
+            for k in range(1, n):
+                Q.append((2 * k + 1) * x * Q[k] - ((k * k * Q[k - 1]) << (2 * E)))
+            col.append(Q)
+        tabs.append(col)
+    fact = [math.factorial(k) for k in range(n + 1)]
+    lo = []
+    hi = []
+    for a, ex in zip(par.idx, exact):
+        tot = 0
+        for p_ in range(npts):
+            term = wi[p_]
+            for c in range(d):
+                term *= tabs[c][p_][a[c]]
+            tot += term
+        den = 1 << (E * (1 + sum(a)))
+        for k in a:
+            den *= fact[k]
+        q = Fraction(tot, den) - ex
+        lo.append(frac_lo(q))
+        hi.append(frac_hi(q))
+    return to_midrad(np.array(lo), np.array(hi))
+
+
+def centre_residual(par, n, u, exact):
+    """Enclosure of F at the centre: exact summation on boxes (if not too large), otherwise interval arithmetic."""
+    if par.dom in BOX and not par.cons and len(par.idx) * par.const.shape[0] <= EXACT_PAIRS:
+        return exact_centre_residual(par, n, u, exact)
+    return residual(par, n, u, np.zeros(len(u)), exact)
+
+
 def jacobian(par, n, u, ru):
     """Enclosure (mid, rad) of dF/du over the box u +- ru: shape (equations, unknowns)."""
     d = DIM[par.dom]
@@ -1437,7 +1506,7 @@ def krawczyk(par, n, exact, tries=(1.5, 3.0, 10.0, 1e2, 1e4)):
     if q < M:
         return dict(proved=False, reason="more equations (%d) than unknowns (%d)" % (M, q))
     zero = np.zeros(q)
-    Fm, Fr = residual(par, n, u0, zero, exact)
+    Fm, Fr = centre_residual(par, n, u0, exact)
     J0m, J0r = jacobian(par, n, u0, zero)
     # Scale the unknowns so that all Jacobian columns have comparable size: the Krawczyk box is a cube
     # in the scaled variables. A node with a tiny weight then gets a correspondingly wider box for its
