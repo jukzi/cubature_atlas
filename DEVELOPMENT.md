@@ -35,6 +35,8 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `jaskowiec_sukumar_2020` | `literature` | Fully symmetric tetrahedron rules (reproduced for comparison) |
 | `diallo_worku_2026` | `literature` | Fully symmetric square and cube rules (reproduced for comparison) |
 | `pinkse_2026` | `literature` | Cube rules of degree 21 and 29 with fewer nodes than the atlas (reproduced for comparison) |
+| `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 47 and 49 (reproduced for comparison) |
+| `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 31 to 40 (reproduced for comparison) |
 
 Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
 

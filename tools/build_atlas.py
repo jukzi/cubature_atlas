@@ -32,7 +32,7 @@ SITE = os.path.join(ROOT, "site")
 BASE_URL = "https://jukzi.github.io/cubature_atlas/"
 REPO_URL = "https://github.com/jukzi/cubature_atlas"
 CONCEPT_DOI = "10.5281/zenodo.24037245"
-MAXN = 30
+MAXN = 50
 
 DOMAINS = ["interval", "triangle", "square", "tetra", "cube"]
 SYM = {"interval": "C1", "triangle": "T2", "square": "C2", "tetra": "T3", "cube": "C3"}

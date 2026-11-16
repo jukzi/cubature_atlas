@@ -1,7 +1,7 @@
 {
   "eyebrow": "Numerical integration · Cubature rules",
   "aiNote": "AI-generated: this page was created by Claude (Anthropic).",
-  "lede": "Quadrature and cubature replace an integral by a weighted sum over a few nodes. The atlas collects the smallest known cubature rules with positive weights and nodes inside the domain, for degrees 1 to 30 (depending on the domain, up to the degree for which a rule is available) on the interval, triangle, square, tetrahedron and cube. Typical uses are the finite element method, multiple integrals and any computation where a function evaluation is expensive.",
+  "lede": "Quadrature and cubature replace an integral by a weighted sum over a few nodes. The atlas collects the smallest known cubature rules with positive weights and nodes inside the domain, for degrees 1 to 30 (depending on the domain, up to the degree for which a rule is available) on the interval, triangle, square, tetrahedron and cube. For degrees 31 to 50 it lists the Gauss–Legendre rules on the interval and, for the other domains, the published rules with their proofs; the search of the atlas covers only a few of these degrees so far. Typical uses are the finite element method, multiple integrals and any computation where a function evaluation is expensive.",
   "ai": "AI-generated: this page, its code, the search and all computations were produced by an AI. Please verify the results yourself before relying on them.",
   "kw": [
     "Numerical integration",
@@ -137,7 +137,7 @@
   "srcTipS": "own search, moment equations re-checked, not yet proven",
   "srcSearch": "own search, moment equations re-checked; interval proof not yet computed",
   "srcTip": "from the literature, proven here with interval arithmetic",
-  "srcNote": "Square and triangle (degrees 21 to 30) and tetrahedron (degrees 21 to 23) come from our own search and are proven like the other rules. Where the table ends (tetrahedron from degree 24), no rule better than the Gauss product has been computed yet. ‡ Cube: fully symmetric rule (group Oh or Td), found with symmetry reduction. The interval proof uses the symmetry-reduced system (orbit parameters and orbit weights as unknowns, moments of the invariant polynomials as equations) and proves an exact symmetric rule nearby. ★ marks values with N = L: these rules are optimal. ☆ marks rules that are proven minimal among rules with positive weights.",
+  "srcNote": "Square and triangle (degrees 21 to 30) and tetrahedron (degrees 21 to 23) come from our own search and are proven like the other rules. Where the table ends (tetrahedron from degree 24), no rule better than the Gauss product has been computed yet. A dash in the column N<sub>PI</sub> (degrees 31 to 50) means that the search of the atlas has not covered this degree yet; the row then shows the published rules only. ‡ Cube: fully symmetric rule (group Oh or Td), found with symmetry reduction. The interval proof uses the symmetry-reduced system (orbit parameters and orbit weights as unknowns, moments of the invariant polynomials as equations) and proves an exact symmetric rule nearby. ★ marks values with N = L: these rules are optimal. ☆ marks rules that are proven minimal among rules with positive weights.",
   "srcLit": "literature rule (Diallo–Worku), moment equations re-checked, proven here with interval arithmetic",
   "srcGauss": "Gauss–Jacobi product, exact by construction",
   "srcNoCertC": "simple rule, exact by construction",
