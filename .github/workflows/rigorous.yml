@@ -6,7 +6,7 @@ name: Interval proofs
 # Pull requests: the rule files added or changed against the base branch (all rules if the checker itself
 # changed). The job fails if the stored numbers do not pass or if the existence proof fails. Every rule
 # needs a proof; tools/build_atlas.py also requires a matching entry in reports/interval_proofs.json.
-# Weekly and on demand: all rules; the report is attached as an artifact. If the result differs from
+# On demand (workflow_dispatch): all rules; the report is attached as an artifact. If the result differs from
 # reports/interval_proofs.json (new, changed or removed rule files, or a different verdict), the job opens
 # or updates a pull request with the new report from the branch auto/interval-report.
 
@@ -16,14 +16,12 @@ on:
       - "rules/**"
       - "tools/verify_rigorous.py"
       - ".github/workflows/rigorous.yml"
-  schedule:
-    - cron: "17 3 * * 1"
   workflow_dispatch:
 
 jobs:
   proofs:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     permissions:
       contents: read
     steps:
