@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-45-367-PI-WHZ",
+ "file": "rules/worku_hicken_zingg_2024/triangle/CA-T2-45-367-PI-WHZ.json",
+ "domain": "triangle",
+ "degree": 45,
+ "points": 367,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "90f9ef360c0e992f",
+ "stored": {
+  "res_bound": 2.0918759346261214e-14,
+  "res_ok": true,
+  "margin_exact": 0.0009135750842806918,
+  "minw_exact": 1.0466789646595527e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.936043086759452e-14,
+  "kratio": 0.6666669699112493,
+  "mode": "sym6",
+  "equations": 263,
+  "unknowns": 264,
+  "dist": 3.947145328107934e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 25.97,
+ "ok_stored": true,
+ "ok_exist": true
+}

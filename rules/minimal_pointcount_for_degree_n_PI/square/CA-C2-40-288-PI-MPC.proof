@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-40-288-PI-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-40-288-PI-MPC.json",
+ "domain": "square",
+ "degree": 40,
+ "points": 288,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "1490fd3b6c7ce6cf",
+ "stored": {
+  "res_bound": 1.2518728526142625e-14,
+  "res_ok": true,
+  "margin_exact": 0.0011771308524768,
+  "minw_exact": 0.00035210320151716286,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 5.2343490947981e-14,
+  "kratio": 0.6670864342969081,
+  "mode": "full",
+  "equations": 861,
+  "unknowns": 864,
+  "dist": 8.374958551676961e-13,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 5.06,
+ "ok_stored": true,
+ "ok_exist": true
+}

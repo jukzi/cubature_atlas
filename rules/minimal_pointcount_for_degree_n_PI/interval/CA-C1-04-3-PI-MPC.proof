@@ -1,0 +1,33 @@
+{
+ "id": "CA-C1-04-3-PI-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PI/interval/CA-C1-04-3-PI-MPC.json",
+ "domain": "interval",
+ "degree": 4,
+ "points": 3,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "e807380ed858edd4",
+ "stored": {
+  "res_bound": 1.1102230246251575e-15,
+  "res_ok": true,
+  "margin_exact": 0.2254033307585166,
+  "minw_exact": 0.5555555555555557,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.2952601953960168e-16,
+  "kratio": 0.6666666666666713,
+  "mode": "sym2",
+  "equations": 3,
+  "unknowns": 3,
+  "dist": 4.810968660488397e-16,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.01,
+ "ok_stored": true,
+ "ok_exist": true
+}

@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-49-422-PI-PK",
+ "file": "rules/pinkse_2026/square/CA-C2-49-422-PI-PK.json",
+ "domain": "square",
+ "degree": 49,
+ "points": 422,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "957e48daa18c8797",
+ "stored": {
+  "res_bound": 2.0637565689475586e-14,
+  "res_ok": true,
+  "margin_exact": 0.0003090152433657,
+  "minw_exact": 0.0003142254812136399,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.268841787397724e-16,
+  "kratio": 0.666702202558784,
+  "mode": "sym2",
+  "equations": 625,
+  "unknowns": 633,
+  "dist": 5.230146859836359e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 6.29,
+ "ok_stored": true,
+ "ok_exist": true
+}

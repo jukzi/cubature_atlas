@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-04-10-PO-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PO/tetra/CA-T3-04-10-PO-MPC.json",
+ "domain": "tetra",
+ "degree": 4,
+ "points": 10,
+ "quality": "PO",
+ "status": "verified",
+ "sha": "35c795c6da690a45",
+ "stored": {
+  "res_bound": 6.349087922075118e-13,
+  "res_ok": true,
+  "margin_exact": -0.340916104452,
+  "minw_exact": 0.000952475747726,
+  "quality_exact": "PO"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.3455125786319177e-14,
+  "kratio": 0.6666666669216543,
+  "mode": "full",
+  "equations": 35,
+  "unknowns": 40,
+  "dist": 6.052989747362507e-13,
+  "pos": true,
+  "inside": false,
+  "outside": true,
+  "quality_proved": "PO"
+ },
+ "seconds": 0.04,
+ "ok_stored": true,
+ "ok_exist": true
+}

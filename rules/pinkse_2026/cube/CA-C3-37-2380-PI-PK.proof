@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-37-2380-PI-PK",
+ "file": "rules/pinkse_2026/cube/CA-C3-37-2380-PI-PK.json",
+ "domain": "cube",
+ "degree": 37,
+ "points": 2380,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "b60ef8c552df2c06",
+ "stored": {
+  "res_bound": 1.1064451433640427e-14,
+  "res_ok": true,
+  "margin_exact": 9.834694038e-07,
+  "minw_exact": 4.731637934546803e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.5173109145689547e-11,
+  "kratio": 0.7498095065007852,
+  "mode": "sym2",
+  "equations": 4750,
+  "unknowns": 4760,
+  "dist": 2.4276985735344626e-10,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 237.04,
+ "ok_stored": true,
+ "ok_exist": true
+}

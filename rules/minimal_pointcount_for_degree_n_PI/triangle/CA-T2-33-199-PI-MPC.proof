@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-33-199-PI-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-33-199-PI-MPC.json",
+ "domain": "triangle",
+ "degree": 33,
+ "points": 199,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "18457d6d60a55387",
+ "stored": {
+  "res_bound": 1.2162470703692202e-14,
+  "res_ok": true,
+  "margin_exact": 8.191768314051252e-08,
+  "minw_exact": 8.821168696397488e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.2693804156336568e-12,
+  "kratio": 0.6670474042427781,
+  "mode": "full",
+  "equations": 595,
+  "unknowns": 597,
+  "dist": 1.0164757786249178e-11,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 16.05,
+ "ok_stored": true,
+ "ok_exist": true
+}

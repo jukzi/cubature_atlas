@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-08-15-PO-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PO/square/CA-C2-08-15-PO-MPC.json",
+ "domain": "square",
+ "degree": 8,
+ "points": 15,
+ "quality": "PO",
+ "status": "proven",
+ "sha": "efea7adb2ea476d0",
+ "stored": {
+  "res_bound": 8.838493088456084e-13,
+  "res_ok": true,
+  "margin_exact": -0.21057711472,
+  "minw_exact": 0.00471047054259,
+  "quality_exact": "PO"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.2451005732505748e-15,
+  "kratio": 0.6666666675655614,
+  "mode": "full",
+  "equations": 45,
+  "unknowns": 45,
+  "dist": 2.2002914950492345e-12,
+  "pos": true,
+  "inside": false,
+  "outside": true,
+  "quality_proved": "PO"
+ },
+ "seconds": 0.05,
+ "ok_stored": true,
+ "ok_exist": true
+}

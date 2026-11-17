@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-06-21-PO-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-06-21-PO-MPC.json",
+ "domain": "cube",
+ "degree": 6,
+ "points": 21,
+ "quality": "PO",
+ "status": "proven",
+ "sha": "586faf939adb434e",
+ "stored": {
+  "res_bound": 1.776356839400252e-15,
+  "res_ok": true,
+  "margin_exact": -0.271964754518432,
+  "minw_exact": 0.02510562517341945,
+  "quality_exact": "PO"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.6871021372341846e-14,
+  "kratio": 0.6666666699773576,
+  "mode": "full",
+  "equations": 84,
+  "unknowns": 84,
+  "dist": 1.474840854893674e-13,
+  "pos": true,
+  "inside": false,
+  "outside": true,
+  "quality_proved": "PO"
+ },
+ "seconds": 0.06,
+ "ok_stored": true,
+ "ok_exist": true
+}

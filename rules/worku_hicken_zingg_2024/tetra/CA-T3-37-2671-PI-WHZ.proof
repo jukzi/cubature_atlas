@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-37-2671-PI-WHZ",
+ "file": "rules/worku_hicken_zingg_2024/tetra/CA-T3-37-2671-PI-WHZ.json",
+ "domain": "tetra",
+ "degree": 37,
+ "points": 2671,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "f2cd59560e06c74b",
+ "stored": {
+  "res_bound": 1.118722167279978e-14,
+  "res_ok": true,
+  "margin_exact": 0.0001479589675898,
+  "minw_exact": 1.0533592117178571e-06,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.1737943871465466e-12,
+  "kratio": 0.6695647205868699,
+  "mode": "sym24",
+  "equations": 675,
+  "unknowns": 709,
+  "dist": 2.179595308251129e-12,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 613.69,
+ "ok_stored": true,
+ "ok_exist": true
+}

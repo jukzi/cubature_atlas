@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-37-2506-PI-DW",
+ "file": "rules/diallo_worku_2026/cube/CA-C3-37-2506-PI-DW.json",
+ "domain": "cube",
+ "degree": 37,
+ "points": 2506,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "329daa397e747d07",
+ "stored": {
+  "res_bound": 9.75140650710721e-15,
+  "res_ok": true,
+  "margin_exact": 8.4e-15,
+  "minw_exact": 2.558513980243873e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.602639757055556e-16,
+  "kratio": 0.6666667230451698,
+  "mode": "sym48",
+  "equations": 274,
+  "unknowns": 284,
+  "dist": 1.676791685864038e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 39.4,
+ "ok_stored": true,
+ "ok_exist": true
+}

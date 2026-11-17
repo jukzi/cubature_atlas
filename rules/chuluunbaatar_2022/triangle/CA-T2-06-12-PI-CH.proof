@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-06-12-PI-CH",
+ "file": "rules/chuluunbaatar_2022/triangle/CA-T2-06-12-PI-CH.json",
+ "domain": "triangle",
+ "degree": 6,
+ "points": 12,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "b347e7a5dfebde7d",
+ "stored": {
+  "res_bound": 1.3322676295501888e-15,
+  "res_ok": true,
+  "margin_exact": 0.0531450498448169,
+  "minw_exact": 0.02542245318510341,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 7.062617142903381e-16,
+  "kratio": 0.6666666666681724,
+  "mode": "sym6",
+  "equations": 10,
+  "unknowns": 10,
+  "dist": 1.447217932794682e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.03,
+ "ok_stored": true,
+ "ok_exist": true
+}
