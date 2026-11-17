@@ -103,7 +103,9 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-45-359-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-46-387-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-47-396-PI-FS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-48-417-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-49-427-PI-FS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/festa_sommariva_2012/square/CA-C2-50-454-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-01-1-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-02-4-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/jaskowiec_sukumar_2020/tetra/CA-T3-03-8-PI-JS.html</loc></url>
@@ -473,7 +475,18 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-39-2770-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-41-3200-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-43-3704-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-45-4308-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-31-171-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-33-194-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-35-216-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-37-242-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-39-268-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-41-294-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-43-324-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-45-356-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-47-388-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-49-422-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/square/CA-C2-51-456-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-01-1-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-02-3-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-04-6-PI-WV.html</loc></url>
@@ -624,7 +637,9 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-45-359-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-46-387-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-47-396-PI-FS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-48-417-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-49-427-PI-FS.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/festa_sommariva_2012/square/CA-C2-50-454-PI-FS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-01-1-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-02-4-PI-JS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/jaskowiec_sukumar_2020/tetra/CA-T3-03-8-PI-JS.html</loc></url>
@@ -994,7 +1009,18 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-39-2770-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-41-3200-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-43-3704-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-45-4308-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-31-171-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-33-194-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-35-216-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-37-242-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-39-268-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-41-294-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-43-324-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-45-356-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-47-388-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-49-422-PI-PK.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/square/CA-C2-51-456-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-01-1-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-02-3-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-04-6-PI-WV.html</loc></url>
