@@ -21,7 +21,7 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>4.992e-05</td></tr>
 <tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 3.41e-01, radius = 3.69e-12, ja</td></tr>
 <tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 8.2e-12 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 3)</td></tr>
-<tr><th>Herkunft</th><td>numerical search of this atlas: start from rings of Gauss points per edge (18, 16, 14, 11, 9, 6, 3 points per edge, outside to inside, 210 nodes), C3 symmetric annealing search (float32, nodes free in the plane, noise larger near the centroid; seed 5), re-solved in float64; this state of the search has all nodes inside the triangle; checked numerically</td></tr>
+<tr><th>Herkunft</th><td>numerical search of this atlas: start from rings of Gauss points per edge (18, 16, 14, 11, 9, 6, 3 points per edge, outside to inside, 210 nodes), C3 symmetric annealing search (nodes free in the plane, noise larger near the centroid; seed 5) as in code/anneal_c3.py; this rule was found with an earlier version of that program that used torch in float32 on a GPU and was re-solved in float64, the program of the repository is a numpy float64 port and was not replayed for this rule; this state of the search has all nodes inside the triangle; checked numerically</td></tr>
 </table>
 <p><a href="../../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-34-210-PI-MPC.json">JSON herunterladen</a></p>
 <h2>Zitieren als</h2>
