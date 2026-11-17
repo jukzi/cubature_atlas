@@ -3,6 +3,7 @@
 Read README.md, CONTRIBUTING.md and DEVELOPMENT.md (file format, checks, proofs, automatic search) first. In short:
 
 - Work on a new branch from the latest `main`; never push to `main`. Open one pull request per improvement.
+- Merge strategy: rebase. Pull requests are merged by rebase (no merge commits). If `main` moved on and your branch conflicts, rebase the branch onto the latest `origin/main` and resolve the conflicts there; never merge `main` into the branch.
 - Never modify or delete a rule file with `"locked": true`. Add a new file with a new id instead.
 - Before committing, run `python tools/build_atlas.py --base origin/main --changed`. It checks only the rules your change adds or modifies, not the earlier ones. Do not open a pull request unless it prints `OK`. The check in CI still verifies all rules.
 - Do not weaken the checks in `tools/build_atlas.py` (tolerances, quality rules, locked check) to make a rule pass.
