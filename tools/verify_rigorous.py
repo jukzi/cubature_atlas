@@ -33,7 +33,7 @@ Rounding model: IEEE 754 double precision, round to nearest.
 Usage:
   python tools/verify_rigorous.py                     all rules
   python tools/verify_rigorous.py --changed origin/main   only rule files changed against a git revision
-  python tools/verify_rigorous.py --report reports/interval_proofs.json
+  python tools/verify_rigorous.py --save rules/.../<id>.json
 Exit code 1 if a checked rule fails part 1, or (with --strict) if part 2 cannot prove it.
 """
 
@@ -1897,38 +1897,47 @@ def content_sha(text):
     return hashlib.sha256(blob.encode("utf8")).hexdigest()[:16]
 
 
-def missing_files(path):
-    """Rule files whose numbers have no successful proof in the report."""
-    proved = set()
-    if os.path.exists(path):
-        with open(path) as fh:
-            for e in json.load(fh).get("rules", []):
-                if e.get("ok_stored") and e.get("ok_exist") and e.get("exist", {}).get("quality_proved") == e.get("quality"):
-                    proved.add((e["id"], e.get("sha")))
+def proof_path(rule_path):
+    """The proof of a rule is stored next to it: same name, extension .proof instead of .json."""
+    return os.path.splitext(rule_path)[0] + ".proof"
+
+
+def load_proof(rule_path):
+    """The stored proof entry of a rule file, or None."""
+    p = proof_path(rule_path)
+    if not os.path.exists(p):
+        return None
+    with open(p, encoding="utf8") as fh:
+        return json.load(fh)
+
+
+def save_proof(res):
+    """Write the result of one rule next to the rule file."""
+    p = proof_path(os.path.join(ROOT, res["file"]))
+    with open(p, "w", encoding="utf8", newline="\n") as fh:
+        json.dump(res, fh, indent=1)
+        fh.write("\n")
+
+
+def all_rule_files():
+    return sorted(glob.glob(os.path.join(ROOT, "rules", "*", "*", "*.json")))
+
+
+def missing_files():
+    """Rule files whose numbers have no successful proof next to them."""
     out = []
-    for f in sorted(glob.glob(os.path.join(ROOT, "rules", "*", "*", "*.json"))):
+    for f in all_rule_files():
         with open(f, encoding="utf8") as fh:
             text = fh.read()
-        rid = json.loads(text).get("id")
-        if (rid, content_sha(text)) not in proved:
+        e = load_proof(f)
+        if not (e and e.get("sha") == content_sha(text) and e.get("ok_stored") and e.get("ok_exist")
+                and e.get("exist", {}).get("quality_proved") == e.get("quality")):
             out.append(f)
     return out
 
 
-def merge_report(path, results):
-    """Replace the entries of the checked rules in an existing report; drop entries whose file is gone."""
-    old = []
-    if os.path.exists(path):
-        with open(path) as fh:
-            old = json.load(fh).get("rules", [])
-    new_ids = {r["id"] for r in results}
-    keep = [e for e in old if e["id"] not in new_ids and os.path.exists(os.path.join(ROOT, e["file"]))]
-    merged = sorted(keep + results, key=lambda e: e["file"])
-    write_report(path, merged)
-    return len(keep), len(results)
-
-
 def write_report(path, results):
+    """Combined report of one run (for workflow artifacts); the proofs of record are the .proof files."""
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w") as fh:
         json.dump(dict(tool="tools/verify_rigorous.py", rules=results), fh, indent=1)
@@ -1950,9 +1959,9 @@ def main():
     ap.add_argument("--changed", help="only rule files added or changed against this git revision")
     ap.add_argument("--report", help="write the results as JSON to this file")
     ap.add_argument("--strict", action="store_true", help="also fail if the existence proof does not succeed")
-    ap.add_argument("--merge", help="put the results of the checked rules into this report file, keeping the other entries")
-    ap.add_argument("--missing", help="only rule files without a successful proof of exactly their numbers in this report file")
-    ap.add_argument("--update", help="rewrite this report file, but only if a result changed (new, changed or removed rule files, or a different verdict); run times and last digits of distances do not count")
+    ap.add_argument("--save", action="store_true", help="write the result of every checked rule to its proof file, next to the rule file (same name, extension .proof)")
+    ap.add_argument("--missing", action="store_true", help="only rule files without a successful proof of exactly their numbers next to them")
+    ap.add_argument("--update", action="store_true", help="like --save, but only for rules whose result changed (a different file hash or verdict); run times and last digits of distances do not count")
     ap.add_argument("--summary", help="append a Markdown summary to this file (e.g. $GITHUB_STEP_SUMMARY)")
     args = ap.parse_args()
     if args.files:
@@ -1960,9 +1969,9 @@ def main():
     elif args.changed:
         files = changed_files(args.changed)
     elif args.missing:
-        files = missing_files(args.missing)
+        files = missing_files()
     else:
-        files = sorted(f for f in glob.glob(os.path.join(ROOT, "rules", "*", "*", "*.json")))
+        files = all_rule_files()
     results = []
     bad1 = 0
     bad2 = 0
@@ -1987,19 +1996,16 @@ def main():
     print("checked %d rules: stored numbers %d ok, %d bad; existence proven %d, not proven %d" % (len(results), len(results) - bad1, bad1, len(results) - bad2, bad2))
     if args.report:
         write_report(args.report, results)
-    if args.update:
-        old = None
-        if os.path.exists(args.update):
-            with open(args.update) as fh:
-                old = json.load(fh).get("rules", [])
-        if old is None or report_key(old) != report_key(results):
-            write_report(args.update, results)
-            print("report %s updated" % args.update)
-        else:
-            print("report %s unchanged" % args.update)
-    if args.merge:
-        kept, added = merge_report(args.merge, results)
-        print("report %s: %d entries kept, %d checked rules written" % (args.merge, kept, added))
+    if args.save or args.update:
+        written = 0
+        for res in results:
+            if args.update:
+                old = load_proof(os.path.join(ROOT, res["file"]))
+                if old is not None and report_key([old]) == report_key([res]):
+                    continue
+            save_proof(res)
+            written += 1
+        print("%d proof files written next to the rule files" % written)
     if args.summary:
         with open(args.summary, "a") as fh:
             fh.write("### Interval proofs (tools/verify_rigorous.py)\n\n")

@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-06-10-PO-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-06-10-PO-MPC.json",
+ "domain": "triangle",
+ "degree": 6,
+ "points": 10,
+ "quality": "PO",
+ "status": "verified",
+ "sha": "fa004e73f2dd4a94",
+ "stored": {
+  "res_bound": 5.113687251423474e-13,
+  "res_ok": true,
+  "margin_exact": -0.506115951701,
+  "minw_exact": 0.000111897283742,
+  "quality_exact": "PO"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.1424454564912369e-14,
+  "kratio": 0.6666666669829525,
+  "mode": "full",
+  "equations": 28,
+  "unknowns": 30,
+  "dist": 5.53958427193147e-13,
+  "pos": true,
+  "inside": false,
+  "outside": true,
+  "quality_proved": "PO"
+ },
+ "seconds": 0.04,
+ "ok_stored": true,
+ "ok_exist": true
+}

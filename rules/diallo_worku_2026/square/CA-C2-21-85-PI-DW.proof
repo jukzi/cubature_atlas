@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-21-85-PI-DW",
+ "file": "rules/diallo_worku_2026/square/CA-C2-21-85-PI-DW.json",
+ "domain": "square",
+ "degree": 21,
+ "points": 85,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "2b01efc8114aa8cc",
+ "stored": {
+  "res_bound": 5.200890716358657e-15,
+  "res_ok": true,
+  "margin_exact": 0.008652555439471,
+  "minw_exact": 0.008767360684371,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 4.94773918562021e-16,
+  "kratio": 0.6666666701713022,
+  "mode": "sym8",
+  "equations": 36,
+  "unknowns": 36,
+  "dist": 1.7688947815278602e-13,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.22,
+ "ok_stored": true,
+ "ok_exist": true
+}

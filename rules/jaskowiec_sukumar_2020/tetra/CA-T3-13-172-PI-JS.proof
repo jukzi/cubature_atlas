@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-13-172-PI-JS",
+ "file": "rules/jaskowiec_sukumar_2020/tetra/CA-T3-13-172-PI-JS.json",
+ "domain": "tetra",
+ "degree": 13,
+ "points": 172,
+ "quality": "PI",
+ "status": "verified",
+ "sha": "541a3ea5f8b5a106",
+ "stored": {
+  "res_bound": 5.778710843173944e-14,
+  "res_ok": true,
+  "margin_exact": 1.95148031e-07,
+  "minw_exact": 8.5337858029e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.4780252525915272e-14,
+  "kratio": 0.6666667039024362,
+  "mode": "sym24",
+  "equations": 54,
+  "unknowns": 57,
+  "dist": 5.2669132629405456e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.67,
+ "ok_stored": true,
+ "ok_exist": true
+}

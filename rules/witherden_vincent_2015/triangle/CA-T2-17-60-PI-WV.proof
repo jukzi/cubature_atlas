@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-17-60-PI-WV",
+ "file": "rules/witherden_vincent_2015/triangle/CA-T2-17-60-PI-WV.json",
+ "domain": "triangle",
+ "degree": 17,
+ "points": 60,
+ "quality": "PI",
+ "status": "verified",
+ "sha": "413afa00a594fbd7",
+ "stored": {
+  "res_bound": 1.532107773982717e-14,
+  "res_ok": true,
+  "margin_exact": 0.011575175903181,
+  "minw_exact": 0.001386943788819,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 5.363480182770978e-15,
+  "kratio": 0.6666666670189304,
+  "mode": "sym6",
+  "equations": 46,
+  "unknowns": 46,
+  "dist": 7.167594401899274e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.2,
+ "ok_stored": true,
+ "ok_exist": true
+}

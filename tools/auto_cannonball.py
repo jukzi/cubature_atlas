@@ -21,7 +21,7 @@ What it does
    the boundary, computes the Newton-Kantorovich certificate
    (code/cubature_atlas.py), writes the rule file into
    rules/minimal_pointcount_for_degree_n_PI/tetra/, runs
-   `python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json <rule>` (interval proof)
+   `python tools/verify_rigorous.py --strict --save <rule>` (interval proof)
    and `python tools/build_atlas.py --base origin/main`, and requires both to succeed.
 4. Writes the pull-request title and body and, for GitHub Actions, the step
    outputs found / branch / title / rule_id / rule_path / body.
@@ -233,10 +233,10 @@ def write_rule(degree, X, W, cert, start):
 
 
 def build_check(rule_path):
-    """Prove the rule with interval arithmetic (recorded in reports/interval_proofs.json), then run the
+    """Prove the rule with interval arithmetic (recorded in the .proof file next to the rule), then run the
     atlas check against origin/main; return (ok, last lines of the output)."""
     # Interval proof of the new rule; the build requires it.
-    proof = subprocess.run([sys.executable, "tools/verify_rigorous.py", "--strict", "--merge", "reports/interval_proofs.json", rule_path], cwd=ROOT, capture_output=True, text=True)
+    proof = subprocess.run([sys.executable, "tools/verify_rigorous.py", "--strict", "--save", rule_path], cwd=ROOT, capture_output=True, text=True)
     # Run the build.
     res = subprocess.run([sys.executable, "tools/build_atlas.py", "--base", "origin/main"], cwd=ROOT, capture_output=True, text=True)
     # Combined output.

@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-08-46-PI-CH",
+ "file": "rules/chuluunbaatar_2022/tetra/CA-T3-08-46-PI-CH.json",
+ "domain": "tetra",
+ "degree": 8,
+ "points": 46,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "57772832b5d3756d",
+ "stored": {
+  "res_bound": 1.83186799063151e-15,
+  "res_ok": true,
+  "margin_exact": 0.01204284005219922,
+  "minw_exact": 0.0009401790997843717,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.2209640896240054e-15,
+  "kratio": 0.6666666667123545,
+  "mode": "sym24",
+  "equations": 22,
+  "unknowns": 23,
+  "dist": 4.4419281792480115e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.15,
+ "ok_stored": true,
+ "ok_exist": true
+}

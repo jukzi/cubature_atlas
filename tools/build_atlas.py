@@ -15,6 +15,7 @@ import hashlib
 import html
 import json
 import math
+import glob
 import os
 import re
 import shutil
@@ -308,17 +309,14 @@ def check_rule(fam, dom, r, fn):
 
 
 def attach_interval_proofs(fams, only=None):
-    """Results of tools/verify_rigorous.py (reports/interval_proofs.json) for rule files that are unchanged since."""
-    path = os.path.join(ROOT, "reports", "interval_proofs.json")
-    rep = {}
-    if os.path.exists(path):
-        for e in load_json(path).get("rules", []):
-            rep[e["id"]] = e
+    """Result of tools/verify_rigorous.py for rule files that are unchanged since; the proof of a rule is the
+    file next to it with the extension .proof instead of .json."""
     for f in fams:
         for r in f["rules"]:
             if only is not None and os.path.abspath(r["_path"]) not in only:
                 continue   # --changed: rules this change does not touch are not checked here
-            e = rep.get(r["id"])
+            pp = os.path.splitext(r["_path"])[0] + ".proof"
+            e = load_json(pp) if os.path.exists(pp) else None
             if e and e.get("sha") == r["_sha"]:
                 ex = e["exist"]
                 r["_iv"] = {"ok": bool(e.get("ok_stored") and e.get("ok_exist")), "d": ex.get("dist"),
@@ -327,10 +325,13 @@ def attach_interval_proofs(fams, only=None):
                 r["_iv"] = None
             iv = r["_iv"]
             if iv is None:
-                err("%s: no interval proof for these numbers in reports/interval_proofs.json; run "
-                    "python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json %s" % (rel(r["_path"]), rel(r["_path"])))
+                err("%s: no interval proof for these numbers (%s); run "
+                    "python tools/verify_rigorous.py --strict --save %s" % (rel(r["_path"]), rel(pp), rel(r["_path"])))
             elif not iv["ok"] or iv["q"] != r.get("quality"):
                 err("%s: the interval proof does not prove the stored quality %s (proved: %s)" % (rel(r["_path"]), r.get("quality"), iv["q"]))
+    for pp in glob.glob(os.path.join(RULES, "*", "*", "*.proof")):
+        if not os.path.exists(os.path.splitext(pp)[0] + ".json"):
+            err("%s: proof without a rule file" % rel(pp))
 
 
 def iv_text(iv, t):

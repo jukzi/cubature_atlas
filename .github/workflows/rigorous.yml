@@ -5,10 +5,10 @@ name: Interval proofs
 #  part 2 proves with a Krawczyk test that an exact rule with the stored quality exists near the stored numbers.
 # Pull requests: the rule files added or changed against the base branch (all rules if the checker itself
 # changed). The job fails if the stored numbers do not pass or if the existence proof fails. Every rule
-# needs a proof; tools/build_atlas.py also requires a matching entry in reports/interval_proofs.json.
+# needs a proof; tools/build_atlas.py also requires the matching .proof file next to every rule file.
 # On demand (workflow_dispatch): all rules; the report is attached as an artifact. If the result differs from
-# reports/interval_proofs.json (new, changed or removed rule files, or a different verdict), the job opens
-# or updates a pull request with the new report from the branch auto/interval-report.
+# the .proof files next to the rules (new or changed rule files, or a different verdict), the job opens
+# or updates a pull request with the new proof files from the branch auto/interval-report.
 
 on:
   pull_request:
@@ -42,7 +42,9 @@ jobs:
           fi
       - name: All rules
         if: github.event_name != 'pull_request'
-        run: python tools/verify_rigorous.py --report interval_proofs.json --update reports/interval_proofs.json --summary "$GITHUB_STEP_SUMMARY"
+        run: python tools/verify_rigorous.py --report interval_proofs.json --update --summary "$GITHUB_STEP_SUMMARY"
+          git ls-files --modified --others --exclude-standard rules | grep "\.proof$" > changed_proofs.txt || true
+          if [ -s changed_proofs.txt ]; then tar czf proofs.tgz -T changed_proofs.txt; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -52,7 +54,8 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           name: interval-report
-          path: reports/interval_proofs.json
+          path: proofs.tgz
+          if-no-files-found: ignore
 
   # Separate job with write access, so that the long proof job keeps read-only permissions.
   report-pr:
@@ -69,26 +72,28 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: interval-report
-          path: reports
-      - name: Pull request with the updated report
+          path: .
+      - name: Pull request with the updated proofs
         env:
           GH_TOKEN: ${{ secrets.AUTO_SEARCH_TOKEN || github.token }}
         run: |
-          if git diff --quiet -- reports/interval_proofs.json; then
-            echo "report unchanged, nothing to do"
+          if [ ! -f proofs.tgz ]; then
+            echo "proofs unchanged, nothing to do"
             exit 0
           fi
+          tar xzf proofs.tgz
+          rm proofs.tgz
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B auto/interval-report
-          git add reports/interval_proofs.json
-          git commit -m "Update the interval proof report" -m "Full run of tools/verify_rigorous.py, workflow run ${{ github.run_id }}."
+          git add rules
+          git commit -m "Update the interval proofs" -m "Full run of tools/verify_rigorous.py, workflow run ${{ github.run_id }}."
           git push --force origin auto/interval-report
           if [ -z "$(gh pr list --head auto/interval-report --state open --json number --jq '.[].number')" ]; then
             {
-              echo "Automatic update of \`reports/interval_proofs.json\` after a full run of \`tools/verify_rigorous.py\` (workflow run ${{ github.run_id }})."
+              echo "Automatic update of the \`.proof\` files next to the rules after a full run of \`tools/verify_rigorous.py\` (workflow run ${{ github.run_id }})."
               echo
-              echo "The report changed: new, changed or removed rule files, or a different verdict. The website shows the result of every rule whose file matches the hash in the report. The job summary of the run lists every rule."
+              echo "The proofs changed: new or changed rule files, or a different verdict. The website shows the result of every rule whose file matches the hash in its proof file. The job summary of the run lists every rule."
             } > /tmp/pr_body.md
-            gh pr create --base main --head auto/interval-report --title "Update the interval proof report" --body-file /tmp/pr_body.md
+            gh pr create --base main --head auto/interval-report --title "Update the interval proofs" --body-file /tmp/pr_body.md
           fi

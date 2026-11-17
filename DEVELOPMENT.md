@@ -18,7 +18,7 @@ Everything needed to add rules, run the checks and the proofs, and work on the w
 | `code/` | Search programs that produced the rules, with numerical checks (not proofs) |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
 | `tools/verify_rigorous.py`, `.github/workflows/rigorous.yml` | Rigorous check with interval arithmetic: stored numbers and existence of an exact rule (Krawczyk test) |
-| `reports/interval_proofs.json` | Result of the rigorous check for all rules |
+| `rules/<family>/<domain>/<id>.proof` | Result of the rigorous check of one rule, next to the rule file (same name, extension `.proof`) |
 | `tools/make_readme_gif.py`, `tools/make_readme_figures.py`, `assets/` | Figures of the README: figure A of the built page as an animated GIF (Playwright, Pillow), and the static charts computed from the rule files (matplotlib) |
 | `tools/auto_search.py`, `.github/workflows/auto_search.yml` | Scheduled automatic search for smaller cube rules; opens a pull request when it finds one |
 | `tools/auto_cannonball.py`, `.github/workflows/auto_cannonball.yml` | Automatic search for smaller tetrahedron rules from a cannonball start, started by hand; opens a pull request when it finds one |
@@ -110,7 +110,7 @@ python tools/build_atlas.py --base origin/main    # also refuse changes to locke
 python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
 ```
 
-Every rule must have an interval proof in `reports/interval_proofs.json` for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+Every rule must have an interval proof in the file `<id>.proof` next to it, for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
 
 ### Rigorous check with interval arithmetic
 
@@ -124,11 +124,11 @@ Basis: Legendre products on boxes, the orthogonal Dubiner (PKD) basis on triangl
 ```bash
 python tools/verify_rigorous.py                                   # all rules
 python tools/verify_rigorous.py --changed origin/main             # only added or changed rule files
-python tools/verify_rigorous.py --strict --merge reports/interval_proofs.json rules/.../<id>.json   # prove new rules and record the proofs
+python tools/verify_rigorous.py --strict --save rules/.../<id>.json   # prove new rules and write rules/.../<id>.proof
 python tools/verify_rigorous.py rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json
 ```
 
-The result for all rules is in `reports/interval_proofs.json` (per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build requires an entry for every rule and shows it on the website (table "Proofs", column "interval proof") and on every rule page. The report stores a hash of what the proof depends on (domain, degree, quality and the exact decimal strings of nodes and weights), so a proof stays valid when only metadata change. `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request (for all rules if the proof program itself changed) and, when started by hand, for all rules (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass. There are no exceptions: every rule needs a proof.
+The result of each rule is in its `.proof` file next to the rule file (so pull requests that prove different rules never touch the same file; per rule: residual bound, exact quality of the stored numbers, proof mode, distance within which the exact rule lies, proven quality). The build requires a proof file for every rule, and refuses a `.proof` file without a rule file (delete the proof together with the rule) and shows it on the website (table "Proofs", column "interval proof") and on every rule page. The proof file stores a hash of what the proof depends on (domain, degree, quality and the exact decimal strings of nodes and weights), so a proof stays valid when only metadata change. `.github/workflows/rigorous.yml` runs the check for the changed rule files of every pull request (for all rules if the proof program itself changed) and, when started by hand, for all rules (if the result differs from `reports/interval_proofs.json`, that run opens a pull request with the new report from the branch `auto/interval-report`); a pull request fails if a changed rule does not pass. There are no exceptions: every rule needs a proof.
 
 For every rule the stored numbers pass, and an exact rule with the stored quality is proven to exist within about 10<sup>-10</sup> of the stored numbers (the per-rule distance is in the report). Some tetrahedron PI rules store a node about 10<sup>-15</sup> outside the face x + y + z = 1 (accepted by the build's tolerance of 10<sup>-12</sup>); for them the proof places that node exactly on the face, and the proven exact rule lies inside. The basis enclosure is computed in blocks of points (`VR_POINT_BLOCK`, default 128) and the matrix products of the Krawczyk test in blocks of rows (`VR_ROW_BLOCK`, default 512); the two QR factorisations of the heuristic parts keep their Householder reflectors instead of forming Q. The proof of the largest rule (cube, degree 45, 4308 nodes, a system of about 8400 equations) was measured at 2.5 GB of memory. Systems with more than `VR_MAX_SYSTEM` entries (equations times unknowns, default 1e8) are not attempted. The linear algebra runs on several cores through the BLAS library of numpy (`OPENBLAS_NUM_THREADS` limits it); the proof does not depend on the number of threads.
 
@@ -146,7 +146,7 @@ Each slot (`tools/auto_search.py`):
 
 If a rule has fewer nodes than every rule of the atlas and of the open automatic pull requests of at least that degree, the slot:
 - checks it numerically with `code/cube_cert.py`;
-- writes the rule file, proves it with `tools/verify_rigorous.py --strict --merge reports/interval_proofs.json` and runs `tools/build_atlas.py --base origin/main`;
+- writes the rule file, proves it with `tools/verify_rigorous.py --strict --save` and runs `tools/build_atlas.py --base origin/main`;
 - opens a pull request from `ai/auto-cube-nXX-mYYY` if the check prints `OK`.
 
 Settings:

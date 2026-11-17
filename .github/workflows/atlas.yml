@@ -36,7 +36,7 @@ jobs:
       - name: Verify rules and build the preview
         run: |
           # every rule needs an interval proof: prove all rules whose numbers have no recorded proof yet
-          python tools/verify_rigorous.py --strict --missing reports/interval_proofs.json --merge reports/interval_proofs.json
+          python tools/verify_rigorous.py --strict --missing --save
           python tools/build_atlas.py --base origin/${{ github.base_ref }}
       - uses: actions/upload-artifact@v4
         with:
@@ -96,7 +96,7 @@ jobs:
       - name: Verify rules and build the site
         run: |
           # every rule needs an interval proof: prove all rules whose numbers have no recorded proof yet
-          python tools/verify_rigorous.py --strict --missing reports/interval_proofs.json --merge reports/interval_proofs.json
+          python tools/verify_rigorous.py --strict --missing --save
           python tools/build_atlas.py
       - name: Disable Jekyll processing on GitHub Pages
         run: touch site/.nojekyll

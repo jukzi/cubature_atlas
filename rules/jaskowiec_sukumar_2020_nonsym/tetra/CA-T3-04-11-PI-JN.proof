@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-04-11-PI-JN",
+ "file": "rules/jaskowiec_sukumar_2020_nonsym/tetra/CA-T3-04-11-PI-JN.json",
+ "domain": "tetra",
+ "degree": 4,
+ "points": 11,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "158fc7eee8348527",
+ "stored": {
+  "res_bound": 1.83186799063151e-15,
+  "res_ok": true,
+  "margin_exact": 0.005415713071965579,
+  "minw_exact": 0.0041220137385117915,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.9013405074178254e-15,
+  "kratio": 0.666666666674438,
+  "mode": "full",
+  "equations": 35,
+  "unknowns": 44,
+  "dist": 1.1716384443156121e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.02,
+ "ok_stored": true,
+ "ok_exist": true
+}
