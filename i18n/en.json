@@ -29,6 +29,8 @@
   "edge": "Domain edge",
   "cellsBtn": "Voronoi cells",
   "perspBtn": "Perspective",
+  "equiBtn2": "Equilateral",
+  "equiBtn3": "Regular",
   "packBtn": "Sphere packing",
   "plist": "Point list with weights",
   "copyList": "Copy list",
