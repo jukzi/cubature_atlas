@@ -191,6 +191,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
         <button class="btn" id="b-cells" aria-pressed="true" data-i="cellsBtn"></button>
         <button class="btn" id="b-dance" aria-pressed="true" data-i="danceBtn"></button>
         <button class="btn" id="b-persp" aria-pressed="true" data-i="perspBtn"></button>
+        <button class="btn" id="b-equi" aria-pressed="false" data-i="equiBtn2"></button>
       </div>
       <p class="sub" id="dancenote" style="margin:0;font-size:13px"></p>
     </div>
@@ -5771,7 +5772,7 @@ function docHTML(){var de=LANG==='de',h=[];
 var REFS=ATLAS.refs;
 
 /* ---------- Zustand ---------- */
-var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:true,size:true,edge:true,cells:true,dance:true,persp:true,pack:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
+var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:true,size:true,edge:true,cells:true,dance:true,persp:true,pack:false,equi:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
 function fmt(x){return x.toLocaleString(LANG==='de'?'de-DE':'en-US',{useGrouping:false});}
 function dec(x,k){var s=x.toFixed(k);return LANG==='de'?s.replace('.',','):s;}
 function sci(x){if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));return dec(x/Math.pow(10,e),1)+'·10<sup>'+String(e).replace('-','−')+'</sup>';}
@@ -6023,15 +6024,25 @@ function drawDance1(ctx,r,proj,tm,H){var n=r.deg||st.n,dp=dancePoly1(n,tm),i;
 function polyClip(P,ax,ay,b){var out=[],n=P.length,k;for(k=0;k<n;k++){var A=P[k],B=P[(k+1)%n],da=ax*A[0]+ay*A[1]-b,db=ax*B[0]+ay*B[1]-b;
   if(da<=0)out.push(A);if((da<0&&db>0)||(da>0&&db<0)){var s=da/(da-db);out.push([A[0]+s*(B[0]-A[0]),A[1]+s*(B[1]-A[1])]);}}return out;}
 function polyArea(P){var s=0,k,n=P.length;for(k=0;k<n;k++){var A=P[k],B=P[(k+1)%n];s+=A[0]*B[1]-B[0]*A[1];}return Math.abs(s)/2;}
-function cells2(r,d){if(r._cells&&r._cells.n===r.n)return r._cells.c;var N=r.pts.length,P=r.pts,w=P.map(function(p){return Math.abs(lastCol(p));}),h=new Float64Array(N),nb=[],i,j,it,K=Math.min(N-1,22);
+/* Display shape of triangle and tetrahedron: the reference simplex (right-angled) or the regular one. It is an affine map
+   applied only when drawing; rules, weights and all numbers stay in reference coordinates. Voronoi cells and the sphere
+   packing depend on distances, so they are computed in the displayed shape. */
+var SQ3=Math.sqrt(3),SQ23=Math.sqrt(2/3);
+function shpOn(dom){return !!st.equi&&(dom==='triangle'||dom==='tetra');}
+function shp(dom,x,y,z){if(!shpOn(dom))return [x,y,z];if(dom==='triangle')return [x+y/2,y*SQ3/2,z];return [x+y/2+z/2,y*SQ3/2+z*SQ3/6,z*SQ23];}
+function shpInv(dom,x,y,z){if(!shpOn(dom))return [x,y,z];if(dom==='triangle'){var b=y*2/SQ3;return [x-b/2,b,z];}var c=z/SQ23,b3=(y-c*SQ3/6)*2/SQ3;return [x-b3/2-c/2,b3,c];}
+function shpDet(dom){return !shpOn(dom)?1:(dom==='triangle'?SQ3/2:SQ3/2*SQ23);}
+/* unit normal of a face of the tetrahedron after the map (inverse transpose) */
+function shpN(dom,n){var a=SQ3/2,b=SQ3/6,c=SQ23,v=[n[0],(-.5*n[0]+n[1])/a,((.5*b/a-.5)*n[0]-b/a*n[1]+n[2])/c],l=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])||1;return [v[0]/l,v[1]/l,v[2]/l];}
+function cells2(r,d){var E=shpOn(st.dom);if(r._cells&&r._cells.n===r.n&&r._cells.e===E)return r._cells.c;var N=r.pts.length,P=E?r.pts.map(function(p){return shp(st.dom,p[0],p[1],0);}):r.pts,VV=E?d.verts.map(function(v){return shp(st.dom,v[0],v[1],0);}):d.verts,dt=shpDet(st.dom),w=r.pts.map(function(p){return Math.abs(lastCol(p))*dt;}),h=new Float64Array(N),nb=[],i,j,it,K=Math.min(N-1,22);
   for(i=0;i<N;i++){var dd=[];for(j=0;j<N;j++)if(j!==i)dd.push([(P[i][0]-P[j][0])*(P[i][0]-P[j][0])+(P[i][1]-P[j][1])*(P[i][1]-P[j][1]),j]);dd.sort(function(a,b){return a[0]-b[0];});nb.push(dd.slice(0,K).map(function(a){return a[1];}));}
   var polys=[],A=new Float64Array(N);
-  function build(){for(i=0;i<N;i++){var poly=d.verts.map(function(v){return [v[0],v[1]];}),pi=P[i],n2=pi[0]*pi[0]+pi[1]*pi[1];
+  function build(){for(i=0;i<N;i++){var poly=VV.map(function(v){return [v[0],v[1]];}),pi=P[i],n2=pi[0]*pi[0]+pi[1]*pi[1];
     for(var q=0;q<nb[i].length&&poly.length;q++){var jj=nb[i][q],pj=P[jj];poly=polyClip(poly,2*(pj[0]-pi[0]),2*(pj[1]-pi[1]),pj[0]*pj[0]+pj[1]*pj[1]-n2-h[jj]+h[i]);}
     polys[i]=poly;A[i]=poly.length>2?polyArea(poly):0;}}
   var tot=w.reduce(function(a,b){return a+b;},0),mw=tot/N;
   for(it=0;it<300;it++){build();var me=0;for(i=0;i<N;i++){h[i]+=.4*(w[i]-A[i]);me=Math.max(me,Math.abs(w[i]-A[i]));}if(me<.004*mw)break;}
-  build();r._cells={n:r.n,c:polys};return polys;}
+  build();if(E)polys=polys.map(function(pl){return pl.map(function(q){return shpInv(st.dom,q[0],q[1],0);});});r._cells={n:r.n,e:E,c:polys};return polys;}
 var GREEN='60,165,100',RED='210,75,95',NEGL=[250,205,150],NEGD=[205,85,20];
 function dancePoly2(r,tm){var n=r.deg||st.n,bm=boxMap(st.dom),N=r.pts.length,out=new Float64Array(N),mx=0,k,i,j;
   var cf=[];for(i=0;i<=n;i++)for(j=0;i+j<=n;j++)cf.push([i,j,Math.cos(tm*(.55+.21*(i+j)+.05*i)+1.3*i+2.1*j)/Math.pow(1+i+j,.8)]);
@@ -6054,9 +6065,9 @@ function baseCell3(dom){var f=[];if(isBox(dom)){var q=[[-1,-1,-1],[1,-1,-1],[1,1
     [[[0,3,2,1],[0,0,-1]],[[4,5,6,7],[0,0,1]],[[0,1,5,4],[0,-1,0]],[[2,3,7,6],[0,1,0]],[[1,2,6,5],[1,0,0]],[[0,4,7,3],[-1,0,0]]].forEach(function(o){f.push({v:o[0].map(function(i){return q[i];}),n:o[1]});});}
   else{var A=[0,0,0],B=[1,0,0],C=[0,1,0],D=[0,0,1],s=1/Math.sqrt(3);f.push({v:[A,C,B],n:[0,0,-1]},{v:[A,B,D],n:[0,-1,0]},{v:[A,D,C],n:[-1,0,0]},{v:[B,C,D],n:[s,s,s]});}
   return f;}
-function cells3(r,dom){if(r._c3&&r._c3.n===r.n&&r._c3.dom===dom)return r._c3.c;var P=r.pts,N=P.length,K=Math.min(N-1,28),res=[],i,j;
+function cells3(r,dom){var E=shpOn(dom);if(r._c3&&r._c3.n===r.n&&r._c3.dom===dom&&r._c3.e===E)return r._c3.c;var P=E?r.pts.map(function(p){return shp(dom,p[0],p[1],p[2]);}):r.pts,N=P.length,K=Math.min(N-1,28),res=[],i,j;
   for(i=0;i<N;i++){var dd=[];for(j=0;j<N;j++)if(j!==i){var dx=P[i][0]-P[j][0],dy=P[i][1]-P[j][1],dz=P[i][2]-P[j][2];dd.push([dx*dx+dy*dy+dz*dz,j]);}
-    dd.sort(function(a,b){return a[0]-b[0];});var faces=baseCell3(dom),pi=P[i],n2=pi[0]*pi[0]+pi[1]*pi[1]+pi[2]*pi[2];
+    dd.sort(function(a,b){return a[0]-b[0];});var faces=E?baseCell3(dom).map(function(F){return {v:F.v.map(function(v){return shp(dom,v[0],v[1],v[2]);}),n:shpN(dom,F.n)};}):baseCell3(dom),pi=P[i],n2=pi[0]*pi[0]+pi[1]*pi[1]+pi[2]*pi[2];
     for(var q=0;q<K&&q<dd.length;q++){var pj=P[dd[q][1]],a=[2*(pj[0]-pi[0]),2*(pj[1]-pi[1]),2*(pj[2]-pi[2])],b=pj[0]*pj[0]+pj[1]*pj[1]+pj[2]*pj[2]-n2,hit=false,f,k;
       for(f=0;f<faces.length&&!hit;f++)for(k=0;k<faces[f].v.length;k++){var v=faces[f].v[k];if(a[0]*v[0]+a[1]*v[1]+a[2]*v[2]-b>1e-12){hit=true;break;}}
       if(!hit)continue;
@@ -6068,8 +6079,9 @@ function cells3(r,dom){if(r._c3&&r._c3.n===r.n&&r._c3.dom===dom)return r._c3.c;v
         uq.forEach(function(p){var dx=p[0]-c[0],dy=p[1]-c[1],dz=p[2]-c[2];p.ang=Math.atan2(dx*w2[0]+dy*w2[1]+dz*w2[2],dx*u[0]+dy*u[1]+dz*u[2]);});
         uq.sort(function(x,y){return x.ang-y.ang;});nf.push({v:uq,n:nn});}
       faces=nf;}
-    res.push({faces:faces,c:[pi[0],pi[1],pi[2]]});}
-  r._c3={n:r.n,dom:dom,c:res};return res;}
+    if(E)faces=faces.map(function(F){return {v:F.v.map(function(v){return shpInv(dom,v[0],v[1],v[2]);}),n:F.n};});
+    res.push({faces:faces,c:[r.pts[i][0],r.pts[i][1],r.pts[i][2]]});}
+  r._c3={n:r.n,dom:dom,e:E,c:res};return res;}
 function dancePoly3(r,tm){var n=Math.min(r.deg||st.n,10),bm=st.dom==='tetra'?{a:[0,0,0],b:[1,1,1]}:{a:[-1,-1,-1],b:[1,1,1]},N=r.pts.length,out=new Float64Array(N),mx=0,k,i,j,l,cf=[];
   for(i=0;i<=n;i++)for(j=0;i+j<=n;j++)for(l=0;i+j+l<=n;l++)cf.push([i,j,l,Math.cos(tm*(.55+.17*(i+j+l)+.05*i)+1.3*i+2.1*j+.7*l)/Math.pow(1+i+j+l,.15)]);
   for(k=0;k<N;k++){var p=r.pts[k],lx=legTab(n,2*(p[0]-bm.a[0])/(bm.b[0]-bm.a[0])-1),ly=legTab(n,2*(p[1]-bm.a[1])/(bm.b[1]-bm.a[1])-1),lz=legTab(n,2*(p[2]-bm.a[2])/(bm.b[2]-bm.a[2])-1),s=0;
@@ -6084,8 +6096,8 @@ function drawCells3(c,cells,vals,proj,yw,pt,ink){var cy=Math.cos(yw),sy=Math.sin
    were still growing). Every ball then touches at least one neighbour and no two balls overlap.
    For a still-growing ball i, its stopping time is min over j of d_ij/2 (j growing) or d_ij - r_j (j stopped);
    a stopped neighbour only loosens the bound, so t_i is recomputed only when its arg-min neighbour stops. */
-function nnRadii(r,d,dim){var key=st.dom+'|'+dim;if(r._nn&&r._nn.key===key&&r._nn.n===r.n)return r._nn.v;
-  var P=r.pts.map(function(p){if(dim===1)return [p[0],0,0];var u=[];for(var a=0;a<3;a++)u.push(a<dim?(p[a]-d.c[a])*d.s:0);return u;}),N=P.length,i,j;
+function nnRadii(r,d,dim){var key=st.dom+'|'+dim+'|'+(shpOn(st.dom)?1:0);if(r._nn&&r._nn.key===key&&r._nn.n===r.n)return r._nn.v;
+  var P=r.pts.map(function(p){if(dim===1)return [p[0],0,0];var u=[];for(var a=0;a<3;a++)u.push(a<dim?(p[a]-d.c[a])*d.s:0);return shp(st.dom,u[0],u[1],u[2]);}),N=P.length,i,j;
   var D=new Float64Array(N*N);for(i=0;i<N;i++)for(j=i+1;j<N;j++){var dx=P[i][0]-P[j][0],dy=P[i][1]-P[j][1],dz=P[i][2]-P[j][2],q=Math.sqrt(dx*dx+dy*dy+dz*dz);D[i*N+j]=q;D[j*N+i]=q;}
   var rad=new Float64Array(N),fr=new Uint8Array(N),tt=new Float64Array(N),arg=new Int32Array(N);
   function best(k){var b=Infinity,a=-1;for(var m=0;m<N;m++){if(m===k)continue;var c=fr[m]?D[k*N+m]-rad[m]:D[k*N+m]/2;if(c<b){b=c;a=m;}}tt[k]=b;arg[k]=a;}
@@ -6107,6 +6119,7 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cw,chh);
   var dim=d.dim,is3=dim===3,yw=dim===2?st.yaw2:st.yaw,pt=dim===2?st.pitch2:st.pitch,cy=Math.cos(yw),sy=Math.sin(yw),cp=Math.cos(pt),sp=Math.sin(pt),scale=Math.min(cw,chh)*(is3?.30:(dim===2?.37:.40));
   function proj(p){if(dim===1)return {x:cw/2+p[0]*scale*1.1,y:chh/2,z:0,k:1};var x=(p[0]-d.c[0])*d.s,y=(p[1]-d.c[1])*d.s,z=is3?(p[2]-d.c[2])*d.s:0;
+    if(shpOn(st.dom)){var q3=shp(st.dom,x,y,z);x=q3[0];y=q3[1];z=q3[2];}
     if(dim===2){z=-y;y=p[2]||0;}
     if(dim===1)return {x:cw/2+x*scale,y:chh/2-y*scale,z:0,k:1};
     var x1=cy*x+sy*z,z1=-sy*x+cy*z,y1=cp*y-sp*z1,z2=sp*y+cp*z1,k=st.persp?1/(1-z2*.18):1;return {x:cw/2+x1*scale*k,y:chh/2-y1*scale*k,z:z2,k:k};}
@@ -6144,7 +6157,7 @@ function draw(){var r=viewRule(),d=DOM[st.dom],dpr=Math.min(window.devicePixelRa
   var ctr=proj(dim===2?[d.c[0],d.c[1],0]:d.c);
   items.forEach(function(q){var hasNeg=wmin<0,tt=hasNeg?Math.max(q.w,0)/(wmax||1):(wmax>wmin?(q.w-wmin)/(wmax-wmin):.5),c=hasNeg&&q.w<0?lerpc(NEGL,NEGD,Math.min(1,q.w/wmin)):lerpc(w0,w1,tt),rad=(dim===1&&d1?.5:1)*base*(st.size?Math.pow(Math.abs(q.w/wavg),dim===3?1/3:.5):1)*q.k;
     var trueSize=st.size&&!st.pack;
-    if(trueSize){var aw=Math.abs(q.w),R=dim===1?aw/2:(dim===2?Math.sqrt(aw/Math.PI):Math.cbrt(3*aw/(4*Math.PI)));rad=Math.max(.8,R*(dim===1?1.1:d.s)*scale*q.k);}
+    if(trueSize){var aw=Math.abs(q.w)*shpDet(st.dom),R=dim===1?aw/2:(dim===2?Math.sqrt(aw/Math.PI):Math.cbrt(3*aw/(4*Math.PI)));rad=Math.max(.8,R*(dim===1?1.1:d.s)*scale*q.k);}
     else{rad=Math.max(1.6,Math.min(rad,base*2.4));if(dim===1&&d1)rad=Math.min(rad,9);}
     if(st.pack){packBall(ctx,q,nnr[q.i]*q.k,c);return;}
     var rgb='rgb('+c.map(Math.round).join(',')+')';
@@ -6167,7 +6180,7 @@ cv.addEventListener('pointermove',function(e){if(!drag)return;var dx=e.clientX-d
 ['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){drag=null;});});
 function toggle(id,key){var b=$(id);b.onclick=function(){st[key]=!st[key];b.setAttribute('aria-pressed',st[key]);
     var other=key==='size'?'pack':(key==='pack'?'size':null);if(other&&st[key]){st[other]=false;$('#b-'+other).setAttribute('aria-pressed',false);}draw();};}
-toggle('#b-dance','dance');$('#b-dance').addEventListener('click',function(){$('#dancenote').style.display=st.dance?'':'none';});toggle('#b-auto','auto');toggle('#b-size','size');toggle('#b-edge','edge');toggle('#b-cells','cells');toggle('#b-persp','persp');toggle('#b-pack','pack');
+toggle('#b-dance','dance');$('#b-dance').addEventListener('click',function(){$('#dancenote').style.display=st.dance?'':'none';});toggle('#b-auto','auto');toggle('#b-size','size');toggle('#b-edge','edge');toggle('#b-cells','cells');toggle('#b-persp','persp');toggle('#b-pack','pack');toggle('#b-equi','equi');$('#b-equi').addEventListener('click',function(){drawEx();});
 function setDeg(n){st.n=n;viewer();table();chart();certTable();exChart();}
 $('#deg').oninput=function(){setDeg(+this.value);};$('#deg2').oninput=function(){setDeg(+this.value);};
 Array.prototype.forEach.call(document.querySelectorAll('input[name=mode]'),function(i){i.onchange=function(){st.mode=i.value;chart();};});
@@ -6364,7 +6377,7 @@ function drawEx(){var dom=st.dom,d=DOM[dom],dim=d.dim,f=fdef(dom,st.fn),dpr=Math
   function col(v,a){var c=lerpc(w0,w1,(v-g.mn)/span).map(Math.round);return 'rgba('+c.join(',')+','+a+')';}
   var HB=-.75,hz=function(v){return HB+(v-g.mn)/span*1.5;},H0=hz(Math.max(g.mn,Math.min(0,g.mx)));
   if(dim===2){var cx=d.c[0],cyy=d.c[1],s=d.s;
-    var P=function(x,y,v){return proj([(x-cx)*s,v==null?H0:hz(v),-(y-cyy)*s]);};
+    var P=function(x,y,v){var q=shp(dom,(x-cx)*s,(y-cyy)*s,0);return proj([q[0],v==null?H0:hz(v),-q[1]]);};
     var pv=g.V.map(function(v){return P(v[0],v[1],v[2]);});
     var quads=g.Q.map(function(q){var z=(pv[q[0]].z+pv[q[1]].z+pv[q[2]].z+pv[q[3]].z)/4,v=(g.V[q[0]][2]+g.V[q[1]][2]+g.V[q[2]][2]+g.V[q[3]][2])/4;return {q:q,z:z,v:v};});
     quads.sort(function(a,b){return a.z-b.z;});
@@ -6374,7 +6387,7 @@ function drawEx(){var dom=st.dom,d=DOM[dom],dim=d.dim,f=fdef(dom,st.fn),dpr=Math
     r.pts.forEach(function(p){var v=f([p[0],p[1]]),a=P(p[0],p[1],null),b=P(p[0],p[1],v);ectx.strokeStyle=ink;ectx.lineWidth=1;ectx.globalAlpha=.55;ectx.beginPath();ectx.moveTo(a.x,a.y);ectx.lineTo(b.x,b.y);ectx.stroke();ectx.globalAlpha=1;
       ectx.beginPath();ectx.arc(b.x,b.y,3.2,0,6.2832);ectx.fillStyle=ink;ectx.fill();ectx.strokeStyle=surf;ectx.lineWidth=1;ectx.stroke();});
     setTx(cap,t('capSurf'));return;}
-  var cc=d.c,ss=d.s,Pc=function(p){return proj([(p[0]-cc[0])*ss,(p[1]-cc[1])*ss,(p[2]-cc[2])*ss]);};
+  var cc=d.c,ss=d.s,Pc=function(p){return proj(shp(dom,(p[0]-cc[0])*ss,(p[1]-cc[1])*ss,(p[2]-cc[2])*ss));};
   var cl=g.C.map(function(p){var q=Pc(p);q.v=p[3];return q;});cl.sort(function(a,b){return a.z-b.z;});
   ectx.strokeStyle=edge;ectx.lineWidth=1.5;ectx.beginPath();d.edges.forEach(function(e){var a=Pc(d.verts[e[0]]),b=Pc(d.verts[e[1]]);ectx.moveTo(a.x,a.y);ectx.lineTo(b.x,b.y);});ectx.stroke();
   cl.forEach(function(q){ectx.beginPath();ectx.arc(q.x,q.y,2.6*q.k,0,6.2832);ectx.fillStyle=col(q.v,.4);ectx.fill();});
@@ -6832,7 +6845,7 @@ function applyLang(){document.documentElement.lang=LANG;document.title=t('pageTi
   $('#doc').innerHTML=docHTML();$('#refs').innerHTML=refsHTML();}
 function setLang(l){LANG=l;applyLang();refresh();}
 $('#l-de').onclick=function(){setLang('de');};$('#l-en').onclick=function(){setLang('en');};
-function refresh(){if(st.n>MX())st.n=MX();$('#deg').max=MX();$('#deg2').max=MX();buildTabs();legend();facts();table();chart();fnButtons();certTable();viewer();exChart();$('#b-auto').style.display=DOM[st.dom].dim===3?'':'none';$('#b-exauto').style.display=DOM[st.dom].dim>=2?'':'none';$('#b-dance').style.display='';$('#dancenote').style.display=(st.dance)?'':'none';}
+function refresh(){if(st.n>MX())st.n=MX();$('#deg').max=MX();$('#deg2').max=MX();buildTabs();legend();facts();table();chart();fnButtons();certTable();viewer();exChart();$('#b-auto').style.display=DOM[st.dom].dim===3?'':'none';var eb=$('#b-equi'),ek=st.dom==='tetra'?'equiBtn3':'equiBtn2';eb.style.display=(st.dom==='triangle'||st.dom==='tetra')?'':'none';eb.setAttribute('data-i',ek);setTx(eb,t(ek));$('#b-exauto').style.display=DOM[st.dom].dim>=2?'':'none';$('#b-dance').style.display='';$('#dancenote').style.display=(st.dance)?'':'none';}
 window.addEventListener('resize',function(){draw();drawEx();});
 if(window.matchMedia)window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){draw();drawEx();});
 new MutationObserver(function(){draw();drawEx();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
@@ -6843,7 +6856,7 @@ window.__selftest=function(){var out=[];['interval','triangle','square','tetra',
    The pages behind these paths are small stubs (tools/build_atlas.py) that send the browser to this page with the
    settings in the query string; this page then writes the path again. */
 var URLROOT=document.baseURI,URLEN=LANG==='en'?URLROOT:new URL('../',URLROOT).href,URLDE=LANG==='de'?URLROOT:URLROOT+'de/';
-var URLTOG=['size','edge','dance','persp','pack','auto'],URLDEF={dom:st.dom,n:st.n,mode:st.mode,fn:st.fn,lang:LANG,exauto:exV.auto,drill:DRILL.on,tog:{}};
+var URLTOG=['size','edge','dance','persp','pack','auto','equi'],URLDEF={dom:st.dom,n:st.n,mode:st.mode,fn:st.fn,lang:LANG,exauto:exV.auto,drill:DRILL.on,tog:{}};
 URLTOG.forEach(function(k){URLDEF.tog[k]=st[k];});
 function urlDefSrc(dom){return DOM[dom].dim===1?'gauss':'found';}
 function srcCode(k){return k==='found'?'npi':(k==='out'?'npo':(isF(k)?k.slice(2):k));}
