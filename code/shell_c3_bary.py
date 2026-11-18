@@ -4,6 +4,9 @@ with free numbers s_i, so every solution is a PI rule (all nodes inside, all wei
   turn, then pulled into the triangle again) -> C3 symmetric Levenberg-Marquardt (one representative per orbit of the rotation group), float64, CPU, no noise.
 A run of a pattern stops at a solution (residual below 1e-12), or when over the last --win steps neither the residual fell by --gain (relative) nor an unknown changed by more than --dq.
 Writes <out>/shell_c3_bary_<deg>_<pattern>_turn<mode>.json (stages pattern, S3, rotation, C3 with nodes and residuals), <out>/summary.txt and, at the first solution, <out>/solution_<deg>_<N>.json.
+--softplus: the weights are w = c ln(1 + e^x) with c = 1 / (2 N) (positive, smooth) instead of w = v^2.  --exact: --auto uses only Z nodes (no Z + 1).  --relax K: the shell patterns may have up to K steps of 1 or 4 points per edge
+in addition to the steps of 2 and 3.
+--damping scaled: the damping of the Levenberg-Marquardt steps is scaled by the diagonal of J^T J (Marquardt) with a start value of 1e-3 (default identity: lambda_0 = 0.1); both: both, one after the other.
 --auto: runs all variants one after the other (default settings; first shell one below/above and other turn counts; more steps with a longer stagnation window) with several processes (--procs, default 4, one
 thread each) until the first solution; if there is no pattern with exactly Z nodes it uses Z + 1.
 Usage: python code/shell_c3_bary.py --deg 36 --auto [--out shell_c3_bary_out] [--procs 4]   or   python code/shell_c3_bary.py --deg 36 --target 235 --turn 2,all --offsets 0,-1,1 [--part 0 --parts 4]
@@ -43,21 +46,40 @@ def bary_of(P):
 
 
 class Bary:
-    """unknowns q = [v (one per orbit), s of the orbits]; weights w = v^2; generic orbits: b = s^2 / sum s^2 (3 numbers s), node (x, y) = (b_i, b_j) for the pairs of the orbit images;
+    """unknowns q = [x (one per orbit), s of the orbits]; weights w = x^2, or w = c ln(1 + e^x) with softplus=True (c = 1 / (2 N), the mean weight, so that x is of order 1); generic orbits: b = s^2 / sum s^2 (3 numbers s), node (x, y) = (b_i, b_j) for the pairs of the orbit images;
     orbits on a mirror line (kind ax): barycentric coordinates (a, a, c) with a = s_1^2 / T, c = s_2^2 / T, T = 2 s_1^2 + s_2^2 (2 numbers s); centre node: fixed"""
 
-    def __init__(self, orbits):
+    def __init__(self, orbits, softplus=False):
         self.orbits = orbits
+        self.softplus = softplus
+        self.c = 0.0
         self.n_orb = len(orbits)
         self.N = sum(NODES_OF[k] for k, s in orbits)
         self.pq = self.n_orb + sum(NPARAM[k] for k, s in orbits)
         self.orb = np.concatenate([np.full(NODES_OF[k], j) for j, (k, s) in enumerate(orbits)])
+        self.c = 0.5 / self.N
+
+    def _x_from_w(self, w):
+        w = np.maximum(w, 1e-12)
+        if self.softplus:
+            return np.log(np.expm1(w / self.c))          # inverse of w = c ln(1 + e^x)
+        return np.sqrt(w)
+
+    def _w_of(self, x):
+        if self.softplus:
+            return self.c * np.logaddexp(0.0, x)
+        return x ** 2
+
+    def _dw_of(self, x):
+        if self.softplus:
+            return self.c * 0.5 * (1.0 + np.tanh(0.5 * x))        # c times the logistic function, the derivative of c ln(1 + e^x)
+        return 2 * x
 
     def q_from(self, weights):
         pars = []
         for k, s in self.orbits:
             pars.extend(list(np.atleast_1d(s)) if NPARAM[k] else [])
-        return np.concatenate([np.sqrt(np.asarray(weights, float)), np.array(pars, float)])
+        return np.concatenate([self._x_from_w(np.asarray(weights, float)), np.array(pars, float)])
 
     def _gen(self, s, kind):
         """nodes (n, 2) and derivative d(x, y)/ds (n, 2, 3) of a generic orbit"""
@@ -95,7 +117,7 @@ class Bary:
             Xo, D = self._orbit(k, q[col:col + n])
             X.append(Xo)
             col += n
-        return np.vstack(X), q[:self.n_orb][self.orb] ** 2
+        return np.vstack(X), self._w_of(q[:self.n_orb][self.orb])
 
     def jacobian(self, B, q, X, W):
         J = C.jacobian(B, X, W)
@@ -112,7 +134,7 @@ class Bary:
                 i += 1
             col += n
         DW = np.zeros((N, self.pq))
-        DW[np.arange(N), self.orb] = 2 * q[:self.n_orb][self.orb]
+        DW[np.arange(N), self.orb] = self._dw_of(q[:self.n_orb][self.orb])
         return J[:, :2 * N] @ DX + J[:, 2 * N:] @ DW
 
 
@@ -139,11 +161,59 @@ def s3_orbits_bary(P):
     return out
 
 
+def lm_scaled(B, red, q, steps, win, gain, dq_tol, target=1e-13, lam0=1e-3):
+    """Levenberg-Marquardt like SC.lm, but the damping is scaled by the diagonal of J^T J (Marquardt), so that unknowns of very different size (weights, barycentric numbers) are damped alike"""
+    X, W = red.nodes_weights(q)
+    r = C.residual(B, X, W)
+    cost = float(r @ r)
+    lam = lam0
+    hist = [(cost, q.copy())]
+    reason = "steps"
+    used = 0
+    for it in range(steps):
+        used = it + 1
+        J = red.jacobian(B, q, X, W)
+        g = J.T @ r
+        H = J.T @ J
+        D = np.diag(np.diag(H) + 1e-12 * (np.diag(H).max() + 1e-300))
+        accepted = False
+        for _ in range(25):
+            try:
+                d = -np.linalg.solve(H + lam * D, g)
+            except np.linalg.LinAlgError:
+                lam *= 10
+                continue
+            qn = q + d
+            Xn, Wn = red.nodes_weights(qn)
+            rn = C.residual(B, Xn, Wn)
+            cn = float(rn @ rn)
+            if np.isfinite(cn) and cn < cost:
+                q, X, W, r, cost = qn, Xn, Wn, rn, cn
+                lam = max(lam * 0.3, 1e-15)
+                accepted = True
+                break
+            lam *= 5
+        hist.append((cost, q.copy()))
+        if np.sqrt(cost) < target:
+            reason = "solution"
+            break
+        if not accepted:
+            reason = "no step"
+            break
+        if len(hist) > win:
+            cost_ref, q_ref = hist[-1 - win]
+            if np.sqrt(cost) > (1 - gain) * np.sqrt(cost_ref) and float(np.abs(q - q_ref).max()) < dq_tol:
+                reason = "stagnation"
+                break
+    return q, float(np.sqrt(cost)), used, reason
+
+
 def run_pattern(B, pat, mode, a):
+    lm = lm_scaled if a.damping == "scaled" else SC.lm
     P0 = pull_inside(pat.nodes())
-    red_s = Bary(s3_orbits_bary(P0))
+    red_s = Bary(s3_orbits_bary(P0), a.softplus)
     q = red_s.q_from(np.full(red_s.n_orb, 0.5 / pat.N))
-    q, res, used, why = SC.lm(B, red_s, q, a.s3_steps, 10 ** 9, 0.0, 0.0)
+    q, res, used, why = lm(B, red_s, q, a.s3_steps, 10 ** 9, 0.0, 0.0)
     Xs, Ws = red_s.nodes_weights(q)
     order = SC.match(P0, Xs)
     X = Xs[order]
@@ -153,13 +223,46 @@ def run_pattern(B, pat, mode, a):
     stages.append({"stage": "rotation", "residual": None, "nodes": np.round(X2, 6).tolist()})
     k = pat.k
     orbits = [("g3", s_from_bary("g3", bary_of(X2[3 * j:3 * j + 1])[0])) for j in range(k)] + ([("ce", [])] if pat.centre else [])
-    red_c = Bary(orbits)
+    red_c = Bary(orbits, a.softplus)
     q2 = red_c.q_from(np.concatenate([W[0:3 * k:3], W[3 * k:]]))
-    q2, res2, used2, why2 = SC.lm(B, red_c, q2, a.steps, a.win, a.gain, a.dq)
+    q2, res2, used2, why2 = lm(B, red_c, q2, a.steps, a.win, a.gain, a.dq)
     X3, W3 = red_c.nodes_weights(q2)
     stages.append({"stage": "C3", "residual": res2, "nodes": np.round(X3, 6).tolist()})
     solved = res2 < 1e-12 and bool((W3 > 0).all())
     return stages, X3, W3, res2, used2, why2, solved
+
+
+def enumerate_relaxed(n, target, offsets, relax, last_max=3):
+    """like SC.enumerate_patterns (steps of 2 or 3 points per edge, last shell with at most 3 points, exactly `target` nodes), but with up to `relax` steps of 1 or 4 points per edge in addition"""
+    if relax <= 0 and last_max == 3:
+        return SC.enumerate_patterns(n, target, offsets)
+    m0 = -(-(n + 1) // 2)
+    found = []
+
+    def rec(seq, total, spent):
+        m = seq[-1]
+        if total == target and m <= last_max:
+            found.append(list(seq))
+        if total >= target:
+            return
+        for s in ((1,) if m == 2 else (1, 2, 3, 4)):
+            extra = spent + (1 if (s in (1, 4) and m != 2) else 0)
+            if extra > relax or m - s < 1:
+                continue
+            seq.append(m - s)
+            rec(seq, total + SC.nodes_of_shell(m - s), extra)
+            seq.pop()
+
+    for off in offsets:
+        rec([m0 + off], SC.nodes_of_shell(m0 + off), 0)
+
+    def key(q):
+        steps = [x - y for x, y in zip(q, q[1:])]
+        odd = sum(1 for i, s in enumerate(steps) if s in (1, 4) and q[i] != 2)
+        return (q[0] != m0, odd, sum(1 for s in steps if s != 2), len(q), q)
+
+    found.sort(key=key)
+    return found
 
 
 _STATE = {}
@@ -176,7 +279,7 @@ def job(args):
     t0 = time.time()
     stages, X, W, res, used, why, solved = run_pattern(_STATE["B"], pat, mode, a)
     return {"seq": seq, "mode": mode, "N": pat.N, "shell": pat.shell, "stages": stages, "res": res, "used": used, "why": why, "solved": solved,
-            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"]}
+            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"], "damping": a.damping}
 
 
 def save_result(a, deg, r, cmd):
@@ -184,11 +287,11 @@ def save_result(a, deg, r, cmd):
     tag = "_".join(str(m) for m in seq)
     data = {"degree": deg, "N": r["N"], "seq": seq, "shell": r["shell"], "stages": r["stages"], "solved_by": "C3" if r["solved"] else None, "turn": r["mode"],
             "repro": {"command": cmd + " (shells %s)" % seq}}
-    with open(os.path.join(a.out, "shell_c3_bary_%d_%s_turn%s.json" % (deg, tag, r["mode"])), "w") as fh:
+    with open(os.path.join(a.out, "shell_c3_bary_%d_%s_turn%s%s.json" % (deg, tag, r["mode"], "" if r["damping"] == "identity" else "_" + r["damping"])), "w") as fh:
         json.dump(data, fh)
     diffs = "".join(" -%d" % (x - y) for x, y in zip(seq, seq[1:]))
-    line = "degree %d, N %d, shells %d%s, turn %s: S3 residual %.2e, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
-        deg, r["N"], seq[0], diffs, r["mode"], r["s3"], r["res"], r["used"], r["why"], r["seconds"], "  *** SOLUTION" if r["solved"] else "")
+    line = "degree %d, N %d, shells %d%s, turn %s%s: S3 residual %.2e, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
+        deg, r["N"], seq[0], diffs, r["mode"], "" if r["damping"] == "identity" else ", " + r["damping"] + " damping", r["s3"], r["res"], r["used"], r["why"], r["seconds"], "  *** SOLUTION" if r["solved"] else "")
     print(line, flush=True)
     with open(os.path.join(a.out, "summary.txt"), "a") as fh:
         fh.write(line + "\n")
@@ -206,25 +309,25 @@ def save_result(a, deg, r, cmd):
 def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, label, pats=None):
     from multiprocessing import Pool
     if pats is None:
-        pats = SC.enumerate_patterns(deg, target, offsets)[:a.max_patterns][a.part::a.parts]
+        pats = enumerate_relaxed(deg, target, offsets, a.relax, a.last_max)[:a.max_patterns][a.part::a.parts]
     print("%s: degree %d, target %d nodes, %d shell patterns, turn %s, steps %d" % (label, deg, target, len(pats), modes, steps), flush=True)
     if not pats:
         return None
-    params = {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq}
-    jobs = [(deg, seq, m, params) for seq in pats for m in modes]
-    cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq)
+    dampings = ["identity", "scaled"] if a.damping == "both" else [a.damping]
+    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp}) for seq in pats for m in modes for dmp in dampings]
+    cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "")
     found = None
     if procs <= 1:
         init_worker(deg)
         for j in jobs:
             r = job(j)
-            save_result(a, deg, r, cmd.replace("--turn %s" % ",".join(modes), "--turn %s" % r["mode"]))
+            save_result(a, deg, r, cmd.replace("--turn %s" % ",".join(modes), "--turn %s" % r["mode"]) + ("" if r["damping"] == "identity" else " --damping " + r["damping"]))
             if r["solved"]:
                 return r
         return None
     with Pool(procs, initializer=init_worker, initargs=(deg,)) as pool:
         for r in pool.imap_unordered(job, jobs):
-            save_result(a, deg, r, cmd.replace("--turn %s" % ",".join(modes), "--turn %s" % r["mode"]))
+            save_result(a, deg, r, cmd.replace("--turn %s" % ",".join(modes), "--turn %s" % r["mode"]) + ("" if r["damping"] == "identity" else " --damping " + r["damping"]))
             if r["solved"]:
                 found = r
                 pool.terminate()
@@ -250,6 +353,11 @@ def main():
     ap.add_argument("--gain", type=float, default=0.05)
     ap.add_argument("--dq", type=float, default=1e-3)
     ap.add_argument("--max-patterns", type=int, default=50)
+    ap.add_argument("--damping", default="identity", choices=["identity", "scaled", "both"], help="damping of the Levenberg-Marquardt steps")
+    ap.add_argument("--softplus", action="store_true", help="weights w = ln(1 + e^x) instead of w = v^2")
+    ap.add_argument("--exact", action="store_true", help="--auto: only Z nodes, no Z + 1")
+    ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
+    ap.add_argument("--relax", type=int, default=0, help="up to this many steps of 1 or 4 points per edge in the shell patterns, in addition to the steps of 2 and 3")
     a = ap.parse_args()
     n = a.deg
     Z = -(-((n + 1) * (n + 2) // 2) // 3)
@@ -268,9 +376,9 @@ def main():
     variants = [("default", [0, -1, 1], ["2", "all"], 600, 15, 0.05, 1e-3),
                 ("more first shells and turns", [-2, -1, 0, 1, 2], ["1", "2", "3", "all"], 600, 15, 0.05, 1e-3),
                 ("longer runs", [0, -1, 1], ["1", "2", "all"], 1500, 40, 0.01, 1e-4)]
-    targets = [a.target] if a.target else [Z, Z + 1]
+    targets = [a.target] if a.target else ([Z] if a.exact else [Z, Z + 1])
     for target in targets:
-        if not SC.enumerate_patterns(n, target, [-2, -1, 0, 1, 2]):
+        if not enumerate_relaxed(n, target, [-2, -1, 0, 1, 2], a.relax, a.last_max):
             print("no shell pattern with %d nodes" % target, flush=True)
             continue
         for label, offs, modes, steps, win, gain, dq in variants:
