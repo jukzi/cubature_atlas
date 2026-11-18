@@ -10,6 +10,8 @@ in addition to the steps of 2 and 3.
 --pull-inside: if a solution has nodes on the boundary of the triangle (a barycentric coordinate below 1e-9, the parametrisation ran to s = 0), it is solved again with the barycentric
 coordinates b = delta + (1 - 3 delta) s^2 / sum s^2 for delta = 1e-6, 1e-5, 1e-4, 1e-3 (each solution is the start of the next delta); the solution with the largest delta is kept, so that every node has
 the distance delta to the boundary (needed for an interval proof of a PI rule).
+--staged: only Z nodes; the shell patterns are searched in stages: first only steps of 2 and 3 points per edge (relax 0), then with one step from --extra-steps (default 1 and 4), up to --relax steps; every stage
+runs the patterns that were not in an earlier stage with the turn modes --turn and the weight/damping pairs --configs (for example "v2:identity,softplus:identity") until the first solution or --time-limit seconds.
 --auto: runs all variants one after the other (default settings; first shell one below/above and other turn counts; more steps with a longer stagnation window) with several processes (--procs, default 4, one
 thread each) until the first solution; if there is no pattern with exactly Z nodes it uses Z + 1.
 Usage: python code/shell_c3_bary.py --deg 36 --auto [--out shell_c3_bary_out] [--procs 4]   or   python code/shell_c3_bary.py --deg 36 --target 235 --turn 2,all --offsets 0,-1,1 [--part 0 --parts 4]
@@ -281,7 +283,7 @@ def run_pattern(B, pat, mode, a):
     return stages, X3, W3, res2, used2, why2, solved
 
 
-def enumerate_relaxed(n, target, offsets, relax, last_max=3):
+def enumerate_relaxed(n, target, offsets, relax, last_max=3, extra_steps=(1, 4)):
     """like SC.enumerate_patterns (steps of 2 or 3 points per edge, last shell with at most 3 points, exactly `target` nodes), but with up to `relax` steps of 1 or 4 points per edge in addition"""
     if relax <= 0 and last_max == 3:
         return SC.enumerate_patterns(n, target, offsets)
@@ -294,8 +296,8 @@ def enumerate_relaxed(n, target, offsets, relax, last_max=3):
             found.append(list(seq))
         if total >= target:
             return
-        for s in ((1,) if m == 2 else (1, 2, 3, 4)):
-            extra = spent + (1 if (s in (1, 4) and m != 2) else 0)
+        for s in ((1,) if m == 2 else tuple(sorted({2, 3} | set(extra_steps)))):
+            extra = spent + (1 if (s in extra_steps and m != 2) else 0)
             if extra > relax or m - s < 1:
                 continue
             seq.append(m - s)
@@ -307,7 +309,7 @@ def enumerate_relaxed(n, target, offsets, relax, last_max=3):
 
     def key(q):
         steps = [x - y for x, y in zip(q, q[1:])]
-        odd = sum(1 for i, s in enumerate(steps) if s in (1, 4) and q[i] != 2)
+        odd = sum(1 for i, s in enumerate(steps) if s in extra_steps and q[i] != 2)
         return (q[0] != m0, odd, sum(1 for s in steps if s != 2), len(q), q)
 
     found.sort(key=key)
@@ -328,7 +330,7 @@ def job(args):
     t0 = time.time()
     stages, X, W, res, used, why, solved = run_pattern(_STATE["B"], pat, mode, a)
     return {"seq": seq, "mode": mode, "N": pat.N, "shell": pat.shell, "stages": stages, "res": res, "used": used, "why": why, "solved": solved,
-            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"], "damping": a.damping, "margin": a.margin_result}
+            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"], "damping": a.damping, "margin": a.margin_result, "softplus": a.softplus, "params": params}
 
 
 def save_result(a, deg, r, cmd):
@@ -336,11 +338,11 @@ def save_result(a, deg, r, cmd):
     tag = "_".join(str(m) for m in seq)
     data = {"degree": deg, "N": r["N"], "seq": seq, "shell": r["shell"], "stages": r["stages"], "solved_by": "C3" if r["solved"] else None, "turn": r["mode"],
             "repro": {"command": cmd + " (shells %s)" % seq}}
-    with open(os.path.join(a.out, "shell_c3_bary_%d_%s_turn%s%s.json" % (deg, tag, r["mode"], "" if r["damping"] == "identity" else "_" + r["damping"])), "w") as fh:
+    with open(os.path.join(a.out, "shell_c3_bary_%d_%s_turn%s%s%s.json" % (deg, tag, r["mode"], "_sp" if r.get("softplus") else "", "" if r["damping"] == "identity" else "_" + r["damping"])), "w") as fh:
         json.dump(data, fh)
     diffs = "".join(" -%d" % (x - y) for x, y in zip(seq, seq[1:]))
     line = "degree %d, N %d, shells %d%s, turn %s%s: S3 residual %.2e, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
-        deg, r["N"], seq[0], diffs, r["mode"], "" if r["damping"] == "identity" else ", " + r["damping"] + " damping", r["s3"], r["res"], r["used"], r["why"], r["seconds"], ("  *** SOLUTION" + (" (pulled inside, distance %.0e to the boundary)" % r["margin"] if r["margin"] else "")) if r["solved"] else "")
+        deg, r["N"], seq[0], diffs, r["mode"], ("" if r["damping"] == "identity" else ", " + r["damping"] + " damping") + (", softplus" if r.get("softplus") else ""), r["s3"], r["res"], r["used"], r["why"], r["seconds"], ("  *** SOLUTION" + (" (pulled inside, distance %.0e to the boundary)" % r["margin"] if r["margin"] else "")) if r["solved"] else "")
     print(line, flush=True)
     with open(os.path.join(a.out, "summary.txt"), "a") as fh:
         fh.write(line + "\n")
@@ -348,8 +350,12 @@ def save_result(a, deg, r, cmd):
         X = np.array(r["X"])
         W = np.array(r["W"])
         L = bary_of(X)
+        pr = r.get("params")
+        seqcmd = cmd if not pr else ("python code/shell_c3_bary.py --deg %d --seq %s --target %d --turn %s --steps %d --win %d --gain %g --dq %g" % (
+            deg, ",".join(str(m) for m in seq), r["N"], r["mode"], pr["steps"], pr["win"], pr["gain"], pr["dq"]) + (" --softplus" if r.get("softplus") else "")
+            + ("" if r["damping"] == "identity" else " --damping " + r["damping"]) + (" --pull-inside" if pr.get("pull_inside") else ""))
         sol = {"degree": deg, "N": r["N"], "seq": seq, "turn": r["mode"], "nodes": X.tolist(), "weights": W.tolist(), "residual": r["res"], "min_barycentric": float(L.min()),
-               "nodes_outside": int((L.min(axis=1) < 0).sum()), "margin_delta": r["margin"], "command": cmd}
+               "nodes_outside": int((L.min(axis=1) < 0).sum()), "margin_delta": r["margin"], "command": seqcmd}
         with open(os.path.join(a.out, "solution_%d_%d.json" % (deg, r["N"])), "w") as fh:
             json.dump(sol, fh)
         print("solution: min weight %.2e, smallest barycentric coordinate %.2e (all nodes inside the triangle)" % (W.min(), L.min()), flush=True)
@@ -384,6 +390,39 @@ def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, lab
     return found
 
 
+def run_staged(a, n, Z, nprocs):
+    """see the module docstring (--staged); returns True if a solution was found"""
+    from multiprocessing import Pool
+    deadline = time.time() + a.time_limit if a.time_limit else None
+    extra = tuple(int(s) for s in a.extra_steps.split(",") if s)
+    configs = []
+    for c in a.configs.split(","):
+        w, d = c.split(":")
+        configs.append((w == "softplus", d))
+    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside}
+    seen = set()
+    for relax in range(0, a.relax + 1):
+        pats = [q for q in enumerate_relaxed(n, Z, [-2, -1, 0, 1, 2], relax, a.last_max, extra) if tuple(q) not in seen][:a.max_patterns]
+        seen.update(tuple(q) for q in pats)
+        print("stage relax %d: degree %d, %d nodes, %d new shell patterns" % (relax, n, Z, len(pats)), flush=True)
+        jobs = [(n, seq, m, dict(base, softplus=sp, damping=dmp)) for seq in pats for m in a.turn.split(",") for sp, dmp in configs]
+        if not jobs:
+            continue
+        with Pool(nprocs, initializer=init_worker, initargs=(n,)) as pool:
+            for r in pool.imap_unordered(job, jobs):
+                save_result(a, n, r, "")
+                if r["solved"]:
+                    pool.terminate()
+                    print("solution found: %s" % os.path.join(a.out, "solution_%d_%d.json" % (n, r["N"])), flush=True)
+                    return True
+                if deadline and time.time() > deadline:
+                    pool.terminate()
+                    print("no solution found (time limit of %d s reached)" % a.time_limit, flush=True)
+                    return False
+    print("no solution found", flush=True)
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--deg", type=int, required=True)
@@ -408,10 +447,20 @@ def main():
     ap.add_argument("--exact", action="store_true", help="--auto: only Z nodes, no Z + 1")
     ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
     ap.add_argument("--relax", type=int, default=0, help="up to this many steps of 1 or 4 points per edge in the shell patterns, in addition to the steps of 2 and 3")
+    ap.add_argument("--staged", action="store_true", help="only Z nodes, shell patterns in stages (relax 0 first), see the module docstring")
+    ap.add_argument("--extra-steps", default="1,4", help="steps (points per edge) allowed in addition to 2 and 3, comma separated (default 1,4)")
+    ap.add_argument("--time-limit", type=int, default=0, help="--staged: stop after this many seconds (0 = no limit)")
+    ap.add_argument("--configs", default="v2:identity,softplus:identity", help="--staged: weights:damping pairs, weights v2 or softplus, damping identity or scaled")
     a = ap.parse_args()
     n = a.deg
     Z = -(-((n + 1) * (n + 2) // 2) // 3)
     os.makedirs(a.out, exist_ok=True)
+    if a.staged:
+        if Z % 3 == 2:
+            print("Z = %d is 2 modulo 3: there is no C3 symmetric rule with exactly Z nodes" % Z, flush=True)
+            return
+        found = run_staged(a, n, Z, max(1, min(a.procs, os.cpu_count() or 1)))
+        return
     if a.seq:
         pats = [[int(s) for s in a.seq.split(",")]]
         r = run_variant(a, n, a.target or sum(SC.nodes_of_shell(m) for m in pats[0]), [0], a.turn.split(","), a.steps, a.win, a.gain, a.dq, 1, "pattern", pats)
