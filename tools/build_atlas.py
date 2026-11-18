@@ -249,6 +249,11 @@ def content_sha(text):
 # Keys that may change in a locked rule: they describe checks of the numbers, not the numbers themselves.
 LOCK_FREE_KEYS = {"status", "numerical_check", "certificate", "method"}
 
+# Locked rules that the maintainer released for one replacement: id -> reason.  Only the listed ids are released, every other locked rule stays protected.
+LOCK_RELEASED = {
+    "CA-T2-12-31-PO-MPC": "replaced by a C3 symmetric rule with the same node count at the request of the maintainer (an unsymmetric rule is replaced by a symmetric one)",
+}
+
 
 def check_rule(fam, dom, r, fn):
     where = rel(r["_path"])
@@ -375,6 +380,8 @@ def check_locked(base):
         except Exception:  # noqa: BLE001
             continue
         if not old_rule.get("locked"):
+            continue
+        if old_rule.get("id") in LOCK_RELEASED and status.startswith("M"):
             continue
         if status.startswith("M"):
             try:
