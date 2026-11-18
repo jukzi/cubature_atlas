@@ -7,6 +7,9 @@ Writes <out>/shell_c3_bary_<deg>_<pattern>_turn<mode>.json (stages pattern, S3, 
 --softplus: the weights are w = c ln(1 + e^x) with c = 1 / (2 N) (positive, smooth) instead of w = v^2.  --exact: --auto uses only Z nodes (no Z + 1).  --relax K: the shell patterns may have up to K steps of 1 or 4 points per edge
 in addition to the steps of 2 and 3.
 --damping scaled: the damping of the Levenberg-Marquardt steps is scaled by the diagonal of J^T J (Marquardt) with a start value of 1e-3 (default identity: lambda_0 = 0.1); both: both, one after the other.
+--pull-inside: if a solution has nodes on the boundary of the triangle (a barycentric coordinate below 1e-9, the parametrisation ran to s = 0), it is solved again with the barycentric
+coordinates b = delta + (1 - 3 delta) s^2 / sum s^2 for delta = 1e-6, 1e-5, 1e-4, 1e-3 (each solution is the start of the next delta); the solution with the largest delta is kept, so that every node has
+the distance delta to the boundary (needed for an interval proof of a PI rule).
 --auto: runs all variants one after the other (default settings; first shell one below/above and other turn counts; more steps with a longer stagnation window) with several processes (--procs, default 4, one
 thread each) until the first solution; if there is no pattern with exactly Z nodes it uses Z + 1.
 Usage: python code/shell_c3_bary.py --deg 36 --auto [--out shell_c3_bary_out] [--procs 4]   or   python code/shell_c3_bary.py --deg 36 --target 235 --turn 2,all --offsets 0,-1,1 [--part 0 --parts 4]
@@ -208,6 +211,46 @@ def lm_scaled(B, red, q, steps, win, gain, dq_tol, target=1e-13, lam0=1e-3):
     return q, float(np.sqrt(cost)), used, reason
 
 
+class BaryM(Bary):
+    """Bary with a distance delta to the boundary: b = delta + (1 - 3 delta) s^2 / sum s^2 for the generic orbits"""
+
+    def __init__(self, orbits, delta, softplus=False):
+        super().__init__(orbits, softplus)
+        self.delta = delta
+
+    def _gen(self, s, kind):
+        X, D = Bary._gen(self, s, kind)
+        f = 1 - 3 * self.delta
+        return self.delta + f * X, f * D
+
+
+def solve_with_margin(B, pat, X, W, a, lm):
+    """solve the C3 system again with a growing distance delta to the boundary; returns (nodes, weights, residual, delta) of the largest delta with a solution, or None"""
+    k = pat.k
+    best = None
+    cur_X = X
+    cur_w = np.concatenate([W[0:3 * k:3], W[3 * k:]])
+    for delta in (1e-6, 1e-5, 1e-4, 1e-3):
+        f = 1 - 3 * delta
+        orbits = []
+        for j in range(k):
+            b = bary_of(cur_X[3 * j:3 * j + 1])[0]
+            b0 = np.clip((b - delta) / f, 1e-8, None)
+            orbits.append(("g3", list(np.sqrt(b0 / b0.sum()))))
+        if pat.centre:
+            orbits.append(("ce", []))
+        red = BaryM(orbits, delta, a.softplus)
+        q = red.q_from(cur_w)
+        q, res, used, why = SC.lm(B, red, q, 600, 25, 0.02, 1e-4, lam0=1e-4)
+        Xn, Wn = red.nodes_weights(q)
+        if not (res < 1e-12 and bool((Wn > 0).all())):
+            break
+        best = (Xn, Wn, res, delta)
+        cur_X = Xn
+        cur_w = np.concatenate([Wn[0:3 * k:3], Wn[3 * k:]])
+    return best
+
+
 def run_pattern(B, pat, mode, a):
     lm = lm_scaled if a.damping == "scaled" else SC.lm
     P0 = pull_inside(pat.nodes())
@@ -229,6 +272,12 @@ def run_pattern(B, pat, mode, a):
     X3, W3 = red_c.nodes_weights(q2)
     stages.append({"stage": "C3", "residual": res2, "nodes": np.round(X3, 6).tolist()})
     solved = res2 < 1e-12 and bool((W3 > 0).all())
+    a.margin_result = 0.0
+    if solved and getattr(a, "pull_inside", False) and bary_of(X3).min() < 1e-9:
+        r = solve_with_margin(B, pat, X3, W3, a, lm)
+        if r is not None:
+            X3, W3, res2, a.margin_result = r
+            stages.append({"stage": "inside", "residual": res2, "nodes": np.round(X3, 6).tolist()})
     return stages, X3, W3, res2, used2, why2, solved
 
 
@@ -279,7 +328,7 @@ def job(args):
     t0 = time.time()
     stages, X, W, res, used, why, solved = run_pattern(_STATE["B"], pat, mode, a)
     return {"seq": seq, "mode": mode, "N": pat.N, "shell": pat.shell, "stages": stages, "res": res, "used": used, "why": why, "solved": solved,
-            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"], "damping": a.damping}
+            "X": X.tolist(), "W": W.tolist(), "seconds": time.time() - t0, "s3": stages[1]["residual"], "damping": a.damping, "margin": a.margin_result}
 
 
 def save_result(a, deg, r, cmd):
@@ -291,7 +340,7 @@ def save_result(a, deg, r, cmd):
         json.dump(data, fh)
     diffs = "".join(" -%d" % (x - y) for x, y in zip(seq, seq[1:]))
     line = "degree %d, N %d, shells %d%s, turn %s%s: S3 residual %.2e, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
-        deg, r["N"], seq[0], diffs, r["mode"], "" if r["damping"] == "identity" else ", " + r["damping"] + " damping", r["s3"], r["res"], r["used"], r["why"], r["seconds"], "  *** SOLUTION" if r["solved"] else "")
+        deg, r["N"], seq[0], diffs, r["mode"], "" if r["damping"] == "identity" else ", " + r["damping"] + " damping", r["s3"], r["res"], r["used"], r["why"], r["seconds"], ("  *** SOLUTION" + (" (pulled inside, distance %.0e to the boundary)" % r["margin"] if r["margin"] else "")) if r["solved"] else "")
     print(line, flush=True)
     with open(os.path.join(a.out, "summary.txt"), "a") as fh:
         fh.write(line + "\n")
@@ -300,7 +349,7 @@ def save_result(a, deg, r, cmd):
         W = np.array(r["W"])
         L = bary_of(X)
         sol = {"degree": deg, "N": r["N"], "seq": seq, "turn": r["mode"], "nodes": X.tolist(), "weights": W.tolist(), "residual": r["res"], "min_barycentric": float(L.min()),
-               "nodes_outside": int((L.min(axis=1) < 0).sum()), "command": cmd}
+               "nodes_outside": int((L.min(axis=1) < 0).sum()), "margin_delta": r["margin"], "command": cmd}
         with open(os.path.join(a.out, "solution_%d_%d.json" % (deg, r["N"])), "w") as fh:
             json.dump(sol, fh)
         print("solution: min weight %.2e, smallest barycentric coordinate %.2e (all nodes inside the triangle)" % (W.min(), L.min()), flush=True)
@@ -314,8 +363,8 @@ def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, lab
     if not pats:
         return None
     dampings = ["identity", "scaled"] if a.damping == "both" else [a.damping]
-    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp}) for seq in pats for m in modes for dmp in dampings]
-    cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "")
+    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside}) for seq in pats for m in modes for dmp in dampings]
+    cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "") + (" --pull-inside" if a.pull_inside else "")
     found = None
     if procs <= 1:
         init_worker(deg)
@@ -354,6 +403,7 @@ def main():
     ap.add_argument("--dq", type=float, default=1e-3)
     ap.add_argument("--max-patterns", type=int, default=50)
     ap.add_argument("--damping", default="identity", choices=["identity", "scaled", "both"], help="damping of the Levenberg-Marquardt steps")
+    ap.add_argument("--pull-inside", action="store_true", help="solve a solution with nodes on the boundary again with a distance delta to the boundary (1e-6 up to 1e-3)")
     ap.add_argument("--softplus", action="store_true", help="weights w = ln(1 + e^x) instead of w = v^2")
     ap.add_argument("--exact", action="store_true", help="--auto: only Z nodes, no Z + 1")
     ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
