@@ -1,6 +1,6 @@
 """minimize_l2: minimise the L2 norm of the weights (sum of w^2) of a rule under all moment equations, keeping the symmetry of the rule.
 A rule with more unknowns than independent equations lies on a family of rules; among them the one with the smallest sum of w^2 has the weights spread most evenly and, in the tests so far,
-the nodes farthest from the boundary.  Before a rule is checked in, run this program on it (CLAUDE.md).
+the nodes farthest from the boundary.  Before a rule is checked in, run this program on it (CLAUDE.md). When the nodes come within 1e-4 of a larger symmetry group during the descent, they are made exactly symmetric and the descent goes on (the minimum often has more symmetry than the start).
 The method: projected gradient on the solution manifold.  The unknowns are the node coordinates and v with w = v^2 (so the weights stay positive).  In every step the gradient of sum(v^4) is projected onto the null
 space of the Jacobian of the moment equations (singular value decomposition, so the projection does not depend on a basis and respects every symmetry of the rule), a step along the projected direction is corrected
 back onto the solution manifold by Gauss-Newton steps, and the result is made exactly symmetric by averaging over the symmetry group of the rule (the subgroup of the symmetries of the domain that maps the
@@ -95,54 +95,86 @@ def minimise(domain, degree, X, W, inside, max_iter=300, time_limit=1800.0):
         return np.hstack([J[:, :n * d], J[:, n * d:] * (2 * vq)[None, :]])
 
     t0 = time.time()
-    obj = float(np.sum(v ** 4))
-    obj_start = obj
-    step = 1.0
-    stall = 0
-    for it in range(max_iter):
-        if time.time() - t0 > time_limit:
-            break
-        J = jac(X, v)
-        U, S, Vt = np.linalg.svd(J, full_matrices=False)
-        rank = int((S > 1e-10 * S[0]).sum())
-        Vn = np.linalg.svd(J, full_matrices=True)[2][rank:] if rank < J.shape[1] else np.zeros((0, J.shape[1]))
-        g = np.concatenate([np.zeros(n * d), 4 * v ** 3])
-        direction = -Vn.T @ (Vn @ g)
-        gnorm = float(np.linalg.norm(direction))
-        if gnorm < 1e-12:
-            break
-        direction = direction / gnorm
-        accepted = False
-        for _ in range(30):
-            q = np.concatenate([X.reshape(-1), v]) + step * direction * min(1.0, 1e3 * gnorm + 0.05)
-            Xq = q[:n * d].reshape(n, d)
-            vq = q[n * d:]
-            for _ in range(4):
-                r = res(Xq, vq)
-                dq = -(Vt[:rank].T @ ((U[:, :rank].T @ r) / S[:rank]))
-                Xq = Xq + dq[:n * d].reshape(n, d)
-                vq = vq + dq[n * d:]
-            Xq, Wq = symmetrize(Xq, vq ** 2, group) if group else (Xq, vq ** 2)
-            vq = np.sqrt(np.clip(Wq, 0.0, None))
-            r_new = float(np.linalg.norm(res(Xq, vq)))
-            obj_new = float(np.sum(vq ** 4))
-            ok = r_new < 1e-13 and obj_new < obj and np.isfinite(obj_new) and vq.min() > 0
-            if ok and inside:
-                ok = inside_margin(domain, Xq) >= 0.99 * margin0 and inside_margin(domain, Xq) > 1e-12
-            if ok:
-                accepted = True
+    obj_start = float(np.sum(v ** 4))
+    total_iters = 0
+
+    def descend(X, v, group):
+        obj = float(np.sum(v ** 4))
+        step = 1.0
+        stall = 0
+        iters = 0
+        for it in range(max_iter):
+            if time.time() - t0 > time_limit:
                 break
-            step *= 0.5
-        if not accepted:
+            iters = it + 1
+            J = jac(X, v)
+            U, S, Vt = np.linalg.svd(J, full_matrices=False)
+            rank = int((S > 1e-10 * S[0]).sum())
+            Vn = np.linalg.svd(J, full_matrices=True)[2][rank:] if rank < J.shape[1] else np.zeros((0, J.shape[1]))
+            g = np.concatenate([np.zeros(n * d), 4 * v ** 3])
+            direction = -Vn.T @ (Vn @ g)
+            gnorm = float(np.linalg.norm(direction))
+            if gnorm < 1e-12:
+                break
+            direction = direction / gnorm
+            accepted = False
+            for _ in range(30):
+                q = np.concatenate([X.reshape(-1), v]) + step * direction * min(1.0, 1e3 * gnorm + 0.05)
+                Xq = q[:n * d].reshape(n, d)
+                vq = q[n * d:]
+                for _ in range(4):
+                    r = res(Xq, vq)
+                    dq = -(Vt[:rank].T @ ((U[:, :rank].T @ r) / S[:rank]))
+                    Xq = Xq + dq[:n * d].reshape(n, d)
+                    vq = vq + dq[n * d:]
+                Xq, Wq = symmetrize(Xq, vq ** 2, group) if group else (Xq, vq ** 2)
+                vq = np.sqrt(np.clip(Wq, 0.0, None))
+                r_new = float(np.linalg.norm(res(Xq, vq)))
+                obj_new = float(np.sum(vq ** 4))
+                ok = r_new < 1e-13 and obj_new < obj and np.isfinite(obj_new) and vq.min() > 0
+                if ok and inside:
+                    ok = inside_margin(domain, Xq) >= 0.99 * margin0 and inside_margin(domain, Xq) > 1e-12
+                if ok:
+                    accepted = True
+                    break
+                step *= 0.5
+            if not accepted:
+                break
+            gain = obj - obj_new
+            X, v, obj = Xq, vq, obj_new
+            step = min(step * 1.5, 1.0)
+            stall = stall + 1 if gain < 1e-10 * obj else 0
+            if stall >= 4:
+                break
+        return X, v, obj, iters
+
+    X, v, obj, iters = descend(X, v, group)
+    total_iters += iters
+    # the minimum often has more symmetry than the start: when the nodes are within 1e-4 of a larger group, make them exactly symmetric, correct onto the solution manifold and go on
+    for _ in range(3):
+        bigger = rule_group(domain, X, v ** 2, tol=1e-4)
+        if len(bigger) <= len(group):
             break
-        gain = obj - obj_new
-        X, v, obj = Xq, vq, obj_new
-        step = min(step * 1.5, 1.0)
-        stall = stall + 1 if gain < 1e-10 * obj else 0
-        if stall >= 4:
+        Xs, Ws = symmetrize(X, v ** 2, bigger)
+        vs = np.sqrt(np.clip(Ws, 0.0, None))
+        for _ in range(8):
+            dq = -np.linalg.lstsq(jac(Xs, vs), res(Xs, vs), rcond=1e-12)[0]
+            Xs = Xs + dq[:n * d].reshape(n, d)
+            vs = vs + dq[n * d:]
+            Xs, Ws = symmetrize(Xs, vs ** 2, bigger)
+            vs = np.sqrt(np.clip(Ws, 0.0, None))
+        obj_s = float(np.sum(vs ** 4))
+        ok = float(np.linalg.norm(res(Xs, vs))) < 1e-13 and obj_s <= obj * (1 + 1e-6) and vs.min() > 0 and rule_group(domain, Xs, vs ** 2, tol=1e-9)
+        if ok and inside:
+            ok = inside_margin(domain, Xs) >= 0.99 * margin0 and inside_margin(domain, Xs) > 1e-12
+        if not ok:
             break
+        group = rule_group(domain, Xs, vs ** 2, tol=1e-9)
+        X, v, obj = Xs, vs, obj_s
+        X, v, obj, iters = descend(X, v, group)
+        total_iters += iters
     W = v ** 2
-    return X, W, obj_start, obj, len(group), it + 1
+    return X, W, obj_start, obj, len(group), total_iters
 
 
 def main():
@@ -150,7 +182,7 @@ def main():
     ap.add_argument("rule")
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--max-vars", type=int, default=2500, help="skip rules with more unknowns than this (the singular value decomposition of the Jacobian is dense)")
-    ap.add_argument("--max-iter", type=int, default=300)
+    ap.add_argument("--max-iter", type=int, default=1000)
     ap.add_argument("--time-limit", type=float, default=1800.0)
     a = ap.parse_args()
     with open(a.rule, encoding="utf-8-sig") as fh:
