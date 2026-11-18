@@ -4,9 +4,9 @@ Read README.md, CONTRIBUTING.md and DEVELOPMENT.md (file format, checks, proofs,
 
 - Work on a new branch from the latest `main`; never push to `main`. Open one pull request per improvement.
 - Merge strategy: rebase. Pull requests are merged by rebase (no merge commits). If `main` moved on and your branch conflicts, rebase the branch onto the latest `origin/main` and resolve the conflicts there; never merge `main` into the branch.
-- Never modify or delete a rule file with `"locked": true`. Add a new file with a new id instead.
+- Overwrite or delete an existing rule file only if the new rule is better: C3 or S3 symmetric instead of unsymmetric, larger weights, or a larger distance of the nodes to the boundary (same degree and node count; fewer nodes is always better). Otherwise add a new file with a new id.
 - Before committing, run `python tools/build_atlas.py --base origin/main --changed`. It checks only the rules your change adds or modifies, not the earlier ones. Do not open a pull request unless it prints `OK`. The check in CI still verifies all rules.
-- Do not weaken the checks in `tools/build_atlas.py` (tolerances, quality rules, locked check) to make a rule pass.
+- Do not weaken the checks in `tools/build_atlas.py` (tolerances, quality rules) to make a rule pass.
 - New families: create `rules/<family_id>/family.json` with `name`, `short` and `description` in both `en` and `de`.
 - If you change English texts (`i18n/en.json`, `content/en/`), update the German texts in the same pull request, then run `--sync-hashes`.
 - Every reference you add must be checked to exist; never invent citations.

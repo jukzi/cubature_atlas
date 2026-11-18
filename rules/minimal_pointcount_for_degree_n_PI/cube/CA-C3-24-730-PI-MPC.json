@@ -10,7 +10,6 @@
   "method": "numerical search with symmetry reduction (group Td) started from a Td-invariant cannonball packing (FCC lattice, code/cannon_cube.py), then orbit elimination and large-neighbourhood search of code/cubature_search.py; checked numerically in the symmetry-reduced system",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 1e-15,
   "numerical_check": {"N": 730, "M": 169, "p": 170, "res": 8.849155613974438e-15, "sigma": 0.012092110265688174, "h": 8.970743722273274e-05, "rad": 8.92500959893837e-13, "cert": true, "inside": true},
   "symmetry": "Td",

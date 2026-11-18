@@ -11,7 +11,6 @@
   "author": "Diallo–Worku",
   "source": "M. Diallo, Z. A. Worku: High-order symmetric positive interior quadrature rules on two and three dimensional domains. arXiv:2601.14488 (2026); data: github.com/mdiallo-fula/SymmetricPositiveInteriorCubatures.jl, data/published-results (MIT license), high-precision files rounded to double precision.",
   "status": "proven",
-  "locked": true,
   "symmetry": "full",
   "numerical_check": null,
   "numerical_check": {"N": 277, "M": 400, "p": 415, "res": 3.5051822555587364e-14, "sigma": 0.013214359154501214, "h": 9.461177299353889e-06, "rad": 5.982481152439655e-13, "cert": true, "inside": true},

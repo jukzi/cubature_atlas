@@ -10,7 +10,6 @@
   "method": "node elimination from the previous PI rule of this degree (GPU Levenberg-Marquardt with annealing acceptance and node kicks, float32 search, float64 polish), unsymmetric, the 16 nodes on the boundary were then moved strictly inside along the solution manifold (projected gradient of a barrier penalty in the kernel of the Jacobian, Newton correction); checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 2.282539956790865e-16,
   "numerical_check": {"N": 739, "M": 2925, "p": 2956, "res": 2.282539956790865e-16, "sigma": 0.007709121565730865, "h": 9.172362117316821e-06, "rad": 1.459378336443158e-14, "cert": true, "inside": true},
   "nodes": [

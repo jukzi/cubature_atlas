@@ -19,7 +19,6 @@
     "command": "cd code && python3 square_elim.py 32 205 1 400 --out out32 && python3 square_elim.py refine 32 out32/sq_d32_n189_s1.npy 9201 560 --free --out out32 && python3 square_elim.py refine 32 out32/sq_d32_n188_s9201.npy 9202 560 --free --out out32"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 187,
     "M": 561,

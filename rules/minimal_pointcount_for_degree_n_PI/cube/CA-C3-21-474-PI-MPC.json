@@ -10,7 +10,6 @@
   "method": "node elimination on centrally symmetric rules (pairs +-x with equal weights, GPU/CPU Levenberg-Marquardt with min-norm steps, started from the 476-node rule with 238 pairs of the literature), then the nodes were moved away from the faces along the solution manifold (penalty projected into the kernel of the Jacobian, minimum-norm Newton corrections in float64); no node at the centre",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 4.635526649863009e-14,
   "symmetry": "central",
   "numerical_check": {"N": 474, "M": 946, "p": 948, "res": 1.3903748879254189e-14, "sigma": 0.0048799111519219, "h": 1.1748377406836389e-05, "rad": 2.8576532932095663e-13, "cert": true, "inside": true},

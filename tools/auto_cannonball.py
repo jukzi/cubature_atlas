@@ -200,7 +200,6 @@ def write_rule(degree, X, W, cert, start):
         "method": "automatic search in GitHub Actions (tools/auto_cannonball.py): code/cannonball_start.py, %s; no symmetry; checked numerically and proven with interval arithmetic (tools/verify_rigorous.py)" % start,
         "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz; found by the automatic search in GitHub Actions",
         "status": "proven",
-        "locked": False,
         "residual_reported": float(cert["resid"]) if cert is not None and "resid" in cert else 1e-15,
     }
     # Certificate block (only if the computation ran).

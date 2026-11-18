@@ -13,7 +13,7 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 ## Rules for rule files
 
 - One rule per file, in `rules/<family>/<domain>/<id>.json`. See [DEVELOPMENT.md](DEVELOPMENT.md) for the format and the id scheme.
-- **Never change or delete a file with `"locked": true`.** The check rejects it. A better rule is a new file with a new id. The old one stays; the page shows the best one automatically.
+- **Overwrite a rule only if the new one is better** (symmetric instead of unsymmetric, larger weights, larger distance of the nodes to the boundary). Otherwise a rule is a new file with a new id; the old one stays and the page shows the best one automatically.
 - Do not store "best known" flags. They are computed.
 - Store at least 15 significant digits. The check requires all monomial moments to be correct to 1e-11 per volume.
 - `quality` must match the data (PI, PO, NI, NO), and the family's `quality` if the family sets one.
@@ -21,10 +21,6 @@ The maintainer owns `main`. All other changes, including those made by AI agents
 - Floating-point checks (moment residuals, the Newton–Kantorovich test in `code/`) are useful during the search but are not proofs. Store their result as `"numerical_check"`, never as "certificate".
 - Fill in `origin`, `method` and `author`. AI-generated rules say so in `author`.
 - **Make a found rule reproducible.** Give a new rule with `origin` `"found"` the field `"reproduce": {"script": "code/<program>.py", "seed": 12345, "command": "python code/<program>.py ..."}`. The script is a file of this repository (add it in the same pull request), `seed` is the integer (or the list of integers) that starts the search which found the rule, and `command` is the call that gives the same rule again (with the batch index or starting point if the seed alone does not select it). The build does not check or require the field; it is there so that anybody can find the rule again.
-
-## Locking
-
-After review, the maintainer sets `"locked": true` on rules that are published or cited. Literature rules are locked from the start.
 
 ## Literature
 

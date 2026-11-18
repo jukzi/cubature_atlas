@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: orbit elimination with code/sym_elim.py: first for the subgroup C3 (moment equations reduced to the C3-invariant subspace) from the A4-symmetric rule CA-T3-30-1488-PI-MPC, then without symmetry (group c1); nodes kept in the closed domain; proven with tools/verify_rigorous.py",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "nodes": [
   [
    0.15670405511113047,

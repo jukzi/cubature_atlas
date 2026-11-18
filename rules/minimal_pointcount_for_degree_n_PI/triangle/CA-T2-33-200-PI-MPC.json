@@ -19,7 +19,6 @@
     "command": "cd code && python3 triangle_elim.py 33 230 33101 480 --out out33 && python3 triangle_elim.py refine 33 out33/tri_d33_n202_s33101.npy 33110 520 --out out33 && python3 triangle_elim.py refine 33 out33/tri_d33_n201_s33110.npy 33112 520 --out out33"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 200,
     "M": 595,

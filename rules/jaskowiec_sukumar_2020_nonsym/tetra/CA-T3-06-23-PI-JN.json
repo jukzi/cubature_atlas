@@ -11,7 +11,6 @@
   "author": "Jaśkowiec–Sukumar",
   "source": "J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020); data: supplementary material of the journal, file cubature_tetra_p6_n23.dat.",
   "status": "proven",
-  "locked": true,
   "numerical_check": {"N": 23, "M": 84, "p": 92, "res": 8.881784197001252e-16, "sigma": 0.1281127279182904, "h": 3.7575295691815645e-11, "rad": 8.670803470346122e-16, "cert": true, "inside": true},
   "nodes": [
     [0.8746168885670683, 0.0016502414396875424, 0.10429830378029425],

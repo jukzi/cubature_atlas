@@ -11,7 +11,6 @@
   "reproduce": {"script": "code/anneal_c3.py", "seed": 5, "command": "python code/anneal_c3.py --deg 34 --seq 18,16,14,11,9,6,3 --turn all --chains 8 --iters 30 --seed 5 --out anneal_c3_34.json"},
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 8.379002789653168e-16,
   "numerical_check": {"N": 210, "M": 630, "p": 630, "res": 8.379002789653168e-16, "sigma": 0.0006682970979933303, "h": 0.34111269297071445, "rad": 3.6922524820405045e-12, "cert": true, "inside": true},
   "nodes": [

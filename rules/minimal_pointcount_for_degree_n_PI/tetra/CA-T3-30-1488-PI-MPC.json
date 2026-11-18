@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: orbit elimination with the rotation group A4 (code/cannon_tetra.py --start, code/simplex_cubature.py) started from the previous PI rule CA-T3-30-1506-PI written in A4-orbit form; proven with tools/verify_rigorous.py",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "nodes": [
   [
    0.16372587968251645,
