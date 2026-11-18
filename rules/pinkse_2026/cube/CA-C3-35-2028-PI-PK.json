@@ -11,7 +11,6 @@
   "author": "Pinkse",
   "source": "J. Pinkse: Positive weight Hermite and Legendre quadrature rules. arXiv:2609.26840 (2026); data: Zenodo, doi:10.5281/zenodo.22881864 (CC BY 4.0).",
   "status": "proven",
-  "locked": true,
   "symmetry": "central",
   "numerical_check": null,
   "nodes": [

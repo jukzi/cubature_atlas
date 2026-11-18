@@ -10,7 +10,6 @@
   "method": "Gauss-Legendre rule, closed formula (numpy.polynomial.legendre.leggauss)",
   "author": "closed formula",
   "status": "proven",
-  "locked": false,
   "numerical_check": null,
   "exact_degree": 45,
   "optimal": true,

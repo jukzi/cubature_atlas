@@ -18,7 +18,6 @@
     "command": "cd code && python3 square_elim.py 43 365 108500 480 --cs --out out && python3 square_elim.py refine 43 <smallest file of out> 108510 520 --out out"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 325,
     "M": 484,

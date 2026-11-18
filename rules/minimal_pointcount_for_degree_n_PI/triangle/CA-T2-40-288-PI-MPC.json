@@ -11,7 +11,6 @@
   "reproduce": {"script": "code/shell_c3_bary.py", "command": "python code/shell_c3_bary.py --deg 40 --seq 21,19,16,14,12,9,7,5,2 --target 288 --turn 2 --steps 600 --win 15 --gain 0.05 --dq 0.001", "seed": 0},
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 2.1916174499810014e-15,
   "numerical_check": {"N": 288, "M": 861, "p": 864, "res": 2.1916174499810014e-15, "sigma": 0.0047484164019165965, "h": 0.0006438725176770242, "rad": 1.1495128414181367e-12, "cert": true, "inside": true},
   "nodes": [

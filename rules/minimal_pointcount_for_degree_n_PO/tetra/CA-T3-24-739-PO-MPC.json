@@ -10,7 +10,6 @@
   "method": "node elimination from the PI rule of this degree with nodes allowed on the boundary (GPU Levenberg-Marquardt with annealing acceptance and node kicks, float32 search, float64 polish), unsymmetric, one node then moved 1.4e-6 outside the domain along the solution manifold so that the interval proof decides that the rule has a node outside (PO); checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 2.4044321348377974e-16,
   "numerical_check": {"N": 739, "M": 2925, "p": 2956, "res": 2.4044321348377974e-16, "sigma": 0.007716044659204555, "h": 8.90258965514175e-06, "rad": 1.4175709419532065e-14, "cert": true, "inside": false},
   "nodes": [

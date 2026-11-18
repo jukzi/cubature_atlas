@@ -10,7 +10,6 @@
   "method": "node elimination from the previous PI rule of this degree (GPU Levenberg-Marquardt with annealing acceptance and node kicks, float32 search, float64 polish), unsymmetric, checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 2.4289856258395667e-16,
   "numerical_check": {"N": 824, "M": 3276, "p": 3296, "res": 2.4289856258395667e-16, "sigma": 0.0026320145627935975, "h": 0.0001114653797456928, "rad": 2.1081958214753208e-14, "cert": true, "inside": true},
   "nodes": [

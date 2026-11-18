@@ -17,7 +17,6 @@
     "command": "cd code && python3 triangle_elim.py 31 211 31001 480 --out out31"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 177,
     "M": 528,

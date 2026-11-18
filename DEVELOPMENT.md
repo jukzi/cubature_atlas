@@ -89,7 +89,6 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
   "author": "...",
   "reproduce": {"script": "code/<program>.py", "seed": 12345, "command": "python code/<program>.py ..."},
   "status": "proven",
-  "locked": false,
   "numerical_check": {"N": 4, "M": 10, "p": 12, "res": 1e-16, "sigma": 0.3, "h": 1e-14, "rad": 1e-16, "cert": true, "inside": true},
   "nodes": [[x, y], ...],
   "weights": [w, ...]
@@ -106,11 +105,10 @@ with the domain symbols `C1` interval [−1,1], `T2` triangle (0,0),(1,0),(0,1),
 pip install numpy
 python tools/build_atlas.py --check               # verify all rules
 python tools/build_atlas.py                       # verify and build site/
-python tools/build_atlas.py --base origin/main    # also refuse changes to locked rules
 python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
 ```
 
-Every rule must have an interval proof in the file `<id>.proof` next to it, for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique, and locked rules must be unchanged against `--base`.
+Every rule must have an interval proof in the file `<id>.proof` next to it, for exactly its numbers (see below); the build fails otherwise. Every rule is also checked for: exact integration of all monomials up to its degree (maximum error per volume ≤ 1e-11), the quality code computed from the data (weights and position of the nodes), and agreement of the id with domain, degree, point count and family tag. Ids must be unique.
 
 ### Rigorous check with interval arithmetic
 

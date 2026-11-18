@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: orbit search with the rotation group A4 (code/simplex_cubature.py), certified",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "nodes": [
   [
    0.12784529011937265,

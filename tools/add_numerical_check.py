@@ -1,5 +1,5 @@
 """add_numerical_check: store the floating-point check (Newton-Kantorovich test of code/cubature_atlas.py) as "numerical_check" in rule files that have none.
-Only the line `"numerical_check": {...},` is inserted in front of `"nodes"`; nothing else in the file changes (a locked rule may change this key).
+Only the line `"numerical_check": {...},` is inserted in front of `"nodes"`; nothing else in the file changes.
 The check is numerical, not a proof.  Needs numpy and scipy (code/cubature_atlas.py imports it).
 Usage: python tools/add_numerical_check.py [--max-p 4000] [--dry-run] <rule files>   (without files: every rule without numerical_check)"""
 import argparse

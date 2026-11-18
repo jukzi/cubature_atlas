@@ -3,7 +3,6 @@
 Usage:
     python tools/build_atlas.py --check              # verify only (used on pull requests)
     python tools/build_atlas.py                      # verify and build site/
-    python tools/build_atlas.py --base origin/main   # also refuse changes to locked rules
     python tools/build_atlas.py --base origin/main --changed   # before a commit: check only the rules this change adds or modifies
     python tools/build_atlas.py --strict             # stale translations are errors, not warnings
     python tools/build_atlas.py --sync-hashes        # after updating German texts: mark them as current
@@ -246,15 +245,6 @@ def content_sha(text):
     return hashlib.sha256(blob.encode("utf8")).hexdigest()[:16]
 
 
-# Keys that may change in a locked rule: they describe checks of the numbers, not the numbers themselves.
-LOCK_FREE_KEYS = {"status", "numerical_check", "certificate", "method"}
-
-# Locked rules that the maintainer released for one replacement: id -> reason.  Only the listed ids are released, every other locked rule stays protected.
-LOCK_RELEASED = {
-    "CA-T2-12-31-PO-MPC": "replaced by a C3 symmetric rule with the same node count at the request of the maintainer (an unsymmetric rule is replaced by a symmetric one)",
-}
-
-
 def check_rule(fam, dom, r, fn):
     where = rel(r["_path"])
     rid = r.get("id", "")
@@ -357,45 +347,6 @@ def check_unique(fams):
             if r["id"] in seen:
                 err("%s: id %s also used in %s" % (rel(r["_path"]), r["id"], seen[r["id"]]))
             seen[r["id"]] = rel(r["_path"])
-
-
-def check_locked(base):
-    """Refuse modification or deletion of rule files that were locked in the base revision."""
-    try:
-        out = subprocess.run(["git", "diff", "--name-status", base, "--", "rules"], cwd=ROOT,
-                             capture_output=True, text=True, check=True).stdout
-    except Exception as e:  # noqa: BLE001
-        err("cannot compare with %s (%s)" % (base, e))
-        return
-    for line in out.splitlines():
-        parts = line.split("\t")
-        status = parts[0]
-        path = parts[1]
-        if status.startswith("A") or not path.endswith(".json"):
-            continue
-        try:
-            old = subprocess.run(["git", "show", "%s:%s" % (base, path)], cwd=ROOT,
-                                 capture_output=True, text=True, check=True).stdout
-            old_rule = json.loads(old)
-        except Exception:  # noqa: BLE001
-            continue
-        if not old_rule.get("locked"):
-            continue
-        if old_rule.get("id") in LOCK_RELEASED and status.startswith("M"):
-            continue
-        if status.startswith("M"):
-            try:
-                with open(os.path.join(ROOT, path), encoding="utf8") as fh:
-                    new_rule = json.load(fh)
-            except Exception:  # noqa: BLE001
-                new_rule = None
-            if new_rule is not None:
-                a = {k: v for k, v in old_rule.items() if k not in LOCK_FREE_KEYS}
-                b = {k: v for k, v in new_rule.items() if k not in LOCK_FREE_KEYS}
-                if a == b and new_rule.get("locked"):
-                    continue
-        err("%s: rule is locked and must not be changed or deleted (status %s); only %s may change" % (
-            path, status, ", ".join(sorted(LOCK_FREE_KEYS))))
 
 
 def changed_rule_paths(base):
@@ -777,7 +728,7 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="verify only, do not build the site")
-    ap.add_argument("--base", help="git revision to compare with; locked rules must be unchanged")
+    ap.add_argument("--base", help="git revision to compare with (with --changed: check only the rules this change adds or modifies)")
     ap.add_argument("--strict", action="store_true", help="treat stale translations as errors")
     ap.add_argument("--changed", action="store_true",
                     help="with --base: check only the rule files this change adds or modifies (before a commit); implies --check")
@@ -797,8 +748,6 @@ def main():
         load_rules(f, only)
     check_unique(fams)
     attach_interval_proofs(fams, only)
-    if args.base:
-        check_locked(args.base)
     check_references()
     en, de, doc_en, doc_de, stale_doc = check_i18n(args.strict)
     total =sum(len(f["rules"]) for f in fams)

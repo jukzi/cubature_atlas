@@ -233,7 +233,6 @@ def write_rule(degree, X, W, cert, group, mode):
         "method": "automatic scheduled search (tools/auto_search.py, mode %s): code/cubature_search.py with symmetry reduction (group %s), orbit elimination and large-neighbourhood search; checked numerically in the symmetry-reduced system and proven with interval arithmetic (tools/verify_rigorous.py)" % (mode, group),
         "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz; found by the automatic search in GitHub Actions",
         "status": "proven",
-        "locked": False,
         "residual_reported": 1e-15,
     }
     # Certificate block (only if the computation ran).
