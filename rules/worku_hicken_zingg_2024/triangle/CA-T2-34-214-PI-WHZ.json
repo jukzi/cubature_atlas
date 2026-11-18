@@ -11,7 +11,6 @@
   "author": "Worku–Hicken–Zingg",
   "source": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. J. Comput. Appl. Math. 472 (2026) 116782, arXiv:2409.02027; data: github.com/OptimalDesignLab/SummationByParts.jl, pi_quadrature_data/high_precision (MIT license), mapped from the simplex with vertex coordinates -1 and 1 to the unit simplex (x -> (x+1)/2, weights divided by 2^d) and rounded to double precision.",
   "status": "proven",
-  "locked": true,
   "symmetry": "full",
   "numerical_check": null,
   "numerical_check": {"N": 214, "M": 630, "p": 642, "res": 9.606852525803432e-15, "sigma": 0.07399236030561616, "h": 1.0631351411656022e-07, "rad": 5.0702792782055216e-14, "cert": true, "inside": true},

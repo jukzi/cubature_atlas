@@ -17,7 +17,6 @@
     "command": "cd code && python3 square_elim.py 41 324 107100 480 --cs --out out"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 296,
     "M": 441,

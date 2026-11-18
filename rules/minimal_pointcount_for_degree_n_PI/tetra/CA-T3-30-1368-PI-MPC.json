@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: orbit elimination without symmetry (group c1) with code/sym_elim.py, started from CA-T3-30-1369-PI-MPC and removing one node; nodes kept in the closed domain; proven with tools/verify_rigorous.py",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "nodes": [
   [
    0.15583970117498072,

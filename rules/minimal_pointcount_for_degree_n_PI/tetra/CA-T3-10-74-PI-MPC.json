@@ -10,7 +10,6 @@
   "method": "numerical search of this atlas (code/cannonball_start.py: cannonball packing of N = ceil(Z(10)) + 2 = 74 balls as start, degree continuation 5..10 with bounded least squares (scipy trf), no symmetry), checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 4.552213727489513e-15,
   "numerical_check": {"N": 74, "M": 286, "p": 296, "res": 4.552213727489513e-15, "sigma": 0.04150659656777638, "h": 1.6256394838781907e-08, "rad": 7.33124917025053e-15, "cert": true, "inside": false},
   "nodes": [

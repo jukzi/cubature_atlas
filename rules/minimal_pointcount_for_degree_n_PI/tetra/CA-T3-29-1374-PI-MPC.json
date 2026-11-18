@@ -10,7 +10,6 @@
   "method": "numerical search of this atlas (code/cannon_tetra.py: start from a cannonball pile with degree continuation, then code/simplex_cubature.py orbit elimination with symmetry groups S and A), checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "numerical_check": {"N": 1374, "M": 4960, "p": 5496, "res": 1.2272962946168494e-15, "sigma": 0.011165244125570305, "h": 1.547201602302963e-05, "rad": 5.005862265409062e-14, "cert": true, "inside": true},
   "symmetry": "rotational symmetry A4",
   "nodes": [

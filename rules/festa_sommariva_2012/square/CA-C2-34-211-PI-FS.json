@@ -11,7 +11,6 @@
   "author": "Festa–Sommariva",
   "source": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296-4302; numbers as printed (16 digits) in J. Burkardt's square_minimal_rule (people.math.sc.edu/Burkardt/py_src/square_minimal_rule, GNU LGPL), which reproduces the authors' sets.",
   "status": "proven",
-  "locked": true,
   "symmetry": "none",
   "numerical_check": null,
   "numerical_check": {"N": 211, "M": 630, "p": 633, "res": 3.819944764360248e-14, "sigma": 0.0004160094240254103, "h": 0.1322960957586, "rad": 8.941606468909391e-12, "cert": true, "inside": true},

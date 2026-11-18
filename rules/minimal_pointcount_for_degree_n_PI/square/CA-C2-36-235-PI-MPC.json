@@ -18,7 +18,6 @@
     "command": "cd code && python3 square_elim.py 36 255 13001 480 --out out36 && python3 square_elim.py refine 36 out36/sq_d36_n236_s13001.npy 13010 520 --free --out out36"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 235,
     "M": 703,

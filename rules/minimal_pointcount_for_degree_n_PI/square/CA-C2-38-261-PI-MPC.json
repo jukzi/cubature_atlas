@@ -18,7 +18,6 @@
     "command": "cd code && python3 square_elim.py 38 286 208300 480 --out out && python3 square_elim.py refine 38 <smallest file of out> 208314 520 --free --out out (refine seeds 208310.. tried in sequence on the smallest file; queue job sqf38x39)"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 261,
     "M": 780,

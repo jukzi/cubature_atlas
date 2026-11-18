@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: combined search (code/combo_search.py): orbit search with the full symmetry group S4 (175 nodes), then asymmetric node elimination with nodes kept in the closed domain; numerically checked, proven with tools/verify_rigorous.py",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "numerical_check": {
   "N": 172,
   "M": 680,

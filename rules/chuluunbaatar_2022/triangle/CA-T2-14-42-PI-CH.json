@@ -11,7 +11,6 @@
   "author": "Chuluunbaatar et al.",
   "source": "G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, ..., 6-simplexes. Comput. Math. Appl. 124 (2022) 89-97, supplementary material (weights and nodes to 50 digits).",
   "status": "proven",
-  "locked": true,
   "symmetry": "full",
   "numerical_check": null,
   "numerical_check": {"N": 42, "M": 120, "p": 126, "res": 2.892066499620563e-15, "sigma": 0.6199250415258878, "h": 4.60690498388514e-11, "rad": 9.422631359695721e-15, "cert": true, "inside": true},
