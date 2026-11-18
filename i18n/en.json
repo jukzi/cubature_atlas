@@ -81,6 +81,9 @@
   "isoBtn": "Isolated solution",
   "smileBtn": "Fewest nodes in this row, at most Z",
   "smileTip": "The best rule in this row has at most as many nodes as the counting value Z.",
+  "asymBtn": "No symmetric rule with exactly Z nodes",
+  "asymTri": "No rule that is symmetric under the rotation group of the triangle (C3, also S3) can have exactly Z nodes: its nodes form orbits of 3 (or 6) nodes and possibly the centre, so the number of nodes is 0 or 1 modulo 3, but Z is 2 modulo 3. A rule with Z nodes would have to be asymmetric.",
+  "asymSq": "No rule that is symmetric under the rotation group of the square (C4, also D4) can have exactly Z nodes: its nodes form orbits of 4 (or 8) nodes and possibly the centre, so the number of nodes is 0 or 1 modulo 4, but Z is 2 or 3 modulo 4. A rule with Z nodes would have to be asymmetric.",
   "trophyBtn": "Fewest nodes in this row",
   "notes": {
     "interval": "On the interval the Gauss–Legendre rule is optimal: counting value, lower bound and Gauss product coincide, so no rule needs fewer than ⌈(n+1)/2⌉ nodes.",

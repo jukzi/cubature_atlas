@@ -92,6 +92,7 @@ td.found{font-weight:700;color:var(--s-found)}
 td .trophy{font-size:.8em;margin-right:3px}
 td .smile{font-size:.8em;margin-right:3px}
 td .iso{margin-right:3px}
+td .asym{font-size:.75em;margin-right:3px;color:var(--s-sym);cursor:help}
 td.dim{color:var(--muted)}
 .delta-ok{color:var(--good)} .delta-up{color:var(--muted)}
 .viewer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
@@ -5860,6 +5861,10 @@ document.addEventListener('mouseover',function(e){var hw=e.target.closest&&e.tar
 document.addEventListener('mouseout',function(e){var hw=e.target.closest&&e.target.closest(HPSEL);if(!hw||hpopPin||hpopFor!==hw)return;var to=e.relatedTarget;if(to&&to.closest&&(to.closest(HPSEL)===hw||to.closest('#hpop')))return;hpopClose();});
 document.addEventListener('click',function(e){var oq=e.target.closest&&e.target.closest('td .oq');if(oq){e.stopPropagation();e.preventDefault();hpopToggle(oq);return;}var hi=e.target.closest&&e.target.closest('th .hi');if(hi){e.stopPropagation();e.preventDefault();hpopToggle(hi.closest('.hw'));return;}if(hpopPin&&!(e.target.closest&&e.target.closest('#hpop')))hpopClose();},true);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')hpopClose();var oq=e.target.closest&&e.target.closest('td .oq');if(oq&&(e.key==='Enter'||e.key===' ')){e.preventDefault();hpopToggle(oq);return;}var hi=e.target.closest&&e.target.closest('th .hi');if(hi&&(e.key==='Enter'||e.key===' ')){e.preventDefault();hpopToggle(hi.closest('.hw'));}});
+/* column Z: a superscript "asym" in front of Z where no rule that is symmetric under the rotation group of the domain can have exactly Z nodes: the nodes form orbits plus at most the centre,
+   so the number of nodes is 0 or 1 modulo 3 (triangle: C3, S3) or modulo 4 (square: C4, D4); same popup as the other symbols */
+function asymMark(dom,z){var k=null;if(z==null)return '';if(dom==='triangle'&&z%3===2)k='asymTri';else if(dom==='square'&&z%4>=2)k='asymSq';
+  return k?'<sup class="oq asym" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('asymBtn'))+'" data-tip="'+escA(t(k))+'">asym</sup>':'';}
 function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
   var po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
   var heads=[['colN',null]];
@@ -5879,7 +5884,7 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     /* smiley: in front of the trophy when the rule with the fewest nodes has at most the counting value Z nodes */
     var SM=(!iv&&tv!=null&&d.abz[i]!=null&&tv<=d.abz[i])?'<span class="oq smile" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('smileBtn'))+'" data-tip="'+escA(t('smileTip'))+'">🙂</span>':'';
     var TR=function(k){return (!iv&&tw===k)?SM+'<span class="oq trophy" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('trophyBtn'))+'" data-tip="'+escA(t('trophy'))+'">🏆</span>':'';};
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+asymMark(st.dom,d.abz[i])+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
     else if(f[i]==null){cells+='<td class="found dim">–</td>';}
     else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
