@@ -273,7 +273,7 @@ def run_pattern(B, pat, mode, a):
     q2, res2, used2, why2 = lm(B, red_c, q2, a.steps, a.win, a.gain, a.dq)
     X3, W3 = red_c.nodes_weights(q2)
     stages.append({"stage": "C3", "residual": res2, "nodes": np.round(X3, 6).tolist()})
-    solved = res2 < 1e-12 and bool((W3 > 0).all())
+    solved = res2 < 1e-12 and bool((W3 > getattr(a, "min_weight", 0.0)).all())
     a.margin_result = 0.0
     if solved and getattr(a, "pull_inside", False) and bary_of(X3).min() < 1e-9:
         r = solve_with_margin(B, pat, X3, W3, a, lm)
@@ -369,7 +369,7 @@ def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, lab
     if not pats:
         return None
     dampings = ["identity", "scaled"] if a.damping == "both" else [a.damping]
-    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside}) for seq in pats for m in modes for dmp in dampings]
+    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside, "min_weight": a.min_weight}) for seq in pats for m in modes for dmp in dampings]
     cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "") + (" --pull-inside" if a.pull_inside else "")
     found = None
     if procs <= 1:
@@ -399,7 +399,7 @@ def run_staged(a, n, Z, nprocs):
     for c in a.configs.split(","):
         w, d = c.split(":")
         configs.append((w == "softplus", d))
-    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside}
+    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside, "min_weight": a.min_weight}
     seen = set()
     for relax in range(0, a.relax + 1):
         pats = [q for q in enumerate_relaxed(n, Z, [-2, -1, 0, 1, 2], relax, a.last_max, extra) if tuple(q) not in seen][:a.max_patterns]
@@ -447,6 +447,7 @@ def main():
     ap.add_argument("--exact", action="store_true", help="--auto: only Z nodes, no Z + 1")
     ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
     ap.add_argument("--relax", type=int, default=0, help="up to this many steps of 1 or 4 points per edge in the shell patterns, in addition to the steps of 2 and 3")
+    ap.add_argument("--min-weight", type=float, default=1e-9, help="a solution needs a smallest weight above this value (a node with a weight of about 0 only repeats a rule with fewer nodes)")
     ap.add_argument("--staged", action="store_true", help="only Z nodes, shell patterns in stages (relax 0 first), see the module docstring")
     ap.add_argument("--extra-steps", default="1,4", help="steps (points per edge) allowed in addition to 2 and 3, comma separated (default 1,4)")
     ap.add_argument("--time-limit", type=int, default=0, help="--staged: stop after this many seconds (0 = no limit)")
@@ -456,10 +457,11 @@ def main():
     Z = -(-((n + 1) * (n + 2) // 2) // 3)
     os.makedirs(a.out, exist_ok=True)
     if a.staged:
-        if Z % 3 == 2:
-            print("Z = %d is 2 modulo 3: there is no C3 symmetric rule with exactly Z nodes" % Z, flush=True)
+        tgt = a.target or Z
+        if tgt % 3 == 2:
+            print("%d nodes is 2 modulo 3: there is no C3 symmetric rule with this node count (use --target %d)" % (tgt, tgt + 1), flush=True)
             return
-        found = run_staged(a, n, Z, max(1, min(a.procs, os.cpu_count() or 1)))
+        found = run_staged(a, n, tgt, max(1, min(a.procs, os.cpu_count() or 1)))
         return
     if a.seq:
         pats = [[int(s) for s in a.seq.split(",")]]
