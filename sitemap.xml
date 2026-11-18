@@ -412,6 +412,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-25-117-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-26-127-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-27-136-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-28-145-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-28-146-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-29-155-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-30-166-PI-MPC.html</loc></url>
@@ -488,7 +489,6 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-20-77-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-22-92-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-23-100-PO-MPC.html</loc></url>
-  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-28-145-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-35-222-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-21-476-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-25-776-PI-PK.html</loc></url>
@@ -971,6 +971,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-25-117-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-26-127-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-27-136-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-28-145-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-28-146-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-29-155-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-30-166-PI-MPC.html</loc></url>
@@ -1047,7 +1048,6 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-20-77-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-22-92-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-23-100-PO-MPC.html</loc></url>
-  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-28-145-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-35-222-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-21-476-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-25-776-PI-PK.html</loc></url>
