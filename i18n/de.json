@@ -73,6 +73,8 @@
     "chartLbl": "cf2351f9bca81831",
     "isoTip": "806a501ac6b39de9",
     "isoBtn": "18acfe35cb4fc127",
+    "smileBtn": "980b88c3104d3c3e",
+    "smileTip": "62a4d3e7b04d2dc9",
     "trophyBtn": "d52c34c823637f8d",
     "notes": "534253cb41af12d7",
     "exH": "7c73b04fcf74e0aa",
@@ -314,6 +316,8 @@
   "chartLbl": "Knotenzahl über dem Grad",
   "isoTip": "Isolierte Lösung: Das Momentensystem ist quadratisch (so viele Gleichungen wie Unbekannte, d + 1 pro Knoten) und seine Jacobi-Matrix an dieser Regel ist regulär; die Regel hat keinen freien Parameter und ist lokal eindeutig.",
   "isoBtn": "Isolierte Lösung",
+  "smileBtn": "Höchstens der Zählwert",
+  "smileTip": "Höchstens so viele Knoten wie der Zählwert Z (Spalte Zählwert).",
   "trophyBtn": "Wenigste Knoten in dieser Zeile",
   "notes": {
     "interval": "Im Intervall ist die Gauß-Legendre-Formel optimal: Abzählwert, untere Schranke und Gauß-Produkt stimmen überein, mehr als ⌈(n+1)/2⌉ Knoten spart keine Regel ein.",

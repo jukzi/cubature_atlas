@@ -79,6 +79,8 @@
   "chartLbl": "Number of nodes over degree",
   "isoTip": "Isolated solution: the moment system is square (as many equations as unknowns, d + 1 per node) and its Jacobian at this rule is regular, so the rule has no free parameter and is locally unique.",
   "isoBtn": "Isolated solution",
+  "smileBtn": "At most the counting value",
+  "smileTip": "At most as many nodes as the counting value Z (column counting value).",
   "trophyBtn": "Fewest nodes in this row",
   "notes": {
     "interval": "On the interval the Gauss–Legendre rule is optimal: counting value, lower bound and Gauss product coincide, so no rule needs fewer than ⌈(n+1)/2⌉ nodes.",
