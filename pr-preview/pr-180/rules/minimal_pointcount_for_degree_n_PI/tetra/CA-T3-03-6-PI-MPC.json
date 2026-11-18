@@ -1,0 +1,32 @@
+{
+  "id": "CA-T3-03-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "tetra",
+  "dimension": 3,
+  "degree": 3,
+  "points": 6,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), checked numerically",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "proven",
+  "locked": true,
+  "residual_reported": 1.1102230246251565e-16,
+  "numerical_check": {"N": 6, "M": 20, "p": 24, "res": 2.46086892749522e-15, "sigma": 0.6733025179087376, "h": 5.141300136604804e-13, "rad": 2.504494864377705e-15, "cert": true, "inside": true},
+  "nodes": [
+    [0.252125862381774, 0.58912297510195, 0.065755877285743],
+    [0.575081954802801, 0.123862062148455, 0.149217291941368],
+    [0.182487714241361, 0.193735704561482, 0.583521012165457],
+    [0.034722222588488, 0.522579865592367, 0.227371725994754],
+    [0.157869022184001, 0.152546451181061, 0.097547143022548],
+    [0.104597975258402, 0.040673482878389, 0.522024085674209]
+  ],
+  "weights": [
+    0.021507068241241,
+    0.040353232129346,
+    0.025276447263826,
+    0.024883234361313,
+    0.034637728583862,
+    0.020008956087079
+  ]
+}
