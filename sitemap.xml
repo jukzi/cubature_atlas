@@ -373,6 +373,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-30-1678-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-30-1704-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-31-1572-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-32-1654-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-32-1712-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-01-1-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-02-3-PI-MPC.html</loc></url>
@@ -473,7 +474,9 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-28-145-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-36-235-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-37-247-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-38-261-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-39-274-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-40-288-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-21-476-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-25-776-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/pinkse_2026/cube/CA-C3-29-1184-PI-PK.html</loc></url>
@@ -916,6 +919,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-30-1678-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-30-1704-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-31-1572-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-32-1654-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-32-1712-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-01-1-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-02-3-PI-MPC.html</loc></url>
@@ -1016,7 +1020,9 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-28-145-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-36-235-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-37-247-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-38-261-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-39-274-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-40-288-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-21-476-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-25-776-PI-PK.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/pinkse_2026/cube/CA-C3-29-1184-PI-PK.html</loc></url>
