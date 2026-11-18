@@ -18,7 +18,6 @@
     "command": "cd code && python3 triangle_elim.py 34 235 104400 480 --out out && python3 triangle_elim.py refine 34 <smallest file of out> 104422 520 --out out (refine seeds 104410..104425 tried in sequence on the smallest file)"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 212,
     "M": 630,

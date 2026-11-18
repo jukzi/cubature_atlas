@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: node elimination from the previous PI rule (code/po_elim.py), checked numerically",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "numerical_check": {
   "N": 55,
   "M": 220,

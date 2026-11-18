@@ -11,7 +11,6 @@
   "reproduce": {"script": "code/shell_c3_search.py", "command": "python code/shell_c3_search.py --deg 35 --turn 1 --offsets 0,-1,1 --steps 600 --win 15 --gain 0.05 --dq 0.001", "seed": 0},
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 2.018027019515175e-15,
   "numerical_check": {"N": 222, "M": 666, "p": 666, "res": 2.018027019515175e-15, "sigma": 0.0033044852748265155, "h": Infinity, "rad": Infinity, "cert": false, "inside": false},
   "nodes": [

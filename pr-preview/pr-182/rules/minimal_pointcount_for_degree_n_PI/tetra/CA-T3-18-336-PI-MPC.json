@@ -10,7 +10,6 @@
  "method": "numerical search of this atlas: combined search (code/combo_search.py), here the asymmetric node elimination with nodes kept in the closed domain started from the previous PI rule; numerically checked, proven with tools/verify_rigorous.py",
  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
  "status": "proven",
- "locked": false,
  "numerical_check": {
   "N": 336,
   "M": 1330,

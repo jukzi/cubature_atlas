@@ -10,7 +10,6 @@
   "method": "numerical search of this atlas: start from rings of Gauss points per edge (17, 15, 12, 10, 7, 5, 3, 1 points per edge, outside to inside, 187 nodes), symmetric (S3, then C3) and then unsymmetric least squares, finished by an annealing search over noisy restarts (seed 3); checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 1.5729158484212324e-15,
   "numerical_check": {"N": 187, "M": 561, "p": 561, "res": 1.5729158484212324e-15, "sigma": 0.0005410070651342692, "h": 1.5613814719443553, "rad": 3.192677097294894e-11, "cert": false, "inside": false},
   "nodes": [

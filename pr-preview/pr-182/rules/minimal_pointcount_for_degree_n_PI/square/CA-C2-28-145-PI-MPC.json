@@ -10,7 +10,6 @@
   "method": "unsymmetric GPU search (Levenberg-Marquardt with annealing acceptance and node kicks, float32 search, float64 polish), checked numerically",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "locked": false,
   "residual_reported": 6.501579781152049e-16,
   "numerical_check": {"N": 145, "M": 435, "p": 435, "res": 6.501579781152049e-16, "sigma": 0.000998052062524043, "h": 0.00020090929182180761, "rad": 1.6967564486509202e-13, "cert": true, "inside": true},
   "nodes": [

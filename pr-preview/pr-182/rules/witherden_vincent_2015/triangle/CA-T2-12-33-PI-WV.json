@@ -11,7 +11,6 @@
   "author": "Witherden–Vincent",
   "source": "F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015).",
   "status": "proven",
-  "locked": true,
   "symmetry": "full",
   "numerical_check": null,
   "numerical_check": {"N": 33, "M": 91, "p": 99, "res": 9.43453638410506e-15, "sigma": 0.44003105416370625, "h": 1.3444401750774051e-11, "rad": 5.4850556758036844e-15, "cert": true, "inside": true},

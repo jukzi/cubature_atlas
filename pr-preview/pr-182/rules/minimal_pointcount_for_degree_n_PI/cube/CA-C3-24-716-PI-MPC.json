@@ -10,7 +10,6 @@
   "method": "automatic scheduled search (tools/auto_search.py, mode fresh): code/cubature_search.py with symmetry reduction (group Td), orbit elimination and large-neighbourhood search; checked numerically in the symmetry-reduced system and proven with interval arithmetic (tools/verify_rigorous.py)",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz; found by the automatic search in GitHub Actions",
   "status": "proven",
-  "locked": false,
   "residual_reported": 1e-15,
   "numerical_check": {"N": 716, "M": 169, "p": 170, "res": 8.617244769279788e-15, "sigma": 0.03374709168339575, "h": 1.4110991734419293e-06, "rad": 9.35775338347611e-14, "cert": true, "inside": true},
   "symmetry": "Td",

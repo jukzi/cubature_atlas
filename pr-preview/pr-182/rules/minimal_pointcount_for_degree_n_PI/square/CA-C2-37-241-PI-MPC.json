@@ -18,7 +18,6 @@
     "command": "cd code && python3 square_elim.py 37 263 109100 480 --cs --out out && python3 square_elim.py refine 37 <smallest file of out> 109110 520 --out out (refine seeds 109110..109115 tried in sequence on the smallest file)"
   },
   "status": "proven",
-  "locked": false,
   "numerical_check": {
     "N": 241,
     "M": 361,
