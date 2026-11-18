@@ -86,6 +86,7 @@ def minimise(domain, degree, X, W, inside, max_iter=300, time_limit=1800.0):
     group = rule_group(domain, X, W)
     v = np.sqrt(W)
     margin0 = inside_margin(domain, X)
+    w_min0 = float(W.min())
 
     def res(Xq, vq):
         return C.residual(B, Xq, vq ** 2)
@@ -134,6 +135,9 @@ def minimise(domain, degree, X, W, inside, max_iter=300, time_limit=1800.0):
                 ok = r_new < 1e-13 and obj_new < obj and np.isfinite(obj_new) and vq.min() > 0
                 if ok and inside:
                     ok = inside_margin(domain, Xq) >= 0.99 * margin0 and inside_margin(domain, Xq) > 1e-12
+                elif ok:
+                    # a PO rule: no node may move farther outside and no weight may fall far below the smallest weight of the start (otherwise a node escapes to infinity with a weight of zero)
+                    ok = inside_margin(domain, Xq) >= margin0 - 1e-9 and float(vq.min() ** 2) >= 0.5 * w_min0
                 if ok:
                     accepted = True
                     break
