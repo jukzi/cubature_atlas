@@ -256,13 +256,19 @@ def solve_with_margin(B, pat, X, W, a, lm):
 def run_pattern(B, pat, mode, a):
     lm = lm_scaled if a.damping == "scaled" else SC.lm
     P0 = pull_inside(pat.nodes())
-    red_s = Bary(s3_orbits_bary(P0), a.softplus)
-    q = red_s.q_from(np.full(red_s.n_orb, 0.5 / pat.N))
-    q, res, used, why = lm(B, red_s, q, a.s3_steps, 10 ** 9, 0.0, 0.0)
-    Xs, Ws = red_s.nodes_weights(q)
-    order = SC.match(P0, Xs)
-    X = Xs[order]
-    W = Ws[order]
+    if getattr(a, "skip_s3", False):
+        # no S3 stage: the pattern is rotated as it is, equal weights start the C3 solve
+        res = None
+        X = P0
+        W = np.full(pat.N, 0.5 / pat.N)
+    else:
+        red_s = Bary(s3_orbits_bary(P0), a.softplus)
+        q = red_s.q_from(np.full(red_s.n_orb, 0.5 / pat.N))
+        q, res, used, why = lm(B, red_s, q, a.s3_steps, 10 ** 9, 0.0, 0.0)
+        Xs, Ws = red_s.nodes_weights(q)
+        order = SC.match(P0, Xs)
+        X = Xs[order]
+        W = Ws[order]
     stages = [{"stage": "pattern", "residual": None, "nodes": np.round(P0, 6).tolist()}, {"stage": "S3", "residual": res, "nodes": np.round(X, 6).tolist()}]
     X2 = pull_inside(SC.rotate(pat, X, mode))
     stages.append({"stage": "rotation", "residual": None, "nodes": np.round(X2, 6).tolist()})
@@ -341,8 +347,8 @@ def save_result(a, deg, r, cmd):
     with open(os.path.join(a.out, "shell_c3_bary_%d_%s_turn%s%s%s.json" % (deg, tag, r["mode"], "_sp" if r.get("softplus") else "", "" if r["damping"] == "identity" else "_" + r["damping"])), "w") as fh:
         json.dump(data, fh)
     diffs = "".join(" -%d" % (x - y) for x, y in zip(seq, seq[1:]))
-    line = "degree %d, N %d, shells %d%s, turn %s%s: S3 residual %.2e, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
-        deg, r["N"], seq[0], diffs, r["mode"], ("" if r["damping"] == "identity" else ", " + r["damping"] + " damping") + (", softplus" if r.get("softplus") else ""), r["s3"], r["res"], r["used"], r["why"], r["seconds"], ("  *** SOLUTION" + (" (pulled inside, distance %.0e to the boundary)" % r["margin"] if r["margin"] else "")) if r["solved"] else "")
+    line = "degree %d, N %d, shells %d%s, turn %s%s: S3 residual %s, C3 residual %.2e after %d steps (%s), %.0fs%s" % (
+        deg, r["N"], seq[0], diffs, r["mode"], ("" if r["damping"] == "identity" else ", " + r["damping"] + " damping") + (", softplus" if r.get("softplus") else ""), ("skipped" if r["s3"] is None else "%.2e" % r["s3"]), r["res"], r["used"], r["why"], r["seconds"], ("  *** SOLUTION" + (" (pulled inside, distance %.0e to the boundary)" % r["margin"] if r["margin"] else "")) if r["solved"] else "")
     print(line, flush=True)
     with open(os.path.join(a.out, "summary.txt"), "a") as fh:
         fh.write(line + "\n")
@@ -353,7 +359,7 @@ def save_result(a, deg, r, cmd):
         pr = r.get("params")
         seqcmd = cmd if not pr else ("python code/shell_c3_bary.py --deg %d --seq %s --target %d --turn %s --steps %d --win %d --gain %g --dq %g" % (
             deg, ",".join(str(m) for m in seq), r["N"], r["mode"], pr["steps"], pr["win"], pr["gain"], pr["dq"]) + (" --softplus" if r.get("softplus") else "")
-            + ("" if r["damping"] == "identity" else " --damping " + r["damping"]) + (" --pull-inside" if pr.get("pull_inside") else ""))
+            + ("" if r["damping"] == "identity" else " --damping " + r["damping"]) + (" --pull-inside" if pr.get("pull_inside") else "") + (" --skip-s3" if pr.get("skip_s3") else ""))
         sol = {"degree": deg, "N": r["N"], "seq": seq, "turn": r["mode"], "nodes": X.tolist(), "weights": W.tolist(), "residual": r["res"], "min_barycentric": float(L.min()),
                "nodes_outside": int((L.min(axis=1) < 0).sum()), "margin_delta": r["margin"], "command": seqcmd}
         with open(os.path.join(a.out, "solution_%d_%d.json" % (deg, r["N"])), "w") as fh:
@@ -369,7 +375,7 @@ def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, lab
     if not pats:
         return None
     dampings = ["identity", "scaled"] if a.damping == "both" else [a.damping]
-    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside, "min_weight": a.min_weight}) for seq in pats for m in modes for dmp in dampings]
+    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3}) for seq in pats for m in modes for dmp in dampings]
     cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "") + (" --pull-inside" if a.pull_inside else "")
     found = None
     if procs <= 1:
@@ -399,11 +405,13 @@ def run_staged(a, n, Z, nprocs):
     for c in a.configs.split(","):
         w, d = c.split(":")
         configs.append((w == "softplus", d))
-    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside, "min_weight": a.min_weight}
+    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3}
     seen = set()
     for relax in range(0, a.relax + 1):
         pats = [q for q in enumerate_relaxed(n, Z, [-2, -1, 0, 1, 2], relax, a.last_max, extra) if tuple(q) not in seen][:a.max_patterns]
         seen.update(tuple(q) for q in pats)
+        if relax < a.relax_from:
+            continue
         print("stage relax %d: degree %d, %d nodes, %d new shell patterns" % (relax, n, Z, len(pats)), flush=True)
         jobs = [(n, seq, m, dict(base, softplus=sp, damping=dmp)) for seq in pats for m in a.turn.split(",") for sp, dmp in configs]
         if not jobs:
@@ -448,6 +456,8 @@ def main():
     ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
     ap.add_argument("--relax", type=int, default=0, help="up to this many steps of 1 or 4 points per edge in the shell patterns, in addition to the steps of 2 and 3")
     ap.add_argument("--min-weight", type=float, default=1e-9, help="a solution needs a smallest weight above this value (a node with a weight of about 0 only repeats a rule with fewer nodes)")
+    ap.add_argument("--skip-s3", action="store_true", help="skip the S3 approximation: rotate the shell pattern itself and start the C3 solve with equal weights")
+    ap.add_argument("--relax-from", type=int, default=0, help="--staged: stages below this relax level are only enumerated (their patterns count as done), not run")
     ap.add_argument("--staged", action="store_true", help="only Z nodes, shell patterns in stages (relax 0 first), see the module docstring")
     ap.add_argument("--extra-steps", default="1,4", help="steps (points per edge) allowed in addition to 2 and 3, comma separated (default 1,4)")
     ap.add_argument("--time-limit", type=int, default=0, help="--staged: stop after this many seconds (0 = no limit)")
