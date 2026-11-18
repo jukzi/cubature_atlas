@@ -7,7 +7,7 @@
   "points": 288,
   "quality": "PI",
   "origin": "found",
-  "method": "numerical search of this atlas: Gauss shell pattern with 288 nodes (shells with 21, 19, 16, 14, 12, 9, 7, 5, 2 points per edge, outside to inside), S3 approximation, rotation (outer shell slides by 1/8 spacing along its edge, the 2 innermost shells turn), then a C3 symmetric Levenberg-Marquardt search in float64 with the nodes kept inside the triangle by barycentric coordinates b = s^2 / sum s^2 (code/shell_c3_bary.py, no random numbers); all nodes lie inside the triangle",
+  "method": "numerical search of this atlas: Gauss shell pattern with 288 nodes (shells with 21, 19, 16, 14, 12, 9, 7, 5, 2 points per edge, outside to inside, in relative notation 21 -2 -3 -2 -2 -3 -2 -2 -3), S3 approximation, rotation (outer shell slides by 1/8 spacing along its edge, the 2 innermost shells turn), then a C3 symmetric Levenberg-Marquardt search in float64 with the nodes kept inside the triangle by barycentric coordinates b = s^2 / sum s^2 (code/shell_c3_bary.py, no random numbers); all nodes lie inside the triangle",
   "reproduce": {"script": "code/shell_c3_bary.py", "command": "python code/shell_c3_bary.py --deg 40 --seq 21,19,16,14,12,9,7,5,2 --target 288 --turn 2 --steps 600 --win 15 --gain 0.05 --dq 0.001", "seed": 0},
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
