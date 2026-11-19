@@ -102,7 +102,7 @@ The rules come from numerical searches: symmetric orbit searches, node eliminati
 
 ## Contributing
 
-Pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) describes the workflow; [DEVELOPMENT.md](DEVELOPMENT.md) describes the rule files, the families, the checks and proofs, the automatic searches and the translations; [literature.md](literature.md) lists the literature used and tried.
+Pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) describes the workflow; [DEVELOPMENT.md](DEVELOPMENT.md) describes the rule files, the families, the checks and proofs, the automatic searches and the translations; [literature.md](literature.md) lists the literature used and tried. [SEARCH_PROMPT.md](SEARCH_PROMPT.md) is a prompt for AI agents that search for better rules.
 
 ## Citing
 
