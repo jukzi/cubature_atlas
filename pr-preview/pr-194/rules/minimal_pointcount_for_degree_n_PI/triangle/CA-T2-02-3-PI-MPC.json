@@ -7,19 +7,19 @@
   "points": 3,
   "quality": "PI",
   "origin": "found",
-  "method": "numerical search of this atlas (moment equations, least squares), checked numerically",
+  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
   "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "status": "proven",
-  "residual_reported": 5.134781488891349e-15,
-  "numerical_check": {"N": 3, "M": 6, "p": 9, "res": 1.002520768268114e-13, "sigma": 1.8337099484129735, "h": 4.27636712440812e-13, "rad": 4.868724324265179e-14, "cert": true, "inside": false},
+  "residual_reported": 1.3010426069826053e-16,
+  "numerical_check": {"N": 3, "M": 6, "p": 9, "res": 1.3010426069826053e-16, "sigma": 1.824385737350512, "h": 1.4279818269049715e-15, "rad": 1.625145678278987e-16, "cert": true, "inside": true},
   "nodes": [
-    [0.02579033903323, 0.550518137531374],
-    [0.572712439461957, 0.427287560538043],
-    [0.436519242073512, 0.0]
+    [0.008649146146937058, 0.5610089349960146],
+    [0.5610089349960146, 0.43034191885704837],
+    [0.43034191885704837, 0.008649146146937056]
   ],
   "weights": [
-    0.178635327676441,
-    0.159903271442997,
-    0.161461400880562
+    0.16666666666666666,
+    0.16666666666666666,
+    0.16666666666666666
   ]
 }
