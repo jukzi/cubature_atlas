@@ -82,19 +82,21 @@ def reference_rule(name, m):
 
 class Basis:
     """Orthonormal basis phi_k and targets T_k = integral of phi_k."""
-    def __init__(self, name, n):
+    def __init__(self, name, n, check_ortho=True):
+        # check_ortho=False skips the Gram matrix (basis size squared: several GB for the large rules) and the orthogonality test
         self.name, self.n, self.idx = name, n, indices(name, n)
         pts, wt = reference_rule(name, n + 4)
         # blockwise (memory: the full points x basis matrix can reach several GB for the cube at degree 30)
         chunk = max(1, 2_000_000 // max(1, len(self.idx)))
-        sq = np.zeros(len(self.idx)); T = np.zeros(len(self.idx)); G = np.zeros((len(self.idx), len(self.idx)))
+        sq = np.zeros(len(self.idx)); T = np.zeros(len(self.idx)); G = np.zeros((len(self.idx), len(self.idx))) if check_ortho else None
         for a in range(0, len(pts), chunk):
             B = raw(name, n, pts[a:a + chunk]); w = wt[a:a + chunk]
             sq += (B * B * w[:, None]).sum(0); T += (B * w[:, None]).sum(0)
-            G += B.T @ (B * w[:, None])
+            if check_ortho:
+                G += B.T @ (B * w[:, None])
         self.scale = 1 / np.sqrt(sq)
         self.T = T * self.scale
-        self.ortho = np.abs(G * self.scale[:, None] * self.scale[None, :] - np.eye(len(self.idx))).max()
+        self.ortho = np.abs(G * self.scale[:, None] * self.scale[None, :] - np.eye(len(self.idx))).max() if check_ortho else float("nan")
         self.parity = np.array([sum(t) % 2 for t in self.idx])
 
     def __call__(self, X):
