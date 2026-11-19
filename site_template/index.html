@@ -184,7 +184,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
       <div class="btns" id="srcbtns"></div><p class="sub" id="srcinfo" style="margin:0;font-size:13px"></p>
       <div class="slider"><label for="deg" class="eyebrow" data-i="degree"></label><output id="degout" for="deg">9</output>
         <input type="range" id="deg" min="1" max="30" value="9"></div>
-      <div class="facts" id="rfacts" style="grid-template-columns:repeat(3,1fr);margin:0"></div>
+      <div class="facts" id="rfacts" style="grid-template-columns:repeat(4,1fr);margin:0"></div>
       <div><svg id="whist" class="whist" viewBox="0 0 300 84" role="img" aria-label="Weights"></svg></div>
       <div class="btns" id="vbtns">
         <button class="btn" id="b-auto" aria-pressed="true" data-i="rotate"></button>
@@ -5967,23 +5967,25 @@ function interpRule(kind,n){var key=kind+'|'+n;if(irc[key])return irc[key];var N
 var D1SRC=['nc','cc','lob'];
 function viewRule(){var d=DATA[st.dom][st.n];normSrc();if(isF(st.src))return famRule(st.src,st.dom,st.n);if(st.src==='out')return poRule(st.dom,st.n);if(DOM[st.dom].dim===1&&st.src!=='gauss'&&D1SRC.indexOf(st.src)<0&&!isF(st.src))st.src='gauss';if(D1SRC.indexOf(st.src)>=0){if(DOM[st.dom].dim!==1)st.src='found';else return interpRule(st.src,st.n);}if(st.src==='lit'){var l=litRule(st.dom,st.n);return l||null;}if(st.src==='gauss'&&GJ)return gaussRule(st.dom,st.n);return d;}
 function srcButtons(){var b=$('#srcbtns');b.innerHTML='';var FBT=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return [x.k,null];});if(isF(st.src)&&!famHas(st.src,st.dom))st.src=DOM[st.dom].dim===1?'gauss':'found';if(DOM[st.dom].dim===1&&st.src!=='gauss'&&D1SRC.indexOf(st.src)<0&&!isF(st.src))st.src='gauss';if(D1SRC.indexOf(st.src)>=0&&DOM[st.dom].dim!==1)st.src='found';var lit=litRule(st.dom,st.n),po=OUT[st.dom]?poRule(st.dom,st.n):null;
-  (DOM[st.dom].dim===1?[['gauss','srcGaussL'],['lob','srcLobB'],['cc','srcCcB'],['nc','srcNcB']].concat(FBT):(OUT[st.dom]?[['out','srcOutB']]:[]).concat([['found','srcFound'],['lit','srcLitB'],['gauss','srcGaussB']]).concat(FBT)).forEach(function(o){var x=document.createElement('button');x.className='btn';x.textContent=o[1]?t(o[1]):famShort(o[0]);x.setAttribute('aria-pressed',st.src===o[0]);if((o[0]==='lit'&&!lit)||(o[0]==='out'&&!po)||(isF(o[0])&&!famRule(o[0],st.dom,st.n)))x.className='btn warn';x.onclick=function(){st.src=o[0];viewer();if(DOM[st.dom].dim===1)table();drawEx();exChart();};b.appendChild(x);});
+  (DOM[st.dom].dim===1?[['gauss','srcGaussL'],['lob','srcLobB'],['cc','srcCcB'],['nc','srcNcB']].concat(FBT):(OUT[st.dom]?[['out','srcOutB']]:[]).concat([['found','srcFound'],['lit','srcLitB'],['gauss','srcGaussB']]).concat(FBT)).forEach(function(o){var x=document.createElement('button');x.className='btn';x.textContent=(o[1]?t(o[1]):famShort(o[0]))+srcCnt(o[0]);x.setAttribute('aria-pressed',st.src===o[0]);if((o[0]==='lit'&&!lit)||(o[0]==='out'&&!po)||(isF(o[0])&&!famRule(o[0],st.dom,st.n)))x.className='btn warn';x.onclick=function(){st.src=o[0];viewer();if(DOM[st.dom].dim===1)table();drawEx();exChart();};b.appendChild(x);});
   var info=t('srcInfoFound');$('#srcinfo').style.color=((st.src==='lit'&&!lit)||(st.src==='out'&&!po))?'var(--bad)':'';if(st.src==='out')info=po?t('srcInfoOut'):t('srcInfoOutNone').replace('{n}',st.n);else if(st.src==='lit'&&!lit)info=t('srcInfoLitNone').replace('{n}',st.n);if(st.src==='lit'&&lit)info=t('srcInfoLit').replace('{s}',SRCN[lit.src]||lit.src).replace('{d}',lit.deg);
   else if(st.src==='gauss'){var g=gaussRule(st.dom,st.n);info=t('srcInfoGauss').replace('{m}',g.m).replace('{e}',g.deg);}
   else if(D1SRC.indexOf(st.src)>=0){var ir=interpRule(st.src,st.n),neg=ir.pts.filter(function(p){return p[1]<0;}).length;info=t('srcInfo_'+st.src).replace('{N}',ir.n)+(neg?' '+t('srcInfoNeg').replace('{k}',neg):'');}
   if(isF(st.src)){var fr=famRule(st.src,st.dom,st.n),fn0=famOf(st.src).f.name[LANG];info=fr?t('srcInfoFam').replace('{f}',fn0).replace('{d}',fr.deg).replace('{N}',fr.n).replace('{q}',fr.q):t('srcInfoFamNone').replace('{f}',fn0).replace('{n}',st.n);$('#srcinfo').style.color=fr?'':'var(--bad)';}
   $('#srcinfo').textContent=info;}
+/* node count of the selected degree for a source button (the number of Table 1), appended to the button label */
+function srcCnt(k){var d=DOM[st.dom],i=st.n-1,v=null,c;
+  if(DOM[st.dom].dim===1||isF(k))v=seriesOf(st.dom,k)[i];
+  else if(k==='found')v=seriesOf(st.dom,'found')[i];
+  else if(k==='gauss')v=d.gauss[i];
+  else{c=d.cols.filter(function(x){return x.k===k;})[0];v=c?c.arr[i]:null;}
+  return v==null?'':' · '+fmt(v);}
 /* all numbers of the row of Table 1 for the selected degree, shown beside Figure A (first fact: nodes of the rule shown) */
-function rowFacts(r){var d=DOM[st.dom],i=st.n-1,iv=st.dom==='interval',items=[[r?fmt(r.n):'–',t('nodes')]];
+function rowFacts(r){var d=DOM[st.dom],i=st.n-1,items=[[r?fmt(r.n):'–',t('nodes')]];
   var add=function(v,lab){items.push([v==null?'–':fmt(v),lab]);};
-  if(iv){add(seriesOf('interval','gauss')[i],t('srcGaussL'));add(seriesOf('interval','lob')[i],t('srcLobB'));add(seriesOf('interval','cc')[i],t('srcCcB'));add(seriesOf('interval','nc')[i],t('srcNcB'));
-    FAMX.filter(function(x){return famHas(x.k,'interval');}).forEach(function(x){add(seriesOf('interval',x.k)[i],famShort(x.k));});}
-  else{var f=seriesOf(st.dom,'found'),po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
-    add(d.low[i],t('colLow'));add(d.abz[i],t('colAbz'));if(po)add(po.arr[i],t('colOut'));add(f[i],t('colFound'));
-    var dl=f[i]==null?null:f[i]-d.abz[i];items.push([dl==null?'–':(dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'))),'Δ']);
-    if(lit)add(lit.arr[i],t('colLit'));
-    FAMX.filter(function(x){return famHas(x.k,st.dom);}).forEach(function(x){add(seriesOf(st.dom,x.k)[i],famShort(x.k));});
-    add(d.gauss[i],t('colGauss'));}
+  if(st.dom!=='interval'){var f=seriesOf(st.dom,'found');
+    add(d.low[i],t('colLow'));add(d.abz[i],t('colAbz'));
+    var dl=f[i]==null?null:f[i]-d.abz[i];items.push([dl==null?'–':(dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'))),'Δ']);}
   return items.map(function(x){return '<div class="fact"><b style="font-size:17px">'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
 /* histogram of the weights; the bars have the colour the nodes of that weight have in Figure A. Logarithmic axis if the weights span more than 1.5 decades. */
 function weightHist(ws,wmin,wmax){var svg=$('#whist');if(!svg)return;var n=ws.length,nb=Math.max(8,Math.min(30,Math.round(Math.sqrt(n)))),lg=wmin>0&&wmax/wmin>30,
