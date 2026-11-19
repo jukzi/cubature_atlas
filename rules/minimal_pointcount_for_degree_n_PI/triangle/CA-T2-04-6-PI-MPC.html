@@ -16,22 +16,22 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Degree</th><td>4</td></tr>
 <tr><th>Number of nodes</th><td>6</td></tr>
 <tr><th>Quality</th><td>PI</td></tr>
-<tr><th>Max. moment residual (build check)</th><td>2.78e-16</td></tr>
-<tr><th>Smallest weight</th><td>1.645164e-02</td></tr>
-<tr><th>Distance to domain boundary (negative = outside)</th><td>2.194e-03</td></tr>
-<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 1.22e-13, radius = 2.02e-15, yes</td></tr>
-<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 3.4e-15 of the stored numbers (equations in all unknowns)</td></tr>
-<tr><th>Origin</th><td>numerical search of this atlas (moment equations, least squares), checked numerically</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>1.11e-16</td></tr>
+<tr><th>Smallest weight</th><td>5.497587e-02</td></tr>
+<tr><th>Distance to domain boundary (negative = outside)</th><td>9.158e-02</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 6.43e-15, radius = 5.05e-16, yes</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 1.6e-15 of the stored numbers (symmetry-reduced equations, group of order 6)</td></tr>
+<tr><th>Origin</th><td>numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
 </table>
 <p><a href="../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-04-6-PI-MPC.json">Download JSON</a></p>
 <h2>Cite as</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-04-6-PI-MPC (Minimal point count for degree n (PI), triangle, degree 4, 6 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-04-6-PI-MPC.html</pre>
 <h2>Nodes and weights</h2>
 <pre>  #                       x                       y                       w
-   1  7.526639429316980e-01   1.296341204137050e-01   9.203551772945300e-02
-   2  3.767845424258450e-01   9.757412297292101e-02   1.091643798542760e-01
-   3  3.297107501197440e-01   5.484377251291660e-01   1.342115376933920e-01
-   4  1.555178604176300e-02   8.597276723719049e-01   3.546295460033800e-02
-   5  9.835136372300200e-02   3.545881238258880e-01   1.126739697338560e-01
-   6  2.305316988013300e-02   2.194266918026000e-03   1.645164038868500e-02</pre>
+   1  8.168475729804587e-01   9.157621350977059e-02   5.497587182766098e-02
+   2  4.459484909159648e-01   1.081030181680701e-01   1.116907948390057e-01
+   3  4.459484909159649e-01   4.459484909159649e-01   1.116907948390057e-01
+   4  9.157621350977059e-02   8.168475729804587e-01   5.497587182766098e-02
+   5  1.081030181680701e-01   4.459484909159649e-01   1.116907948390057e-01
+   6  9.157621350977059e-02   9.157621350977059e-02   5.497587182766098e-02</pre>
 </body></html>
