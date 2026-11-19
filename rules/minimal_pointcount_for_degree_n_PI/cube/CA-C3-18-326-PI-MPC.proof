@@ -6,28 +6,28 @@
  "points": 326,
  "quality": "PI",
  "status": "proven",
- "sha": "a23ed1bcb9d9eaa5",
+ "sha": "a33969f231c37b5f",
  "stored": {
-  "res_bound": 2.7130939639005726e-15,
+  "res_bound": 3.441691376337987e-15,
   "res_ok": true,
-  "margin_exact": 0.0125907121668893,
-  "minw_exact": 0.0018986905855016211,
+  "margin_exact": 0.0125326665349555,
+  "minw_exact": 0.0019027631697040432,
   "quality_exact": "PI"
  },
  "exist": {
   "proved": true,
-  "r": 2.4862372429808774e-16,
-  "kratio": 0.6666666670355456,
+  "r": 1.3705623984155558e-16,
+  "kratio": 0.6666666668257994,
   "mode": "sym24",
   "equations": 84,
   "unknowns": 85,
-  "dist": 3.977979588769405e-15,
+  "dist": 6.633796376857615e-15,
   "pos": true,
   "inside": true,
   "outside": false,
   "quality_proved": "PI"
  },
- "seconds": 1.06,
+ "seconds": 0.83,
  "ok_stored": true,
  "ok_exist": true
 }
