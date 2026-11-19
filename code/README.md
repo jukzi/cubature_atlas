@@ -4,6 +4,7 @@ The programs that produced the rules and checked them numerically, as published 
 
 | File | Purpose |
 |---|---|
+| `import_xiao_wandzura.py` | The rules printed in Wandzura–Xiao (2003, Tables 3–8) and Xiao–Gimbutas (2010, Tables 5–8): expands the printed generator nodes with the symmetry group, maps the triangle to (0,0), (1,0), (0,1), checks the moment equations and writes the rule files and the two `family.json` files |
 | `counts.py` | Counting value, lower bounds, Gauss product |
 | `triangle_moeller.py` | Triangle, odd degrees: exact Möller lower bound dim P_k + rank(M_k)/2 from the three-term relation (fractions, no numpy); shows that no Gauss rule exists and that the degree 3, 5 and 7 rules (4, 7, 12 nodes) are minimal |
 | `moeller_bound.py` | Lower bounds for odd degrees (triangle, square, tetrahedron, cube) from the structural matrices of the three-term relation, exact modulo a prime (numpy); contains a short proof valid for any real weights; gives the tetrahedron column L |

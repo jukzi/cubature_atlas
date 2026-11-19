@@ -37,6 +37,8 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `pinkse_2026` | `literature` | Cube rules of the degrees 21, 25 and 29 to 45 (odd) and square rules of the odd degrees 31 to 51 (reproduced for comparison) |
 | `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 50 (reproduced for comparison) |
 | `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 31 to 40 (reproduced for comparison) |
+| `wandzura_xiao_2003` | `literature` | The six fully symmetric triangle rules printed in the paper (degrees 5, 10, 15, 20, 25, 30), made by `code/import_xiao_wandzura.py` |
+| `xiao_gimbutas_2010` | `literature` | The four rules with printed nodes: triangle degrees 10, 30, 50 and the cube rule of degree 5, made by `code/import_xiao_wandzura.py` |
 
 Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
 

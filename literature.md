@@ -85,7 +85,7 @@ Summary in our own words, the publisher's abstract is not reproduced: the author
 
 ### S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003) 1829–1840. <https://doi.org/10.1016/S0898-1221(03)90004-6>
 
-Symmetric triangle rules; cited in the documentation.
+Symmetric triangle rules; cited in the documentation. The six rules of its Tables 3–8 (degrees 5, 10, 15, 20, 25, 30) are the family `wandzura_xiao_2003` (made by `code/import_xiao_wandzura.py`).
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper constructs quadrature rules on triangles that have positive weights, full symmetry and rapid convergence, comparable to Gauss rules on intervals. A scheme that combines simple group theory with numerical optimisation gives such rules up to order 30; the approach formalises an older one by Lyness and Jespersen and extends to other regions, and example formulae and numerical results are shown.
 
@@ -97,9 +97,9 @@ Section 2 gives Möller's lower bound for centrally symmetric weights in explici
 
 ### H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663–676. <https://doi.org/10.1016/j.camwa.2009.10.027>
 
-Cited in the docstrings of `code/cubature_search.py` and `code/simplex_cubature.py` for the node elimination idea; the tetrahedron counts in `code/simplex_cubature.py` are taken from its rules. Its node counts are in the column N_Lit (triangle, square, cube and tetrahedron); for the triangle degrees 31 to 50 these are the counts of its fully symmetric rules.
+Cited in the docstrings of `code/cubature_search.py` and `code/simplex_cubature.py` for the node elimination idea; the tetrahedron counts in `code/simplex_cubature.py` are taken from its rules. Its node counts are in the column N_Lit (triangle, square, cube and tetrahedron); for the triangle degrees 31 to 50 these are the counts of its fully symmetric rules. The four rules with printed nodes (Tables 5–8: cube degree 5, triangle degrees 10, 30, 50) are the family `xiao_gimbutas_2010` (made by `code/import_xiao_wandzura.py`); in Table 8 the printed weights of the orbits of six are twice the weight of each node, and in Table 5 one printed weight does not satisfy the moment equations and is recomputed from them (both are recorded in the rule files).
 
-Summary in our own words, the publisher's abstract is not reproduced: the paper presents a numerical algorithm that constructs efficient high-order quadrature rules in two and more dimensions. The rules have positive weights and interior nodes, like Gauss rules in one dimension, and can be generated with different degrees of symmetry adapted to the domain. Examples are rules for polynomials on triangles, squares and cubes up to degree 50, which are described as near optimal in the number of nodes, many of them new. (Read on ResearchGate, https://www.researchgate.net/publication/220513533.)
+Summary in our own words, the publisher's abstract is not reproduced: the paper presents a numerical algorithm that constructs efficient high-order quadrature rules in two and more dimensions. The rules have positive weights and interior nodes, like Gauss rules in one dimension, and can be generated with different degrees of symmetry adapted to the domain. Examples are rules for polynomials on triangles, squares and cubes up to degree 50, which are described as near optimal in the number of nodes, many of them new.
 
 ### Z. Meng, Z. Luo: Constructing cubature formulae of degree 5 with few points. J. Comput. Appl. Math. 237 (2013) 354–362 (arXiv:1111.5094, 2011). <https://arxiv.org/abs/1111.5094>
 

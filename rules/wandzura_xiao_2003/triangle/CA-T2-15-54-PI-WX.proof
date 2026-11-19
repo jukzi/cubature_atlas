@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-15-54-PI-WX",
+ "file": "rules/wandzura_xiao_2003/triangle/CA-T2-15-54-PI-WX.json",
+ "domain": "triangle",
+ "degree": 15,
+ "points": 54,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "04e0639f8f9e9b5c",
+ "stored": {
+  "res_bound": 2.915040171053154e-15,
+  "res_ok": true,
+  "margin_exact": 0.005143608816970367,
+  "minw_exact": 0.0018073215320460172,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.9227858398060895e-15,
+  "kratio": 0.6666666667070582,
+  "mode": "sym6",
+  "equations": 39,
+  "unknowns": 42,
+  "dist": 2.4709590063873795e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.11,
+ "ok_stored": true,
+ "ok_exist": true
+}
