@@ -134,6 +134,7 @@
   "srcGaussB": "Gauss product",
   "srcInfoFound": "Smallest PI rule from the numerical search of this page.",
   "srcInfoLit": "Literature rule: {s}, rule for degree {d}.",
+  "srcInfoLitCount": "Literature count: {c} nodes (a published count for which the atlas stores no points); the rule shown is the smallest stored one, with {N} nodes.",
   "srcInfoLitNone": "There is no literature rule for degree {n}.",
   "srcInfoGauss": "Gauss product with {m} points per direction (exact up to degree {e}).",
   "fnSinc": "Sinc ripple",
