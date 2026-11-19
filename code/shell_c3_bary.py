@@ -253,6 +253,17 @@ def solve_with_margin(B, pat, X, W, a, lm):
     return best
 
 
+def noisy_start(X2, pat, sigma, seed):
+    """the nodes of the rotation stage with noise proportional to the bubble function 27 b0 b1 b2 (1 at the centroid, 0 on the boundary): x + sigma * bubble * normal; only the representatives of the orbits matter"""
+    rng = np.random.default_rng(seed)
+    Xn = X2.copy()
+    for j in range(pat.k):
+        p = Xn[3 * j]
+        bubble = max(0.0, 27.0 * (1.0 - p[0] - p[1]) * p[0] * p[1])
+        Xn[3 * j] = p + sigma * bubble * rng.normal(size=2)
+    return pull_inside(Xn)
+
+
 def run_pattern(B, pat, mode, a):
     lm = lm_scaled if a.damping == "scaled" else SC.lm
     P0 = pull_inside(pat.nodes())
@@ -273,11 +284,20 @@ def run_pattern(B, pat, mode, a):
     X2 = pull_inside(SC.rotate(pat, X, mode))
     stages.append({"stage": "rotation", "residual": None, "nodes": np.round(X2, 6).tolist()})
     k = pat.k
-    orbits = [("g3", s_from_bary("g3", bary_of(X2[3 * j:3 * j + 1])[0])) for j in range(k)] + ([("ce", [])] if pat.centre else [])
-    red_c = Bary(orbits, a.softplus)
-    q2 = red_c.q_from(np.concatenate([W[0:3 * k:3], W[3 * k:]]))
-    q2, res2, used2, why2 = lm(B, red_c, q2, a.steps, a.win, a.gain, a.dq)
-    X3, W3 = red_c.nodes_weights(q2)
+    w0 = np.concatenate([W[0:3 * k:3], W[3 * k:]])
+    best = None
+    for s in range(getattr(a, "noise_starts", 0) + 1):
+        Xs0 = X2 if s == 0 else noisy_start(X2, pat, a.noise, a.noise_seed + s)
+        orbits = [("g3", s_from_bary("g3", bary_of(Xs0[3 * j:3 * j + 1])[0])) for j in range(k)] + ([("ce", [])] if pat.centre else [])
+        red_c = Bary(orbits, a.softplus)
+        q2 = red_c.q_from(w0)
+        q2, res2, used2, why2 = lm(B, red_c, q2, a.steps, a.win, a.gain, a.dq)
+        X3, W3 = red_c.nodes_weights(q2)
+        if best is None or res2 < best[0]:
+            best = (res2, X3, W3, used2, why2, red_c)
+        if res2 < 1e-12 and bool((W3 > getattr(a, "min_weight", 0.0)).all()):
+            break
+    res2, X3, W3, used2, why2, red_c = best
     stages.append({"stage": "C3", "residual": res2, "nodes": np.round(X3, 6).tolist()})
     solved = res2 < 1e-12 and bool((W3 > getattr(a, "min_weight", 0.0)).all())
     a.margin_result = 0.0
@@ -359,7 +379,7 @@ def save_result(a, deg, r, cmd):
         pr = r.get("params")
         seqcmd = cmd if not pr else ("python code/shell_c3_bary.py --deg %d --seq %s --target %d --turn %s --steps %d --win %d --gain %g --dq %g" % (
             deg, ",".join(str(m) for m in seq), r["N"], r["mode"], pr["steps"], pr["win"], pr["gain"], pr["dq"]) + (" --softplus" if r.get("softplus") else "")
-            + ("" if r["damping"] == "identity" else " --damping " + r["damping"]) + (" --pull-inside" if pr.get("pull_inside") else "") + (" --skip-s3" if pr.get("skip_s3") else ""))
+            + ("" if r["damping"] == "identity" else " --damping " + r["damping"]) + (" --pull-inside" if pr.get("pull_inside") else "") + (" --skip-s3" if pr.get("skip_s3") else "") + ((" --noise-starts %d --noise %g --noise-seed %d" % (pr["noise_starts"], pr["noise"], pr["noise_seed"])) if pr.get("noise_starts") else ""))
         sol = {"degree": deg, "N": r["N"], "seq": seq, "turn": r["mode"], "nodes": X.tolist(), "weights": W.tolist(), "residual": r["res"], "min_barycentric": float(L.min()),
                "nodes_outside": int((L.min(axis=1) < 0).sum()), "margin_delta": r["margin"], "command": seqcmd}
         with open(os.path.join(a.out, "solution_%d_%d.json" % (deg, r["N"])), "w") as fh:
@@ -375,7 +395,7 @@ def run_variant(a, deg, target, offsets, modes, steps, win, gain, dq, procs, lab
     if not pats:
         return None
     dampings = ["identity", "scaled"] if a.damping == "both" else [a.damping]
-    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3}) for seq in pats for m in modes for dmp in dampings]
+    jobs = [(deg, seq, m, {"s3_steps": a.s3_steps, "steps": steps, "win": win, "gain": gain, "dq": dq, "softplus": a.softplus, "damping": dmp, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3, "noise_starts": a.noise_starts, "noise": a.noise, "noise_seed": a.noise_seed}) for seq in pats for m in modes for dmp in dampings]
     cmd = "python code/shell_c3_bary.py --deg %d --target %d --turn %s --offsets %s --steps %d --win %d --gain %g --dq %g%s%s" % (deg, target, ",".join(modes), ",".join(str(o) for o in offsets), steps, win, gain, dq, " --softplus" if a.softplus else "", (" --relax %d" % a.relax) if a.relax else "") + ((" --last-max %d" % a.last_max) if a.last_max != 3 else "") + (" --pull-inside" if a.pull_inside else "")
     found = None
     if procs <= 1:
@@ -405,7 +425,7 @@ def run_staged(a, n, Z, nprocs):
     for c in a.configs.split(","):
         w, d = c.split(":")
         configs.append((w == "softplus", d))
-    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3}
+    base = {"s3_steps": a.s3_steps, "steps": a.steps, "win": a.win, "gain": a.gain, "dq": a.dq, "pull_inside": a.pull_inside, "min_weight": a.min_weight, "skip_s3": a.skip_s3, "noise_starts": a.noise_starts, "noise": a.noise, "noise_seed": a.noise_seed}
     seen = set()
     for relax in range(0, a.relax + 1):
         pats = [q for q in enumerate_relaxed(n, Z, [-2, -1, 0, 1, 2], relax, a.last_max, extra) if tuple(q) not in seen][:a.max_patterns]
@@ -456,6 +476,9 @@ def main():
     ap.add_argument("--last-max", type=int, default=3, help="largest number of points per edge of the last shell")
     ap.add_argument("--relax", type=int, default=0, help="up to this many steps of 1 or 4 points per edge in the shell patterns, in addition to the steps of 2 and 3")
     ap.add_argument("--min-weight", type=float, default=1e-9, help="a solution needs a smallest weight above this value (a node with a weight of about 0 only repeats a rule with fewer nodes)")
+    ap.add_argument("--noise-starts", type=int, default=0, help="further C3 solves of every pattern from starts with noise proportional to the bubble function 27 b0 b1 b2 of the barycentric coordinates (use with a small --win, so that a hopeless start ends quickly)")
+    ap.add_argument("--noise", type=float, default=0.05, help="noise amplitude at the centroid (barycentric units)")
+    ap.add_argument("--noise-seed", type=int, default=0)
     ap.add_argument("--skip-s3", action="store_true", help="skip the S3 approximation: rotate the shell pattern itself and start the C3 solve with equal weights")
     ap.add_argument("--relax-from", type=int, default=0, help="--staged: stages below this relax level are only enumerated (their patterns count as done), not run")
     ap.add_argument("--staged", action="store_true", help="only Z nodes, shell patterns in stages (relax 0 first), see the module docstring")
