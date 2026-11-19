@@ -55,11 +55,16 @@ def raw(name, n, X):
         return np.stack([Q[i] * Rs[i][j] for i, j in idx], 1)
     x, y, z = X[:, 0], X[:, 1], X[:, 2]
     Q = homLegendre(n, x, 1 - y - z)
+    # the recurrences depend only on i (R) and on i + j (P): one evaluation per value instead of one per basis function (same numbers, much faster for large degrees)
+    Rc = {}
+    Pc = {}
     out = []
     for i, j, k in idx:
-        R = homJacobi(n, 2 * i + 1, y, 1 - z)[j]
-        P = homJacobi(n, 2 * i + 2 * j + 2, z, np.ones_like(z))[k]
-        out.append(Q[i] * R * P)
+        if i not in Rc:
+            Rc[i] = homJacobi(n, 2 * i + 1, y, 1 - z)
+        if i + j not in Pc:
+            Pc[i + j] = homJacobi(n, 2 * (i + j) + 2, z, np.ones_like(z))
+        out.append(Q[i] * Rc[i][j] * Pc[i + j][k])
     return np.stack(out, 1)
 
 
