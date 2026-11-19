@@ -127,8 +127,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .btn{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px var(--f-body);padding:8px 12px;border-radius:8px;cursor:pointer}
 .btn.warn{border-color:var(--bad);color:var(--bad)}.btn.warn[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:#fff}
 .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.ramp{height:10px;border-radius:5px;background:linear-gradient(90deg,var(--w0),var(--w1))}
-.ramp-l{display:flex;justify-content:space-between;font:400 12px var(--f-mono);color:var(--muted)}
+.whist{display:block;width:100%;height:auto}
+.whist text{font:400 10px var(--f-mono);fill:var(--muted)}
+.whist .ax{stroke:var(--edge);stroke-width:1}
 details{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
 summary{padding:12px 16px;cursor:pointer;font-weight:600}
 .plist{padding:0 16px 16px}
@@ -184,7 +185,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
       <div class="slider"><label for="deg" class="eyebrow" data-i="degree"></label><output id="degout" for="deg">9</output>
         <input type="range" id="deg" min="1" max="30" value="9"></div>
       <div class="facts" id="rfacts" style="grid-template-columns:repeat(3,1fr);margin:0"></div>
-      <div><div class="ramp"></div><div class="ramp-l"><span id="wlo"></span><span data-i="weight"></span><span id="whi"></span></div></div>
+      <div><svg id="whist" class="whist" viewBox="0 0 300 84" role="img" aria-label="Weights"></svg></div>
       <div class="btns" id="vbtns">
         <button class="btn" id="b-auto" aria-pressed="true" data-i="rotate"></button>
         <button class="btn" id="b-size" aria-pressed="true" data-i="sizeW"></button>
@@ -5972,15 +5973,41 @@ function srcButtons(){var b=$('#srcbtns');b.innerHTML='';var FBT=FAMX.filter(fun
   else if(D1SRC.indexOf(st.src)>=0){var ir=interpRule(st.src,st.n),neg=ir.pts.filter(function(p){return p[1]<0;}).length;info=t('srcInfo_'+st.src).replace('{N}',ir.n)+(neg?' '+t('srcInfoNeg').replace('{k}',neg):'');}
   if(isF(st.src)){var fr=famRule(st.src,st.dom,st.n),fn0=famOf(st.src).f.name[LANG];info=fr?t('srcInfoFam').replace('{f}',fn0).replace('{d}',fr.deg).replace('{N}',fr.n).replace('{q}',fr.q):t('srcInfoFamNone').replace('{f}',fn0).replace('{n}',st.n);$('#srcinfo').style.color=fr?'':'var(--bad)';}
   $('#srcinfo').textContent=info;}
+/* all numbers of the row of Table 1 for the selected degree, shown beside Figure A (first fact: nodes of the rule shown) */
+function rowFacts(r){var d=DOM[st.dom],i=st.n-1,iv=st.dom==='interval',items=[[r?fmt(r.n):'–',t('nodes')]];
+  var add=function(v,lab){items.push([v==null?'–':fmt(v),lab]);};
+  if(iv){add(seriesOf('interval','gauss')[i],t('srcGaussL'));add(seriesOf('interval','lob')[i],t('srcLobB'));add(seriesOf('interval','cc')[i],t('srcCcB'));add(seriesOf('interval','nc')[i],t('srcNcB'));
+    FAMX.filter(function(x){return famHas(x.k,'interval');}).forEach(function(x){add(seriesOf('interval',x.k)[i],famShort(x.k));});}
+  else{var f=seriesOf(st.dom,'found'),po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
+    add(d.low[i],t('colLow'));add(d.abz[i],t('colAbz'));if(po)add(po.arr[i],t('colOut'));add(f[i],t('colFound'));
+    var dl=f[i]==null?null:f[i]-d.abz[i];items.push([dl==null?'–':(dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'))),'Δ']);
+    if(lit)add(lit.arr[i],t('colLit'));
+    FAMX.filter(function(x){return famHas(x.k,st.dom);}).forEach(function(x){add(seriesOf(st.dom,x.k)[i],famShort(x.k));});
+    add(d.gauss[i],t('colGauss'));}
+  return items.map(function(x){return '<div class="fact"><b style="font-size:17px">'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
+/* histogram of the weights; the bars have the colour the nodes of that weight have in Figure A. Logarithmic axis if the weights span more than 1.5 decades. */
+function weightHist(ws,wmin,wmax){var svg=$('#whist');if(!svg)return;var n=ws.length,nb=Math.max(8,Math.min(30,Math.round(Math.sqrt(n)))),lg=wmin>0&&wmax/wmin>30,
+  lo=lg?Math.log10(wmin):wmin,hi=lg?Math.log10(wmax):wmax,span=hi-lo||1,cnt=[],k,mx=0;
+  for(k=0;k<nb;k++)cnt.push(0);
+  ws.forEach(function(w){var v=lg?Math.log10(w):w,j=Math.min(nb-1,Math.floor((v-lo)/span*nb));cnt[j]+=1;});
+  cnt.forEach(function(c){mx=Math.max(mx,c);});
+  var X0=6,X1=294,Y0=14,Y1=58,bw=(X1-X0)/nb,h='';
+  cnt.forEach(function(c,j){if(!c)return;var cw=lo+(j+.5)/nb*span,w=lg?Math.pow(10,cw):cw,hasNeg=wmin<0,
+      fill=hasNeg&&w<0?'rgb('+lerpc(NEGL,NEGD,Math.min(1,w/wmin)).map(Math.round).join(',')+')':'color-mix(in srgb,var(--w1) '+(100*(hasNeg?Math.max(w,0)/(wmax||1):(wmax>wmin?(w-wmin)/(wmax-wmin):.5)))+'%,var(--w0))',
+      bh=(Y1-Y0)*c/mx;h+='<rect x="'+(X0+j*bw+.5)+'" y="'+(Y1-bh)+'" width="'+(bw-1)+'" height="'+bh+'" style="fill:'+fill+'"/>';});
+  h+='<line class="ax" x1="'+X0+'" x2="'+X1+'" y1="'+Y1+'" y2="'+Y1+'"/>';
+  h+='<text x="'+X0+'" y="10">'+mx+'</text>';
+  h+='<text x="'+X0+'" y="72">'+sci(wmin)+'</text><text x="'+X1+'" y="72" text-anchor="end">'+sci(wmax)+'</text>';
+  h+='<text x="150" y="72" text-anchor="middle">'+t('weight')+(lg?' (log)':'')+'</text>';
+  h+='<text x="'+X1+'" y="10" text-anchor="end">'+n+' '+t('nodes').toLowerCase()+'</text>';
+  svg.innerHTML=h;}
 function viewer(){srcButtons();figTitles();var r=viewRule(),d=DOM[st.dom];if(r&&r.url&&r.id){var ra=document.createElement('a');ra.href=r.url;ra.textContent=r.id;$('#srcinfo').appendChild(document.createTextNode(' '));$('#srcinfo').appendChild(ra);}$('#degout').textContent=st.n;$('#deg').value=st.n;$('#deg2').value=st.n;$('#deg2out').textContent=st.n;
-  if(!r){$('#dancenote').textContent='';$('#rfacts').innerHTML=[t('nodes'),t('wmin'),t('wmax')].map(function(x){return '<div class="fact"><b style="font-size:17px">–</b><span>'+x+'</span></div>';}).join('');$('#wlo').textContent='';$('#whi').textContent='';$('#ptxt').textContent='';draw();return;}
+  if(!r){$('#dancenote').textContent='';$('#rfacts').innerHTML=rowFacts(null);$('#whist').innerHTML='';$('#ptxt').textContent='';draw();return;}
   $('#dancenote').textContent=t(d.dim===1?'danceNote1':(d.dim===3?'danceNote3':'danceNote')).replace('{n}',r.deg||st.n).replace('{N}',r.n);$('#degout').textContent=st.n;$('#deg').value=st.n;$('#deg2').value=st.n;$('#deg2out').textContent=st.n;
   var ws=r.pts.map(lastCol),wmin=Math.min.apply(null,ws),wmax=Math.max.apply(null,ws),sw=ws.reduce(function(a,b){return a+b;},0);
   var c=CERT[st.dom]&&CERT[st.dom][st.n];
-  $('#rfacts').innerHTML=[[fmt(r.n),t('nodes')],[sci(wmin),t('wmin')],[sci(wmax),t('wmax')]]
-    .map(function(x){return '<div class="fact"><b style="font-size:17px">'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');
-  $('#wlo').innerHTML=sci(wmin);$('#whi').innerHTML=sci(wmax);
-  var rampEl=document.querySelector('.ramp');if(rampEl)rampEl.style.background=wmin<0?'linear-gradient(90deg,rgb('+NEGD+') 0%,rgb('+NEGL+') '+(100*-wmin/(wmax-wmin))+'%,var(--w0) '+(100*-wmin/(wmax-wmin))+'%,var(--w1) 100%)':'';
+  $('#rfacts').innerHTML=rowFacts(r);
+  weightHist(ws,wmin,wmax);
   var names=['x','y','z'].slice(0,d.dim).concat(['w']),iw=Math.max(2,String(r.pts.length).length),sp='                    ';
   $('#ptxt').textContent=(sp+'#').slice(-iw)+';'+names.map(function(s){return (sp+s).slice(-18);}).join(';')+'\n'+r.pts.slice().sort(function(p,q){return lastCol(p)-lastCol(q);}).map(function(p,i){return (sp+(i+1)).slice(-iw)+';'+p.map(pad).join(';');}).join('\n');
   draw();drawEx();}
