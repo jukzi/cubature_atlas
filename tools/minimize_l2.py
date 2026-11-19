@@ -21,6 +21,7 @@ import sys
 import time
 
 import numpy as np
+from scipy.sparse.linalg import LinearOperator, lsmr
 from scipy.spatial import cKDTree
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -106,8 +107,54 @@ def penalty(domain, X, tau):
     return value, grad
 
 
-def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, time_limit=1800.0):
-    B = C.Basis(domain, degree)
+def build_jac(B, X, v):
+    """Jacobian of the moment equations with respect to the node coordinates and v (w = v^2), built in chunks of nodes so that the complex-step arrays stay small"""
+    n, d = X.shape
+    m = len(B.idx)
+    W = v ** 2
+    J = np.empty((m, n * d + n))
+    chunk = max(1, 4000000 // m)
+    for a in range(0, n, chunk):
+        b = min(n, a + chunk)
+        Xa = X[a:b]
+        J[:, n * d + a:n * d + b] = B(Xa).T * (2 * v[a:b])[None, :]
+        for c in range(d):
+            Xc = Xa.astype(complex)
+            Xc[:, c] += 1e-30j
+            J[:, d * a + c:d * b:d] = (B(Xc).imag / 1e-30 * W[a:b, None]).T
+    return J
+
+
+class Linear:
+    """projection onto the null space of J and minimum norm solutions of J dq = -r.  Small systems: singular value decomposition.  Large systems: LSMR (matrix-free least squares) on the dense Jacobian,
+    which needs no second copy of J, no square matrix of the size of the basis and no full decomposition; the memory is the Jacobian plus a few vectors."""
+
+    def __init__(self, J, dense_limit, lsmr_iter):
+        self.J = J
+        self.dense = min(J.shape) <= dense_limit
+        self.lsmr_iter = lsmr_iter
+        if self.dense:
+            U, S, Vt = np.linalg.svd(J, full_matrices=False)
+            rank = int((S > 1e-10 * S[0]).sum())
+            self.U, self.S, self.Vt, self.rank = U[:, :rank], S[:rank], Vt[:rank], rank
+        else:
+            self.op = LinearOperator(J.shape, matvec=lambda x: J @ x, rmatvec=lambda y: J.T @ y, dtype=float)
+            self.opT = LinearOperator((J.shape[1], J.shape[0]), matvec=lambda y: J.T @ y, rmatvec=lambda x: J @ x, dtype=float)
+
+    def project(self, g):
+        if self.dense:
+            return g - self.Vt.T @ (self.Vt @ g)
+        y = lsmr(self.opT, g, atol=1e-14, btol=1e-14, conlim=1e10, maxiter=self.lsmr_iter)[0]
+        return g - self.J.T @ y
+
+    def solve(self, r):
+        if self.dense:
+            return -(self.Vt.T @ ((self.U.T @ r) / self.S))
+        return -lsmr(self.op, r, atol=1e-14, btol=1e-14, conlim=1e10, maxiter=self.lsmr_iter)[0]
+
+
+def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, time_limit=1800.0, dense_limit=1500, lsmr_iter=3000):
+    B = C.Basis(domain, degree, check_ortho=False)
     n, d = X.shape
     group = rule_group(domain, X, W)
     v = np.sqrt(W)
@@ -117,8 +164,7 @@ def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, tim
         return C.residual(B, Xq, vq ** 2)
 
     def jac(Xq, vq):
-        J = C.jacobian(B, Xq, vq ** 2)
-        return np.hstack([J[:, :n * d], J[:, n * d:] * (2 * vq)[None, :]])
+        return build_jac(B, Xq, vq)
 
     def objective(Xq, vq):
         return float(np.sum(vq ** 4)) / s0 + lam * penalty(domain, Xq, tau)[0]
@@ -136,13 +182,10 @@ def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, tim
             if time.time() - t0 > time_limit:
                 break
             iters = it + 1
-            J = jac(X, v)
-            U, S, Vt = np.linalg.svd(J, full_matrices=False)
-            rank = int((S > 1e-10 * S[0]).sum())
-            Vn = np.linalg.svd(J, full_matrices=True)[2][rank:] if rank < J.shape[1] else np.zeros((0, J.shape[1]))
+            lin = Linear(jac(X, v), dense_limit, lsmr_iter)
             gx = lam * penalty(domain, X, tau)[1]
             g = np.concatenate([gx.reshape(-1), 4 * v ** 3 / s0])
-            direction = -Vn.T @ (Vn @ g)
+            direction = -lin.project(g)
             gnorm = float(np.linalg.norm(direction))
             if gnorm < 1e-12:
                 break
@@ -153,8 +196,7 @@ def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, tim
                 Xq = q[:n * d].reshape(n, d)
                 vq = q[n * d:]
                 for _ in range(4):
-                    r = res(Xq, vq)
-                    dq = -(Vt[:rank].T @ ((U[:, :rank].T @ r) / S[:rank]))
+                    dq = lin.solve(res(Xq, vq))
                     Xq = Xq + dq[:n * d].reshape(n, d)
                     vq = vq + dq[n * d:]
                 Xq, Wq = symmetrize(Xq, vq ** 2, group) if group else (Xq, vq ** 2)
@@ -188,7 +230,7 @@ def minimise(domain, degree, X, W, inside, lam=0.05, tau=0.1, max_iter=1000, tim
         Xs, Ws = symmetrize(X, v ** 2, bigger)
         vs = np.sqrt(np.clip(Ws, 0.0, None))
         for _ in range(8):
-            dq = -np.linalg.lstsq(jac(Xs, vs), res(Xs, vs), rcond=1e-12)[0]
+            dq = Linear(jac(Xs, vs), dense_limit, lsmr_iter).solve(res(Xs, vs))
             Xs = Xs + dq[:n * d].reshape(n, d)
             vs = vs + dq[n * d:]
             Xs, Ws = symmetrize(Xs, vs ** 2, bigger)
@@ -213,7 +255,9 @@ def main():
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--lambda", dest="lam", type=float, default=0.05, help="weight of the penalty for nodes outside, in units of the starting sum of w^2")
     ap.add_argument("--tau", type=float, default=0.1, help="length scale of the penalty exp(a / tau) - 1 - a / tau, a the barycentric distance outside a face")
-    ap.add_argument("--max-vars", type=int, default=2500, help="skip rules with more unknowns than this (the singular value decomposition of the Jacobian is dense)")
+    ap.add_argument("--max-vars", type=int, default=40000, help="skip rules with more unknowns than this (the dense Jacobian needs (equations x unknowns) x 8 bytes)")
+    ap.add_argument("--dense-limit", type=int, default=1500, help="systems with at most this many equations or unknowns use the singular value decomposition, larger ones LSMR")
+    ap.add_argument("--lsmr-iter", type=int, default=3000, help="iteration limit of every LSMR solve")
     ap.add_argument("--allow-closer", action="store_true", help="with --write: also write a PI rule whose smallest distance to the boundary became smaller (the penalty only punishes outer nodes, so the descent may move inner nodes onto the boundary)")
     ap.add_argument("--max-iter", type=int, default=1000)
     ap.add_argument("--time-limit", type=float, default=1800.0)
@@ -229,8 +273,8 @@ def main():
         return
     inside = rule.get("quality") == "PI"
     m0 = inside_margin(domain, X)
-    X1, W1, f0, f1, ng, iters = minimise(domain, rule["degree"], X, W, inside, a.lam, a.tau, a.max_iter, a.time_limit)
-    B = C.Basis(domain, rule["degree"])
+    X1, W1, f0, f1, ng, iters = minimise(domain, rule["degree"], X, W, inside, a.lam, a.tau, a.max_iter, a.time_limit, a.dense_limit, a.lsmr_iter)
+    B = C.Basis(domain, rule["degree"], check_ortho=False)
     r1 = float(np.max(np.abs(C.residual(B, X1, W1))))
     m1 = inside_margin(domain, X1)
     out0 = int((face_distances(domain, X).min(axis=1) < 0).sum())
