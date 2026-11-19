@@ -1,7 +1,7 @@
 """Square [-1,1]^2: PI cubature search by node elimination.
 
 Usage:
-    python3 square_elim.py <degree> <start_points> <seed> <seconds> [--cs] [--out DIR]
+    python3 square_elim.py <degree> <start_points> <seed> <seconds> [--cs] [--po BOUND] [--out DIR]
     python3 square_elim.py refine <degree> <start.npy> <seed> <seconds> [--to-centre] [--out DIR]
 
 Starts from <start_points> random nodes (drawn from numpy's default_rng(seed)),
@@ -13,6 +13,9 @@ is found is saved as DIR/sq_d<degree>_n<N>_s<seed>.npy (columns x, y, w).
 --cs: centrally symmetric rules (pairs +p, -p and a centre node when the
 number of nodes is odd); only the even moments are imposed, the odd ones
 vanish by symmetry.  This is the useful choice for odd degrees.
+
+--po BOUND: PO rules: the nodes may leave the square, the bounds of the coordinates are [-BOUND, BOUND] (for example 3); the weights stay positive.  Rules are saved as
+DIR/sqpo_d<degree>_n<N>_s<seed>.npy.  With --cs this gives centrally symmetric PO rules (symmetry group of order 2, rotation by 180 degrees).
 
 Basis: products of orthonormal Legendre polynomials.  The check here is a
 floating-point residual test only; it is neither a certificate nor a proof.
@@ -32,6 +35,7 @@ class Problem:
     def __init__(self, deg, cs):
         self.deg = deg
         self.cs = cs
+        self.bound = 1.0
         pairs = []
         for i in range(deg + 1):
             for j in range(deg + 1 - i):
@@ -88,8 +92,8 @@ class Problem:
         return jac
 
     def bounds(self, n, centre):
-        lo = np.r_[-np.ones(2 * n), np.zeros(n)]
-        hi = np.r_[np.ones(2 * n), 10.0 * np.ones(n)]
+        lo = np.r_[-self.bound * np.ones(2 * n), np.zeros(n)]
+        hi = np.r_[self.bound * np.ones(2 * n), 10.0 * np.ones(n)]
         if centre:
             lo = np.r_[lo, 0.0]
             hi = np.r_[hi, 10.0]
@@ -207,6 +211,7 @@ def main():
     ap.add_argument("seed", type=int)
     ap.add_argument("seconds", type=float)
     ap.add_argument("--cs", action="store_true")
+    ap.add_argument("--po", type=float, default=0.0, help="PO rules: nodes may leave the square, coordinate bounds [-PO, PO] (0: nodes stay in the square)")
     ap.add_argument("--centre", type=int, default=-1, help="1/0: force a centre node (cs only); default: by parity of start_points")
     ap.add_argument("--tries", type=int, default=12, help="candidates tried per elimination step")
     ap.add_argument("--iters", type=int, default=400)
@@ -217,6 +222,8 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     rng = np.random.default_rng(args.seed)
     prob = Problem(deg, cs)
+    if args.po > 0:
+        prob.bound = args.po
     if cs:
         centre = (args.start_points % 2 == 1) if args.centre < 0 else bool(args.centre)
         n = args.start_points // 2
@@ -240,9 +247,9 @@ def main():
         pts, wts = prob.full_rule(x, n, centre)
         err = monomial_error(deg, pts, wts)
         total = len(wts)
-        inside = np.abs(pts).max() <= 1.0
+        inside = np.abs(pts).max() <= (args.po if args.po > 0 else 1.0)
         if err < 1e-13 and wts.min() > 0 and inside:
-            name = os.path.join(args.out, "sq_d%d_n%d_s%d.npy" % (deg, total, args.seed))
+            name = os.path.join(args.out, "%s_d%d_n%d_s%d.npy" % ("sqpo" if args.po > 0 else "sq", deg, total, args.seed))
             np.save(name, np.c_[pts, wts])
             best_total = total
             print("FOUND deg %d N %d err %.1e wmin %.2e  %.0fs" % (deg, total, err, wts.min(), time.time() - t_start), flush=True)
