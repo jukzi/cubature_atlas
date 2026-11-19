@@ -183,11 +183,12 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
     <div class="figbox" id="fbA"><span class="figtag" data-i="figA"></span>
     <canvas id="cv" class="cv" width="800" height="800" aria-label="Nodes"></canvas></div>
     <div class="ctl">
-      <div class="btns" id="srcbtns"></div><p class="sub" id="srcinfo" style="margin:0;font-size:13px"></p>
+      <div class="btns" id="srcbtns"></div>
       <div class="slider"><label for="deg" class="eyebrow" data-i="degree"></label><output id="degout" for="deg">9</output>
         <input type="range" id="deg" min="1" max="30" value="9"></div>
       <div class="facts" id="rfacts" style="grid-template-columns:repeat(4,1fr);margin:0"></div>
-      <div><svg id="whist" class="whist" viewBox="0 0 300 80" role="img" aria-label="Weights"></svg></div>
+      <div><svg id="whist" class="whist" viewBox="0 0 300 80" role="img" aria-label="Weights"></svg>
+      <p class="sub" id="srcinfo" style="margin:4px 0 0;font-size:13px;line-height:1.4;min-height:2.8em"></p></div>
       <div class="btns" id="vbtns">
         <button class="btn" id="b-auto" aria-pressed="true" data-i="rotate"></button>
         <button class="btn" id="b-size" aria-pressed="true" data-i="sizeW"></button>
@@ -6000,11 +6001,11 @@ function rowFacts(r){var d=DOM[st.dom],i=st.n-1,items=[[r?fmt(r.n):'–',t('node
     add(d.low[i],t('colLow'));add(d.abz[i],t('colAbz'));
     var dl=f[i]==null?null:f[i]-d.abz[i];items.push([dl==null?'–':(dl>0?'+'+dl:(dl===0?'0':String(dl).replace('-','−'))),'Δ']);}
   return items.map(function(x){return '<div class="fact"><b style="font-size:17px">'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');}
-/* weight histogram on a fixed logarithmic axis from 1e-4 to 1 (4 bins per decade); lighter or heavier weights fall into the outer bins, negative weights get their own bar at the left.
+/* weight histogram on a fixed logarithmic axis from 1e-6 to 1 (4 bins per decade); lighter or heavier weights fall into the outer bins, negative weights get their own bar at the left.
    The bars have the colour the nodes of that weight have in Figure A; the dashed line is the mean weight. */
 function svgExp(e){return '10<tspan dy="-4" style="font-size:7px">'+String(e).replace('-','−')+'</tspan>';}
 function svgSci(x){if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));return dec(x/Math.pow(10,e),1)+'·'+svgExp(e);}
-function weightHist(ws,wmin,wmax){var svg=$('#whist');if(!svg)return;var n=ws.length,LO=-4,HI=0,PD=4,nb=(HI-LO)*PD,cnt=[],tts=[],k,mx=0,neg=0,hasNeg=wmin<0;
+function weightHist(ws,wmin,wmax){var svg=$('#whist');if(!svg)return;var n=ws.length,LO=-6,HI=0,PD=4,nb=(HI-LO)*PD,cnt=[],tts=[],k,mx=0,neg=0,hasNeg=wmin<0;
   for(k=0;k<nb;k++){cnt.push(0);tts.push(0);}
   ws.forEach(function(w){if(w<=0){neg+=1;return;}var j=Math.max(0,Math.min(nb-1,Math.floor((Math.log10(w)-LO)*PD))),tt=hasNeg?Math.max(w,0)/(wmax||1):(wmax>wmin?(w-wmin)/(wmax-wmin):.5);cnt[j]+=1;tts[j]+=tt;});
   cnt.forEach(function(c){mx=Math.max(mx,c);});mx=Math.max(mx,neg);
@@ -6015,7 +6016,6 @@ function weightHist(ws,wmin,wmax){var svg=$('#whist');if(!svg)return;var n=ws.le
     h+='<rect x="'+(AX+j*bw+.5)+'" y="'+(Y1-bh)+'" width="'+(bw-1)+'" height="'+bh+'" style="fill:color-mix(in srgb,var(--w1) '+pc+'%,var(--w0))"><title>'+c+'</title></rect>';});
   h+='<line class="ax" x1="'+AX+'" x2="'+X1+'" y1="'+Y1+'" y2="'+Y1+'"/>';
   for(k=LO;k<=HI;k++){h+='<line class="ax" x1="'+tick(k)+'" x2="'+tick(k)+'" y1="'+Y1+'" y2="'+(Y1+3)+'"/><text x="'+(tick(k)+(k===LO?-2:(k===HI?2:0)))+'" y="72" text-anchor="'+(k===LO?'start':(k===HI?'end':'middle'))+'">'+(k===0?'1':svgExp(k))+'</text>';}
-  h+='<text x="'+X0+'" y="10">'+mx+'</text>';
   var pos=ws.filter(function(w){return w>0;}),mean=ws.reduce(function(a,w){return a+w;},0)/n;
   if(mean>0){var mv=Math.max(LO,Math.min(HI,Math.log10(mean))),mxp=tick(mv),anc=mxp>150?'end':'start';
     h+='<line x1="'+mxp+'" x2="'+mxp+'" y1="'+(Y0-4)+'" y2="'+Y1+'" style="stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 2"/>';
