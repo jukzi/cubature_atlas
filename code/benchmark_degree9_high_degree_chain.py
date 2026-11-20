@@ -206,7 +206,7 @@ def main():
         "results": results,
     }
     Path("degree9_high_degree_chain_results.json").write_text(
-        json.dumps(summary, indent=2) + "\n"
+        json.dumps(summary, indent=2, default=lambda obj: obj.item() if hasattr(obj, "item") else str(obj)) + "\n"
     )
     print("FINAL SUMMARY")
     print(json.dumps([
