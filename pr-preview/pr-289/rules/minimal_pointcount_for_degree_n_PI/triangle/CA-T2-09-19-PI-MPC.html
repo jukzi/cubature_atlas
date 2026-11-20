@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-T2-09-19-PI-MPC – Cubature Atlas Triangle, Degree 9, 19 Nodes</title><meta name="description" content="Smallest rules found by the numerical search of this atlas: positive weights, all nodes in the closed domain (PI). One rule per domain and degree; eve">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../">Back to the atlas</a> · <a href="../../../rules/index.html">All rules</a></p>
+<h1>CA-T2-09-19-PI-MPC</h1>
+<p class="ai">AI-generated: this page, its code, the search and all computations were produced by an AI. Please verify the results yourself before relying on them.</p>
+<p>Not the best known rule; best known: <a href="../../../rules/chuluunbaatar_2022/triangle/CA-T2-09-19-PI-CH.html">CA-T2-09-19-PI-CH</a> (19)</p>
+<p><a href="https://creativecommons.org/licenses/by/4.0/" rel="license">License: CC BY 4.0</a></p>
+<table>
+<tr><th>Family</th><td>Minimal point count for degree n (PI)<br><small>rules/minimal_pointcount_for_degree_n_PI/</small></td></tr>
+<tr><th>Domain</th><td>Triangle (T2)</td></tr>
+<tr><th>Degree</th><td>9</td></tr>
+<tr><th>Number of nodes</th><td>19</td></tr>
+<tr><th>Quality</th><td>PI</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>4.44e-16</td></tr>
+<tr><th>Smallest weight</th><td>1.278884e-02</td></tr>
+<tr><th>Distance to domain boundary (negative = outside)</th><td>2.063e-02</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 5.34e-12, radius = 1.09e-15, yes</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 6.1e-15 of the stored numbers (symmetry-reduced equations, group of order 6)</td></tr>
+<tr><th>Origin</th><td>AI-assisted numerical search of this atlas: start from the proven degree-10, 24-node PI rule CA-T2-10-24-PI-MPC, continue at degree 9, then remove five nodes successively. At each node count, 12 seeded deletion candidates and three perturbation amplitudes were tested; the chain selected the successful rule with the largest minimum weight and boundary margin. The 19-node result was reached through five removals; a further reduction to 18 nodes did not succeed in this campaign. The weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
+</table>
+<p><a href="../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.json">Download JSON</a></p>
+<h2>Cite as</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-09-19-PI-MPC (Minimal point count for degree n (PI), triangle, degree 9, 19 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.html</pre>
+<h2>Nodes and weights</h2>
+<pre>  #                       x                       y                       w
+   1  4.472951339445280e-02   4.472951339445280e-02   1.278883782934903e-02
+   2  3.333333333333333e-01   3.333333333333333e-01   4.856789814139937e-02
+   3  4.370895914929365e-01   1.258208170141269e-01   3.891377050238716e-02
+   4  6.235929287619345e-01   1.882035356190327e-01   3.982386946360512e-02
+   5  7.411985987844979e-01   3.683841205473635e-02   2.164176968864470e-02
+   6  1.882035356190327e-01   1.882035356190327e-01   3.982386946360512e-02
+   7  1.258208170141269e-01   4.370895914929365e-01   3.891377050238716e-02
+   8  4.472951339445280e-02   9.105409732110944e-01   1.278883782934903e-02
+   9  3.683841205473635e-02   7.411985987844979e-01   2.164176968864470e-02
+  10  2.063496160252485e-02   4.896825191987376e-01   1.566735011356957e-02
+  11  3.683841205473635e-02   2.219629891607657e-01   2.164176968864470e-02
+  12  1.882035356190327e-01   6.235929287619345e-01   3.982386946360512e-02
+  13  2.219629891607657e-01   3.683841205473635e-02   2.164176968864470e-02
+  14  4.896825191987376e-01   2.063496160252485e-02   1.566735011356957e-02
+  15  9.105409732110944e-01   4.472951339445280e-02   1.278883782934903e-02
+  16  4.896825191987376e-01   4.896825191987376e-01   1.566735011356957e-02
+  17  7.411985987844979e-01   2.219629891607657e-01   2.164176968864470e-02
+  18  4.370895914929366e-01   4.370895914929365e-01   3.891377050238716e-02
+  19  2.219629891607657e-01   7.411985987844979e-01   2.164176968864470e-02</pre>
+</body></html>
