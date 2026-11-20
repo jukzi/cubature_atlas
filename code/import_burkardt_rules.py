@@ -287,6 +287,72 @@ def cube_pk(path, degree):
     return X, w / scale, inside, scale
 
 
+
+def xg_table(table, domain):
+    """Reader for tables/<table>/data_post.m of the authors' repository (35 digits, all nodes listed, block 'nmax = <degree>').
+    triangle: (-1,-1/sqrt3), (1,-1/sqrt3), (0,2/sqrt3) -> (0,0), (1,0), (0,1), weights to 1/2; tetra: reference tetrahedron of the authors -> (0,0,0), (1,0,0), (0,1,0), (0,0,1), weights to 1/6;
+    square and cube: [-1,1]^d unchanged, weights to 4 and 8."""
+    def reader(path, degree):
+        d = read_data_post_any(os.path.join(path, "tables", table, "data_post.m"), degree)
+        names = ["xs", "ys", "zs"][:{"triangle": 2, "square": 2, "tetra": 3, "cube": 3}[domain]]
+        P = np.stack([d[n] for n in names], axis=1)
+        w = d["ws"]
+        s3 = math.sqrt(3.0)
+        s6 = math.sqrt(6.0)
+        if domain == "triangle":
+            v0 = np.array([-1.0, -1.0 / s3])
+            vs = [np.array([1.0, -1.0 / s3]), np.array([0.0, 2.0 / s3])]
+            volume = 0.5
+        elif domain == "tetra":
+            v0 = np.array([-1.0, -1.0 / s3, -1.0 / s6])
+            vs = [np.array([0.0, 2.0 / s3, -1.0 / s6]), np.array([1.0, -1.0 / s3, -1.0 / s6]), np.array([0.0, 0.0, 3.0 / s6])]
+            volume = 1.0 / 6.0
+        else:
+            X = P
+            inside = float(1.0 - np.abs(X).max())
+            volume = 4.0 if domain == "square" else 8.0
+            scale = float(w.sum()) / volume
+            return X, w / scale, inside, scale
+        m = np.array([v - v0 for v in vs]).T
+        X = np.linalg.solve(m, (P - v0).T).T
+        inside = float(min(X.min(), (1.0 - X.sum(axis=1)).min()))
+        scale = float(w.sum()) / volume
+        return X, w / scale, inside, scale
+    return reader
+
+
+def read_data_post_any(path, degree):
+    """Arrays xs, ys, (zs), ws of the block '%%% nmax = <degree>' in a file data_post.m."""
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+    for block in re.split(r"(?m)^%%% nmax = ", text)[1:]:
+        if int(re.match(r"\d+", block).group(0)) != degree:
+            continue
+        out = {}
+        for name in ("xs", "ys", "zs", "ws"):
+            m = re.search(r"%s%d = \[(.*?)\];" % (name, degree), block, re.S)
+            if m:
+                out[name] = np.array([float(t) for t in m.group(1).replace(",", " ").split()])
+        return out
+    raise SystemExit("degree %d not found in %s" % (degree, path))
+
+
+XG_TABLES = [
+    ("triarotq", "triangle", "T2", "rotation (group of order 3)"),
+    ("triaarbq", "triangle", "T2", "none"),
+    ("squarearbq", "square", "C2", "auto"),
+    ("squarerotq", "square", "C2", "auto"),
+    ("squarerefq", "square", "C2", "auto"),
+    ("tetraarbq", "tetra", "T3", "none"),
+    ("tetrarotq", "tetra", "T3", "none"),
+    ("tetrasym4q", "tetra", "T3", "none"),
+    ("cubearbq", "cube", "C3", "auto"),
+    ("cuberefq", "cube", "C3", "auto"),
+]
+XG_SOURCE = ("H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; "
+             "rule of the authors' published data tables (more recent than the paper, fewer nodes than the count of the paper), mapped affinely to the atlas domain, weights scaled to its volume.")
+
+
 def central_symmetry(X, W):
     """True if the node set and the weights are invariant under x -> -x (up to 1e-13)."""
     for p, w in zip(X, W):
@@ -400,11 +466,42 @@ SOURCES = {
 }
 
 
-def build_rule(cfg, degree, root, subs, max_p):
+
+for _t, _dom, _letter, _sym in XG_TABLES:
+    SOURCES["xgt_" + _t] = {"family": "xiao_gimbutas_2010", "tag": "XG", "domain": _dom, "letter": _letter, "key": "xg", "reader": xg_table(_t, _dom), "symmetry": _sym,
+                            "author": "Xiao-Gimbutas", "source": XG_SOURCE, "better": True}
+
+# Data file and retrieval date, written into the field "source" of every rule ({degree} is replaced).
+RETRIEVED = "2026-11-20"
+BURKARDT = "https://people.sc.fsu.edu/~jburkardt/f_src/%s/%s.f90"
+DATA = {
+    "triangle_xg": "J. Burkardt, " + BURKARDT % ("triangle_symq_rule", "triangle_symq_rule") + ", subroutine rule{degree}",
+    "tetra_xg": "J. Burkardt, " + BURKARDT % ("tetrahedron_arbq_rule", "tetrahedron_arbq_rule") + ", subroutine rule{degree}",
+    "cube_xg": "J. Burkardt, " + BURKARDT % ("cube_arbq_rule", "cube_arbq_rule") + ", subroutine rule{degree}",
+    "square_xg": "J. Burkardt, " + BURKARDT % ("square_arbq_rule", "square_arbq_rule") + ", subroutine rule{degree}",
+    "square_fs": "J. Burkardt, " + BURKARDT % ("square_minimal_rule", "square_minimal_rule") + ", subroutine smr{degree}",
+    "triangle_xg_rot": "github.com/zgimbutas/triasymq (version 1.11, commit 332f5f4), file tables/triarotq/data_post.m, block nmax = {degree}",
+    "tetra_wk": "github.com/OptimalDesignLab/SummationByParts.jl (branch master), file pi_quadrature_data/high_precision/tet/expanded/tet_q{degree}_n<N>_ext.dat",
+    "cube_pk": "Zenodo doi:10.5281/zenodo.22881864, archive le.zip, file le/rules/legendre_d3_p{degree}_q<q>_n<N>.csv",
+    "square_os": "the tables 2 to 5 of the paper (doi:10.1016/j.cam.2005.04.005, page of the publisher, open archive)",
+}
+for _t, _dom, _letter, _sym in XG_TABLES:
+    DATA["xgt_" + _t] = "github.com/zgimbutas/triasymq (version 1.11, commit 332f5f4), file tables/" + _t + "/data_post.m, block nmax = {degree}"
+
+
+def source_text(cfg, name, degree):
+    """Citation, data file and retrieval date of a rule."""
+    return "%s Data file: %s. Retrieved %s." % (cfg["source"], DATA[name].replace("{degree}", "%02d" % degree if "subroutine" in DATA[name] else str(degree)), RETRIEVED)
+
+
+def build_rule(cfg, degree, root, subs, max_p, name):
     X, W, inside, scale = cfg["reader"](subs, degree)
     n = len(W)
     expected = literature_count(root, cfg["domain"], cfg["key"], degree)
-    if expected is not None and expected != n:
+    if cfg.get("better"):
+        if expected is None or n >= expected:
+            raise SystemExit("degree %d: %d nodes, not fewer than the literature count %s" % (degree, n, expected))
+    elif expected is not None and expected != n:
         raise SystemExit("degree %d: %d nodes, literature count %s" % (degree, n, expected))
     if W.min() <= 0:
         raise SystemExit("degree %d: weight not positive" % degree)
@@ -427,7 +524,7 @@ def build_rule(cfg, degree, root, subs, max_p):
     rule = {"id": rid, "family": cfg["family"], "domain": cfg["domain"], "dimension": X.shape[1], "degree": degree, "points": int(n),
             "quality": "PI", "origin": "literature",
             "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
-            "author": cfg["author"], "source": cfg["source"], "status": "proven", "symmetry": symmetry}
+            "author": cfg["author"], "source": source_text(cfg, name, degree), "status": "proven", "symmetry": symmetry}
     if nc is not None:
         rule["numerical_check"] = nc
     rule["nodes"] = [[float(repr(float(v))) for v in row] for row in X]
@@ -455,7 +552,7 @@ def main():
     cfg = SOURCES[args.source]
     subs = None if not args.file else (args.file if os.path.isdir(args.file) else read_subroutines(args.file))
     for degree in args.degrees:
-        path = write_rule(args.root, build_rule(cfg, degree, args.root, subs, args.max_p))
+        path = write_rule(args.root, build_rule(cfg, degree, args.root, subs, args.max_p, args.source))
         print("  wrote", path, flush=True)
 
 

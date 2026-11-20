@@ -9,7 +9,7 @@
  "origin": "literature",
  "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
  "author": "Omelyan-Solovyan",
- "source": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190-204, doi:10.1016/j.cam.2005.04.005 (Tables 2-5: generators with 32 digits as printed, expanded by the rotation group of order 4; in Table 5 the printed weight of the generator (0,0) is the weight of the central node).",
+ "source": "I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190-204, doi:10.1016/j.cam.2005.04.005 (Tables 2-5: generators with 32 digits as printed, expanded by the rotation group of order 4; in Table 5 the printed weight of the generator (0,0) is the weight of the central node). Data file: the tables 2 to 5 of the paper (doi:10.1016/j.cam.2005.04.005, page of the publisher, open archive). Retrieved 2026-11-20.",
  "status": "proven",
  "symmetry": "rotation (group of order 4)",
  "numerical_check": {

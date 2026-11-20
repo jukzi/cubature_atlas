@@ -9,7 +9,7 @@
  "origin": "literature",
  "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
  "author": "Xiao-Gimbutas",
- "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; fully symmetric rule as printed (16 digits) in J. Burkardt's triangle_symq_rule, barycentric nodes (b, c) used as Cartesian coordinates of the atlas triangle, weights scaled to the sum 1/2.",
+ "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; fully symmetric rule as printed (16 digits) in J. Burkardt's triangle_symq_rule, barycentric nodes (b, c) used as Cartesian coordinates of the atlas triangle, weights scaled to the sum 1/2. Data file: J. Burkardt, https://people.sc.fsu.edu/~jburkardt/f_src/triangle_symq_rule/triangle_symq_rule.f90, subroutine rule39. Retrieved 2026-11-20.",
  "status": "proven",
  "symmetry": "full",
  "numerical_check": {
