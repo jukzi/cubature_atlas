@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-17-56-PI-OS",
+ "file": "rules/omelyan_solovyan_2006/square/CA-C2-17-56-PI-OS.json",
+ "domain": "square",
+ "degree": 17,
+ "points": 56,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "a9ce50423d520e48",
+ "stored": {
+  "res_bound": 2.817543290692395e-15,
+  "res_ok": true,
+  "margin_exact": 0.003098650017417,
+  "minw_exact": 0.010693483986974527,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.1978752461906363e-16,
+  "kratio": 0.6666666667137081,
+  "mode": "sym4",
+  "equations": 41,
+  "unknowns": 42,
+  "dist": 9.583001969525092e-16,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.43,
+ "ok_stored": true,
+ "ok_exist": true
+}
