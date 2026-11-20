@@ -16,7 +16,7 @@
     "de": "Nicht symmetrische PI-Regeln auf dem Tetraeder aus der Literatur, zum Vergleich übernommen: J. Jaśkowiec, N. Sukumar: High-order cubature rules for tetrahedra. Int. J. Numer. Methods Eng. 121 (2020). Daten: das Zusatzmaterial der Zeitschrift (64 Stellen, Gewichte auf Summe 1 normiert), auf doppelte Genauigkeit gerundet und die Gewichte durch 6 geteilt; der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    18
+    21
   ],
   "author": "Jaśkowiec–Sukumar"
 }
