@@ -1,0 +1,104 @@
+{
+ "id": "CA-C2-09-17-PI-XG",
+ "family": "xiao_gimbutas_2010",
+ "domain": "square",
+ "dimension": 2,
+ "degree": 9,
+ "points": 17,
+ "quality": "PI",
+ "origin": "literature",
+ "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
+ "author": "Xiao-Gimbutas",
+ "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; rule of the authors' published data tables (more recent than the paper, fewer nodes than the count of the paper), mapped affinely to the atlas domain, weights scaled to its volume. Data file: github.com/zgimbutas/triasymq (version 1.11, commit 332f5f4), file tables/squarerotq/data_post.m, block nmax = 9. Retrieved 2026-11-20.",
+ "status": "proven",
+ "symmetry": "central",
+ "nodes": [
+  [
+   -0.9279616459595696,
+   -0.7502770999789006
+  ],
+  [
+   -0.7502770999789006,
+   0.9279616459595696
+  ],
+  [
+   0.9279616459595696,
+   0.7502770999789006
+  ],
+  [
+   0.7502770999789006,
+   -0.9279616459595696
+  ],
+  [
+   -0.6306801197316688,
+   -0.9688499663619777
+  ],
+  [
+   -0.9688499663619777,
+   0.6306801197316688
+  ],
+  [
+   0.6306801197316688,
+   0.9688499663619777
+  ],
+  [
+   0.9688499663619777,
+   -0.6306801197316688
+  ],
+  [
+   -0.8526157293336623,
+   -0.07620832819261718
+  ],
+  [
+   -0.07620832819261718,
+   0.8526157293336623
+  ],
+  [
+   0.8526157293336623,
+   0.07620832819261718
+  ],
+  [
+   0.07620832819261718,
+   -0.8526157293336623
+  ],
+  [
+   -0.4533398211356472,
+   -0.5237358202144293
+  ],
+  [
+   -0.5237358202144293,
+   0.4533398211356472
+  ],
+  [
+   0.4533398211356472,
+   0.5237358202144293
+  ],
+  [
+   0.5237358202144293,
+   -0.4533398211356472
+  ],
+  [
+   0.0,
+   0.0
+  ]
+ ],
+ "weights": [
+  0.11209960212959648,
+  0.11209960212959648,
+  0.11209960212959648,
+  0.11209960212959648,
+  0.08887937817019871,
+  0.08887937817019871,
+  0.08887937817019871,
+  0.08887937817019871,
+  0.2690513376397808,
+  0.2690513376397808,
+  0.2690513376397808,
+  0.2690513376397808,
+  0.3982824392620701,
+  0.3982824392620701,
+  0.3982824392620701,
+  0.3982824392620701,
+  0.5267489711934157
+ ]
+}
