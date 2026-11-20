@@ -20,8 +20,8 @@
   {
     "n": 4,
     "y": "1985",
-    "t": "D. A. Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. Int. J. Numer. Methods Eng. 21 (1985).",
-    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/triangle_dunavant_rule/triangle_dunavant_rule.html"
+    "t": "David Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. International Journal for Numerical Methods in Engineering 21 (1985), 1129–1148.",
+    "u": "https://people.math.sc.edu/Burkardt/f_src/triangle_dunavant_rule/triangle_dunavant_rule.html"
   },
   {
     "n": 5,
