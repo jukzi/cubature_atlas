@@ -32,6 +32,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 |---|---|---|
 | `minimal_pointcount_for_degree_n_PI` | `pi` | Smallest rules of the atlas's own search: positive weights, nodes in the closed domain |
 | `minimal_pointcount_for_degree_n_PO` | `po` | Positive weights, at least one node genuinely outside the domain |
+| `albrecht_collatz_1958` | `literature` | Positive fully symmetric degree-3 triangle rule (6 nodes), reproduced from Albrecht–Collatz (1958) |
 | `witherden_vincent_2015` | `literature` | Fully symmetric triangle rules (reproduced for comparison) |
 | `jaskowiec_sukumar_2020` | `literature` | Fully symmetric tetrahedron rules (reproduced for comparison) |
 | `diallo_worku_2026` | `literature` | Fully symmetric square and cube rules (reproduced for comparison) |
