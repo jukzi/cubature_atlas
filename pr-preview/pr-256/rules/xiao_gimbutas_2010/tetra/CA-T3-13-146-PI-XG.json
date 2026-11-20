@@ -9,7 +9,7 @@
  "origin": "literature",
  "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
  "author": "Xiao-Gimbutas",
- "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; numbers as printed (16 digits) in J. Burkardt's tetrahedron_arbq_rule, mapped affinely from the tetrahedron with the vertices (-1,-1/sqrt3,-1/sqrt6), (0,2/sqrt3,-1/sqrt6), (1,-1/sqrt3,-1/sqrt6), (0,0,3/sqrt6) to the atlas tetrahedron, weights scaled to the sum 1/6.",
+ "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; numbers as printed (16 digits) in J. Burkardt's tetrahedron_arbq_rule, mapped affinely from the tetrahedron with the vertices (-1,-1/sqrt3,-1/sqrt6), (0,2/sqrt3,-1/sqrt6), (1,-1/sqrt3,-1/sqrt6), (0,0,3/sqrt6) to the atlas tetrahedron, weights scaled to the sum 1/6. Data file: J. Burkardt, https://people.sc.fsu.edu/~jburkardt/f_src/tetrahedron_arbq_rule/tetrahedron_arbq_rule.f90, subroutine rule13. Retrieved 2026-11-20.",
  "status": "proven",
  "symmetry": "none",
  "numerical_check": {
