@@ -55,6 +55,10 @@ IDEA 12 Shell start for N = 2 mod 3 (mode shellasym): C3 pattern with N-1 or N-2
 IDEA 13 Unsymmetric polish of C3 near-solutions (--asym_polish): no gain so far.
 IDEA 16 Mirror (x <-> y) symmetric search (mode mirror): N = 2a + b, half the
         unknowns, possible for N = 2 mod 3 where C3 is not.
+IDEA 17 Mirror shell start (mode mirrorshell): S3 symmetric rings of a C3 pattern with
+        N - 1 or N - 2 nodes, paired by the mirror x <-> y, plus 1-2 extra nodes, then
+        the mirror symmetric LM; for N = 2 mod 3 at degrees where random mirror
+        starts are hopeless.
 IDEA 14 Variable projection (--vp 1, solve_vp): weights eliminated by linear least
         squares.  MEASURED: no gain (16/52 time to solution equal within noise to the
         full 3N-unknown LM).  Kept as an option, default off.
@@ -838,6 +842,76 @@ def mode_mirror(a_, rng, cmd):
     print("found", found, "tries", tried, "best", best)
 
 
+def mode_mirrorshell(a_, rng, cmd):
+    """IDEA 17: mirror symmetric shell start for N = 2 mod 3 (no C3 rule possible).
+    A C3 shell pattern with N0 = N - extra nodes (N0 = 0 or 1 mod 3) whose rings are
+    not slid or turned is S3 symmetric, hence mirror symmetric.  Its nodes off the
+    axis x = y are paired (base node with x < y), its nodes on the axis are axis
+    nodes.  extra = 1 adds an axis node, extra = 2 adds a mirror pair or two axis
+    nodes.  Seeded noise (bubble function) breaks the exact structure; the solve is
+    the mirror symmetric LM (IDEA 16), which has half the unknowns."""
+    n, N = a_.degree, a_.nodes
+    t0 = time.time()
+    found = 0
+    tried = 0
+    best = 1e9
+    while not (a_.minutes and time.time() - t0 > 60 * a_.minutes) and tried < a_.tries:
+        extra = int(rng.choice([1, 2]))
+        N0 = N - extra
+        if N0 % 3 == 2:
+            continue
+        ms = shell_pattern_random(N0, rng)
+        if ms is None:
+            continue
+        for _ in range(a_.starts_per_pattern):
+            tried += 1
+            s0, t0_, w0, cen = shell_start(ms, rng, 0.0, 0.0, 0.0)
+            kk = len(s0)
+            full = c3_to_full(np.concatenate([s0, t0_, w0] + ([[0.5 / N]] if cen else [])), kk, cen)
+            fs, ft, fw = unpack(full, N0)
+            x, y = to_xy(fs, ft)
+            on_axis = np.abs(x - y) < 1e-9
+            base = (x < y) & ~on_axis
+            bx, by = x[base], y[base]
+            bw = fw[base]
+            ux = x[on_axis]
+            uw = fw[on_axis]
+            if extra == 1:
+                ux = np.append(ux, rng.random() * 0.5)
+                uw = np.append(uw, 0.5 / N)
+            elif rng.random() < 0.5:
+                bx = np.append(bx, rng.random() * 0.4)
+                by = np.append(by, 0.5 + rng.random() * 0.4 - 0.1)
+                bw = np.append(bw, 0.5 / N)
+            else:
+                ux = np.concatenate([ux, rng.random(2) * 0.5])
+                uw = np.concatenate([uw, np.full(2, 0.5 / N)])
+            bub = 27 * bx * by * np.clip(1 - bx - by, 0, None)
+            bx = np.clip(bx + a_.noise * bub * rng.normal(size=len(bx)), 0, 1)
+            by = np.clip(by + a_.noise * bub * rng.normal(size=len(by)), 0, 1 - bx)
+            bs_, bt_ = xy_to_st(bx, by)
+            a = len(bx)
+            b = len(ux)
+            if 2 * a + b != N:
+                continue
+            v = np.concatenate([bs_, bt_, bw, np.clip(ux, 0, 0.5), uw])
+            v, res = solve_mirror(v, a, b, n, max_nfev=a_.short_fev)
+            if res < best:
+                best = res
+                print(f"pattern {ms}+{extra} res {res:.2e} (best so far)", flush=True)
+            if res < a_.promote:
+                v, res = solve_mirror(v, a, b, n, max_nfev=a_.maxfev)
+                fullm = mirror_to_full(v, a, b)
+                if accept(fullm, n, N, a_.accept):
+                    found += 1
+                    save(a_.out, n, N, fullm, a_.seed, f"mirrorshell:{ms}+{extra}", cmd, res)
+                    print(f"FOUND pattern {ms}+{extra} res {res:.2e}", flush=True)
+                    if a_.max_found and found >= a_.max_found:
+                        print("found", found, "starts", tried, "best", best)
+                        return
+    print("found", found, "starts", tried, "best", best)
+
+
 def selftest():
     """Check the basis: orthonormality via a high order Duffy-Gauss rule."""
     from numpy.polynomial.legendre import leggauss
@@ -867,7 +941,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--degree", type=int)
     ap.add_argument("--nodes", type=int)
-    ap.add_argument("--mode", choices=["random", "elim", "po2pi", "c3", "basin", "shell", "shellasym", "mirror", "selftest"], default="random")
+    ap.add_argument("--mode", choices=["random", "elim", "po2pi", "c3", "basin", "shell", "shellasym", "mirror", "mirrorshell", "selftest"], default="random")
     ap.add_argument("--start")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--tries", type=int, default=20)
@@ -896,7 +970,7 @@ def main():
         selftest()
         return
     rng = np.random.default_rng(a.seed)
-    {"random": mode_random, "elim": mode_elim, "po2pi": mode_po2pi, "c3": mode_c3, "basin": mode_basin, "shell": mode_shell, "shellasym": mode_shellasym, "mirror": mode_mirror}[a.mode](a, rng, cmd)
+    {"random": mode_random, "elim": mode_elim, "po2pi": mode_po2pi, "c3": mode_c3, "basin": mode_basin, "shell": mode_shell, "shellasym": mode_shellasym, "mirror": mode_mirror, "mirrorshell": mode_mirrorshell}[a.mode](a, rng, cmd)
 
 
 if __name__ == "__main__":
