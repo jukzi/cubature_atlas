@@ -167,8 +167,10 @@
   {
     "n": 27,
     "y": "2024",
-    "t": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. arXiv:2409.02027 (2024), J. Comput. Appl. Math. 472 (2026) 116782. Tetrahedron rules up to degree 40.",
-    "u": "https://arxiv.org/abs/2409.02027"
+    "t": "Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. Journal of Computational and Applied Mathematics 472 (2026), 116782. DOI: 10.1016/j.cam.2025.116782.",
+    "u": "https://doi.org/10.1016/j.cam.2025.116782",
+    "u2": "https://arxiv.org/abs/2409.02027",
+    "l2": "Preprint"
   },
   {
     "n": 28,
