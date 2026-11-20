@@ -69,7 +69,7 @@ def build_system():
     return C, m, high, index, upper, dim_pk
 
 
-def run_rank(r, C, m, high, index, upper, rng):
+def run_rank(r, C, m, high, index, upper, dim_pk, rng):
     num_high = len(high)
 
     def residual(z):
@@ -119,7 +119,7 @@ def main():
     summaries = []
     factors = {}
     for r in RANKS:
-        report, s, F = run_rank(r, C, m, high, index, upper, rng)
+        report, s, F = run_rank(r, C, m, high, index, upper, dim_pk, rng)
         summaries.append(report)
         factors[str(r)] = {"moment_deviation": s.tolist(), "factor": F.tolist()}
 
