@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-29-153-PI-FS",
+ "file": "rules/festa_sommariva_2012/square/CA-C2-29-153-PI-FS.json",
+ "domain": "square",
+ "degree": 29,
+ "points": 153,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "6a0a1a46d429b27e",
+ "stored": {
+  "res_bound": 8.580535235244375e-15,
+  "res_ok": true,
+  "margin_exact": 0.0032305001063594,
+  "minw_exact": 0.0009395690393964076,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.6518344450573444e-16,
+  "kratio": 0.6666666671169377,
+  "mode": "sym2",
+  "equations": 225,
+  "unknowns": 229,
+  "dist": 5.429296854984148e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 3.21,
+ "ok_stored": true,
+ "ok_exist": true
+}
