@@ -7,18 +7,22 @@
   "points": 19,
   "quality": "PI",
   "origin": "found",
-  "method": "AI-assisted numerical search of this atlas: start from the proven degree-10, 24-node PI rule CA-T2-10-24-PI-MPC, continue at degree 9, then remove five nodes successively. At each node count, 12 seeded deletion candidates and three perturbation amplitudes were tested; the chain selected the successful rule with the largest minimum weight and boundary margin. The 19-node result was reached through five removals; a further reduction to 18 nodes did not succeed in this campaign.",
+  "method": "AI-assisted numerical search of this atlas: start from the proven degree-10, 24-node PI rule CA-T2-10-24-PI-MPC, continue at degree 9, then remove five nodes successively. At each node count, 12 seeded deletion candidates and three perturbation amplitudes were tested; the chain selected the successful rule with the largest minimum weight and boundary margin. The 19-node result was reached through five removals; a further reduction to 18 nodes did not succeed in this campaign. The weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
   "author": "OpenAI ChatGPT (AI-assisted search)",
-  "status": "numerical candidate; interval proof pending",
-  "residual_reported": 5.412337245200466e-16,
+  "status": "interval-proven PI; awaiting atlas promotion",
+  "residual_reported": 4.802278888620784e-16,
   "numerical_check": {
     "N": 19,
     "M": 55,
     "p": 57,
-    "res": 5.412337245200466e-16,
+    "res": 4.802278888620784e-16,
     "inside": true,
-    "min_weight": 0.012668887067989574,
-    "min_boundary_distance": 0.020012932780952838
+    "min_weight": 0.012788837829349035,
+    "min_boundary_distance": 0.020634961602524846,
+    "sigma": 0.27969205290227084,
+    "h": 5.336591813994182e-12,
+    "rad": 1.0947456560473798e-15,
+    "cert": true
   },
   "reproduce": {
     "script": "code/benchmark_degree9_high_degree_chain.py",
@@ -27,101 +31,101 @@
   },
   "nodes": [
     [
-      0.045022973137768804,
-      0.04493730332210219
+      0.0447295133944528,
+      0.0447295133944528
     ],
     [
-      0.32916544184778157,
-      0.332333552599897
+      0.3333333333333333,
+      0.3333333333333333
     ],
     [
-      0.43447672094111944,
-      0.1251285063638693
+      0.43708959149293647,
+      0.1258208170141269
     ],
     [
-      0.6200303753329779,
-      0.1885767640794062
+      0.6235929287619345,
+      0.18820353561903272
     ],
     [
-      0.7424786723262653,
-      0.03725504780579609
+      0.7411985987844979,
+      0.03683841205473635
     ],
     [
-      0.1853713832080527,
-      0.18652814318041602
+      0.18820353561903272,
+      0.18820353561903272
     ],
     [
-      0.1231773580207159,
-      0.43630961631019294
+      0.1258208170141269,
+      0.4370895914929365
     ],
     [
-      0.04481710656024732,
-      0.9106773063873622
+      0.0447295133944528,
+      0.9105409732110944
     ],
     [
-      0.03666923208405766,
-      0.7424398840682893
+      0.03683841205473635,
+      0.7411985987844979
     ],
     [
-      0.020012932780952838,
-      0.49260612685112637
+      0.020634961602524846,
+      0.48968251919873756
     ],
     [
-      0.03578235960968769,
-      0.2233227639576499
+      0.03683841205473635,
+      0.22196298916076573
     ],
     [
-      0.18681920016798031,
-      0.6224508244099134
+      0.18820353561903272,
+      0.6235929287619345
     ],
     [
-      0.22368400161179336,
-      0.03603481921427717
+      0.22196298916076573,
+      0.03683841205473635
     ],
     [
-      0.4933355622586623,
-      0.020528796778520025
+      0.48968251919873756,
+      0.020634961602524846
     ],
     [
-      0.9109637370886776,
-      0.044633304239158296
+      0.9105409732110944,
+      0.0447295133944528
     ],
     [
-      0.49053644792472184,
-      0.48855990247398556
+      0.48968251919873756,
+      0.48968251919873756
     ],
     [
-      0.7409381099769149,
-      0.22125314761528705
+      0.7411985987844979,
+      0.22196298916076573
     ],
     [
-      0.435099806460743,
-      0.4367249640083005
+      0.43708959149293664,
+      0.4370895914929365
     ],
     [
-      0.2222228995374305,
-      0.7403156460527689
+      0.22196298916076573,
+      0.7411985987844979
     ]
   ],
   "weights": [
-    0.012933295679839875,
-    0.04870306705025932,
-    0.03877535639460856,
-    0.04009528192084283,
-    0.02170177321361591,
-    0.039522308048458604,
-    0.03851441511727787,
-    0.01274967793106271,
-    0.021444372972365913,
-    0.015253144986020666,
-    0.02121098808779963,
-    0.03991325913720128,
-    0.0213814893005473,
-    0.015584821782599642,
-    0.012668887067989574,
-    0.01593430042145108,
-    0.022101428078180812,
-    0.03950623075297936,
-    0.022005902056899042
+    0.012788837829349035,
+    0.04856789814139937,
+    0.03891377050238716,
+    0.039823869463605124,
+    0.0216417696886447,
+    0.039823869463605124,
+    0.03891377050238716,
+    0.012788837829349035,
+    0.0216417696886447,
+    0.01566735011356957,
+    0.0216417696886447,
+    0.039823869463605124,
+    0.0216417696886447,
+    0.01566735011356957,
+    0.012788837829349035,
+    0.01566735011356957,
+    0.0216417696886447,
+    0.03891377050238716,
+    0.0216417696886447
   ]
 }
