@@ -4,6 +4,8 @@ Idea: the removed node leaves a hole; the weight of the removed node is given to
 then Levenberg-Marquardt (code/shell_c3_search.py, `lm`) on all nodes and weights.  The nodes stay inside the triangle by construction (barycentric b = s^2 / sum s^2, weights wmin + v^2, class AsymPI of code/shell_asym_search.py),
 so a solution is a PI rule.  A run stops at a residual below 1e-12, or when over the last --win steps neither the residual fell by --gain (relative) nor an unknown changed by more than --dq.
 The candidates to remove are the nodes in the order of --order (weight: smallest weight first; random: seeded permutation); start number k removes candidate k // --noises and uses noise --noise * (k % --noises + 1) / --noises.
+--pull-inside --refine <solution.json>: a solution may have nodes on the boundary (a parametrisation ran to s = 0), which an interval proof of a PI rule cannot use; the solution is solved again with the barycentric
+coordinates b = delta + (1 - 3 delta) s^2 / sum s^2 for delta = 1e-6, 1e-5, 1e-4, 1e-3 (each solution is the start of the next delta, no noise) and written to <out>/refined_<deg>_<N>_asym.json, so that every node has the distance delta to the boundary.
 Every result (also without a solution) is appended to <out>/summary.txt with seed and command; a solution is written to <out>/solution_<deg>_<N-1>_asym.json with all digits, seed and command.
 Usage: python code/asym_remove_node.py --rule rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-44-348-PI-MPC.json --starts 40 --noise 0.05 --noises 2 --seed 1 [--part 0 --parts 4] --out asym_out
 Needs numpy and scipy (code/cubature_atlas.py, code/shell_c3_search.py, code/shell_asym_search.py)."""
@@ -21,9 +23,61 @@ import shell_c3_search as SC
 import shell_asym_search as SA
 
 
+class AsymPIDelta(SA.AsymPI):
+    """like AsymPI, but b = delta + (1 - 3 delta) s^2 / sum s^2, so every node has the barycentric distance delta to the boundary"""
+
+    def __init__(self, n, wmin, delta):
+        SA.AsymPI.__init__(self, n, wmin)
+        self.delta = delta
+
+    def q_from(self, X, W):
+        L = np.c_[1 - X.sum(1), X]
+        L = np.clip((L - self.delta) / (1 - 3 * self.delta), 1e-3, None)
+        L = L / L.sum(axis=1, keepdims=True)
+        return np.concatenate([np.sqrt(np.clip(W - self.wmin, 1e-12, None)), np.sqrt(L).reshape(-1)])
+
+    def nodes_weights(self, q):
+        X, W = SA.AsymPI.nodes_weights(self, q)
+        return self.delta + (1 - 3 * self.delta) * X, W
+
+    def jacobian(self, B, q, X, W):
+        n = self.N
+        J = SA.AsymPI.jacobian(self, B, q, X, W)
+        J[:, n:] *= (1 - 3 * self.delta)
+        return J
+
+
+def refine(a):
+    """pull the nodes of a solution file into the triangle: solve again for delta = 1e-6 ... 1e-3"""
+    sol = json.load(open(a.refine))
+    n = sol["degree"]
+    X = np.array(sol["nodes"], float)
+    W = np.array(sol["weights"], float)
+    B = C.Basis("triangle", n)
+    for delta in (1e-6, 1e-5, 1e-4, 1e-3):
+        red = AsymPIDelta(len(X), a.wmin, delta)
+        q = red.q_from(X, W)
+        q, res, used, why = SC.lm(B, red, q, 1500, 40, 0.01, 0.0001)
+        Xf, Wf = red.nodes_weights(q)
+        L = np.c_[1 - Xf.sum(1), Xf]
+        print("delta %g: residual %.2e (%d steps, %s), smallest barycentric coordinate %.2e, smallest weight %.2e" % (delta, res, used, why, L.min(), Wf.min()), flush=True)
+        if res < 1e-12 and float(Wf.min()) > 0.0:
+            X, W = Xf, Wf
+            out = dict(sol)
+            out.update({"nodes": X.tolist(), "weights": W.tolist(), "residual": res, "min_barycentric": float(L.min()), "nodes_outside": 0, "delta": delta,
+                        "refine_command": "python code/asym_remove_node.py --refine %s --pull-inside --wmin %g" % (a.refine, a.wmin)})
+            with open(os.path.join(a.out, "refined_%d_%d_asym.json" % (n, len(X))), "w") as fh:
+                json.dump(out, fh)
+        else:
+            print("no solution for this delta, the last refined file stays", flush=True)
+            return
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rule", required=True)
+    ap.add_argument("--refine", default="")
+    ap.add_argument("--pull-inside", action="store_true")
+    ap.add_argument("--rule", default="")
     ap.add_argument("--starts", type=int, default=20)
     ap.add_argument("--noise", type=float, default=0.05)
     ap.add_argument("--noises", type=int, default=2)
@@ -38,6 +92,10 @@ def main():
     ap.add_argument("--parts", type=int, default=1)
     ap.add_argument("--out", default="asym_remove_out")
     a = ap.parse_args()
+    if a.refine:
+        os.makedirs(a.out, exist_ok=True)
+        refine(a)
+        return
     rule = json.load(open(a.rule))
     n = rule["degree"]
     X0 = np.array(rule["nodes"], float)
