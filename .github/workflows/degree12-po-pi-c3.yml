@@ -1,0 +1,33 @@
+name: Degree-12 PO31 to PI31 C3 homotopy
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - "code/benchmark_degree12_po_pi_c3.py"
+      - ".github/workflows/degree12-po-pi-c3.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  homotopy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install search dependencies
+        run: pip install numpy scipy
+      - name: Run C3-reduced and asymmetric PO-to-PI homotopy
+        run: python code/benchmark_degree12_po_pi_c3.py
+      - name: Upload candidate rules and diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: degree12-po-to-pi-c3-results
+          path: degree12_c3_po_to_pi_results.json
