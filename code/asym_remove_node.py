@@ -4,6 +4,8 @@ Idea: the removed node leaves a hole; the weight of the removed node is given to
 then Levenberg-Marquardt (code/shell_c3_search.py, `lm`) on all nodes and weights.  The nodes stay inside the triangle by construction (barycentric b = s^2 / sum s^2, weights wmin + v^2, class AsymPI of code/shell_asym_search.py),
 so a solution is a PI rule.  A run stops at a residual below 1e-12, or when over the last --win steps neither the residual fell by --gain (relative) nor an unknown changed by more than --dq.
 The candidates to remove are the nodes in the order of --order (weight: smallest weight first; random: seeded permutation); start number k removes candidate k // --noises and uses noise --noise * (k % --noises + 1) / --noises.
+--drop-below W (default 1e-6): the weights are w = wmin + v^2, so a node whose v has run to 0 keeps the weight wmin and can no longer change: it is practically removed, and the other nodes make up for its tiny contribution.
+Every such solution is therefore a solution with one node less plus a dummy node.  After a solution, every node with a weight below W is dropped and the rest is solved again (up to 5 times as long as it succeeds); the stored solution has the nodes that are left (N is the number of them, which can be below N - 1).
 --pull-inside --refine <solution.json>: a solution may have nodes on the boundary (a parametrisation ran to s = 0), which an interval proof of a PI rule cannot use; the solution is solved again with the barycentric
 coordinates b = delta + (1 - 3 delta) s^2 / sum s^2 for delta = 1e-6, 1e-5, 1e-4, 1e-3 (each solution is the start of the next delta, no noise) and written to <out>/refined_<deg>_<N>_asym.json, so that every node has the distance delta to the boundary.
 Every result (also without a solution) is appended to <out>/summary.txt with seed and command; a solution is written to <out>/solution_<deg>_<N-1>_asym.json with all digits, seed and command.
@@ -76,6 +78,7 @@ def refine(a):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--refine", default="")
+    ap.add_argument("--drop-below", type=float, default=1e-6)
     ap.add_argument("--pull-inside", action="store_true")
     ap.add_argument("--rule", default="")
     ap.add_argument("--starts", type=int, default=20)
@@ -127,16 +130,29 @@ def main():
         cmd = "python code/asym_remove_node.py --rule %s --starts %d --noise %g --noises %d --order %s --seed %d --steps %d --win %d --gain %g --dq %g --wmin %g" % (
             a.rule, a.starts, a.noise, a.noises, a.order, a.seed, a.steps, a.win, a.gain, a.dq, a.wmin)
         solved = res < 1e-12 and float(Wf.min()) > 0.0
-        line = "degree %d, N %d, removed node %d (weight %.2e), noise %.3f, start %d: residual %.2e (%d steps, %s), %.0fs%s" % (
-            n, N - 1, cand, W0[cand], noise, k, res, used, why, time.time() - t0, "  *** SOLUTION" if solved else "")
+        dropped = 0
+        while solved and float(Wf.min()) < a.drop_below and dropped < 5 and len(Wf) > 2:
+            drop = int(np.argmin(Wf))
+            keep_n = np.arange(len(Wf)) != drop
+            red2 = SA.AsymPI(len(Wf) - 1, a.wmin)
+            q2 = red2.q_from(Xf[keep_n], Wf[keep_n])
+            q2, res2, used2, why2 = SC.lm(B, red2, q2, a.steps, a.win, a.gain, a.dq)
+            X2, W2 = red2.nodes_weights(q2)
+            if res2 < 1e-12 and float(W2.min()) > 0.0:
+                Xf, Wf, res = X2, W2, res2
+                dropped += 1
+            else:
+                break
+        line = "degree %d, N %d (%d dummy nodes dropped), removed node %d (weight %.2e), noise %.3f, start %d: residual %.2e (%d steps, %s), %.0fs%s" % (
+            n, len(Wf), dropped, cand, W0[cand], noise, k, res, used, why, time.time() - t0, "  *** SOLUTION" if solved else "")
         print(line, flush=True)
         with open(os.path.join(a.out, "summary.txt"), "a") as fh:
             fh.write(line + "\n")
         if solved:
             L = np.c_[1 - Xf.sum(1), Xf]
-            sol = {"degree": n, "N": N - 1, "nodes": Xf.tolist(), "weights": Wf.tolist(), "residual": res, "min_barycentric": float(L.min()),
+            sol = {"degree": n, "N": len(Wf), "dropped": dropped, "nodes": Xf.tolist(), "weights": Wf.tolist(), "residual": res, "min_barycentric": float(L.min()),
                    "nodes_outside": int((L.min(axis=1) < 0).sum()), "start": k, "removed": cand, "noise": noise, "command": cmd}
-            with open(os.path.join(a.out, "solution_%d_%d_asym.json" % (n, N - 1)), "w") as fh:
+            with open(os.path.join(a.out, "solution_%d_%d_asym.json" % (n, len(Wf))), "w") as fh:
                 json.dump(sol, fh)
             print("solution found: min weight %.2e, smallest barycentric coordinate %.2e" % (Wf.min(), L.min()), flush=True)
             return
