@@ -216,14 +216,41 @@ def lm_bounded(fun_jac, v0, lb, ub, max_nfev, tol=1e-15):
         if not free.any() or np.abs(g[free]).max() < tol:
             break
         Jf = J[:, free]
+        # Use the smaller of the primal and dual damped systems.  Preserve the
+        # diagonal LM scaling of the primal formulation exactly:
+        #
+        #   (Jf.T Jf + mu D) step = -Jf.T r,  D = diag(Jf.T Jf).
+        #
+        # With K = Jf D^{-1/2}, the equivalent dual step is
+        #
+        #   step = -D^{-1/2} K.T (K K.T + mu I)^{-1} r.
+        #
+        # The dual system is cheaper when there are fewer moment equations than
+        # free variables.  This scaling matters: replacing D by a scalar damping
+        # term would change the LM trajectory and confound the benchmark.
         A = Jf.T @ Jf
         d = np.diag(A).copy()
         d[d < 1e-14] = 1e-14
+        use_dual = Jf.shape[0] < Jf.shape[1]
+        if use_dual:
+            inv_sqrt_d = 1.0 / np.sqrt(d)
+            K = Jf * inv_sqrt_d[None, :]
+            system = K @ K.T
+        else:
+            system = A
         improved = False
         for _try in range(12):
             try:
-                L = np.linalg.cholesky(A + mu * np.diag(d))
-                step = -np.linalg.solve(L.T, np.linalg.solve(L, g[free]))
+                damped = system.copy()
+                if use_dual:
+                    damped.flat[::damped.shape[0] + 1] += mu
+                    L = np.linalg.cholesky(damped)
+                    y = np.linalg.solve(L.T, np.linalg.solve(L, r))
+                    step = -(Jf.T @ y) / d
+                else:
+                    damped.flat[::damped.shape[0] + 1] += mu * d
+                    L = np.linalg.cholesky(damped)
+                    step = -np.linalg.solve(L.T, np.linalg.solve(L, g[free]))
             except np.linalg.LinAlgError:
                 mu *= 10
                 continue
