@@ -54,6 +54,7 @@ Before checking in a rule of this atlas, run `python tools/minimize_l2.py <rule.
 - PO search without any lower bound on the weights: nodes may go far outside with tiny weights (triangle degree 8: three nodes about 3.6 outside with weights 1.6e-10) and the interval proof decides. A bound such as w >= 1e-5 hid these solutions. Still demand w > 0 and guard against dummy nodes (weight about 1e-12) when N = Z + 1.
 - Asymmetric search (all nodes and weights free) started from the symmetric pattern with seeded noise; polish a symmetric result on the reduced system. The minimum of sum w^2 often turns out symmetric by itself.
 - Literature tables: if a paper prints nodes, import them with a script (see `code/import_xiao_wandzura.py`): read the printed generator nodes, expand the orbits with the symmetry group, map the domain affinely, scale the weights, check the moment equations. The check also finds misprints (a wrong printed weight; weights printed per generator instead of per node). A published count without points is not a rule: the viewer then shows only the number and no nodes.
+- Triangle degrees 41 to 50: a target of Z + 2 or Z + 3 nodes (C3 symmetric, N = 0 or 1 modulo 3) with `shell_c3_bary.py --target N --turn 2,all --offsets 0,-1,1 --pull-inside`, split over 4 processes with `--part`/`--parts`, found rules within about 30 to 90 minutes each; kill the other parts after the first solution. `--pull-inside` is needed for the interval proof (nodes on the boundary otherwise).
 
 ### Tried without gain
 
@@ -63,6 +64,7 @@ Repeat only with a new twist; add every new negative result with domain, degree,
 - Triangle, N = Z, PI: degrees 8, 10, 12 (best residual symmetric 1.4e-1, 8.0e-2, 1.5e-1; unsymmetric 9.5e-2, 6.9e-2, not finished for 12), even degrees 10 to 18 with C3 symmetry up to `--relax 4`, degree 18 with noise starts (150 per pattern, residual about 1e-3).
 - Triangle degrees 51 to 70, C3 symmetric PI, no S3 stage, 20 cloud sessions of 4 hours: no rule.
 - Square degree 28, centrally symmetric PO with 146 nodes: `square_elim.py --cs --po 3` stops at 150 nodes within seconds (the elimination gives up after 12 failed candidates).
+- Triangle, PI, C3 symmetric shell search (`code/shell_c3_bary.py --pull-inside`, all patterns, `--turn 2,all`, 4 cores, about 30 to 100 s per pattern): no solution for degree 41 with N = 301 and 302 (about 170 runs, best residual 3.2e-5), degree 42 with N = 316 and 317 (about 260 runs, best 1.2e-4), degree 44 with N = 345 (best 9.3e-5, also `--staged --relax 3`, 55 min) and N = 346 (best residual not recorded), degree 46 with N = 376 (best 1.8e-4, also `--staged --relax 3`, 55 min), degree 48 with N = 411 and 412 (about 100 runs, best 4.5e-5), degree 50 with N = 442 (best residual not recorded). Pattern: the residual stalls at 1e-4 to 1e-5; the rules found so far all have N = Z + 2 or Z + 3 (degree 41: 303, degree 42: 318, degree 44: 348, degree 46: 378, degree 50: 444).
 
 ### Open ideas
 
