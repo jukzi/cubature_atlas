@@ -1,6 +1,15 @@
 # Search prompt for AI agents
 
-A prompt for an AI agent (or a person) that searches for better rules in the Cubature Atlas. It collects what worked and what did not. Numbers in it are examples from earlier sessions: re-check every number against the current atlas before relying on it.
+A prompt for an AI agent (or a person) that searches for better rules in the Cubature Atlas. It collects what worked and what did not. Numbers in it (rule counts, node counts, rule ids, pull request numbers, residuals) are examples from earlier sessions: re-check every one against the current atlas before relying on it, and name its source when you quote it.
+
+## 0. Quick start
+
+1. Read README.md, CONTRIBUTING.md, DEVELOPMENT.md, CLAUDE.md; check `nproc`, `free -g`, whether the shell has network access, and `uptime`.
+2. Fetch `origin/main`, run `python tools/state_table.py` and pick a cell (see "Where to search").
+3. Calibrate: reproduce the atlas count of an easy cell from random starts with your own program.
+4. Search in short runs with many different parameters (see "Persistence and reporting"); save every solution with seed and command.
+5. Minimise the weights (`tools/minimize_l2.py`), prove the rule (`tools/verify_rigorous.py --strict --save`), run `tools/build_atlas.py --base origin/main --changed`, open one pull request per rule.
+6. Write what worked and what did not into this file, with numbers and their source.
 
 ## 1. Core
 
@@ -13,7 +22,7 @@ A prompt for an AI agent (or a person) that searches for better rules in the Cub
 - Goal: for a domain and degree n, find rules with fewer nodes N than the atlas (columns N_PI / N_PO). Also welcome: the same N with better quality (see "Quality").
 - Counting value Z = ceil(M / (dim + 1)): M is the number of moment equations (total degree at most n), every node brings dim + 1 unknowns (coordinates and weight). Triangle and square: M = (n+1)(n+2)/2, Z = ceil(M/3). Tetrahedron and cube: M = (n+1)(n+2)(n+3)/6, Z = ceil(M/4). Z is the natural target.
 - PI = all weights positive and all nodes in the closed domain. PO = weights positive, nodes may be outside; a PO rule only shows that a rule with that many nodes exists in principle.
-- The atlas changes all the time (other people merge pull requests). Before every campaign, and again before every long run, fetch and read it from `origin/main`. Generate the state table with a script over `rules/*/*/*.json` (fields `domain`, `degree`, `points`, `quality`, `origin`; use `tools/state_table.py` if it exists) instead of copying numbers from this text. From it determine:
+- The atlas changes all the time (other people merge pull requests). Before every campaign, and again before every long run, fetch and read it from `origin/main`. Generate the state table with `python tools/state_table.py` (options `--domain`, `--min-degree`, `--csv`; it reads `rules/*/*/*.json`) instead of copying numbers from this text. From it determine:
   - where the gap N − Z is largest,
   - where a PO rule has fewer nodes than the best PI rule,
   - which cells are unsolved,
@@ -50,6 +59,22 @@ Before checking in a rule of this atlas, run `python tools/minimize_l2.py <rule.
 - Own Levenberg–Marquardt instead of `scipy.optimize.least_squares(trf)`: Cholesky on the free variables, one basis evaluation per iteration, float64 on the CPU. This was the largest single speed-up (10x time to solution on the triangle). A start damping of 1e-4 gave wrong minima in one implementation, 0.1 worked; test your own.
 - Stagnation stop: stop a run when, over the last `win` steps, neither the residual fell by `gain` (relative) nor an unknown changed by `dq`. Hopeless starts then end after a few steps, and the saved time goes into more starts.
 - PI by construction, no penalties. Two variants worked: barycentric squares b = s^2 / sum s^2 (weights v^2 or softplus), or box bounds on a collapsed (Duffy) parametrisation with w >= 0. Nodes on the boundary can be pulled inside by re-solving with b = delta + (1 − 3 delta) s^2 / sum s^2.
+- Which map for weights and nodes (measured in one session, see the table below; re-measure with your own solver before relying on it). Weights: softplus w = ln(1 + e^s), w = e^s and w = s^2 all work; w = |s| and unconstrained w are much worse (the solver finds solutions, but almost all have negative weights, so positivity is the hard part). Likely reasons, not tested: |s| has a kink at 0, s^2 has zero slope at w = 0, so a weight near 0 gets stuck. Nodes: barycentric squares and a sigmoid on the Duffy coordinates were at least as good as box bounds; the sigmoid map was the fastest in wall time (no bounds, 2N instead of 3N node unknowns). Neither of them reaches the boundary exactly, so polish rules with boundary nodes afterwards.
+
+  Setup of the measurement: triangle, unsymmetric (all nodes and weights free), N = 12, 16, 19 for degrees 6, 8, 9, 40 random starts per cell with the same seeds for every variant, `scipy.optimize.least_squares(trf)` with a finite-difference Jacobian, Dubiner basis; success means residual below 1e-12 and all weights above 1e-8. Cells show successes out of 40.
+
+  | map | degree 6 | degree 8 | degree 9 |
+  |---|---|---|---|
+  | weights s^2 (box nodes) | 22 | 5 | 26 |
+  | weights e^s (box nodes) | 37 | 4 | 22 |
+  | weights softplus (box nodes) | 33 | 4 | 29 |
+  | weights \|s\| (box nodes) | 3 | 0 | 2 |
+  | weights free, sign not forced (box nodes) | 3 | 0 | 2 |
+  | nodes box bounds (softplus weights) | 33 | 4 | 29 |
+  | nodes barycentric squares (softplus weights) | 40 | 12 | 24 |
+  | nodes sigmoid on Duffy (softplus weights) | 40 | 5 | 31 |
+
+  With 40 starts only large gaps count (for example 3 against 33 or 40, or 12 against 4 at degree 8); differences of a few runs are noise. The scripts of this measurement are not in the repository.
 - Shell start + symmetric search (details per domain below), noise starts in short runs, staged pattern search (first coarse patterns, then relax).
 - PO search without any lower bound on the weights: nodes may go far outside with tiny weights (triangle degree 8: three nodes about 3.6 outside with weights 1.6e-10) and the interval proof decides. A bound such as w >= 1e-5 hid these solutions. Still demand w > 0 and guard against dummy nodes (weight about 1e-12) when N = Z + 1.
 - Asymmetric search (all nodes and weights free) started from the symmetric pattern with seeded noise; polish a symmetric result on the reduced system. The minimum of sum w^2 often turns out symmetric by itself.
@@ -72,20 +97,22 @@ Repeat only with a new twist; add every new negative result with domain, degree,
 - Cube degree 28, `--group Td --refine` from the 1133-node rule, 60 minutes: no improvement. Degree 16, `--group Td` and `--group Oh` refine: see above.
 - Square degree 28, centrally symmetric PO with 146 nodes: `square_elim.py --cs --po 3` stops at 150 nodes within seconds (the elimination gives up after 12 failed candidates).
 - Triangle, PI, C3 symmetric shell search (`code/shell_c3_bary.py --pull-inside`, all patterns, `--turn 2,all`, 4 cores, about 30 to 100 s per pattern): no solution for degree 41 with N = 301 and 302 (about 170 runs, best residual 3.2e-5), degree 42 with N = 316 and 317 (about 260 runs, best 1.2e-4), degree 44 with N = 345 (best 9.3e-5, also `--staged --relax 3`, 55 min) and N = 346 (best residual not recorded), degree 46 with N = 376 (best 1.8e-4, also `--staged --relax 3`, 55 min), degree 48 with N = 411 and 412 (about 100 runs, best 4.5e-5), degree 50 with N = 442 (best residual not recorded). Pattern: the residual stalls at 1e-4 to 1e-5; the rules found so far all have N = Z + 2 or Z + 3 (degree 41: 303, degree 42: 318, degree 44: 348, degree 46: 378, degree 50: 444).
+- Weight maps w = |s| and unconstrained w (positivity not forced) for PI search on the triangle, unsymmetric, degrees 6, 8, 9 with N = 12, 16, 19, 40 random starts each with `scipy` trf: only 3, 0 and 2 runs ended with residual below 1e-12 and positive weights (unconstrained w: 36 of 40 runs converged at degree 6, but only 3 with positive weights). Best residuals of the failed runs were not recorded. Use softplus, e^s or s^2 instead.
 
 ### Open ideas
 
+- Own Levenberg–Marquardt with the best maps from the table above (softplus weights, barycentric nodes) on the triangle cells with the largest gap N − Z: measure whether the success rates carry over from the unsymmetric `scipy` runs; a two-phase run (forced-positive maps first, free weights or the plain moment system to polish) is untested.
 - Noise-start search for the unsolved cells (check the atlas first); asymmetric search started from the best symmetric near-solution; variable projection (solve the weights linearly each step, fewer unknowns); Z − 1 attempts with symmetric shells; adaptive noise amplitude per shell; the same pipeline for the square (C2/C4) and the tetrahedron (shell-like starts); a c1 phase after the C3 phase has stalled; an iterative `--tries`/restart loop for the square elimination.
 
 ### Persistence and reporting
 
-- The stopping criterion is a budget, not success (a target may not exist): at least X hours of total compute (X is given for the session; if it is not given, X = 4) and at least 15 different ideas tried; each search run at most 1 hour (interval proofs are exempt, they can take hours). "No more ideas" does not count: derive new ones from near-solutions (which nodes move, where the residual sits, which pattern was closest).
+- The stopping criterion is a budget, not success (a target may not exist): at least X hours of total compute (X is given for the session; if it is not given, X = 4) and at least 15 different ideas tried; each search run at most 1 hour (interval proofs are exempt, they can take hours). Prefer many short runs: a configuration that has found no solution after about 30 minutes is replaced by other parameters (pattern, start, noise, map, N) instead of being run longer, unless the stagnation criterion shows it still improving. "No more ideas" does not count: derive new ones from near-solutions (which nodes move, where the residual sits, which pattern was closest).
 - Do not end your turn with a question or a pure status report, and do not end it while searches or proofs are running (see the environment notes: they may die with the turn). Report in short notes about every hour and keep working after each note. Each note names: what is searched and with which algorithm, the best state per degree, open proofs, open pull requests, chance of success. All numbers come from files (`git log`, the atlas, the logs), not from memory.
 - Wait inside the turn (poll loops). If the session cannot continue by itself, first test whether a scheduled wake-up (`/loop`, a scheduled task, a "send later" message) is actually delivered in this session; scheduled tasks may start a fresh session without your context. Schedule a follow-up before you stop only if it works.
 - Commit and push intermediate states to your branch (name it `ai/<topic>`). Pull requests: first the program (own pull request, with a line in `code/README.md`), then the rule (its `reproduce` command needs the program; do not open the rule pull request before the program one exists), one pull request per proven rule. The description says what was computed, how it was proven and what is still open. If a better proven rule exists for the same cell, close the older pull request with a pointer to the newer one.
 - Keep this file current: when you find a new idea, a useful insight or a tool that helps, add it to `SEARCH_PROMPT.md` in the same pull request or in a pull request of its own. Document what does not work just as carefully (domain, degree, N, method, best residual, time spent) under "Tried without gain", so nobody repeats it. Move an entry between "Open ideas", "What worked" and "Tried without gain" when its status changes, and correct numbers that are out of date.
 - Never invent a citation, never state a count you have not checked. If you use a publication, extend `literature.md` as CLAUDE.md describes.
-- Every number you quote from earlier sessions (rule counts, node counts, rule ids, pull request numbers) must come with its source and be re-checked against the current atlas before you rely on it.
+- Do not start GitHub Actions search runs (`workflow_dispatch` of `auto_search.yml`, `auto_cannonball.yml`) on your own; only the maintainer does.
 
 ### Environment notes
 
