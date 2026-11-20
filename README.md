@@ -71,18 +71,7 @@ Allowing nodes **outside** the domain (quality *PO*) saves nodes in 40 cells. Th
 
 ## Use a rule
 
-Every rule is a small JSON file with nodes and weights; the website offers each one as a download (and all of them as a ZIP).
-
-```python
-import json, math
-
-rule = json.load(open("rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-20-78-PI-MPC.json"))
-f = lambda x, y: math.exp(x) * math.cos(y)
-approx = sum(w * f(x, y) for (x, y), w in zip(rule["nodes"], rule["weights"]))
-print(approx)   # 0.668254268891508..., error about 4e-15 with 78 points
-```
-
-Domains: interval [−1,1], triangle (0,0),(1,0),(0,1), square [−1,1]<sup>2</sup>, tetrahedron (0,0,0),(1,0,0),(0,1,0),(0,0,1), cube [−1,1]<sup>3</sup>. The weights sum to the volume.
+Every rule is a small JSON file containing nodes and weights. Choose a domain and degree in the [interactive atlas](https://jukzi.github.io/cubature_atlas/), inspect the nodes, and download the rule you need. The website's [quick guide](https://jukzi.github.io/cubature_atlas/#start) explains the node-count columns and the PI/PO distinction; its [Python example](https://jukzi.github.io/cubature_atlas/#use-rule) shows how to apply a downloaded file. The weights sum to the volume of the reference domain.
 
 ## Open questions
 
