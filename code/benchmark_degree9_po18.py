@@ -26,7 +26,7 @@ import tri_search as TS
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = (
     ("original", ROOT / "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.json"),
-    ("improved_s3", ROOT / "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC-a.json"),
+    ("improved_s3", ROOT / "scratch_candidates/degree9_s3_19_po_start.json"),
 )
 DEGREE = 9
 TARGET_N = 18
