@@ -14,6 +14,7 @@ A prompt for an AI agent (or a person) that searches for better rules in the Cub
 ## 1. Core
 
 **Task:** Cubature Atlas – find rules with fewer nodes (or better rules), prove them, submit pull requests.
+Allways keep improving code or searching rules without asking for feedback. 
 
 ### Project
 
@@ -129,7 +130,8 @@ Repeat only with a new twist; add every new negative result with domain, degree,
 
 ### Persistence and reporting
 
-- The stopping criterion is a budget, not success (a target may not exist): at least X hours of total compute (X is given for the session; if it is not given, X = 4) and at least 15 different ideas tried; each search run at most 1 hour (interval proofs are exempt, they can take hours). Prefer many short runs: a configuration that has found no solution after about 30 minutes is replaced by other parameters (pattern, start, noise, map, N) instead of being run longer, unless the stagnation criterion shows it still improving. "No more ideas" does not count: derive new ones from near-solutions (which nodes move, where the residual sits, which pattern was closest).
+- The stopping criterion is a budget, not success (a target may not exist): Each search should run at most 1 hour (set a timeout). Prefer many short runs: a configuration that has found no solution after about 30 minutes is replaced by other parameters (pattern, start, noise, map, N) instead of being run longer, unless the stagnation criterion shows it still improving. "No more ideas" does not count: derive new ones from near-solutions (which nodes move, where the residual sits, which pattern was closest).
+- Start every status message with GMT+1 date and time (if available) "YYYY-MM-DD hh:mm:".
 - Do not end your turn with a question or a pure status report, and do not end it while searches or proofs are running (see the environment notes: they may die with the turn). Report in short notes about every hour and keep working after each note. Each note names: what is searched and with which algorithm, the best state per degree, open proofs, open pull requests, chance of success. All numbers come from files (`git log`, the atlas, the logs), not from memory.
 - Wait inside the turn (poll loops). If the session cannot continue by itself, first test whether a scheduled wake-up (`/loop`, a scheduled task, a "send later" message) is actually delivered in this session; scheduled tasks may start a fresh session without your context. Schedule a follow-up before you stop only if it works.
 - Commit and push intermediate states to your branch (name it `ai/<topic>`). Pull requests: first the program (own pull request, with a line in `code/README.md`), then the rule (its `reproduce` command needs the program; do not open the rule pull request before the program one exists), one pull request per proven rule. The description says what was computed, how it was proven and what is still open. If a better proven rule exists for the same cell, close the older pull request with a pointer to the newer one.
@@ -161,7 +163,6 @@ Observed in earlier sessions; verify first, they differ per session.
 
 - Most promising region: degrees 31 and higher, where stored counts are furthest from the lower bound. Rule files: `rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-<degree>-<nodes>-PI-MPC.json`.
 - Search program: `code/sym_elim.py` with group c3 (C3-symmetric orbit elimination). Run it in stages of 2400 s; every stage writes a sidecar `.json` with seed, start and command, so the `reproduce` field can chain the stages. Settings used before: `EXTTOL=1e-5`, `EXTIT=150`, two chains with different seed bases (8700 and 9200).
-- Interval proofs for N between 2100 and 2600 took 1.5 to 3 hours and need much memory; do not run a browser next to a proof.
 - Never replay old runs only to fill `reproduce`; draw start points from a generator seeded with the stored seed and save every solution with seed and command (`--out`).
 
 ## 4. Appendix: square and cube
