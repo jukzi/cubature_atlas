@@ -440,6 +440,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-38-261-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-39-274-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-40-288-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-302-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-303-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-318-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-330-PI-MPC.html</loc></url>
@@ -555,6 +556,16 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-18-67-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-19-73-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/witherden_vincent_2015/triangle/CA-T2-20-79-PI-WV.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-21-540-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-22-616-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-23-706-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-24-756-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-25-904-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-26-992-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-27-1148-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-28-1200-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-29-1405-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-30-1564-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-31-1667-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-32-1768-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/worku_hicken_zingg_2024/tetra/CA-T3-33-1913-PI-WHZ.html</loc></url>
@@ -1060,6 +1071,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-38-261-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-39-274-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-40-288-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-302-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-303-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-318-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-330-PI-MPC.html</loc></url>
@@ -1175,6 +1187,16 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-18-67-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-19-73-PI-WV.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/witherden_vincent_2015/triangle/CA-T2-20-79-PI-WV.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-21-540-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-22-616-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-23-706-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-24-756-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-25-904-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-26-992-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-27-1148-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-28-1200-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-29-1405-PI-WHZ.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-30-1564-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-31-1667-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-32-1768-PI-WHZ.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/worku_hicken_zingg_2024/tetra/CA-T3-33-1913-PI-WHZ.html</loc></url>

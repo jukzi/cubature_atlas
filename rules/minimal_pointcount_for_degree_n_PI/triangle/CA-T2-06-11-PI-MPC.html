@@ -16,27 +16,27 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Degree</th><td>6</td></tr>
 <tr><th>Number of nodes</th><td>11</td></tr>
 <tr><th>Quality</th><td>PI</td></tr>
-<tr><th>Max. moment residual (build check)</th><td>8.88e-16</td></tr>
-<tr><th>Smallest weight</th><td>1.669874e-02</td></tr>
-<tr><th>Distance to domain boundary (negative = outside)</th><td>4.586e-02</td></tr>
-<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 3.98e-14, radius = 3.28e-16, yes</td></tr>
-<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 1.6e-15 of the stored numbers (symmetry-reduced equations, group of order 2)</td></tr>
-<tr><th>Origin</th><td>numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>4.44e-16</td></tr>
+<tr><th>Smallest weight</th><td>1.735436e-02</td></tr>
+<tr><th>Distance to domain boundary (negative = outside)</th><td>4.462e-02</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 1.28e-14, radius = 3.81e-16, yes</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 1.0e-15 of the stored numbers (symmetry-reduced equations, group of order 2)</td></tr>
+<tr><th>Origin</th><td>numerical search of this atlas: mirror (x &lt;-&gt; y) symmetric Levenberg-Marquardt search in float64 from random starts with 3 node(s) on the mirror axis (code/tri_search.py, mode mirror; N = 2 a + b, a pairs and b axis nodes), start points from an arcsine law, degree continuation, the nodes kept in the triangle by box bounds on a collapsed parametrisation and the weights &gt;= 0; all nodes lie inside the triangle; the weights were then minimised in the L2 norm with the symmetry kept (tools/minimize_l2.py); the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
 </table>
 <p><a href="../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-06-11-PI-MPC.json">Download JSON</a></p>
 <h2>Cite as</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-06-11-PI-MPC (Minimal point count for degree n (PI), triangle, degree 6, 11 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-06-11-PI-MPC.html</pre>
 <h2>Nodes and weights</h2>
 <pre>  #                       x                       y                       w
-   1  7.112906765840099e-02   7.112906765840099e-02   3.193218325599137e-02
-   2  9.052959898246830e-01   4.884395045744788e-02   1.669874388359145e-02
-   3  3.478877921033962e-01   5.094289992909677e-02   4.367077929585714e-02
-   4  5.094289992909677e-02   3.478877921033962e-01   4.367077929585714e-02
-   5  2.470374626761304e-01   2.470374626761304e-01   5.703238627822173e-02
-   6  3.709442549941017e-01   3.709442549941017e-01   8.006548449594954e-02
-   7  6.510765429975083e-01   2.926496673807407e-01   4.709905041568694e-02
-   8  6.589246267932958e-01   7.892879428662125e-02   5.801639938978333e-02
-   9  2.926496673807407e-01   6.510765429975083e-01   4.709905041568694e-02
-  10  4.884395045744788e-02   9.052959898246830e-01   1.669874388359145e-02
-  11  7.892879428662125e-02   6.589246267932958e-01   5.801639938978333e-02</pre>
+   1  2.891205545712979e-01   7.126076690552149e-02   5.621643454601749e-02
+   2  6.587648591896696e-02   6.290990269948993e-01   5.397058641262165e-02
+   3  6.803300983256862e-01   2.413615420021723e-01   4.743975273009375e-02
+   4  9.013084319765770e-01   4.462042479233158e-02   1.735436307300823e-02
+   5  7.126076690552149e-02   2.891205545712979e-01   5.621643454601749e-02
+   6  6.290990269948993e-01   6.587648591896696e-02   5.397058641262165e-02
+   7  2.413615420021723e-01   6.803300983256862e-01   4.743975273009375e-02
+   8  4.462042479233158e-02   9.013084319765770e-01   1.735436307300823e-02
+   9  3.363782406522180e-01   3.363782406522180e-01   1.037867219052065e-01
+  10  4.752573856403941e-01   4.752573856403941e-01   2.703216778485860e-02
+  11  5.200257922364722e-02   5.200257922364722e-02   1.921883678645288e-02</pre>
 </body></html>
