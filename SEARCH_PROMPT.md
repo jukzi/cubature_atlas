@@ -166,7 +166,7 @@ Xiao-Gimbutas (2010), still without node data:
 - triangle k=xg: 110@24 and 118@25 (the table of the paper lists reflection-symmetric rules; the authors' repository has only the rotationally symmetric rules with 111 nodes at degree 24 and 117 at degree 25, no reflection-symmetric code `triasyml.f`).
 - square k=xg: 18@9, 27@11, 35@13, 45@15, 71@19. The published code gives fewer nodes (17, 24, 33, 44, 68 in Burkardt's square_arbq_rule; 17, 24, 33, 43, 67 in the authors' current tables); no data with the counts of the table of the paper was found.
 - cube k=xg: 74@10 (the published code has 73 nodes at degree 10).
-- Other counts of the current tables of the authors (square, tetrahedron and cube rules with fewer nodes than the paper) are not imported: they do not match the counts in the file.
+- The rules of the more recent tables of the authors with fewer nodes than the counts of the paper are in the family `xiao_gimbutas_2010` (sources `xgt_<table>` of `code/import_burkardt_rules.py`; each rule names the file and the retrieval date). They are literature rules, not atlas results: never use a search result of the atlas as a literature rule.
 
 Worku-Hicken-Zingg (2024), tetrahedron k=wk: all cells 540@21 to 1564@30 now have node data (degrees 21 to 30, imported by `code/import_burkardt_rules.py` from the published high-precision tables). Their triangle and tetrahedron rules of higher degrees were already in the atlas.
 Pinkse (2026), cube k=pk: the cells 82@11, 128@13, 188@15, 266@17, 612@23, 964@27 now have node data (imported by `code/import_burkardt_rules.py` from the published data deposit). The cells of the even degrees and of the square (for example 456@50) are covered by the rule of the next odd degree with the same node count.

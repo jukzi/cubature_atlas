@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-48-412-PI-XG",
+ "file": "rules/xiao_gimbutas_2010/triangle/CA-T2-48-412-PI-XG.json",
+ "domain": "triangle",
+ "degree": 48,
+ "points": 412,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "23c76ae193cb17a8",
+ "stored": {
+  "res_bound": 2.368913491907148e-14,
+  "res_ok": true,
+  "margin_exact": 0.00013237759979050495,
+  "minw_exact": 2.1704997334885556e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.1640134147942013e-12,
+  "kratio": 0.667275967587642,
+  "mode": "full",
+  "equations": 1225,
+  "unknowns": 1236,
+  "dist": 1.8624214636707225e-11,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 301.71,
+ "ok_stored": true,
+ "ok_exist": true
+}
