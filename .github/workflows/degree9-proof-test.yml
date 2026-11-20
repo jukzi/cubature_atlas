@@ -1,0 +1,35 @@
+name: Degree-9 candidate interval proof test
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - "scratch_candidates/CA-T2-09-19-PI-MPC-a.json"
+      - ".github/workflows/degree9-proof-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  interval-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install verifier dependency
+        run: pip install numpy
+      - name: Prove the candidate
+        run: |
+          python tools/verify_rigorous.py --strict --save scratch_candidates/CA-T2-09-19-PI-MPC-a.json --report candidate_interval_report.json
+      - name: Upload proof and report
+        uses: actions/upload-artifact@v4
+        with:
+          name: degree9-candidate-interval-proof
+          path: |
+            scratch_candidates/CA-T2-09-19-PI-MPC-a.proof
+            candidate_interval_report.json
