@@ -127,6 +127,7 @@ Repeat only with a new twist; add every new negative result with domain, degree,
 ### Open ideas
 
 - Own Levenberg–Marquardt with the best maps from the table above (softplus weights, barycentric nodes) on the triangle cells with the largest gap N − Z: measure whether the success rates carry over from the unsymmetric `scipy` runs; a two-phase run (forced-positive maps first, free weights or the plain moment system to polish) is untested.
+- Tetrahedron: test the higher-degree warm start that worked for triangle and square. `sym_elim.py` builds its moment system from the requested target degree but accepts any expanded node/weight start, so a degree n+1 rule is already exact for the degree-n equations and gives more elimination slack. First untested trial: target degree 35 (Z = 2109) from the proven C3 rule `CA-T3-36-2475-PI-MPC` (2475 nodes), using group `c3`; preserve the stage sidecars and stop if residuals plateau. This is a hypothesis, not a computed result.
 - Noise-start search for the unsolved cells (check the atlas first); asymmetric search started from the best symmetric near-solution; variable projection (solve the weights linearly each step, fewer unknowns); Z − 1 attempts with symmetric shells; adaptive noise amplitude per shell; the same pipeline for the square (C2/C4) and the tetrahedron (shell-like starts); a c1 phase after the C3 phase has stalled; an iterative `--tries`/restart loop for the square elimination.
 
 ### Persistence and reporting
