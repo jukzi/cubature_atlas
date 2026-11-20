@@ -16,7 +16,7 @@
     "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003). Die sechs im Artikel abgedruckten Regeln (Grade 5, 10, 15, 20, 25, 30); Erzeugerknoten wie gedruckt (16 Stellen), mit der Symmetriegruppe ergänzt und auf das Dreieck mit den Ecken (0,0), (1,0), (0,1) abgebildet; der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    12
+    13
   ],
   "author": "Wandzura–Xiao"
 }

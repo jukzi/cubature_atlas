@@ -16,7 +16,7 @@
     "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: J. Jaśkowiec, N. Sukumar: High-order symmetric cubature rules for tetrahedra and pyramids. Int. J. Numer. Methods Eng. 122 (2021). Knoten und Gewichte wie veröffentlicht (15 Stellen); der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    22
+    23
   ],
   "author": "Jaśkowiec–Sukumar"
 }

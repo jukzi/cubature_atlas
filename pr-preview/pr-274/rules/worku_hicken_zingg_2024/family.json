@@ -16,7 +16,7 @@
     "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. J. Comput. Appl. Math. 472 (2026) 116782, arXiv:2409.02027 (2024). Dreieck Grad 31 bis 50 und Tetraeder Grad 21 bis 40. Daten: github.com/OptimalDesignLab/SummationByParts.jl, pi_quadrature_data/high_precision (MIT-Lizenz), vom Simplex mit den Eckenkoordinaten −1 und 1 auf den Einheitssimplex umgerechnet (Gewichte durch 2^d geteilt) und auf doppelte Genauigkeit gerundet; der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    27
+    28
   ],
   "author": "Worku–Hicken–Zingg"
 }
