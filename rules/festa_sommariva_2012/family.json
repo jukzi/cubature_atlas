@@ -16,7 +16,7 @@
     "de": "PI-Regeln auf dem Quadrat aus der Literatur, zum Vergleich übernommen: M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296–4302. Grad 16, 20, 22, 27, 29 und 31 bis 50, eine Regel je Grad. Zahlen wie in J. Burkardts square_minimal_rule abgedruckt (16 Stellen, GNU LGPL), das die Punktmengen der Autoren wiedergibt; der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    16
+    19
   ],
   "author": "Festa–Sommariva"
 }
