@@ -100,6 +100,7 @@ Before checking in a rule of this atlas, run `python tools/minimize_l2.py <rule.
 
 Repeat only with a new twist; add every new negative result with domain, degree, N, method, best residual.
 
+- Triangle degree 8, PI, random starts: compared the existing box-bounded Duffy coordinates with softmax barycentric nodes and softplus weights, using the same 40 starts (seeds 2001–2040), primal LM solver, continuation degrees 4, 6, 7, 8 and iteration budgets ([benchmark PR #275](https://github.com/jukzi/cubature_atlas/pull/275), run 44782221552). At N = 16, box/Duffy solved 4/40 (best residual 5.27e-16, 7.89 s total) while barycentric/softplus solved 1/40 (9.16e-16, 17.31 s). At N = 15, both solved 0/40 (best residual 2.85e-2 vs 2.93e-2; 7.16 s vs 14.44 s). The barycentric map was about 2.2x slower at N = 16 and 2.0x slower at N = 15, with fewer or equal successes; no gain for this setup.
 - Random-start LM without a shell pattern where shells worked; node elimination from N + 1 rules; long basin hopping; GPU float32 searches; S3 stage for triangle degrees below 20; PO to PI conversion by shrinking outside nodes towards the centroid.
 - Triangle, N = Z, PI: degrees 8, 10, 12 (best residual symmetric 1.4e-1, 8.0e-2, 1.5e-1; unsymmetric 9.5e-2, 6.9e-2, not finished for 12), even degrees 10 to 18 with C3 symmetry up to `--relax 4`, degree 18 with noise starts (150 per pattern, residual about 1e-3).
 - Triangle degrees 51 to 70, C3 symmetric PI, no S3 stage, 20 cloud sessions of 4 hours: no rule.
