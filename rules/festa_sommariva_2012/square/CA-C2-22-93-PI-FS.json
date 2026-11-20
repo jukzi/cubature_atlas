@@ -9,7 +9,7 @@
  "origin": "literature",
  "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
  "author": "Festa-Sommariva",
- "source": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296-4302; numbers as printed (16 digits) in J. Burkardt's square_minimal_rule (GNU LGPL), which reproduces the authors' sets.",
+ "source": "M. Festa, A. Sommariva: Computing almost minimal formulas on the square. J. Comput. Appl. Math. 236 (2012) 4296-4302; numbers as printed (16 digits) in J. Burkardt's square_minimal_rule (GNU LGPL), which reproduces the authors' sets. Data file: J. Burkardt, https://people.sc.fsu.edu/~jburkardt/f_src/square_minimal_rule/square_minimal_rule.f90, subroutine smr22. Retrieved 2026-11-20.",
  "status": "proven",
  "symmetry": "none",
  "numerical_check": {

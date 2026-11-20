@@ -9,7 +9,7 @@
  "origin": "literature",
  "method": "taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build",
  "author": "Xiao-Gimbutas",
- "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; numbers as printed (16 digits) in J. Burkardt's cube_arbq_rule on [-1,1]^3, weights scaled to the sum 8.",
+ "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010) 663-676; numbers as printed (16 digits) in J. Burkardt's cube_arbq_rule on [-1,1]^3, weights scaled to the sum 8. Data file: J. Burkardt, https://people.sc.fsu.edu/~jburkardt/f_src/cube_arbq_rule/cube_arbq_rule.f90, subroutine rule11. Retrieved 2026-11-20.",
  "status": "proven",
  "symmetry": "none",
  "numerical_check": {
