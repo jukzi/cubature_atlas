@@ -102,7 +102,7 @@ def run_one(solver_name: str, solver, seed: int, out_path: Path):
         "seed": seed,
         "max_repetitions": TRIES,
         "homotopy_steps": HSTEPS,
-        "lm_calls": log.getvalue().count(" res "),
+        "solve_calls": log.getvalue().count(" res "),
         "solutions": len(rows),
         "seconds": elapsed,
         "best_residual": min((r["residual"] for r in rows), default=None),
@@ -144,8 +144,8 @@ def main():
     for name in ("primal", "adaptive"):
         part = [r for r in results if r["solver"] == name]
         summary["solvers"][name] = {
-            "max_lm_calls": len(SEEDS) * TRIES * HSTEPS,
-            "actual_lm_calls": sum(r["lm_calls"] for r in part),
+            "max_solve_calls": len(SEEDS) * TRIES * HSTEPS,
+            "actual_solve_calls": sum(r["solve_calls"] for r in part),
             "solutions": sum(r["solutions"] for r in part),
             "seconds": sum(r["seconds"] for r in part),
             "median_seconds_per_seed": float(np.median([r["seconds"] for r in part])),
@@ -157,8 +157,8 @@ def main():
             "seed": seed,
             "primal_solutions": p["solutions"],
             "adaptive_solutions": a["solutions"],
-            "primal_lm_calls": p["lm_calls"],
-            "adaptive_lm_calls": a["lm_calls"],
+            "primal_solve_calls": p["solve_calls"],
+            "adaptive_solve_calls": a["solve_calls"],
             "primal_seconds": p["seconds"],
             "adaptive_seconds": a["seconds"],
             "primal_best_residual": p["best_residual"],
