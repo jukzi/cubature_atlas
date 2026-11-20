@@ -1,18 +1,10 @@
 {
   "eyebrow": "Numerical integration · Cubature rules",
   "aiNote": "AI-generated: this page was created by Claude (Anthropic).",
-  "lede": "Quadrature and cubature replace an integral by a weighted sum over a few nodes. The atlas collects the smallest known cubature rules with positive weights and nodes inside the domain, for degrees 1 to 30 (depending on the domain, up to the degree for which a rule is available) on the interval, triangle, square, tetrahedron and cube. For degrees 31 to 50 it lists the Gauss–Legendre rules on the interval and, for the other domains, the published rules with their proofs; the search of the atlas covers only a few of these degrees so far. Typical uses are the finite element method, multiple integrals and any computation where a function evaluation is expensive.",
-  "ai": "AI-generated: this page, its code, the search and all computations were produced by an AI. Please verify the results yourself before relying on them.",
-  "kw": [
-    "Numerical integration",
-    "Gauss quadrature",
-    "Cubature rules",
-    "Finite element method",
-    "Moment equations",
-    "Xiao–Gimbutas"
-  ],
+  "lede": "How many nodes are needed to integrate every polynomial up to a chosen degree exactly? The atlas collects positive-weight cubature rules for the interval, triangle, square, tetrahedron and cube. Choose a domain and degree to inspect the nodes, compare node counts and download a rule. The atlas's own search covers degrees 1–30 where rules are available; published rules at higher degrees are included for comparison.",
+  "ai": "AI-assisted research and presentation. The atlas rules are checked against their polynomial moments and certified with interval arithmetic; see Documentation for the methods and their limits.",
   "viewH": "Inspect a rule",
-  "viewSub": "Each dot is a node of the rule. Size and colour show the weight. With size by weight, the area of a circle (in 3D the volume of a ball, in 1D the diameter) equals the weight; the small dot marks the node. A dotted line leads from a node outside the domain to its centre. For 3D domains, dragging on the picture rotates the view.",
+  "viewSub": "Each dot is a node; its position and weight determine its contribution to the integral. Size and colour encode the weight. In 3D, drag the plot to rotate the view.",
   "degree": "Degree n",
   "weight": "Weight",
   "rotate": "Rotate",
@@ -258,5 +250,15 @@
   "ivSym": "symmetry-reduced equations, group of order {g}",
   "ivFull": "equations in all unknowns",
   "ivSumTpl": "Interval proof: for {iv} of the {all} degrees the rule in the table is proven to lie near an exact rule of its quality.",
-  "ivBtn": "Details of the interval proof"
+  "ivBtn": "Details of the interval proof",
+  "startH": "How to use the atlas",
+  "startSub": "A cubature rule replaces an integral by a weighted sum: ∫ f(x) dx ≈ Σᵢ wᵢ f(xᵢ). A rule of degree n is exact for every polynomial of total degree at most n.",
+  "start1H": "1. Choose a domain",
+  "start1": "Use the tabs above to select the interval, triangle, square, tetrahedron or cube.",
+  "start2H": "2. Set the degree",
+  "start2": "Each dot is a node of the rule; its position and weight determine the contribution. The overview compares node counts with published rules and proven lower bounds.",
+  "start3H": "3. Read the counts carefully",
+  "start3": "N_PI is the smallest rule currently known with positive weights and nodes inside the domain. It is an upper bound, not automatically the minimum. When N_PI equals the proven lower bound L, optimality is established. N_PO allows nodes outside the domain, so use it only when your integrand is defined there.",
+  "useRuleH": "Use a downloaded rule",
+  "useRuleText": "Download a rule as JSON, define your integrand f, then sum its values at the nodes using the corresponding weights."
 }
