@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-12-116-PI-XG",
+ "file": "rules/xiao_gimbutas_2010/cube/CA-C3-12-116-PI-XG.json",
+ "domain": "cube",
+ "degree": 12,
+ "points": 116,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "65137c1f6f2ca546",
+ "stored": {
+  "res_bound": 1.776356839400252e-15,
+  "res_ok": true,
+  "margin_exact": 0.000195168862998,
+  "minw_exact": 0.004360452203877846,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.306911080568126e-16,
+  "kratio": 0.6666666671276369,
+  "mode": "full",
+  "equations": 455,
+  "unknowns": 464,
+  "dist": 2.2896185183937737e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 31.59,
+ "ok_stored": true,
+ "ok_exist": true
+}

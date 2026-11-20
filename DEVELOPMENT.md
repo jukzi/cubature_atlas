@@ -39,7 +39,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 50 (reproduced for comparison) |
 | `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 31 to 40 (reproduced for comparison) |
 | `wandzura_xiao_2003` | `literature` | The six fully symmetric triangle rules printed in the paper (degrees 5, 10, 15, 20, 25, 30), made by `code/import_xiao_wandzura.py` |
-| `xiao_gimbutas_2010` | `literature` | The four rules with printed nodes: triangle degrees 10, 30, 50 and the cube rule of degree 5, made by `code/import_xiao_wandzura.py` |
+| `xiao_gimbutas_2010` | `literature` | The four rules with printed nodes (triangle degrees 10, 30, 50 and the cube rule of degree 5, made by `code/import_xiao_wandzura.py`) and the rules of the authors' data tables (fully symmetric triangle degrees 32 to 49, rotationally symmetric triangle degrees 23, 28, 29, square degrees 16, 20, 22, tetrahedron degrees 11 to 15, cube degrees 9, 11, 12, 13, 15), made by `code/import_burkardt_rules.py` |
 
 Quality codes, as used by Cools' encyclopaedia: **PI** = positive weights, all nodes inside (the boundary counts as inside); **PO** = positive weights, some node outside; **NI** / **NO** = some negative weight, nodes inside / outside. Families for rules with negative weights would be named `minimal_pointcount_for_degree_n_NI` and `minimal_pointcount_for_degree_n_NO`.
 

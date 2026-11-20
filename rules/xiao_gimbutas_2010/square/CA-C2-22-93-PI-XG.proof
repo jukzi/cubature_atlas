@@ -1,0 +1,33 @@
+{
+ "id": "CA-C2-22-93-PI-XG",
+ "file": "rules/xiao_gimbutas_2010/square/CA-C2-22-93-PI-XG.json",
+ "domain": "square",
+ "degree": 22,
+ "points": 93,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "9a7ece14c55c2eda",
+ "stored": {
+  "res_bound": 4.8579745098604374e-15,
+  "res_ok": true,
+  "margin_exact": 0.0032211851203207,
+  "minw_exact": 0.0025124293580722,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.4955308428807334e-16,
+  "kratio": 0.6666666672480015,
+  "mode": "full",
+  "equations": 276,
+  "unknowns": 279,
+  "dist": 9.546856117537144e-15,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 49.18,
+ "ok_stored": true,
+ "ok_exist": true
+}

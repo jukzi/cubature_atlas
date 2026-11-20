@@ -111,3 +111,13 @@ Observed in earlier sessions; verify first, they differ per session.
 - Symmetry groups used for orbit expansion: S2, S5 and S6 (printed orbit data is expanded by the group, then the moments are checked).
 - The moment check finds typos in printed data: one cube weight pair was wrong in print and was recomputed by least squares; a 6-orbit weight in one triangle table was doubled. Always run the moment check and say in the pull request what was corrected.
 - Same acceptance rules as in the other domains: minimise the L2 norm of weights for atlas-found rules, make the interval proof (`--strict --save`), commit the `.proof` file, one pull request per improvement.
+
+## 5. Literature cells that still have only a count (state 2026-11-20)
+
+Cell = (domain, source k of `reference_data/literature_counts.json`, node count at degree n). Re-check against `python tools/state_table.py` and the atlas before relying on it. Public data tables found for the cells of the Xiao-Gimbutas rules: J. Burkardt's rule collections (triangle_symq_rule, tetrahedron_arbq_rule, cube_arbq_rule, square_arbq_rule, square_minimal_rule), the authors' repository `zgimbutas/triasymq` (BSD licence; tables with 35 digits under `tables/*/data_post.m`; its README lists the node counts of all rule types). They are imported by `code/import_burkardt_rules.py`.
+
+Xiao-Gimbutas (2010), still without node data:
+- triangle k=xg: 110@24 and 118@25 (the table of the paper lists reflection-symmetric rules; the authors' repository has only the rotationally symmetric rules with 111 nodes at degree 24 and 117 at degree 25, no reflection-symmetric code `triasyml.f`).
+- square k=xg: 18@9, 27@11, 35@13, 45@15, 71@19. The published code gives fewer nodes (17, 24, 33, 44, 68 in Burkardt's square_arbq_rule; 17, 24, 33, 43, 67 in the authors' current tables); no data with the counts of the table of the paper was found.
+- cube k=xg: 74@10 (the published code has 73 nodes at degree 10).
+- Other counts of the current tables of the authors (square, tetrahedron and cube rules with fewer nodes than the paper) are not imported: they do not match the counts in the file.
