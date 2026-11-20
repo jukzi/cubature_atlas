@@ -22,8 +22,10 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install verifier dependency
-        run: pip install numpy
-      - name: Prove the candidate
+        run: pip install numpy scipy
+      - name: Minimize the L2 norm of the candidate weights
+        run: python tools/minimize_l2.py scratch_candidates/CA-T2-09-19-PI-MPC-a.json --write
+      - name: Prove the minimized candidate
         run: |
           python tools/verify_rigorous.py --strict --save scratch_candidates/CA-T2-09-19-PI-MPC-a.json --report candidate_interval_report.json
       - name: Upload proof and report
@@ -31,5 +33,6 @@ jobs:
         with:
           name: degree9-candidate-interval-proof
           path: |
+            scratch_candidates/CA-T2-09-19-PI-MPC-a.json
             scratch_candidates/CA-T2-09-19-PI-MPC-a.proof
             candidate_interval_report.json
