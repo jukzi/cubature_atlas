@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-"""Paired benchmark: main-branch primal LM vs branch primal/dual LM.
+"""Paired benchmark: old primal LM vs adaptive primal/dual LM.
 
-Target: reduce the proven degree-10 PI triangle rule from 24 to 23 nodes.
-Every seed gives both solvers the same random node-removal order and noise.
-The run uses a fixed number of candidates and the same maximum LM iterations.
-This tests search success, not just the algebraic equivalence of one LM step.
+Target: turn the existing degree-12 PO triangle rule (31 nodes) into a PI
+rule with the same 31 nodes, improving the atlas PI count from 32 to 31.
+Each seed, continuation step, and perturbation is identical for both solvers.
 """
 from __future__ import annotations
 
 import contextlib
 import io
 import json
-import os
 import tempfile
 import time
 from pathlib import Path
@@ -23,10 +21,11 @@ import tri_search as ts
 
 
 ROOT = Path(__file__).resolve().parents[1]
-START = ROOT / "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-10-24-PI-MPC.json"
-SEEDS = list(range(801, 809))
-TRIES_PER_SEED = 24
-MAXFEV = 300
+START = ROOT / "rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-12-31-PO-MPC.json"
+SEEDS = list(range(801, 805))
+TRIES = 6
+HSTEPS = 6
+MAXFEV = 250
 NOISE = 1e-3
 ACCEPT = 1e-13
 
@@ -77,12 +76,12 @@ def primal_lm_bounded(fun_jac, v0, lb, ub, max_nfev, tol=1e-15):
 def run_one(solver_name: str, solver, seed: int, out_path: Path):
     ts.lm_bounded = solver
     args = SimpleNamespace(
-        degree=10,
-        nodes=23,
+        degree=12,
+        nodes=31,
         start=str(START),
-        order="random",
-        tries=TRIES_PER_SEED,
+        tries=TRIES,
         noise=NOISE,
+        hsteps=HSTEPS,
         maxfev=MAXFEV,
         accept=ACCEPT,
         out=str(out_path),
@@ -92,7 +91,7 @@ def run_one(solver_name: str, solver, seed: int, out_path: Path):
     log = io.StringIO()
     t0 = time.perf_counter()
     with contextlib.redirect_stdout(log):
-        ts.mode_elim(args, rng, f"paired-benchmark:{solver_name}:seed={seed}")
+        ts.mode_po2pi(args, rng, f"paired-benchmark:{solver_name}:seed={seed}")
     elapsed = time.perf_counter() - t0
     rows = []
     if out_path.exists():
@@ -101,7 +100,9 @@ def run_one(solver_name: str, solver, seed: int, out_path: Path):
     return {
         "solver": solver_name,
         "seed": seed,
-        "attempts": TRIES_PER_SEED,
+        "max_repetitions": TRIES,
+        "homotopy_steps": HSTEPS,
+        "lm_calls": log.getvalue().count(" res "),
         "solutions": len(rows),
         "seconds": elapsed,
         "best_residual": min((r["residual"] for r in rows), default=None),
@@ -114,29 +115,25 @@ def main():
     if not START.exists():
         raise FileNotFoundError(START)
     base = json.loads(START.read_text())
-    if base.get("degree") != 10 or base.get("points") != 24:
+    if base.get("degree") != 12 or base.get("points") != 31 or base.get("quality") != "PO":
         raise RuntimeError("Unexpected benchmark start rule metadata")
 
     results = []
     with tempfile.TemporaryDirectory(prefix="tri-lm-bench-") as tmp:
         tmp = Path(tmp)
         for seed in SEEDS:
-            # Alternate order by seed to reduce systematic machine-load bias.
-            variants = [
-                ("primal", primal_lm_bounded),
-                ("adaptive", ts.lm_bounded),
-            ]
+            variants = [("primal", primal_lm_bounded), ("adaptive", ts.lm_bounded)]
             if seed % 2:
                 variants.reverse()
             for name, solver in variants:
-                out = tmp / f"{name}-{seed}.jsonl"
-                results.append(run_one(name, solver, seed, out))
+                results.append(run_one(name, solver, seed, tmp / f"{name}-{seed}.jsonl"))
 
     summary = {
-        "target": "triangle degree 10 PI, 23 nodes (atlas baseline: 24)",
+        "target": "triangle degree 12 PI, 31 nodes (atlas baseline: PI 32; proven PO 31)",
+        "start_rule": "CA-T2-12-31-PO-MPC",
         "seeds": SEEDS,
-        "tries_per_seed": TRIES_PER_SEED,
-        "attempts_per_solver": len(SEEDS) * TRIES_PER_SEED,
+        "max_repetitions_per_seed": TRIES,
+        "homotopy_steps": HSTEPS,
         "maxfev": MAXFEV,
         "noise": NOISE,
         "accept": ACCEPT,
@@ -147,7 +144,8 @@ def main():
     for name in ("primal", "adaptive"):
         part = [r for r in results if r["solver"] == name]
         summary["solvers"][name] = {
-            "attempts": sum(r["attempts"] for r in part),
+            "max_lm_calls": len(SEEDS) * TRIES * HSTEPS,
+            "actual_lm_calls": sum(r["lm_calls"] for r in part),
             "solutions": sum(r["solutions"] for r in part),
             "seconds": sum(r["seconds"] for r in part),
             "median_seconds_per_seed": float(np.median([r["seconds"] for r in part])),
@@ -159,6 +157,8 @@ def main():
             "seed": seed,
             "primal_solutions": p["solutions"],
             "adaptive_solutions": a["solutions"],
+            "primal_lm_calls": p["lm_calls"],
+            "adaptive_lm_calls": a["lm_calls"],
             "primal_seconds": p["seconds"],
             "adaptive_seconds": a["seconds"],
             "primal_best_residual": p["best_residual"],
@@ -174,11 +174,8 @@ def main():
                     "weights": rule["weights"],
                 })
 
-    Path("tri_lm_benchmark_results.json").write_text(
-        json.dumps(summary, indent=2) + "\n"
-    )
-    print(json.dumps({k: v for k, v in summary.items()
-                      if k != "rule_candidates"}, indent=2))
+    Path("tri_lm_benchmark_results.json").write_text(json.dumps(summary, indent=2) + "\n")
+    print(json.dumps({k: v for k, v in summary.items() if k != "rule_candidates"}, indent=2))
     print("\nCandidate rules:", len(summary["rule_candidates"]))
     print("Full results: tri_lm_benchmark_results.json")
 
