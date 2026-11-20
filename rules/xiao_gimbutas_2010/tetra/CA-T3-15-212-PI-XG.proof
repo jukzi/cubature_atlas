@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-15-212-PI-XG",
+ "file": "rules/xiao_gimbutas_2010/tetra/CA-T3-15-212-PI-XG.json",
+ "domain": "tetra",
+ "degree": 15,
+ "points": 212,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "8b681619b623566f",
+ "stored": {
+  "res_bound": 2.2331049566470306e-15,
+  "res_ok": true,
+  "margin_exact": 0.00016247711989374192,
+  "minw_exact": 0.00010764203065983262,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.6597014178094364e-13,
+  "kratio": 0.6666680747383658,
+  "mode": "sym4",
+  "equations": 257,
+  "unknowns": 265,
+  "dist": 1.6630320902139813e-13,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 46.1,
+ "ok_stored": true,
+ "ok_exist": true
+}

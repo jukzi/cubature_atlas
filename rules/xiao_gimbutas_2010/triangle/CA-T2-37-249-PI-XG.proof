@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-37-249-PI-XG",
+ "file": "rules/xiao_gimbutas_2010/triangle/CA-T2-37-249-PI-XG.json",
+ "domain": "triangle",
+ "degree": 37,
+ "points": 249,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "c885fb238736dbaa",
+ "stored": {
+  "res_bound": 1.5735115067741606e-14,
+  "res_ok": true,
+  "margin_exact": 0.002317843544623895,
+  "minw_exact": 8.339963299908706e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 9.861360359904762e-13,
+  "kratio": 0.6668098535121371,
+  "mode": "sym3",
+  "equations": 330,
+  "unknowns": 332,
+  "dist": 9.864691032309307e-13,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 126.3,
+ "ok_stored": true,
+ "ok_exist": true
+}
