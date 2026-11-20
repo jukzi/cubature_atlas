@@ -47,11 +47,21 @@ Lower bound for the number of nodes; listed in the references of the documentati
 
 Summary in our own words, the publisher's abstract is not reproduced: it recalls that Gauss formulae have the fewest nodes among all quadrature formulae of a given degree on an interval, and says that the multidimensional analogue needs lower bounds for the number of nodes together with information on how sharp they are.
 
+### A. Genz: Testing multidimensional integration routines. In: B. Ford, J. C. Rault, F. Thomasset (eds.), Tools, Methods, and Languages for Scientific and Engineering Computation. North-Holland (1984) 81–94. ISBN 0-444-87570-0. <https://people.math.sc.edu/Burkardt/f_src/testpack/testpack.html>
+
+Introduces the test-integrand families used to assess multidimensional integration routines; cited in the documentation together with Kaarnioja's paper on their exact integral values.
+
+Summary in our own words: the contribution presents a collection of test integrands for evaluating multidimensional integration routines.
+
 ### D. A. Dunavant: High degree efficient symmetrical Gaussian quadrature rules for the triangle. Int. J. Numer. Methods Eng. 21 (1985) 1129–1148. <https://doi.org/10.1002/nme.1620210612>
 
 Cited in the documentation as an early symmetric triangle collection.
 
 > Gaussian quadrature is required for the computation of matrices based on the isoparametric formulztion of the finite element method. A brief review of existing quadrature rules for the triangle is given, and the method for the determination of high degree efficient symmetrical rules for the triangle is discussed. New quadrature rules of degree 12–20 are presented, and a short FORTRAN program is included.
+
+### D. H. Ackley: A Connectionist Machine for Genetic Hillclimbing. Kluwer Academic Publishers (1987). <https://doi.org/10.1007/978-1-4613-1997-9>
+
+Original book reference for the Ackley benchmark function used in the documentation.
 
 ### M. Dubiner: Spectral methods on triangles and other domains. J. Sci. Comput. 6 (1991) 345–390. <https://doi.org/10.1007/BF01060030>
 
@@ -79,7 +89,7 @@ Compilation of known rules; cited in the documentation.
 
 ### R. Cools: An encyclopaedia of cubature formulas. J. Complexity 19 (2003) 445–453. <https://doi.org/10.1016/S0885-064X(03)00011-6>
 
-The online database at KU Leuven (https://nines.cs.kuleuven.be/research/ecf/) asks to cite this article together with the two compilations above; cited in the documentation.
+The online database at KU Leuven (https://nines.cs.kuleuven.be/ecf/) asks to cite this article together with the two compilations above; cited in the documentation.
 
 Summary in our own words, the publisher's abstract is not reproduced: the author began collecting published cubature formulas for standard regions about 13 years earlier; the paper describes how this collection is made available to a wide audience through the World Wide Web.
 
@@ -175,7 +185,7 @@ Fully symmetric rules of the triangle and the tetrahedron up to degree 20, store
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper gives fully symmetric quadrature rules with positive weights and nodes inside the simplex (PI type): up to order 20 on the tetrahedron, 16 on the 4-simplex and 10 on the 5- and 6-simplexes. The node counts do not exceed the known ones and most rules are new. They were computed with modified Levenberg-Marquardt methods for nonlinear equations with convex constraints, first in FORTRAN to 25 digits and then refined to 50 digits in MAPLE.
 
-### A. Slobodkins, J. Tausch: A node elimination algorithm for cubature of high-dimensional polytopes. Comput. Math. Appl. 144 (2023) 229–236 (arXiv:2207.10737, 2022). <https://arxiv.org/abs/2207.10737>
+### A. Slobodkins, J. Tausch: A node elimination algorithm for cubature of high-dimensional polytopes. Comput. Math. Appl. 144 (2023) 229–236 (arXiv:2207.10737, 2022). <https://doi.org/10.1016/j.camwa.2023.06.001>
 
 Ranking of the nodes by the norm of the minimum-norm linearised correction, used in `code/` and in the GPU search. Its tetrahedron counts for degrees 15, 17 and 23 served as search targets.
 
@@ -209,7 +219,7 @@ Positive-weight Gauss–Legendre rules for the square and the cube (and higher d
 
 A. Sommariva: Cubature rules on the triangle (simplex). University of Padova, online sets with 26 cited sources; the page shows no date. <https://www.math.unipd.it/~alvise/SETS_CUBATURE_TRIANGLE/rules_triangle.html> Online collection used for comparison.
 
-J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection. <https://people.sc.fsu.edu/~jburkardt/m_src/cube_arbq_rule/cube_arbq_rule.html> Online collection used for comparison.
+J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection. <https://people.math.sc.edu/Burkardt/f_src/cube_arbq_rule/cube_arbq_rule.html> Online collection used for comparison.
 
 ## 2. Tried, not worthwhile
 
