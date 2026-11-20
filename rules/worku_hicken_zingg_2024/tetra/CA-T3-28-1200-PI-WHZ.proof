@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-28-1200-PI-WHZ",
+ "file": "rules/worku_hicken_zingg_2024/tetra/CA-T3-28-1200-PI-WHZ.json",
+ "domain": "tetra",
+ "degree": 28,
+ "points": 1200,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "ed7b70930e85bbb1",
+ "stored": {
+  "res_bound": 7.330703406454706e-15,
+  "res_ok": true,
+  "margin_exact": 0.00020406793951871505,
+  "minw_exact": 8.137972063832532e-07,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 1.662692379689723e-13,
+  "kratio": 0.6666722918229604,
+  "mode": "sym24",
+  "equations": 329,
+  "unknowns": 336,
+  "dist": 1.6638026038245716e-13,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 230.35,
+ "ok_stored": true,
+ "ok_exist": true
+}

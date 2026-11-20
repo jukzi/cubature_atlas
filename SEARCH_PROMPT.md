@@ -130,3 +130,5 @@ Xiao-Gimbutas (2010), still without node data:
 - square k=xg: 18@9, 27@11, 35@13, 45@15, 71@19. The published code gives fewer nodes (17, 24, 33, 44, 68 in Burkardt's square_arbq_rule; 17, 24, 33, 43, 67 in the authors' current tables); no data with the counts of the table of the paper was found.
 - cube k=xg: 74@10 (the published code has 73 nodes at degree 10).
 - Other counts of the current tables of the authors (square, tetrahedron and cube rules with fewer nodes than the paper) are not imported: they do not match the counts in the file.
+
+Worku-Hicken-Zingg (2024), tetrahedron k=wk: all cells 540@21 to 1564@30 now have node data (degrees 21 to 30, imported by `code/import_burkardt_rules.py` from the published high-precision tables). Their triangle and tetrahedron rules of higher degrees were already in the atlas.
