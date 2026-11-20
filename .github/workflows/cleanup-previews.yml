@@ -1,0 +1,66 @@
+name: Clean up stale PR previews
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: clean-stale-pr-previews
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the Pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+
+      - name: Remove previews for closed or merged pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Query all open PRs (including every API page) and retain their preview folders.
+          open_prs="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls?state=open&per_page=100" --jq '.[].number' | sort -u)"
+
+          shopt -s nullglob
+          removed=0
+          for preview_dir in pr-preview/pr-*; do
+            [[ -d "$preview_dir" ]] || continue
+            folder="${preview_dir##*/}"
+            if [[ "$folder" =~ ^pr-([0-9]+)$ ]]; then
+              pr_number="${BASH_REMATCH[1]}"
+              if ! grep -qx "$pr_number" <<< "$open_prs"; then
+                echo "Removing stale preview: $preview_dir"
+                rm -rf -- "$preview_dir"
+                removed=$((removed + 1))
+              fi
+            fi
+          done
+
+          if (( removed == 0 )); then
+            echo "No stale PR previews found."
+            exit 0
+          fi
+
+          git add -A pr-preview
+          if git diff --cached --quiet; then
+            echo "No tracked preview changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Remove stale pull request previews"
+          git push origin HEAD:gh-pages
