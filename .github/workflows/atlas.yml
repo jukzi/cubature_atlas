@@ -81,6 +81,15 @@ jobs:
           umbrella-dir: pr-preview
           qr-code: false
           action: deploy
+      - name: Clean up failed deployment p1
+        if: steps.p1.outcome == 'failure'
+        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
       - name: Wait before the next attempt
         if: steps.p1.outcome == 'failure'
         run: sleep $((RANDOM % 30 + 15))
@@ -95,6 +104,15 @@ jobs:
           umbrella-dir: pr-preview
           qr-code: false
           action: deploy
+      - name: Clean up failed deployment p2
+        if: steps.p2.outcome == 'failure'
+        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
       - name: Wait before the last attempt
         if: steps.p2.outcome == 'failure'
         run: sleep $((RANDOM % 60 + 30))
@@ -121,6 +139,15 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: remove
+      - name: Clean up failed deployment r1
+        if: steps.r1.outcome == 'failure'
+        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
       - name: Wait before the next attempt
         if: steps.r1.outcome == 'failure'
         run: sleep $((RANDOM % 30 + 15))
@@ -133,6 +160,15 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: remove
+      - name: Clean up failed deployment r2
+        if: steps.r2.outcome == 'failure'
+        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
       - name: Wait before the last attempt
         if: steps.r2.outcome == 'failure'
         run: sleep $((RANDOM % 60 + 30))
