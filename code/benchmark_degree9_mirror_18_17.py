@@ -83,7 +83,8 @@ def perturb_mirror(q,a,b,noise,seed):
         v[:2*a]=np.clip(v[:2*a],1e-10,1-1e-10)
         v[3*a:3*a+b]+=rng.normal(0,noise,b)
         v[3*a:3*a+b]=np.clip(v[3*a:3*a+b],1e-10,0.5-1e-10)
-        v[2*a:3*a+b]*=np.exp(rng.normal(0,noise, a+b))
+        v[2*a:3*a]*=np.exp(rng.normal(0,noise,a))
+        v[3*a+b:3*a+2*b]*=np.exp(rng.normal(0,noise,b))
     return v
 
 
