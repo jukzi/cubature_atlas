@@ -53,6 +53,8 @@ IDEA 11 Shell start + noise (mode shell): nested rings of Chebyshev-Lobatto poin
 IDEA 12 Shell start for N = 2 mod 3 (mode shellasym): C3 pattern with N-1 or N-2
         nodes plus 1-2 free nodes, unsymmetric solve (reproduces 11/27 unsymmetric).
 IDEA 13 Unsymmetric polish of C3 near-solutions (--asym_polish): no gain so far.
+IDEA 16 Mirror (x <-> y) symmetric search (mode mirror): N = 2a + b, half the
+        unknowns, possible for N = 2 mod 3 where C3 is not.
 IDEA 14 Variable projection (--vp 1, solve_vp): weights eliminated by linear least
         squares.  MEASURED: no gain (16/52 time to solution equal within noise to the
         full 3N-unknown LM).  Kept as an option, default off.
@@ -754,6 +756,88 @@ def mode_shellasym(a, rng, cmd):
     print("found", found, "starts", tried, "best", best)
 
 
+# ----------------------------------------------------- mirror symmetry (IDEA 16)
+def mirror_expand(v, a, b, n):
+    """IDEA 16: mirror (x <-> y) symmetric rules, N = 2a + b.  a pairs (x,y),(y,x)
+    with the same weight and b nodes (u,u) on the mirror axis.  Unknowns:
+    s,t,w of the pairs (Duffy coordinates of one node) and u,w of the axis nodes.
+    Allows N = 2 mod 3, where no C3 rule exists, with half the unknowns."""
+    bs = basis(n)
+    s = v[:a]
+    t = v[a:2 * a]
+    w = v[2 * a:3 * a]
+    u = v[3 * a:3 * a + b]
+    wu = v[3 * a + b:3 * a + 2 * b]
+    x, y = to_xy(s, t)
+    X = np.concatenate([x, y, u])
+    Y = np.concatenate([y, x, u])
+    W = np.concatenate([w, w, wu])
+    B, Bx, By = bs.eval(X, Y)
+    res = B @ W - bs.rhs()
+    Gx = Bx[:, :a] * w + By[:, a:2 * a] * w
+    Gy = By[:, :a] * w + Bx[:, a:2 * a] * w
+    Js = Gx - Gy * t
+    Jt = Gy * (1 - s)
+    Jw = B[:, :a] + B[:, a:2 * a]
+    Ju = (Bx[:, 2 * a:] + By[:, 2 * a:]) * wu
+    Jwu = B[:, 2 * a:]
+    return res, np.hstack([Js, Jt, Jw, Ju, Jwu])
+
+
+def solve_mirror(v0, a, b, n, max_nfev=300):
+    m = 3 * a + 2 * b
+    lb = np.zeros(m)
+    ub = np.concatenate([np.ones(2 * a), np.full(a, np.inf), np.full(b, 0.5), np.full(b, np.inf)])
+    v0 = np.clip(v0, lb + 1e-12, np.where(np.isinf(ub), 1e9, ub - 1e-12))
+    return lm_bounded(lambda q: mirror_expand(q, a, b, n), v0, lb, ub, max_nfev)
+
+
+def mirror_to_full(v, a, b):
+    s = v[:a]
+    t = v[a:2 * a]
+    w = v[2 * a:3 * a]
+    u = v[3 * a:3 * a + b]
+    wu = v[3 * a + b:3 * a + 2 * b]
+    x, y = to_xy(s, t)
+    X = np.concatenate([x, y, u])
+    Y = np.concatenate([y, x, u])
+    W = np.concatenate([w, w, wu])
+    s2, t2 = xy_to_st(X, Y)
+    return np.concatenate([s2, t2, W])
+
+
+def mode_mirror(a_, rng, cmd):
+    """IDEA 16: random starts (arcsine law) with mirror symmetry, b axis nodes drawn
+    from --axis_max, degree continuation, short runs with a stagnation cut."""
+    n, N = a_.degree, a_.nodes
+    t0 = time.time()
+    found = 0
+    tried = 0
+    best = 1e9
+    while not (a_.minutes and time.time() - t0 > 60 * a_.minutes) and tried < a_.tries:
+        b = int(rng.integers(0, a_.axis_max + 1))
+        if (N - b) % 2:
+            continue
+        a = (N - b) // 2
+        tried += 1
+        base = random_start(a, rng)
+        v = np.concatenate([base, rng.random(b) * 0.5, np.full(b, 0.5 / N)])
+        for d in [d for d in (n - 4, n - 2, n - 1) if d >= 1]:
+            v, _ = solve_mirror(v, a, b, d, max_nfev=100)
+        v, res = solve_mirror(v, a, b, n, max_nfev=a_.maxfev)
+        if res < best:
+            best = res
+            print(f"try {tried} axis {b} res {res:.2e} (best so far)", flush=True)
+        full = mirror_to_full(v, a, b)
+        if accept(full, n, N, a_.accept):
+            found += 1
+            save(a_.out, n, N, full, a_.seed, f"mirror:{b}", cmd, res)
+            print(f"FOUND axis {b} res {res:.2e}", flush=True)
+            if a_.max_found and found >= a_.max_found:
+                break
+    print("found", found, "tries", tried, "best", best)
+
+
 def selftest():
     """Check the basis: orthonormality via a high order Duffy-Gauss rule."""
     from numpy.polynomial.legendre import leggauss
@@ -783,7 +867,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--degree", type=int)
     ap.add_argument("--nodes", type=int)
-    ap.add_argument("--mode", choices=["random", "elim", "po2pi", "c3", "basin", "shell", "shellasym", "selftest"], default="random")
+    ap.add_argument("--mode", choices=["random", "elim", "po2pi", "c3", "basin", "shell", "shellasym", "mirror", "selftest"], default="random")
     ap.add_argument("--start")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--tries", type=int, default=20)
@@ -798,6 +882,7 @@ def main():
     ap.add_argument("--starts_per_pattern", type=int, default=100)
     ap.add_argument("--max_found", type=int, default=0,
                     help="stop after this many solutions (makes the command reproducible)")
+    ap.add_argument("--axis_max", type=int, default=6)
     ap.add_argument("--vp", type=int, default=0)
     ap.add_argument("--rot", type=float, default=0.0)
     ap.add_argument("--asym_polish", type=float, default=0.0)
@@ -811,7 +896,7 @@ def main():
         selftest()
         return
     rng = np.random.default_rng(a.seed)
-    {"random": mode_random, "elim": mode_elim, "po2pi": mode_po2pi, "c3": mode_c3, "basin": mode_basin, "shell": mode_shell, "shellasym": mode_shellasym}[a.mode](a, rng, cmd)
+    {"random": mode_random, "elim": mode_elim, "po2pi": mode_po2pi, "c3": mode_c3, "basin": mode_basin, "shell": mode_shell, "shellasym": mode_shellasym, "mirror": mode_mirror}[a.mode](a, rng, cmd)
 
 
 if __name__ == "__main__":
