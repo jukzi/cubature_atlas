@@ -38,6 +38,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `pinkse_2026` | `literature` | Cube rules of the degrees 11, 13, 15, 17, 21, 23, 25, 27 and 29 to 45 (odd) and square rules of the odd degrees 31 to 51 (reproduced for comparison) |
 | `festa_sommariva_2012` | `literature` | Square rules of the degrees 16, 20, 22, 27, 29 and 31 to 50 (reproduced for comparison; degrees 16 to 29 made by `code/import_burkardt_rules.py`) |
 | `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 21 to 40 (reproduced for comparison) |
+| `omelyan_solovyan_2006` | `literature` | Rotationally symmetric square rules of the degrees 15, 17, 19, 21 (44, 56, 68, 81 nodes) printed in the paper, made by `code/import_burkardt_rules.py` |
 | `wandzura_xiao_2003` | `literature` | The six fully symmetric triangle rules printed in the paper (degrees 5, 10, 15, 20, 25, 30), made by `code/import_xiao_wandzura.py` |
 | `xiao_gimbutas_2010` | `literature` | The four rules with printed nodes (triangle degrees 10, 30, 50 and the cube rule of degree 5, made by `code/import_xiao_wandzura.py`) and the rules of the authors' data tables (fully symmetric triangle degrees 32 to 49, rotationally symmetric triangle degrees 23, 28, 29, square degrees 16, 20, 22, tetrahedron degrees 11 to 15, cube degrees 9, 11, 12, 13, 15), made by `code/import_burkardt_rules.py` |
 
