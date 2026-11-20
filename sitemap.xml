@@ -187,6 +187,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-958-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-960-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-966-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1129-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1132-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1133-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1145-PI-MPC.html</loc></url>
@@ -443,6 +444,8 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-40-288-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-302-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-303-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-316-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-317-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-318-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-330-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-331-PI-MPC.html</loc></url>
@@ -821,6 +824,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-958-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-960-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-27-966-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1129-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1132-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1133-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/cube/CA-C3-28-1145-PI-MPC.html</loc></url>
@@ -1077,6 +1081,8 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-40-288-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-302-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-41-303-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-316-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-317-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-42-318-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-330-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-43-331-PI-MPC.html</loc></url>
