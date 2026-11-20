@@ -1,0 +1,83 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-C2-16-52-PI-XG – Kubaturatlas Quadrat, Grad 16, 52 Knoten</title><meta name="description" content="PI-Regeln aus der Literatur, zum Vergleich übernommen. Zusätzlich enthalten ist die asymmetrische Dreiecksregel vom Grad 3 mit 4 Knoten aus der ursprü">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/square/CA-C2-16-52-PI-XG.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/square/CA-C2-16-52-PI-XG.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../../de/">Zurück zum Atlas</a> · <a href="../../../../de/rules/index.html">Alle Regeln</a></p>
+<h1>CA-C2-16-52-PI-XG</h1>
+<p class="ai">KI-generiert: Diese Seite, der Code, die Suche und alle Berechnungen stammen von einer KI. Ergebnisse bitte vor einer Verwendung selbst prüfen.</p>
+<p>Nicht die beste bekannte Regel; beste bekannte: <a href="../../../../de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-16-51-PI-MPC.html">CA-C2-16-51-PI-MPC</a> (51)</p>
+<p>Aus der zitierten Veröffentlichung zum Vergleich übernommen; nicht von der CC-BY-4.0-Lizenz des Atlas erfasst, es gelten die ursprünglichen Bedingungen.</p>
+<table>
+<tr><th>Familie</th><td>Xiao–Gimbutas (Literatur)<br><small>rules/xiao_gimbutas_2010/</small></td></tr>
+<tr><th>Gebiet</th><td>Quadrat (C2)</td></tr>
+<tr><th>Grad</th><td>16</td></tr>
+<tr><th>Knotenzahl</th><td>52</td></tr>
+<tr><th>Qualität</th><td>PI</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>5.55e-17</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>9.821024e-03</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>5.728e-03</td></tr>
+<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 2.61e-08, radius = 9.04e-14, ja</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 1.5e-15 von den gespeicherten Zahlen entfernt (Gleichungen in allen Unbekannten)</td></tr>
+<tr><th>Herkunft</th><td>taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build</td></tr>
+</table>
+<p><a href="../../../../rules/xiao_gimbutas_2010/square/CA-C2-16-52-PI-XG.json">JSON herunterladen</a></p>
+<h2>Zitieren als</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-C2-16-52-PI-XG (Xiao–Gimbutas (literature), square, degree 16, 52 nodes), https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/square/CA-C2-16-52-PI-XG.html</pre>
+<h2>Knoten und Gewichte</h2>
+<pre>  #                       x                       y                       w
+   1  4.455077315117606e-01  -4.133544718603057e-01   1.097508957721364e-01
+   2 -2.848639978436560e-01  -7.739045957079853e-01   9.273542263370588e-02
+   3  3.281612731066613e-01  -9.418618376442869e-01   4.939148458031491e-02
+   4  8.918323090897292e-01  -5.606355473579230e-01   6.933033177740973e-02
+   5  5.080739455207711e-01   9.698717423735355e-01   2.929940238648999e-02
+   6 -1.604014838336734e-01  -4.892197731244818e-01   1.366632972432514e-01
+   7 -5.084786013975685e-01  -9.117050044897801e-01   6.046368787779997e-02
+   8  6.830501661618820e-01  -5.146278686624721e-01   6.012319656388613e-02
+   9  3.958609078545774e-02  -8.810600362311165e-01   6.525371041135750e-02
+  10 -9.505884228486957e-01  -9.545711191201147e-01   1.426664669394554e-02
+  11 -9.618117119546932e-01  -5.466258413042109e-01   3.673998522733961e-02
+  12 -9.824876605856204e-01  -8.038321990753307e-01   1.024445009004685e-02
+  13  7.294909884375445e-01  -1.738438525238659e-01   1.228913099966438e-01
+  14  1.663512176814138e-01  -6.521123405187266e-01   1.098941997269091e-01
+  15 -8.401346406026955e-01  -3.199762775663758e-01   9.651704536524723e-02
+  16  7.196828159773350e-01   8.583352444264194e-01   6.990260788949922e-02
+  17  2.530272226250717e-01   9.559713160961977e-01   2.742659049273722e-02
+  18  6.403128558574714e-02   8.638442022353128e-01   8.892100165276481e-02
+  19  9.867649245062882e-01  -7.782646945578277e-01   1.737589674802390e-02
+  20 -2.009570267598735e-01   6.577321912732575e-01   1.456519315667654e-01
+  21 -4.385685045405642e-01  -2.429524974731521e-01   1.596717621222834e-01
+  22  9.942720499027967e-01   3.876054361677954e-01   2.077966543593932e-02
+  23 -8.306577686854565e-01  -7.951217128043849e-01   6.266470099362798e-02
+  24  1.540093368841131e-01  -2.163105603296342e-01   1.673174744263057e-01
+  25  5.127230397362322e-01  -7.522598930908062e-01   8.988149600470956e-02
+  26 -9.896697019211779e-01   5.914422527084512e-01   2.160355802216501e-02
+  27  9.721677355950014e-01  -2.390927720573675e-01   4.018104891588416e-02
+  28 -7.432189863550824e-01  -9.749994483165604e-01   2.082333390752027e-02
+  29  7.845206176595362e-01  -8.444622014821822e-01   5.839448672420441e-02
+  30  9.792382924978336e-01   8.810775159513397e-01   1.625289200319796e-02
+  31 -7.071472873150695e-01   6.173187727164633e-01   1.114842052111100e-01
+  32 -1.416891896032315e-01   7.292324652124864e-02   1.894661576875587e-01
+  33  8.901118844470474e-01   1.389731666217061e-01   8.790558492645695e-02
+  34  8.991291622644930e-01   6.539121663076461e-01   6.706425594561376e-02
+  35 -8.948787586840297e-01   8.152409648202001e-01   4.992566867912492e-02
+  36 -1.685236423690618e-01  -9.939582277051608e-01   2.352813112375850e-02
+  37  8.814614259143865e-01   9.818676808679303e-01   1.519724478124620e-02
+  38 -9.727794481100781e-01   9.582010007957961e-01   9.821024046902672e-03
+  39 -2.335640652756550e-01   9.824162852107247e-01   3.250930766970773e-02
+  40  9.317484014546712e-01  -9.611203598796459e-01   1.740685690503007e-02
+  41  4.462548323794501e-01   1.014796681115945e-01   1.792979282168254e-01
+  42 -4.956609448877936e-01   8.630083224142983e-01   8.903333343822227e-02
+  43 -7.464462325957708e-01   9.693553936129727e-01   2.921861583176706e-02
+  44 -6.209288757442605e-01  -5.969027498090264e-01   1.223721596688210e-01
+  45 -9.729904625306640e-01  -3.789880325419188e-02   4.155648044463454e-02
+  46  6.851689211463186e-01   4.272704958652744e-01   1.357709578952647e-01
+  47 -6.950237982778372e-01   4.313302857584844e-02   1.360842630489206e-01
+  48  1.406973647399049e-01   4.101941952194764e-01   1.850218619823136e-01
+  49 -8.903519744155600e-01   3.277950128817075e-01   8.648430188023914e-02
+  50 -4.494459013630722e-01   3.540266909627898e-01   1.618376846285262e-01
+  51  6.393855383975146e-01  -9.786311482371555e-01   2.302689959995151e-02
+  52  4.185604687784284e-01   6.960968466161754e-01   1.355735631358921e-01</pre>
+</body></html>
