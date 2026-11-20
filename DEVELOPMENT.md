@@ -14,7 +14,7 @@ Everything needed to add rules, run the checks and the proofs, and work on the w
 | `content/en/`, `content/de/` | Documentation section of the website |
 | `content/references.json` | Bibliography, sorted by year (undated last); the position is the citation number `[n]`; after adding an entry run `tools/sort_references.py` |
 | `tools/sort_references.py` | Sorts the bibliography by year and renumbers every use of the numbers |
-| `tools/state_table.py` | Prints per domain and degree the counting value Z, the smallest stored PI and PO node counts and the gaps N - Z (options `--domain`, `--min-degree`, `--csv`) |
+| `tools/state_table.py` | Prints the complete domain/degree matrix (degrees 1–30 plus higher degrees up to the highest stored degree per domain), including missing cells, with counting value Z, stored PI/PO node counts and gaps N - Z (options `--domain`, `--min-degree`, `--csv`) |
 | `site_template/index.html` | The interactive page; the build inserts the data |
 | `code/` | Search programs that produced the rules, with numerical checks (not proofs) |
 | `tools/build_atlas.py` | Verifier and site generator (Python 3.9+, numpy) |
