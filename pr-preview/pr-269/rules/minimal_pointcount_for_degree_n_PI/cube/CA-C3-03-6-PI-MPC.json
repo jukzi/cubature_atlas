@@ -1,0 +1,31 @@
+{
+  "id": "CA-C3-03-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "cube",
+  "dimension": 3,
+  "degree": 3,
+  "points": 6,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "proven",
+  "residual_reported": 2.715132753421715e-16,
+  "numerical_check": {"N": 6, "M": 7, "p": 12, "res": 2.5390056314011964e-16, "sigma": 1.2247448713909195, "h": 5.7690445499319455e-16, "rad": 1.2586966262087025e-16, "cert": true, "inside": true},
+  "nodes": [
+    [0.12872954743807305, 0.7692558814393683, -0.6258354791509976],
+    [0.6464762599551142, -0.5436545903950307, -0.5352667049395329],
+    [0.7519966942778116, 0.3356837205531516, 0.5672910569881758],
+    [-0.12872954743807305, -0.7692558814393683, 0.6258354791509976],
+    [-0.6464762599551142, 0.5436545903950307, 0.5352667049395329],
+    [-0.7519966942778116, -0.3356837205531516, -0.5672910569881758]
+  ],
+  "weights": [
+    1.3333387273860502,
+    1.3333302483271838,
+    1.3333310242867666,
+    1.3333387273860502,
+    1.3333302483271838,
+    1.3333310242867666
+  ]
+}
