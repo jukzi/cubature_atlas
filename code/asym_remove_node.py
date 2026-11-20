@@ -8,6 +8,7 @@ The candidates to remove are the nodes in the order of --order (weight: smallest
 Every such solution is therefore a solution with one node less plus a dummy node.  After a solution, every node with a weight below W is dropped and the rest is solved again (up to 5 times as long as it succeeds); the stored solution has the nodes that are left (N is the number of them, which can be below N - 1).
 --pull-inside --refine <solution.json>: a solution may have nodes on the boundary (a parametrisation ran to s = 0), which an interval proof of a PI rule cannot use; the solution is solved again with the barycentric
 coordinates b = delta + (1 - 3 delta) s^2 / sum s^2 for delta = 1e-6, 1e-5, 1e-4, 1e-3 (each solution is the start of the next delta, no noise) and written to <out>/refined_<deg>_<N>_asym.json, so that every node has the distance delta to the boundary.
+--only-start K runs only the start number K (the same node removed, the same noise as in a long run with the same --seed, --order, --noise and --noises), so that a near solution of a long run can be tried again with more patience (--steps, --win, --gain, --dq).
 Every result (also without a solution) is appended to <out>/summary.txt with seed and command; a solution is written to <out>/solution_<deg>_<N-1>_asym.json with all digits, seed and command.
 Usage: python code/asym_remove_node.py --rule rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-44-348-PI-MPC.json --starts 40 --noise 0.05 --noises 2 --seed 1 [--part 0 --parts 4] --out asym_out
 Needs numpy and scipy (code/cubature_atlas.py, code/shell_c3_search.py, code/shell_asym_search.py)."""
@@ -79,6 +80,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--refine", default="")
     ap.add_argument("--drop-below", type=float, default=1e-6)
+    ap.add_argument("--only-start", type=int, default=-1)
     ap.add_argument("--pull-inside", action="store_true")
     ap.add_argument("--rule", default="")
     ap.add_argument("--starts", type=int, default=20)
@@ -113,6 +115,8 @@ def main():
     red = SA.AsymPI(N - 1, a.wmin)
     for k in range(a.starts):
         if k % a.parts != a.part:
+            continue
+        if a.only_start >= 0 and k != a.only_start:
             continue
         cand = int(order[(k // a.noises) % N])
         noise = a.noise * (k % a.noises + 1) / a.noises
