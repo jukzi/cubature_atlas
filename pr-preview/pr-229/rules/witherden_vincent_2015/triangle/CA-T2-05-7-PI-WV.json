@@ -1,0 +1,35 @@
+{
+  "id": "CA-T2-05-7-PI-WV",
+  "family": "witherden_vincent_2015",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 5,
+  "points": 7,
+  "quality": "PI",
+  "origin": "literature",
+  "method": "taken from the literature, moment equations re-checked by the build",
+  "author": "Witherden–Vincent",
+  "source": "F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015).",
+  "status": "proven",
+  "symmetry": "full",
+  "numerical_check": null,
+  "numerical_check": {"N": 7, "M": 21, "p": 21, "res": 2.5069538525892055e-15, "sigma": 1.0358749378349388, "h": 4.2351233277559364e-13, "rad": 2.624299311669393e-15, "cert": true, "inside": true},
+  "nodes": [
+    [0.333333333333333, 0.333333333333333],
+    [0.101286507323456, 0.797426985353087],
+    [0.797426985353087, 0.101286507323456],
+    [0.101286507323456, 0.101286507323456],
+    [0.470142064105115, 0.05971587178977],
+    [0.05971587178977, 0.470142064105115],
+    [0.470142064105115, 0.470142064105115]
+  ],
+  "weights": [
+    0.1125,
+    0.062969590272414,
+    0.062969590272414,
+    0.062969590272414,
+    0.066197076394253,
+    0.066197076394253,
+    0.066197076394253
+  ]
+}
