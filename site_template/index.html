@@ -41,10 +41,9 @@ h1{font:400 clamp(44px,8vw,84px)/.95 var(--f-display);margin:0;letter-spacing:-.
 h1 em{color:var(--accent)}
 .ainote{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);flex-wrap:wrap}
 .aitag{font:600 11px var(--f-mono);letter-spacing:.08em;border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:2px 7px}
-.aibadge{margin:0;max-width:66ch;font:500 13px/1.45 var(--f-mono);color:var(--ink);background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:8px 12px}
+.aibadge{margin:0;max-width:78ch;font:400 13px/1.45 var(--f-body);color:var(--muted)}
 .lede{max-width:66ch;color:var(--muted);margin:0;font-size:17px}
-.kw{display:flex;flex-wrap:wrap;gap:6px}
-.kw span{font:500 12px var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:var(--surface)}
+.startgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:14px}.startgrid article{min-width:0}.startgrid h3{margin:0 0 5px;font:600 15px var(--f-body)}.startgrid p{margin:0;max-width:48ch;color:var(--muted)}.rule-example{max-height:none;white-space:pre;overflow-x:auto}@media(max-width:720px){.startgrid{grid-template-columns:minmax(0,1fr);gap:14px}}
 /* Reiter */
 .tabbar{display:flex;flex-wrap:wrap;gap:0 18px;margin-top:14px;border-bottom:1px solid var(--line);align-items:flex-end}
 .tgroup{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:100%}
@@ -169,13 +168,21 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <div class="topline"><div class="eyebrow" data-i="eyebrow"></div>
     <div class="lang" role="group" aria-label="Language"><button id="l-de" aria-pressed="true">DE</button><button id="l-en" aria-pressed="false">EN</button></div></div>
   <h1 id="h1">Cubature <em>Atlas</em></h1>
-  <p class="aibadge" data-i="ai"></p>
   <p class="lede" data-i="lede"></p>
+  <p class="aibadge" data-i="ai"></p>
   <p class="sub" id="links" style="margin:0"></p>
-  <div class="kw" id="kw"></div>
   <div class="tabbar" id="tabbar" role="tablist"></div>
 </header>
 <main>
+<section id="start">
+  <h2 data-i="startH"></h2>
+  <p class="sub" data-i="startSub"></p>
+  <div class="startgrid">
+    <article><h3 data-i="start1H"></h3><p data-i="start1"></p></article>
+    <article><h3 data-i="start2H"></h3><p data-i="start2"></p></article>
+    <article><h3 data-i="start3H"></h3><p data-i="start3"></p></article>
+  </div>
+</section>
 <section id="betrachter">
   <h2 data-i="viewH"></h2>
   <p class="sub" data-i="viewSub"></p>
@@ -190,12 +197,12 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
       <div><svg id="whist" class="whist" viewBox="0 0 300 80" role="img" aria-label="Weights"></svg>
       <p class="sub" id="srcinfo" style="margin:4px 0 0;font-size:13px;line-height:1.4;min-height:2.8em"></p></div>
       <div class="btns" id="vbtns">
-        <button class="btn" id="b-auto" aria-pressed="true" data-i="rotate"></button>
+        <button class="btn" id="b-auto" aria-pressed="false" data-i="rotate"></button>
         <button class="btn" id="b-size" aria-pressed="true" data-i="sizeW"></button>
         <button class="btn" id="b-pack" aria-pressed="false" data-i="packBtn"></button>
         <button class="btn" id="b-edge" aria-pressed="true" data-i="edge"></button>
         <button class="btn" id="b-cells" aria-pressed="true" data-i="cellsBtn"></button>
-        <button class="btn" id="b-dance" aria-pressed="true" data-i="danceBtn"></button>
+        <button class="btn" id="b-dance" aria-pressed="false" data-i="danceBtn"></button>
         <button class="btn" id="b-persp" aria-pressed="true" data-i="perspBtn"></button>
         <button class="btn" id="b-equi" aria-pressed="false" data-i="equiBtn2"></button>
       </div>
@@ -226,7 +233,7 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <p class="sub" data-i="exSub"></p>
   <div class="exgrid">
     <div class="exfig"><div class="figbox" id="fbC"><span class="figtag" data-i="figC"></span><canvas id="ex" class="cv" width="640" height="640" aria-label="Function"></canvas></div>
-      <div class="btns" style="margin-top:8px"><button class="btn" id="b-exauto" aria-pressed="true" data-i="rotate"></button></div><p class="sub" id="excap" style="margin:8px 0 0;font-size:13px"></p></div>
+      <div class="btns" style="margin-top:8px"><button class="btn" id="b-exauto" aria-pressed="false" data-i="rotate"></button></div><p class="sub" id="excap" style="margin:8px 0 0;font-size:13px"></p></div>
     <div class="panel">
       <div class="figtag fi" data-i="figD"></div>
       <div class="slider" style="margin-bottom:8px"><label for="deg2" class="eyebrow" data-i="degree"></label> <b id="deg2out" style="font:600 15px var(--f-mono);margin-left:8px"></b>
@@ -251,6 +258,18 @@ footer{margin-top:40px;color:var(--muted);font-size:13px}
   <h2 data-i="docH"></h2>
   <p class="sub" data-i="docSub"></p>
   <div class="doc" id="doc"></div>
+  <div class="use-rule" id="use-rule" style="margin-top:28px;max-width:760px">
+    <h3 data-i="useRuleH"></h3>
+    <p class="sub" data-i="useRuleText"></p>
+    <pre class="rule-example">import json
+
+with open("rule.json", encoding="utf-8") as file:
+    rule = json.load(file)
+
+# Define f(x, y, ...) for your integrand.
+integral = sum(weight * f(*node)
+               for node, weight in zip(rule["nodes"], rule["weights"]))</pre>
+  </div>
 </section>
 
 </section>
@@ -409,7 +428,7 @@ function docHTML(){var de=LANG==='de',h=[];
 var REFS=ATLAS.refs;
 
 /* ---------- Zustand ---------- */
-var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:true,size:true,edge:true,cells:true,dance:true,persp:true,pack:false,equi:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
+var st={dom:'interval',n:2,mode:'abs',hide:{},yaw:-.7,pitch:.45,auto:false,size:true,edge:true,cells:true,dance:false,persp:true,pack:false,equi:false,yaw2:0,pitch2:Math.PI/2,fn:'cos',src:'gauss'};
 function fmt(x){return x.toLocaleString(LANG==='de'?'de-DE':'en-US',{useGrouping:false});}
 function dec(x,k){var s=x.toFixed(k);return LANG==='de'?s.replace('.',','):s;}
 function sci(x){if(x===0)return '0';var e=Math.floor(Math.log10(Math.abs(x)));return dec(x/Math.pow(10,e),1)+'·10<sup>'+String(e).replace('-','−')+'</sup>';}
@@ -1033,7 +1052,7 @@ function exStem(){}
 function exErrors(){var ex=exactValue(st.dom,st.fn),out=[];for(var n=1;n<=MX(st.dom);n++){var q=ruleValue(st.dom,n,st.fn),rr=ruleFor(st.dom,n,st.src);out.push({n:n,q:q,err:Math.abs(q-ex.val),N:rr?rr.n:null,ok:!!rr&&isFinite(q)});}return {ex:ex,rows:out};}
 function fnButtons(){var b=$('#fnbtns');b.innerHTML='';if(FNL(st.dom).indexOf(st.fn)<0)st.fn='cos';FNL(st.dom).forEach(function(k){var x=document.createElement('button');x.className='btn';x.setAttribute('aria-pressed',k===st.fn);x.textContent=t(fnLabelKey(k,st.dom));x.onclick=function(){st.fn=k;fnButtons();drawEx();exChart();exStem();};b.appendChild(x);});}
 var ex=$('#ex'),ectx=ex.getContext('2d');
-var exV={yaw:-.8,pitch:.55,auto:true},exDrag=null,exCache={};
+var exV={yaw:-.8,pitch:.55,auto:false},exDrag=null,exCache={};
 function lcg(seed){var s=seed;return function(){s=(s*1664525+1013904223)%4294967296;return s/4294967296;};}
 function exGeom(){var dom=st.dom,key=dom+'|'+st.fn;if(exCache[key])return exCache[key];var d=DOM[dom],dim=d.dim,f=fdef(dom,st.fn),g={mn:1e9,mx:-1e9};
   if(dim===2){var G=34,V=[],Q=[],i,j;
@@ -1509,7 +1528,6 @@ function figFn(){figTitles();}
 function applyLang(){document.documentElement.lang=LANG;document.title=t('pageTitle');$('#h1').innerHTML=t('titleHtml');$('#links').innerHTML='<a href="https://doi.org/10.5281/zenodo.24037245">'+t('linkDoi')+'</a> · <a href="'+ATLAS.links.repo+'">'+t('linkRepo')+'</a> · <a href="rules/index.html">'+t('rpIndex')+'</a> · <a href="'+ATLAS.links.data+'">'+t('linkData')+'</a> · <a href="'+ATLAS.links.zip+'">'+t('linkZip')+'</a> · <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">'+t('linkLicense')+'</a>';
   Array.prototype.forEach.call(document.querySelectorAll('[data-i]'),function(e){var k=e.getAttribute('data-i');if(typeof t(k)==='string'){if(t(k).indexOf('<sup>')>=0)e.innerHTML=t(k);else e.textContent=t(k);}});
   $('#l-de').setAttribute('aria-pressed',LANG==='de');$('#l-en').setAttribute('aria-pressed',LANG==='en');
-  $('#kw').innerHTML=t('kw').map(function(x){return '<span>'+x+'</span>';}).join('');
   $('#doc').innerHTML=docHTML();$('#refs').innerHTML=refsHTML();}
 function setLang(l){LANG=l;applyLang();refresh();}
 $('#l-de').onclick=function(){setLang('de');};$('#l-en').onclick=function(){setLang('en');};
