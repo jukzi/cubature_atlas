@@ -1,0 +1,22 @@
+{
+  "id": "omelyan_solovyan_2006",
+  "tag": "OS",
+  "role": "literature",
+  "quality": "PI",
+  "name": {
+    "en": "Omelyan–Solovyan (square, literature)",
+    "de": "Omelyan–Solovyan (Quadrat, Literatur)"
+  },
+  "short": {
+    "en": "Omelyan–Solovyan",
+    "de": "Omelyan–Solovyan"
+  },
+  "description": {
+    "en": "PI rules on the square from the literature, reproduced for comparison: I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. The rotationally symmetric rules of the degrees 15, 17, 19 and 21 with 44, 56, 68 and 81 nodes (Tables 2–5); generators as printed (32 digits), expanded with the rotation group of order 4 and rounded to double precision; the printed weight of the generator (0,0) in Table 5 is the weight of the central node. The build re-checks the moment equations.",
+    "de": "PI-Regeln auf dem Quadrat aus der Literatur, zum Vergleich übernommen: I. P. Omelyan, V. B. Solovyan: Improved cubature formulae of high degrees of exactness for the square. J. Comput. Appl. Math. 188 (2006) 190–204. Die drehsymmetrischen Regeln der Grade 15, 17, 19 und 21 mit 44, 56, 68 und 81 Knoten (Tabellen 2–5); Erzeuger wie gedruckt (32 Stellen), mit der Drehgruppe der Ordnung 4 ergänzt und auf doppelte Genauigkeit gerundet; das gedruckte Gewicht des Erzeugers (0,0) in Tabelle 5 ist das Gewicht des mittleren Knotens. Der Build rechnet die Momentengleichungen nach."
+  },
+  "references": [
+    15
+  ],
+  "author": "Omelyan–Solovyan"
+}
