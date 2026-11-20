@@ -59,6 +59,9 @@ IDEA 17 Mirror shell start (mode mirrorshell): S3 symmetric rings of a C3 patter
         N - 1 or N - 2 nodes, paired by the mirror x <-> y, plus 1-2 extra nodes, then
         the mirror symmetric LM; for N = 2 mod 3 at degrees where random mirror
         starts are hopeless.
+IDEA 18 Patterns near known successes (--near, shell_pattern_near): successful ring
+        patterns of neighbouring degrees are similar; sampling near them focuses the
+        search.  See the measurements in SEARCH_PROMPT.md.
 IDEA 14 Variable projection (--vp 1, solve_vp): weights eliminated by linear least
         squares.  MEASURED: no gain (16/52 time to solution equal within noise to the
         full 3N-unknown LM).  Kept as an option, default off.
@@ -613,6 +616,32 @@ def shell_pattern_random(N, rng):
     return None
 
 
+def pattern_total(ms):
+    return sum(3 * (m - 1) if m > 1 else 1 for m in ms)
+
+
+def shell_pattern_near(N, bases, rng):
+    """IDEA 18: a shell pattern near a pattern that already worked.  Successful
+    patterns of neighbouring degrees are similar (e.g. 22 20 18 17 14 11 9 8 5 for
+    degree 44, 24 21 19 17 16 15 12 10 7 5 2 1 for degree 48): outer ring about
+    degree/2, steps of 2 and 3 with a few 1s.  Each ring count is changed by
+    -1, 0 or +1 (0 twice as likely), the last ring may be dropped or added; the
+    result must be strictly decreasing and have exactly N nodes."""
+    for _ in range(20000):
+        base = bases[int(rng.integers(len(bases)))]
+        ms = [max(1, m + int(rng.choice([-1, 0, 0, 1]))) for m in base]
+        r = rng.random()
+        if r < 0.15 and len(ms) > 3:
+            ms.pop()
+        elif r < 0.3 and ms[-1] > 2:
+            ms.append(max(1, ms[-1] - int(rng.choice([2, 3]))))
+        if any(ms[i] <= ms[i + 1] for i in range(len(ms) - 1)):
+            continue
+        if pattern_total(ms) == N:
+            return ms
+    return None
+
+
 def shell_start(ms, rng, noise, slide, rot=0.0):
     """IDEA 11: C3 start built from nested shells.  Optimal triangle rules look
     like nested rings (dense near the boundary) - the structure the atlas rules of
@@ -673,7 +702,12 @@ def mode_shell(a, rng, cmd):
     tried = 0
     best = 1e9
     while not (a.minutes and time.time() - t0 > 60 * a.minutes) and tried < a.tries:
-        ms = shell_pattern_random(N, rng)
+        ms = None
+        if a.near and rng.random() < a.near_prob:
+            bases = [[int(x) for x in b.split(",")] for b in a.near.split(";")]
+            ms = shell_pattern_near(N, bases, rng)
+        if ms is None:
+            ms = shell_pattern_random(N, rng)
         if ms is None:
             print("no pattern")
             return
@@ -956,6 +990,8 @@ def main():
     ap.add_argument("--starts_per_pattern", type=int, default=100)
     ap.add_argument("--max_found", type=int, default=0,
                     help="stop after this many solutions (makes the command reproducible)")
+    ap.add_argument("--near", default="", help="semicolon separated base patterns, e.g. '22,20,18;24,21,19'")
+    ap.add_argument("--near_prob", type=float, default=0.7)
     ap.add_argument("--axis_max", type=int, default=6)
     ap.add_argument("--vp", type=int, default=0)
     ap.add_argument("--rot", type=float, default=0.0)
