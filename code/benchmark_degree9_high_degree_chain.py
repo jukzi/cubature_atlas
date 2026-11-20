@@ -78,11 +78,9 @@ def attempt(v0, policy, N):
 
 
 def candidate_order(W, rng):
-    # Preserve the established low-weight heuristic but also sample other
-    # orbits instead of spending the whole stage on a single small-weight ring.
-    low = list(np.argsort(W)[:min(8, len(W))])
-    rest = [int(i) for i in rng.permutation(len(W)) if int(i) not in set(low)]
-    return low + rest
+    # A seeded permutation pairs the exact deletion indices across policies.
+    # The noise perturbation is also seeded by (source, N, node, amplitude).
+    return [int(i) for i in rng.permutation(len(W))]
 
 
 def run_chain(source_id, source_path, policy):
@@ -91,7 +89,7 @@ def run_chain(source_id, source_path, policy):
         raise RuntimeError(f"bad source metadata: {source_path}")
     X = np.asarray(rule["nodes"], float)
     W = np.asarray(rule["weights"], float)
-    rng = np.random.default_rng(9300 + len(X) * (1 if policy == "direct" else 7))
+    rng = np.random.default_rng(9300 + len(X) * 100)
     history = []
     chain_started = time.perf_counter()
     print(f"CHAIN_START source={source_id} policy={policy} N={len(W)}", flush=True)
