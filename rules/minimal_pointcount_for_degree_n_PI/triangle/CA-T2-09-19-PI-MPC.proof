@@ -1,33 +1,33 @@
 {
- "id": "CA-T2-09-19-PI-MPC",
- "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.json",
- "domain": "triangle",
- "degree": 9,
- "points": 19,
- "quality": "PI",
- "status": "proven",
- "sha": "255192b9d4473924",
- "stored": {
-  "res_bound": 2.109423746787799e-15,
-  "res_ok": true,
-  "margin_exact": 0.01444254381123017,
-  "minw_exact": 0.011242399081814498,
-  "quality_exact": "PI"
- },
- "exist": {
-  "proved": true,
-  "r": 5.3382634994844836e-15,
-  "kratio": 0.6666666668549001,
-  "mode": "full",
-  "equations": 55,
-  "unknowns": 57,
-  "dist": 2.1580303000539676e-14,
-  "pos": true,
-  "inside": true,
-  "outside": false,
-  "quality_proved": "PI"
- },
- "seconds": 0.08,
- "ok_stored": true,
- "ok_exist": true
+  "id": "CA-T2-09-19-PI-MPC",
+  "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.json",
+  "domain": "triangle",
+  "degree": 9,
+  "points": 19,
+  "quality": "PI",
+  "status": "proven",
+  "sha": "e18e7e9b06d21e80",
+  "stored": {
+    "res_bound": 2.2204460492503147e-15,
+    "res_ok": true,
+    "margin_exact": 0.020634961602524846,
+    "minw_exact": 0.012788837829349035,
+    "quality_exact": "PI"
+  },
+  "exist": {
+    "proved": true,
+    "r": 2.9996166940936606e-15,
+    "kratio": 0.6666666667193369,
+    "mode": "sym6",
+    "equations": 18,
+    "unknowns": 18,
+    "dist": 6.11025580167214e-15,
+    "pos": true,
+    "inside": true,
+    "outside": false,
+    "quality_proved": "PI"
+  },
+  "seconds": 0.05,
+  "ok_stored": true,
+  "ok_exist": true
 }
