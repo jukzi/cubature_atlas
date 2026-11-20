@@ -16,7 +16,7 @@
     "de": "PI-Regeln auf Quadrat und Würfel aus der Literatur, zum Vergleich übernommen (nur solche mit gelungenem Intervallbeweis): J. Pinkse: Positive weight Hermite and Legendre quadrature rules. arXiv:2609.26840 (2026). Daten: doi:10.5281/zenodo.22881864 (CC BY 4.0), vom Einheitswürfel bzw. -quadrat auf [-1,1]^d umgerechnet (Gewichte mal 2^d), Doppelte Genauigkeit wie veröffentlicht (Quadratregeln außer Grad 35: die veröffentlichten 80-stelligen Werte, auf doppelte Genauigkeit gerundet). Würfel Grad 11, 13, 15, 17, 21, 23, 25, 27 und 29 bis 45 (ungerade), Quadrat Grad 31 bis 51 (ungerade). Die Würfelregeln der Grade 29 bis 45 sind aus Regeln von Diallo und Worku entstanden (MIT-Lizenz, siehe den Hinweis zu Drittquellen im Datensatz); der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    30
+    31
   ],
   "author": "Pinkse"
 }

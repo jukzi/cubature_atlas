@@ -16,7 +16,7 @@
     "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: G. Chuluunbaatar, O. Chuluunbaatar, A. A. Gusev, S. I. Vinitsky: PI-type fully symmetric quadrature rules on the 3-, ..., 6-simplexes. Comput. Math. Appl. 124 (2022) 89-97. Dreieck und Tetraeder bis Grad 20, aus dem Zusatzmaterial (50 Stellen, in doppelter Genauigkeit gespeichert); der Build rechnet die Momentengleichungen nach."
   },
   "references": [
-    24
+    25
   ],
   "author": "Chuluunbaatar et al."
 }
