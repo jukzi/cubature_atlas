@@ -1,5 +1,7 @@
 name: Cubature Atlas
 
+# No run is cancelled by another run (a cancelled run is shown as an error): there is no concurrency
+# group; writes to gh-pages are repeated when two runs collide.
 # Pull requests: verify all rules, build the site, attach it as an artifact and
 # publish a live preview under https://jukzi.github.io/cubature_atlas/pr-preview/pr-<number>/
 # (the link is posted as a comment in the pull request; the preview is removed when
@@ -22,9 +24,6 @@ jobs:
   check:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
-    concurrency:
-      group: check-${{ github.ref }}
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,19 +44,62 @@ jobs:
 
   preview:
     # Pull requests from forks get no write token, so they keep only the artifact.
+    # No concurrency group: GitHub cancels a pending run of a group when a newer one arrives, and a
+    # cancelled run is shown as an error. Instead the publishing step is repeated if two runs push to
+    # gh-pages at the same time (the push is then rejected), and a run whose commit is no longer the
+    # head of the pull request publishes nothing (the newer run publishes).
     needs: check
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    concurrency:
-      group: gh-pages
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
+      - name: Is this still the head commit of the pull request?
+        id: head
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} --jq .head.sha)
+          if [ "$current" = "${{ github.event.pull_request.head.sha }}" ]; then
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            echo "A newer commit exists; its run publishes the preview."
+          fi
       - uses: actions/download-artifact@v4
+        if: steps.head.outputs.current == 'true'
         with:
           name: site-preview
           path: site
-      - name: Publish the live preview
+      - name: Publish the live preview (attempt 1)
+        id: p1
+        if: steps.head.outputs.current == 'true'
+        continue-on-error: true
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          source-dir: site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          qr-code: false
+          action: deploy
+      - name: Wait before the next attempt
+        if: steps.p1.outcome == 'failure'
+        run: sleep $((RANDOM % 30 + 15))
+      - name: Publish the live preview (attempt 2)
+        id: p2
+        if: steps.p1.outcome == 'failure'
+        continue-on-error: true
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          source-dir: site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          qr-code: false
+          action: deploy
+      - name: Wait before the last attempt
+        if: steps.p2.outcome == 'failure'
+        run: sleep $((RANDOM % 60 + 30))
+      - name: Publish the live preview (attempt 3)
+        if: steps.p2.outcome == 'failure'
         uses: rossjrw/pr-preview-action@v1.8.2
         with:
           source-dir: site
@@ -69,12 +111,33 @@ jobs:
   remove-preview:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    concurrency:
-      group: gh-pages
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
-      - name: Remove the live preview
+      - name: Remove the live preview (attempt 1)
+        id: r1
+        continue-on-error: true
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
+      - name: Wait before the next attempt
+        if: steps.r1.outcome == 'failure'
+        run: sleep $((RANDOM % 30 + 15))
+      - name: Remove the live preview (attempt 2)
+        id: r2
+        if: steps.r1.outcome == 'failure'
+        continue-on-error: true
+        uses: rossjrw/pr-preview-action@v1.8.2
+        with:
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: remove
+      - name: Wait before the last attempt
+        if: steps.r2.outcome == 'failure'
+        run: sleep $((RANDOM % 60 + 30))
+      - name: Remove the live preview (attempt 3)
+        if: steps.r2.outcome == 'failure'
         uses: rossjrw/pr-preview-action@v1.8.2
         with:
           preview-branch: gh-pages
@@ -84,9 +147,6 @@ jobs:
   deploy:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    concurrency:
-      group: gh-pages
-      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -100,7 +160,33 @@ jobs:
           python tools/build_atlas.py
       - name: Disable Jekyll processing on GitHub Pages
         run: touch site/.nojekyll
-      - name: Deploy to the gh-pages branch (previews are kept)
+      - name: Deploy to the gh-pages branch (previews are kept), attempt 1
+        id: d1
+        continue-on-error: true
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
+        with:
+          folder: site
+          branch: gh-pages
+          clean-exclude: pr-preview
+          force: false
+      - name: Wait before the next attempt
+        if: steps.d1.outcome == 'failure'
+        run: sleep $((RANDOM % 30 + 15))
+      - name: Deploy to the gh-pages branch, attempt 2
+        id: d2
+        if: steps.d1.outcome == 'failure'
+        continue-on-error: true
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
+        with:
+          folder: site
+          branch: gh-pages
+          clean-exclude: pr-preview
+          force: false
+      - name: Wait before the last attempt
+        if: steps.d2.outcome == 'failure'
+        run: sleep $((RANDOM % 60 + 30))
+      - name: Deploy to the gh-pages branch, attempt 3
+        if: steps.d2.outcome == 'failure'
         uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           folder: site
