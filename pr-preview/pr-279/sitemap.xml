@@ -3,6 +3,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/index.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/albrecht_collatz_1958/triangle/CA-T2-03-6-PI-AC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/chuluunbaatar_2022/tetra/CA-T3-04-14-PI-CH.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/chuluunbaatar_2022/tetra/CA-T3-05-14-PI-CH.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/chuluunbaatar_2022/tetra/CA-T3-06-24-PI-CH.html</loc></url>
@@ -665,6 +666,13 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/tetra/CA-T3-14-177-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/tetra/CA-T3-15-212-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/tetra/CA-T3-15-214-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-03-4-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-04-6-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-05-7-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-06-11-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-07-12-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-08-16-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-09-19-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-10-24-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-19-70-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-23-101-PI-XG.html</loc></url>
@@ -722,6 +730,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-50-444-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/triangle/CA-T2-50-453-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/index.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/albrecht_collatz_1958/triangle/CA-T2-03-6-PI-AC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/chuluunbaatar_2022/tetra/CA-T3-04-14-PI-CH.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/chuluunbaatar_2022/tetra/CA-T3-05-14-PI-CH.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/chuluunbaatar_2022/tetra/CA-T3-06-24-PI-CH.html</loc></url>
@@ -1384,6 +1393,13 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/tetra/CA-T3-14-177-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/tetra/CA-T3-15-212-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/tetra/CA-T3-15-214-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-03-4-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-04-6-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-05-7-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-06-11-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-07-12-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-08-16-PI-XG.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-09-19-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-10-24-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-19-70-PI-XG.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/triangle/CA-T2-23-101-PI-XG.html</loc></url>
