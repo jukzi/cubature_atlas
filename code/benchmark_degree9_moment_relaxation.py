@@ -82,7 +82,9 @@ def run_rank(r, C, m, high, index, upper, dim_pk, rng):
     best_norm = float("inf")
     best_z = None
     best_trial = None
+    trials_run = 0
     for trial in range(TRIALS):
+        trials_run = trial + 1
         z0 = np.r_[0.01 * rng.standard_normal(num_high),
                    rng.standard_normal(m * r)]
         sol = least_squares(
@@ -114,7 +116,8 @@ def run_rank(r, C, m, high, index, upper, dim_pk, rng):
         "equations": int(upper[0].size),
         "unknowns_before_gauge": num_high + m * r,
         "unknowns_after_full_rank_gauge": num_high + m * r - r * (r - 1) // 2,
-        "trials": best_trial + 1,
+        "trials_run": trials_run,
+        "best_trial": best_trial + 1,
         "best_residual": best_norm,
         "numerically_feasible": bool(best_norm < TOL),
         "moment_error_norm": float(np.linalg.norm(s)),
