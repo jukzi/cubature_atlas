@@ -23,6 +23,12 @@ Tchakaloff's theorem: a positive rule with at most as many nodes as dim P_k exis
 
 > No abstract available
 
+### J. Albrecht, L. Collatz: Zur numerischen Auswertung mehrdimensionaler Integrale. ZAMM 38 (1958) 1–15. <https://doi.org/10.1002/zamm.19580380102>
+
+The fully symmetric positive-interior degree-3 triangle rule with six nodes is included in the family `albrecht_collatz_1958`.
+
+> No abstract available
+
 ### S. L. Sobolev: The formulas of mechanical cubature on the surface of a sphere. Sibirsk. Mat. Zh. 3 (1962) 769–796. <https://mathnet.ru/eng/smj4866>
 
 Cited in `code/cubature_search.py` for the fact that a rule invariant under a finite group is exact as soon as it is exact for the invariant polynomials.
