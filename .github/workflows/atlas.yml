@@ -169,6 +169,19 @@ jobs:
           branch: gh-pages
           clean-exclude: pr-preview
           force: false
+      - name: Clean up the failed attempt 1
+        if: steps.d1.outcome == 'failure'
+        # The deploy action leaves its temporary worktree folder and an unresolved index (for example
+        # "downloads/cubature_atlas_rules.zip: needs merge") behind when the push is rejected because another
+        # run pushed to gh-pages at the same time. The next attempt then stops at once with
+        # "github-pages-deploy-action-temp-deployment-folder already exists". Remove the leftovers first.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
+          git status --short | head -20 || true
       - name: Wait before the next attempt
         if: steps.d1.outcome == 'failure'
         run: sleep $((RANDOM % 30 + 15))
@@ -182,6 +195,19 @@ jobs:
           branch: gh-pages
           clean-exclude: pr-preview
           force: false
+      - name: Clean up the failed attempt 2
+        if: steps.d2.outcome == 'failure'
+        # The deploy action leaves its temporary worktree folder and an unresolved index (for example
+        # "downloads/cubature_atlas_rules.zip: needs merge") behind when the push is rejected because another
+        # run pushed to gh-pages at the same time. The next attempt then stops at once with
+        # "github-pages-deploy-action-temp-deployment-folder already exists". Remove the leftovers first.
+        run: |
+          git rebase --abort || true
+          git merge --abort || true
+          git reset --hard HEAD || true
+          git worktree prune || true
+          rm -rf github-pages-deploy-action-temp-deployment-folder
+          git status --short | head -20 || true
       - name: Wait before the last attempt
         if: steps.d2.outcome == 'failure'
         run: sleep $((RANDOM % 60 + 30))
