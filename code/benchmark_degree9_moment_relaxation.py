@@ -7,8 +7,10 @@ with N nodes necessarily has rank <= N - dim(P_4), and dim(P_4)=15.
 Thus r=2 and r=3 are the relaxation targets for N=17 and N=18.
 
 This is a numerical necessary-condition test, not a proof of nonexistence or
-existence of cubature rules. The best moment deviations and factor matrices
-are saved for any feasible relaxation, for possible follow-up extraction.
+existence of cubature rules. A factor matrix has at most the requested rank;
+the report also records its numerical rank and the corresponding numerical
+rank of the full moment Gram matrix. The best moment deviations and factor
+matrices are saved for any feasible relaxation, for possible follow-up work.
 """
 from __future__ import annotations
 
@@ -99,12 +101,19 @@ def run_rank(r, C, m, high, index, upper, dim_pk, rng):
 
     F = best_z[num_high:].reshape(m, r)
     s = best_z[:num_high]
+    singular_values = np.linalg.svd(F, compute_uv=False)
+    scale = float(singular_values[0]) if singular_values.size else 0.0
+    rank_tolerance = max(F.shape) * np.finfo(float).eps * scale
+    factor_rank = int(np.count_nonzero(singular_values > rank_tolerance))
     return {
-        "rank": r,
-        "nodes_lower_bound": dim_pk + r,
-        "equations": len(upper),
+        "rank_cap": r,
+        "factor_numerical_rank": factor_rank,
+        "factor_full_column_rank": bool(factor_rank == r),
+        "factor_singular_values": singular_values.tolist(),
+        "full_moment_gram_rank": dim_pk + factor_rank,
+        "equations": int(upper[0].size),
         "unknowns_before_gauge": num_high + m * r,
-        "unknowns_after_gauge": num_high + m * r - r * (r - 1) // 2,
+        "unknowns_after_full_rank_gauge": num_high + m * r - r * (r - 1) // 2,
         "trials": best_trial + 1,
         "best_residual": best_norm,
         "numerically_feasible": bool(best_norm < TOL),
@@ -132,7 +141,7 @@ def main():
         "max_nfev": MAX_NFEV,
         "tolerance": TOL,
         "interpretation": (
-            "Numerical PSD-rank relaxation only. A feasible factorization is "
+            "Numerical PSD-rank-cap relaxation only. A feasible factorization is "
             "necessary but not sufficient for a cubature rule; failure to find "
             "one in finitely many starts is not a proof of impossibility."
         ),
