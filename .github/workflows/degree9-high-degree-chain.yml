@@ -1,0 +1,33 @@
+name: Degree-9 higher-degree chained elimination search
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - "code/benchmark_degree9_high_degree_chain.py"
+      - ".github/workflows/degree9-high-degree-chain.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  chained-search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install search dependencies
+        run: pip install numpy scipy
+      - name: Run chained high-degree warm-start search
+        run: python code/benchmark_degree9_high_degree_chain.py
+      - name: Upload chained rules and measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: degree9-high-degree-chain-results
+          path: degree9_high_degree_chain_results.json
