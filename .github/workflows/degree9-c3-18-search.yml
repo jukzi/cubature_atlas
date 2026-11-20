@@ -1,0 +1,34 @@
+name: Degree-9 C3 orbit deletion to 18 nodes
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - "code/benchmark_degree9_c3_18.py"
+      - "scratch_candidates/degree9_s3_19_start.json"
+      - ".github/workflows/degree9-c3-18-search.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install search dependencies
+        run: pip install numpy scipy
+      - name: Run C3 and asymmetric 18-node searches
+        run: python code/benchmark_degree9_c3_18.py
+      - name: Upload candidates and measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: degree9-c3-18-search-results
+          path: degree9_c3_18_search_results.json
