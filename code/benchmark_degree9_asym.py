@@ -233,7 +233,7 @@ def main():
         for r in results if r["final_result"]["accepted"] and r["rule"] is not None
     ]
     Path("degree9_asym_elimination_results.json").write_text(
-        json.dumps(summary, indent=2) + "\n"
+        json.dumps(summary, indent=2, default=lambda obj: obj.item() if hasattr(obj, "item") else str(obj)) + "\n"
     )
     print("FINAL SUMMARY")
     print(json.dumps(summary["methods"], indent=2))
