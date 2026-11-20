@@ -53,8 +53,12 @@ def build_start(X,W,pairs,axis,drop_axis,redistribution):
     kept_axis=[p for i,p in enumerate(axis) if i!=drop_axis]
     coords=[np.array([p[0],p[1]]) for p in pairs]+[np.array([p[0],p[0]]) for p in kept_axis]
     if redistribution=="equal":
-        inc=np.full(TARGET_N,removed[1]/TARGET_N)
-        pair_inc=inc[:A]; axis_inc=inc[A:]
+        # Each off-axis pair represents two physical nodes, while each axis
+        # node represents one. The same per-node increment preserves the
+        # removed mass across all TARGET_N physical nodes.
+        per_node=removed[1]/TARGET_N
+        pair_inc=np.full(len(pairs),per_node)
+        axis_inc=np.full(len(kept_axis),per_node)
     else:
         inv=[]
         for p in pairs:
