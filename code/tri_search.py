@@ -816,7 +816,7 @@ def mode_mirror(a_, rng, cmd):
     best = 1e9
     while not (a_.minutes and time.time() - t0 > 60 * a_.minutes) and tried < a_.tries:
         b = int(rng.integers(0, a_.axis_max + 1))
-        if (N - b) % 2:
+        if b > N or (N - b) % 2:
             continue
         a = (N - b) // 2
         tried += 1
