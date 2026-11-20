@@ -1,0 +1,65 @@
+{
+ "id": "CA-T2-05-7-PI-WX",
+ "family": "wandzura_xiao_2003",
+ "domain": "triangle",
+ "dimension": 2,
+ "degree": 5,
+ "points": 7,
+ "quality": "PI",
+ "origin": "literature",
+ "method": "taken from the literature (printed generator nodes expanded with the symmetry group, mapped to the atlas triangle), moment equations re-checked by the build",
+ "author": "Wandzura-Xiao",
+ "source": "S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math. Appl. 45 (2003) 1829-1840 (Tables 3-8).",
+ "status": "proven",
+ "symmetry": "full",
+ "numerical_check": {
+  "N": 7,
+  "M": 21,
+  "p": 21,
+  "res": 6.573416696263689e-16,
+  "sigma": 1.035874937834946,
+  "h": 1.0590781468995094e-13,
+  "rad": 8.47414209183785e-16,
+  "cert": true,
+  "inside": true
+ },
+ "nodes": [
+  [
+   0.33333333333333326,
+   0.33333333333333337
+  ],
+  [
+   0.47014206410511505,
+   0.47014206410511505
+  ],
+  [
+   0.05971587178976978,
+   0.47014206410511516
+  ],
+  [
+   0.47014206410511494,
+   0.05971587178976983
+  ],
+  [
+   0.10128650732345632,
+   0.10128650732345636
+  ],
+  [
+   0.7974269853530873,
+   0.10128650732345625
+  ],
+  [
+   0.10128650732345645,
+   0.7974269853530874
+  ]
+ ],
+ "weights": [
+  0.11250000000000002,
+  0.06619707639425311,
+  0.06619707639425311,
+  0.06619707639425311,
+  0.06296959027241357,
+  0.06296959027241357,
+  0.06296959027241357
+ ]
+}

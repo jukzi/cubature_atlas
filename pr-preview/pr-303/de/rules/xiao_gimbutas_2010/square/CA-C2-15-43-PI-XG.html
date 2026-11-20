@@ -1,0 +1,74 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-C2-15-43-PI-XG – Kubaturatlas Quadrat, Grad 15, 43 Knoten</title><meta name="description" content="PI-Regeln aus der Literatur, zum Vergleich übernommen. Zusätzlich enthalten sind die asymmetrischen Dreiecksregeln der Grade 3–9 (4, 6, 7, 11, 12, 16 ">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/square/CA-C2-15-43-PI-XG.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/xiao_gimbutas_2010/square/CA-C2-15-43-PI-XG.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../../de/">Zurück zum Atlas</a> · <a href="../../../../de/rules/index.html">Alle Regeln</a></p>
+<h1>CA-C2-15-43-PI-XG</h1>
+<p class="ai">KI-unterstützte Suche und Darstellung. Die Atlas-Regeln werden anhand ihrer Polynom-Momente geprüft und mit Intervallarithmetik zertifiziert; Verfahren und Grenzen stehen in der Dokumentation.</p>
+<p>Nicht die beste bekannte Regel; beste bekannte: <a href="../../../../de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-15-43-PI-MPC.html">CA-C2-15-43-PI-MPC</a> (43)</p>
+<p>Aus der zitierten Veröffentlichung zum Vergleich übernommen; nicht von der CC-BY-4.0-Lizenz des Atlas erfasst, es gelten die ursprünglichen Bedingungen.</p>
+<table>
+<tr><th>Familie</th><td>Xiao–Gimbutas (Literatur)<br><small>rules/xiao_gimbutas_2010/</small></td></tr>
+<tr><th>Gebiet</th><td>Quadrat (C2)</td></tr>
+<tr><th>Grad</th><td>15</td></tr>
+<tr><th>Knotenzahl</th><td>43</td></tr>
+<tr><th>Qualität</th><td>PI</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>2.78e-17</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>1.131684e-02</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>6.945e-03</td></tr>
+<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>–</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 5.8e-16 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 2)</td></tr>
+<tr><th>Herkunft</th><td>taken from the literature (printed numbers read from the data table, weights scaled to the domain volume), moment equations re-checked by the build</td></tr>
+</table>
+<p><a href="../../../../rules/xiao_gimbutas_2010/square/CA-C2-15-43-PI-XG.json">JSON herunterladen</a></p>
+<h2>Zitieren als</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-C2-15-43-PI-XG (Xiao–Gimbutas (literature), square, degree 15, 43 nodes), https://jukzi.github.io/cubature_atlas/rules/xiao_gimbutas_2010/square/CA-C2-15-43-PI-XG.html</pre>
+<h2>Knoten und Gewichte</h2>
+<pre>  #                       x                       y                       w
+   1  9.033959538171654e-01  -6.406072696998686e-01   6.640504882764907e-02
+   2 -9.033959538171654e-01   6.406072696998686e-01   6.640504882764907e-02
+   3 -5.501342949364779e-01   1.151834883971600e-01   1.566746045557385e-01
+   4  5.501342949364779e-01  -1.151834883971600e-01   1.566746045557385e-01
+   5 -7.791923188313193e-01  -9.598031025318839e-01   3.641739394600402e-02
+   6  7.791923188313193e-01   9.598031025318839e-01   3.641739394600402e-02
+   7 -9.000075624249085e-01  -7.397865642462184e-01   6.769104397483909e-02
+   8  9.000075624249085e-01   7.397865642462184e-01   6.769104397483909e-02
+   9  5.285330880486867e-01   8.274698854396582e-01   1.083493912728570e-01
+  10 -5.285330880486867e-01  -8.274698854396582e-01   1.083493912728570e-01
+  11 -9.839356750373425e-01  -9.381062209532779e-01   1.131684031575567e-02
+  12  9.839356750373425e-01   9.381062209532779e-01   1.131684031575567e-02
+  13 -9.037194531198295e-01   9.696687848574426e-01   1.946251509562839e-02
+  14  9.037194531198295e-01  -9.696687848574426e-01   1.946251509562839e-02
+  15 -9.787769673393727e-01  -4.024722048888052e-01   3.764124855035956e-02
+  16  9.787769673393727e-01   4.024722048888052e-01   3.764124855035956e-02
+  17 -2.786406876037015e-01  -9.772126023587213e-01   4.087453747745970e-02
+  18  2.786406876037015e-01   9.772126023587213e-01   4.087453747745970e-02
+  19 -6.917669192811899e-01  -4.922163245030458e-01   1.444801721657969e-01
+  20  6.917669192811899e-01   4.922163245030458e-01   1.444801721657969e-01
+  21  7.320487202667055e-01  -4.120575671508668e-01   1.198665544587813e-01
+  22 -7.320487202667055e-01   4.120575671508668e-01   1.198665544587813e-01
+  23  8.522617934379899e-01   9.840189173922992e-02   1.197239114388495e-01
+  24 -8.522617934379899e-01  -9.840189173922992e-02   1.197239114388495e-01
+  25 -1.834895202954985e-01  -6.313306536510610e-01   1.739790105361726e-01
+  26  1.834895202954985e-01   6.313306536510610e-01   1.739790105361726e-01
+  27  3.742840450548707e-01   2.490409910817429e-01   1.836056762701572e-01
+  28 -3.742840450548707e-01  -2.490409910817429e-01   1.836056762701572e-01
+  29  4.468092466212943e-01  -9.824202108984172e-01   3.390481015221803e-02
+  30 -4.468092466212943e-01   9.824202108984172e-01   3.390481015221803e-02
+  31 -1.863874185921404e-01   3.744752042359351e-01   1.899025291725201e-01
+  32  1.863874185921404e-01  -3.744752042359351e-01   1.899025291725201e-01
+  33 -7.139201416205869e-01   8.653695215928947e-01   7.648512831261625e-02
+  34  7.139201416205869e-01  -8.653695215928947e-01   7.648512831261625e-02
+  35  9.798774632425455e-02  -8.805153710332776e-01   1.105273007512466e-01
+  36 -9.798774632425455e-02   8.805153710332776e-01   1.105273007512466e-01
+  37 -4.380233890083086e-01   6.775780598135109e-01   1.466220008941218e-01
+  38  4.380233890083086e-01  -6.775780598135109e-01   1.466220008941218e-01
+  39  9.930548736756664e-01  -8.369992520364258e-01   1.335492074342501e-02
+  40 -9.930548736756664e-01   8.369992520364258e-01   1.335492074342501e-02
+  41 -9.695418000017063e-01   2.467211819680664e-01   4.801359626785053e-02
+  42  9.695418000017063e-01  -2.467211819680664e-01   4.801359626785053e-02
+  43  0.000000000000000e+00   0.000000000000000e+00   1.894035296399061e-01</pre>
+</body></html>

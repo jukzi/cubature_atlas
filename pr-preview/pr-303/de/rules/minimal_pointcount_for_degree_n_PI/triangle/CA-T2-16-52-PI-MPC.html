@@ -1,0 +1,83 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-T2-16-52-PI-MPC – Kubaturatlas Dreieck, Grad 16, 52 Knoten</title><meta name="description" content="Kleinste Regeln aus der numerischen Suche dieses Atlas: positive Gewichte, alle Knoten im abgeschlossenen Gebiet (PI). Eine Regel je Gebiet und Grad; ">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-16-52-PI-MPC.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-16-52-PI-MPC.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../../de/">Zurück zum Atlas</a> · <a href="../../../../de/rules/index.html">Alle Regeln</a></p>
+<h1>CA-T2-16-52-PI-MPC</h1>
+<p class="ai">KI-unterstützte Suche und Darstellung. Die Atlas-Regeln werden anhand ihrer Polynom-Momente geprüft und mit Intervallarithmetik zertifiziert; Verfahren und Grenzen stehen in der Dokumentation.</p>
+<p><b>Beste bekannte Regel für dieses Gebiet und diesen Grad</b></p>
+<p><a href="https://creativecommons.org/licenses/by/4.0/" rel="license">Lizenz: CC BY 4.0</a></p>
+<table>
+<tr><th>Familie</th><td>Minimale Knotenzahl für Grad n (PI)<br><small>rules/minimal_pointcount_for_degree_n_PI/</small></td></tr>
+<tr><th>Gebiet</th><td>Dreieck (T2)</td></tr>
+<tr><th>Grad</th><td>16</td></tr>
+<tr><th>Knotenzahl</th><td>52</td></tr>
+<tr><th>Qualität</th><td>PI</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>5.55e-17</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>1.204282e-03</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>0.000e+00</td></tr>
+<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 1.06e-10, radius = 5.82e-15, ja</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 1.8e-14 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 3)</td></tr>
+<tr><th>Herkunft</th><td>numerical search of this atlas: nested-ring (shell) start with 52 nodes, points per edge outside to inside 8,7,4,2,1 (relative notation 8 -1 -3 -2 -1), outer ring slid along its edge, inner rings turned, noise proportional to the bubble function 27 b0 b1 b2, then a C3 symmetric Levenberg-Marquardt search in float64 (code/tri_search.py, mode shell), the nodes kept in the triangle by box bounds on a collapsed parametrisation and the weights &gt;= 0; all nodes lie inside the triangle; the weights were then minimised in the L2 norm with the symmetry kept (tools/minimize_l2.py)</td></tr>
+</table>
+<p><a href="../../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-16-52-PI-MPC.json">JSON herunterladen</a></p>
+<h2>Zitieren als</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-16-52-PI-MPC (Minimal point count for degree n (PI), triangle, degree 16, 52 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-16-52-PI-MPC.html</pre>
+<h2>Knoten und Gewichte</h2>
+<pre>  #                       x                       y                       w
+   1  1.431564642904111e-02   6.998663489422950e-02   3.191816101405980e-03
+   2  1.833790744567280e-01   3.081275022686722e-18   1.714555510563782e-03
+   3  1.785916111285537e-01   4.946975574441258e-02   9.791807812307186e-03
+   4  2.154848354825528e-03   5.168599120184555e-01   2.559942506208428e-03
+   5  4.700199911183509e-01   4.875965740726210e-02   1.204204461861235e-02
+   6  8.008845102222774e-01   1.416525634600071e-02   5.073432667403296e-03
+   7  6.730021819447316e-01   1.742785501750326e-01   1.441383363044896e-02
+   8  7.685507284800906e-02   1.990864251899258e-02   4.280169307836807e-03
+   9  2.296270636865956e-01   2.559410930812864e-01   2.031638102723909e-02
+  10  3.099504768094480e-01   9.845159633406285e-02   1.511778650093584e-02
+  11  5.550592557266559e-01   1.056040912308669e-01   1.464755557823782e-02
+  12  7.002886226495421e-01   7.601132315905118e-02   1.114323421688549e-02
+  13  6.429558201178759e-01   1.768840761768313e-02   7.432934354500808e-03
+  14  9.733286743766143e-01   1.507382421043426e-02   1.204282291433607e-03
+  15  3.899798884247814e-01   1.761983599175417e-01   1.983662328656544e-02
+  16  8.263643024468427e-01   7.328369822718382e-02   8.752326882927857e-03
+  17  3.185976754163994e-01   1.972336453840728e-02   7.496778000681790e-03
+  18  6.998663489422950e-02   9.156977186767293e-01   3.191816101405980e-03
+  19  3.081275022686722e-18   8.166209255432719e-01   1.714555510563782e-03
+  20  4.946975574441258e-02   7.719386331270337e-01   9.791807812307186e-03
+  21  5.168599120184555e-01   4.809852396267190e-01   2.559942506208428e-03
+  22  4.875965740726210e-02   4.812203514743870e-01   1.204204461861235e-02
+  23  1.416525634600071e-02   1.849502334317219e-01   5.073432667403296e-03
+  24  1.742785501750326e-01   1.527192678802358e-01   1.441383363044896e-02
+  25  1.990864251899258e-02   9.032362846329983e-01   4.280169307836807e-03
+  26  2.559410930812864e-01   5.144318432321180e-01   2.031638102723909e-02
+  27  9.845159633406285e-02   5.915979268564892e-01   1.511778650093584e-02
+  28  1.056040912308669e-01   3.393366530424772e-01   1.464755557823782e-02
+  29  7.601132315905118e-02   2.237000541914068e-01   1.114323421688549e-02
+  30  1.768840761768313e-02   3.393557722644410e-01   7.432934354500808e-03
+  31  1.507382421043426e-02   1.159750141295144e-02   1.204282291433607e-03
+  32  1.761983599175417e-01   4.338217516576770e-01   1.983662328656544e-02
+  33  7.328369822718382e-02   1.003519993259735e-01   8.752326882927857e-03
+  34  1.972336453840728e-02   6.616789600451933e-01   7.496778000681790e-03
+  35  9.156977186767293e-01   1.431564642904111e-02   3.191816101405980e-03
+  36  8.166209255432719e-01   1.833790744567280e-01   1.714555510563782e-03
+  37  7.719386331270337e-01   1.785916111285537e-01   9.791807812307186e-03
+  38  4.809852396267190e-01   2.154848354825528e-03   2.559942506208428e-03
+  39  4.812203514743870e-01   4.700199911183509e-01   1.204204461861235e-02
+  40  1.849502334317219e-01   8.008845102222774e-01   5.073432667403296e-03
+  41  1.527192678802358e-01   6.730021819447316e-01   1.441383363044896e-02
+  42  9.032362846329983e-01   7.685507284800906e-02   4.280169307836807e-03
+  43  5.144318432321180e-01   2.296270636865956e-01   2.031638102723909e-02
+  44  5.915979268564892e-01   3.099504768094480e-01   1.511778650093584e-02
+  45  3.393366530424772e-01   5.550592557266559e-01   1.464755557823782e-02
+  46  2.237000541914068e-01   7.002886226495421e-01   1.114323421688549e-02
+  47  3.393557722644410e-01   6.429558201178759e-01   7.432934354500808e-03
+  48  1.159750141295144e-02   9.733286743766143e-01   1.204282291433607e-03
+  49  4.338217516576770e-01   3.899798884247814e-01   1.983662328656544e-02
+  50  1.003519993259735e-01   8.263643024468427e-01   8.752326882927857e-03
+  51  6.616789600451933e-01   3.185976754163994e-01   7.496778000681790e-03
+  52  3.333333333333333e-01   3.333333333333333e-01   2.295348711741643e-02</pre>
+</body></html>

@@ -1,0 +1,85 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-T2-15-54-PI-WX – Cubature Atlas Triangle, Degree 15, 54 Nodes</title><meta name="description" content="Fully symmetric PI rules from the literature, reproduced for comparison: S. Wandzura, H. Xiao: Symmetric quadrature rules on a triangle. Comput. Math.">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/wandzura_xiao_2003/triangle/CA-T2-15-54-PI-WX.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/wandzura_xiao_2003/triangle/CA-T2-15-54-PI-WX.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../">Back to the atlas</a> · <a href="../../../rules/index.html">All rules</a></p>
+<h1>CA-T2-15-54-PI-WX</h1>
+<p class="ai">AI-assisted research and presentation. The atlas rules are checked against their polynomial moments and certified with interval arithmetic; see Documentation for the methods and their limits.</p>
+<p>Not the best known rule; best known: <a href="../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-15-46-PI-MPC.html">CA-T2-15-46-PI-MPC</a> (46)</p>
+<p>Reproduced from the cited publication for comparison; not covered by the CC BY 4.0 license of the atlas, the original terms apply.</p>
+<table>
+<tr><th>Family</th><td>Wandzura–Xiao (triangle, literature)<br><small>rules/wandzura_xiao_2003/</small></td></tr>
+<tr><th>Domain</th><td>Triangle (T2)</td></tr>
+<tr><th>Degree</th><td>15</td></tr>
+<tr><th>Number of nodes</th><td>54</td></tr>
+<tr><th>Quality</th><td>PI</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>5.55e-17</td></tr>
+<tr><th>Smallest weight</th><td>1.807322e-03</td></tr>
+<tr><th>Distance to domain boundary (negative = outside)</th><td>5.144e-03</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 3.00e-12, radius = 1.81e-15, yes</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 2.5e-15 of the stored numbers (symmetry-reduced equations, group of order 6)</td></tr>
+<tr><th>Origin</th><td>taken from the literature (printed generator nodes expanded with the symmetry group, mapped to the atlas triangle), moment equations re-checked by the build</td></tr>
+</table>
+<p><a href="../../../rules/wandzura_xiao_2003/triangle/CA-T2-15-54-PI-WX.json">Download JSON</a></p>
+<h2>Cite as</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-15-54-PI-WX (Wandzura–Xiao (triangle, literature), triangle, degree 15, 54 nodes), https://jukzi.github.io/cubature_atlas/rules/wandzura_xiao_2003/triangle/CA-T2-15-54-PI-WX.html</pre>
+<h2>Nodes and weights</h2>
+<pre>  #                       x                       y                       w
+   1  4.582807963691249e-01   4.582807963691251e-01   1.633090942440264e-02
+   2  8.343840726174992e-02   4.582807963691251e-01   1.633090942440264e-02
+   3  4.582807963691249e-01   8.343840726174996e-02   1.633090942440264e-02
+   4  4.036104645791306e-01   4.036104645791306e-01   1.370640901568218e-02
+   5  1.927790708417388e-01   4.036104645791306e-01   1.370640901568218e-02
+   6  4.036104645791305e-01   1.927790708417389e-01   1.370640901568218e-02
+   7  2.931971679130253e-01   2.931971679130254e-01   1.325501829935165e-02
+   8  4.136056641739492e-01   2.931971679130254e-01   1.325501829935165e-02
+   9  2.931971679130254e-01   4.136056641739493e-01   1.325501829935165e-02
+  10  1.464677869427729e-01   1.464677869427729e-01   1.460798106824305e-02
+  11  7.070644261144541e-01   1.464677869427729e-01   1.460798106824305e-02
+  12  1.464677869427730e-01   7.070644261144542e-01   1.460798106824305e-02
+  13  5.636286766560342e-02   5.636286766560343e-02   5.292304033121995e-03
+  14  8.872742646687932e-01   5.636286766560331e-02   5.292304033121995e-03
+  15  5.636286766560368e-02   8.872742646687932e-01   5.292304033121995e-03
+  16  1.657512685837033e-02   1.657512685837034e-02   1.807321532046017e-03
+  17  9.668497462832593e-01   1.657512685837018e-02   1.807321532046017e-03
+  18  1.657512685837048e-02   9.668497462832595e-01   1.807321532046017e-03
+  19  2.395345541547944e-01   7.505532425359808e-01   4.263874050854717e-03
+  20  7.505532425359808e-01   2.395345541547944e-01   4.263874050854717e-03
+  21  9.912203309224691e-03   2.395345541547946e-01   4.263874050854717e-03
+  22  9.912203309224746e-03   7.505532425359810e-01   4.263874050854717e-03
+  23  7.505532425359807e-01   9.912203309224606e-03   4.263874050854717e-03
+  24  2.395345541547942e-01   9.912203309224965e-03   4.263874050854717e-03
+  25  4.048788073183398e-01   5.793174220514321e-01   6.958088258345964e-03
+  26  5.793174220514319e-01   4.048788073183399e-01   6.958088258345964e-03
+  27  1.580377063022801e-02   4.048788073183400e-01   6.958088258345964e-03
+  28  1.580377063022790e-02   5.793174220514322e-01   6.958088258345964e-03
+  29  5.793174220514319e-01   1.580377063022795e-02   6.958088258345964e-03
+  30  4.048788073183397e-01   1.580377063022808e-02   6.958088258345964e-03
+  31  9.500211311304470e-02   8.998542780699846e-01   2.145966470367417e-03
+  32  8.998542780699844e-01   9.500211311304485e-02   2.145966470367417e-03
+  33  5.143608816970545e-03   9.500211311304500e-02   2.145966470367417e-03
+  34  5.143608816970624e-03   8.998542780699846e-01   2.145966470367417e-03
+  35  8.998542780699844e-01   5.143608816970367e-03   2.145966470367417e-03
+  36  9.500211311304457e-02   5.143608816970902e-03   2.145966470367417e-03
+  37  1.497531073222738e-01   8.013245669247373e-01   8.117664640887444e-03
+  38  8.013245669247372e-01   1.497531073222740e-01   8.117664640887444e-03
+  39  4.892232575298870e-02   1.497531073222741e-01   8.117664640887444e-03
+  40  4.892232575298879e-02   8.013245669247373e-01   8.117664640887444e-03
+  41  8.013245669247372e-01   4.892232575298856e-02   8.117664640887444e-03
+  42  1.497531073222738e-01   4.892232575298901e-02   8.117664640887444e-03
+  43  2.869196124413348e-01   6.443116389261460e-01   1.280367046063119e-02
+  44  6.443116389261458e-01   2.869196124413350e-01   1.280367046063119e-02
+  45  6.876874863251915e-02   2.869196124413351e-01   1.280367046063119e-02
+  46  6.876874863251921e-02   6.443116389261460e-01   1.280367046063119e-02
+  47  6.443116389261457e-01   6.876874863251911e-02   1.280367046063119e-02
+  48  2.869196124413348e-01   6.876874863251935e-02   1.280367046063119e-02
+  49  2.818356680990845e-01   5.497599137762162e-01   1.654409776582283e-02
+  50  5.497599137762161e-01   2.818356680990846e-01   1.654409776582283e-02
+  51  1.684044181246991e-01   2.818356680990846e-01   1.654409776582283e-02
+  52  1.684044181246992e-01   5.497599137762162e-01   1.654409776582283e-02
+  53  5.497599137762161e-01   1.684044181246991e-01   1.654409776582283e-02
+  54  2.818356680990844e-01   1.684044181246993e-01   1.654409776582283e-02</pre>
+</body></html>
