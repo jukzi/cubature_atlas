@@ -173,10 +173,10 @@
   {
     "n": 28,
     "y": "2025",
-    "t": "V. Kaarnioja: Explicit solutions of Genz test integrals. Appl. Math. Lett. 163 (2025). Closed-form values for the Genz test families (Genz 1984), used here for the Genz examples.",
-    "u": "https://www.sciencedirect.com/science/article/pii/S0893965924004646",
+    "t": "V. Kaarnioja: Explicit solutions of Genz test integrals. Applied Mathematics Letters 163 (2025), 109444. DOI: 10.1016/j.aml.2024.109444.",
+    "u": "https://doi.org/10.1016/j.aml.2024.109444",
     "u2": "https://refubium.fu-berlin.de/handle/fub188/46492",
-    "l2": "Preprint"
+    "l2": "Open-access version"
   },
   {
     "n": 29,
@@ -199,7 +199,7 @@
   {
     "n": 32,
     "y": "",
-    "t": "J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection (link not re-checked in this session).",
-    "u": "https://people.sc.fsu.edu/~jburkardt/m_src/cube_arbq_rule/cube_arbq_rule.html"
+    "t": "J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection; accessed 2026-11-20.",
+    "u": "https://people.math.sc.edu/Burkardt/f_src/cube_arbq_rule/cube_arbq_rule.html"
   }
 ]
