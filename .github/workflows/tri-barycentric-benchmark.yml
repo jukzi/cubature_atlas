@@ -1,0 +1,33 @@
+name: Triangle barycentric search benchmark
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - "code/benchmark_tri_maps.py"
+      - ".github/workflows/tri-barycentric-benchmark.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  paired-search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install search dependencies
+        run: pip install numpy scipy
+      - name: Run paired search campaign
+        run: python code/benchmark_tri_maps.py
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: triangle-barycentric-search-benchmark
+          path: triangle_barycentric_benchmark.json
