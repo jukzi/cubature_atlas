@@ -169,3 +169,4 @@ Xiao-Gimbutas (2010), still without node data:
 - Other counts of the current tables of the authors (square, tetrahedron and cube rules with fewer nodes than the paper) are not imported: they do not match the counts in the file.
 
 Worku-Hicken-Zingg (2024), tetrahedron k=wk: all cells 540@21 to 1564@30 now have node data (degrees 21 to 30, imported by `code/import_burkardt_rules.py` from the published high-precision tables). Their triangle and tetrahedron rules of higher degrees were already in the atlas.
+Pinkse (2026), cube k=pk: the cells 82@11, 128@13, 188@15, 266@17, 612@23, 964@27 now have node data (imported by `code/import_burkardt_rules.py` from the published data deposit). The cells of the even degrees and of the square (for example 456@50) are covered by the rule of the next odd degree with the same node count.

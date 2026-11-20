@@ -35,7 +35,7 @@ Each family is one directory under `rules/`. The family name, including its tran
 | `witherden_vincent_2015` | `literature` | Fully symmetric triangle rules (reproduced for comparison) |
 | `jaskowiec_sukumar_2020` | `literature` | Fully symmetric tetrahedron rules (reproduced for comparison) |
 | `diallo_worku_2026` | `literature` | Fully symmetric square and cube rules (reproduced for comparison) |
-| `pinkse_2026` | `literature` | Cube rules of the degrees 21, 25 and 29 to 45 (odd) and square rules of the odd degrees 31 to 51 (reproduced for comparison) |
+| `pinkse_2026` | `literature` | Cube rules of the degrees 11, 13, 15, 17, 21, 23, 25, 27 and 29 to 45 (odd) and square rules of the odd degrees 31 to 51 (reproduced for comparison) |
 | `festa_sommariva_2012` | `literature` | Square rules of the degrees 31 to 50 (reproduced for comparison) |
 | `worku_hicken_zingg_2024` | `literature` | Fully symmetric triangle rules of the degrees 31 to 50 and tetrahedron rules of the degrees 21 to 40 (reproduced for comparison) |
 | `wandzura_xiao_2003` | `literature` | The six fully symmetric triangle rules printed in the paper (degrees 5, 10, 15, 20, 25, 30), made by `code/import_xiao_wandzura.py` |
