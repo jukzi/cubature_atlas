@@ -203,9 +203,9 @@ def lm_bounded(fun_jac, v0, lb, ub, max_nfev, tol=1e-15):
     that residual and Jacobian were evaluated separately (two basis evaluations
     per iteration).  Here one evaluation gives both, the damped normal equations
     (J^T J + mu diag(J^T J)) dv = -J^T r are solved by Cholesky on the free
-    variables only (variables sitting on a bound with the gradient pushing outward
-    are frozen), and the step is projected onto the box.  The orthonormal basis
-    (IDEA 1) keeps J^T J well enough conditioned for this."""
+    smaller primal/dual system (variables sitting on a bound with the gradient
+    pushing outward are frozen).  The dual form is algebraically equivalent to the
+    diagonally scaled primal system; the accepted step is projected onto the box."""
     v = v0.copy()
     r, J = fun_jac(v)
     cost = 0.5 * float(r @ r)
