@@ -197,7 +197,7 @@ Theorem 3.1 states Möller's bound with the structural matrices of the three-ter
 
 > In his classical paper [5], Koornwinder studied a family of orthogonal polynomials of two variables, derived from symmetric polynomials. This family possesses a rare property that orthogonal polynomials of degree $n$ have $n(n+1)/2$ real common zeros, which leads to important examples in the theory of minimal cubature rules. This paper aims to give an account of the minimal cubature rules of two variables and examples originating from Koornwinder polynomials, and we will also provide further examples.
 
-### Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. J. Comput. Appl. Math. 472 (2026) 116782 (arXiv:2409.02027, 2024). <https://arxiv.org/abs/2409.02027>
+### Z. A. Worku, J. E. Hicken, D. W. Zingg: Very high-order symmetric positive-interior quadrature rules on triangles and tetrahedra. J. Comput. Appl. Math. 472 (2026) 116782. <https://doi.org/10.1016/j.cam.2025.116782> (Preprint: <https://arxiv.org/abs/2409.02027>).
 
 Fully symmetric rules up to degree 84 (triangle) and 40 (tetrahedron); comparison counts and elimination idea cited in `code/simplex_cubature.py`; its tetrahedron counts for the degrees 21 to 40 and its triangle counts for the degrees 31 to 50 are in the column N_Lit; the triangle rules of the degrees 31 to 50 and the tetrahedron rules of the degrees 21 to 40 are stored in the family `worku_hicken_zingg_2024` (the degrees 21 to 30 made by `code/import_burkardt_rules.py`).
 
@@ -315,7 +315,7 @@ Least squares construction of cubature formulas that are provably positive and e
 
 > Many applications require multi-dimensional numerical integration, often in the form of a cubature formula. These cubature formulas are desired to be positive and exact for certain finite-dimensional function spaces (and weight functions). Although there are several efficient procedures to construct positive and exact cubature formulas for many standard cases, it remains a challenge to do so in a more general setting. Here, we show how the method of least squares can be used to derive provable positive and exact formulas in a general multi-dimensional setting. Thereby, the procedure only makes use of basic linear algebra operations, such as solving a least squares problem. In particular, it is proved that the resulting least squares cubature formulas are ensured to be positive and exact if a sufficiently large number of equidistributed data points is used. We also discuss the application of provable positive and exact least squares cubature formulas to construct nested stable high-order rules and positive interpolatory formulas. Finally, our findings shed new light on some existing methods for multivariate numerical integration and under which restrictions these are ensured to be successful.
 
-### Z. A. Worku, J. E. Hicken, D. W. Zingg: Quadrature rules on triangles and tetrahedra for multidimensional summation-by-parts operators. J. Sci. Comput. 101 (2024), arXiv:2311.15576 (2023). <https://arxiv.org/abs/2311.15576>
+### Z. A. Worku, J. E. Hicken, D. W. Zingg: Quadrature rules on triangles and tetrahedra for multidimensional summation-by-parts operators. J. Sci. Comput. 101(1) (2024), article 24. <https://doi.org/10.1007/s10915-024-02656-5> (Preprint: <https://arxiv.org/abs/2311.15576>).
 
 Fully symmetric positive-weight rules on triangles and tetrahedra with matching facet nodes for diagonal-E operators; not used in the atlas.
 
