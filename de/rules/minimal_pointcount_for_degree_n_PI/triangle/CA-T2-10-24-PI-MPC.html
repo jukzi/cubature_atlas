@@ -16,40 +16,40 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Grad</th><td>10</td></tr>
 <tr><th>Knotenzahl</th><td>24</td></tr>
 <tr><th>Qualität</th><td>PI</td></tr>
-<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>5.55e-16</td></tr>
-<tr><th>Kleinstes Gewicht</th><td>5.545340e-03</td></tr>
-<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>0.000e+00</td></tr>
-<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 6.89e-12, radius = 5.29e-15, ja</td></tr>
-<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 2.1e-14 von den gespeicherten Zahlen entfernt (Gleichungen in allen Unbekannten)</td></tr>
-<tr><th>Herkunft</th><td>numerical search of this atlas (moment equations, least squares), checked numerically</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>4.44e-16</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>2.324812e-03</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>2.163e-04</td></tr>
+<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 1.69e-11, radius = 1.42e-14, ja</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 4.8e-15 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 3)</td></tr>
+<tr><th>Herkunft</th><td>numerical search of this atlas: nested-ring (shell) start with 24 nodes, points per edge outside to inside 6,4 (relative notation 6 -2), outer ring slid along its edge, inner rings turned, noise proportional to the bubble function 27 b0 b1 b2, then a C3 symmetric Levenberg-Marquardt search in float64 (code/tri_search.py, mode shell), the nodes kept in the triangle by box bounds on a collapsed parametrisation and the weights &gt;= 0; all nodes lie inside the triangle; the weights were then minimised in the L2 norm with the symmetry kept (tools/minimize_l2.py); the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
 </table>
 <p><a href="../../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-10-24-PI-MPC.json">JSON herunterladen</a></p>
 <h2>Zitieren als</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-10-24-PI-MPC (Minimal point count for degree n (PI), triangle, degree 10, 24 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-10-24-PI-MPC.html</pre>
 <h2>Knoten und Gewichte</h2>
 <pre>  #                       x                       y                       w
-   1  1.995043966952600e-01   3.052908947513700e-02   1.628718511835500e-02
-   2  7.751882822612000e-01   2.143664820750690e-01   9.519845566505000e-03
-   3  8.203233466857380e-01   5.717031380373000e-03   6.819786848177000e-03
-   4  1.046595329247880e-01   7.787558872787080e-01   2.280623923359200e-02
-   5  7.280379078385000e-03   8.434711699766100e-01   5.545340386250000e-03
-   6  2.122417038719260e-01   3.287046364354460e-01   4.620709704489400e-02
-   7  0.000000000000000e+00   1.880587080272490e-01   5.754250620480000e-03
-   8  9.270399376187130e-01   4.004631514385000e-02   8.477959153429001e-03
-   9  4.814752115325320e-01   5.082241697368990e-01   9.914544679366000e-03
-  10  4.500704750171530e-01   1.185361386177100e-02   1.069164098845100e-02
-  11  4.783402898481590e-01   2.320013808574820e-01   4.626612590828600e-02
-  12  3.131018519228380e-01   4.767355265308780e-01   4.205285227592500e-02
-  13  3.411916571632600e-02   9.385191498766730e-01   6.057702520754000e-03
-  14  1.414291820279600e-02   6.504923011699780e-01   9.845078280403000e-03
-  15  4.000216051468000e-02   3.644837066549900e-02   9.352360987824000e-03
-  16  1.764873475595160e-01   8.163868183497440e-01   6.530519627433000e-03
-  17  6.161260352228320e-01   5.742992381238100e-02   2.623357083832400e-02
-  18  5.648924140228140e-01   3.469993772003390e-01   3.328163326064900e-02
-  19  1.039833070637870e-01   1.699419152859550e-01   3.044079435397300e-02
-  20  2.934562488865770e-01   6.399517467804260e-01   2.484048230302100e-02
-  21  4.117503353296600e-02   4.001561046698740e-01   2.491815268874400e-02
-  22  3.340639548795400e-01   1.197187973668850e-01   3.771082687049700e-02
-  23  7.494392388381350e-01   1.270165499014480e-01   2.785514606746700e-02
-  24  1.127695658173390e-01   5.886157309330350e-01   3.259086437720100e-02</pre>
+   1  2.935277575844194e-02   8.452184555170199e-04   2.324812067229916e-03
+   2  1.750265788681246e-01   2.944590261015493e-02   1.494664121652304e-02
+   3  4.072324885908901e-01   3.634208917645240e-02   2.359666979807016e-02
+   4  6.906513754518687e-01   2.162738020277785e-04   5.442655049228582e-03
+   5  6.269944334447478e-01   7.442541292649839e-02   2.620998025802589e-02
+   6  2.012762959590672e-01   1.564947700340689e-01   3.363238326893938e-02
+   7  3.961488992464106e-01   1.977601001334864e-01   4.470744506043570e-02
+   8  8.596951219515899e-01   3.936813069379109e-02   1.580607994821408e-02
+   9  8.452184555170199e-04   9.698020057860410e-01   2.324812067229917e-03
+  10  2.944590261015493e-02   7.955275185217204e-01   1.494664121652304e-02
+  11  3.634208917645240e-02   5.564254222326576e-01   2.359666979807016e-02
+  12  2.162738020277785e-04   3.091323507461035e-01   5.442655049228582e-03
+  13  7.442541292649839e-02   2.985801536287540e-01   2.620998025802589e-02
+  14  1.564947700340689e-01   6.422289340068639e-01   3.363238326893938e-02
+  15  1.977601001334864e-01   4.060910006201031e-01   4.470744506043570e-02
+  16  3.936813069379108e-02   1.009367473546189e-01   1.580607994821408e-02
+  17  9.698020057860410e-01   2.935277575844194e-02   2.324812067229916e-03
+  18  7.955275185217204e-01   1.750265788681246e-01   1.494664121652304e-02
+  19  5.564254222326575e-01   4.072324885908902e-01   2.359666979807016e-02
+  20  3.091323507461035e-01   6.906513754518687e-01   5.442655049228582e-03
+  21  2.985801536287539e-01   6.269944334447478e-01   2.620998025802589e-02
+  22  6.422289340068639e-01   2.012762959590672e-01   3.363238326893938e-02
+  23  4.060910006201031e-01   3.961488992464106e-01   4.470744506043570e-02
+  24  1.009367473546189e-01   8.596951219515899e-01   1.580607994821408e-02</pre>
 </body></html>
