@@ -228,8 +228,7 @@ def lm_bounded(fun_jac, v0, lb, ub, max_nfev, tol=1e-15):
         # The dual system is cheaper when there are fewer moment equations than
         # free variables.  This scaling matters: replacing D by a scalar damping
         # term would change the LM trajectory and confound the benchmark.
-        A = Jf.T @ Jf
-        d = np.diag(A).copy()
+        d = np.sum(Jf * Jf, axis=0)
         d[d < 1e-14] = 1e-14
         use_dual = Jf.shape[0] < Jf.shape[1]
         if use_dual:
@@ -237,7 +236,7 @@ def lm_bounded(fun_jac, v0, lb, ub, max_nfev, tol=1e-15):
             K = Jf * inv_sqrt_d[None, :]
             system = K @ K.T
         else:
-            system = A
+            system = Jf.T @ Jf
         improved = False
         for _try in range(12):
             try:
