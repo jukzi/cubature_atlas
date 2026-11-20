@@ -1,0 +1,49 @@
+name: Reproduce degree-9 19-node PI improvement
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    branches: [main]
+    paths:
+      - "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC-a.json"
+      - "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC-a.proof"
+      - "code/reproduce_degree9_19_improved.py"
+      - ".github/workflows/degree9-rule-reproduce.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install search dependencies
+        run: pip install numpy scipy
+      - name: Replay the elimination chain, minimize weights, and prove
+        run: python code/reproduce_degree9_19_improved.py --out "$RUNNER_TEMP/reproduced-CA-T2-09-19-PI-MPC-a.json"
+      - name: Compare reproduced rule with the committed candidate
+        run: |
+          python - <<'PY'
+          import json
+          import numpy as np
+          from pathlib import Path
+          stored = json.loads(Path("rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC-a.json").read_text())
+          reproduced = json.loads(Path(__import__("os").environ["RUNNER_TEMP"] + "/reproduced-CA-T2-09-19-PI-MPC-a.json").read_text())
+          X0, X1 = np.asarray(stored["nodes"]), np.asarray(reproduced["nodes"])
+          W0, W1 = np.asarray(stored["weights"]), np.asarray(reproduced["weights"])
+          assert X0.shape == X1.shape == (19, 2)
+          assert W0.shape == W1.shape == (19,)
+          assert np.max(np.abs(X0 - X1)) < 2e-11, np.max(np.abs(X0 - X1))
+          assert np.max(np.abs(W0 - W1)) < 2e-11, np.max(np.abs(W0 - W1))
+          print("reproduction matches: max node delta", np.max(np.abs(X0-X1)),
+                "max weight delta", np.max(np.abs(W0-W1)))
+          PY
+      - name: Check atlas integrity for the added rule
+        run: python tools/build_atlas.py --base origin/main --changed
