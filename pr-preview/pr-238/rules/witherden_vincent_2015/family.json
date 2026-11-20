@@ -1,0 +1,22 @@
+{
+  "id": "witherden_vincent_2015",
+  "tag": "WV",
+  "role": "literature",
+  "quality": "PI",
+  "name": {
+    "en": "Witherden–Vincent (fully symmetric, literature)",
+    "de": "Witherden–Vincent (voll symmetrisch, Literatur)"
+  },
+  "short": {
+    "en": "Witherden–Vincent",
+    "de": "Witherden–Vincent"
+  },
+  "description": {
+    "en": "Fully symmetric PI rules from the literature, reproduced for comparison: F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015). Nodes and weights as published (15 digits); the build re-checks the moment equations.",
+    "de": "Voll symmetrische PI-Regeln aus der Literatur, zum Vergleich übernommen: F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015). Knoten und Gewichte wie veröffentlicht (15 Stellen); der Build rechnet die Momentengleichungen nach."
+  },
+  "references": [
+    17
+  ],
+  "author": "Witherden–Vincent"
+}
