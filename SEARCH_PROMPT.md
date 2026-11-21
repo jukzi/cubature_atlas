@@ -56,6 +56,9 @@ Before checking in a rule of this atlas, run `python tools/minimize_l2.py <rule.
 
 ### What worked in every domain (reuse, do not rediscover)
 
+- Tetrahedron degree 37, PI: 2671 to 2670 nodes by deleting the centroid of `CA-T3-37-2671-PI-WHZ`, redistributing its mass to a nearby orbit, then solving the reduced Dubiner moments with bounded LM. `code/tetra_block_elim.py` builds the invariant basis by averaging seeded point evaluations over the group and doing pivoted QR on each total-degree layer. At degree 10 with S4, the projector differed from the old quadrature-based projector by 1.97e-14 in Frobenius norm. The two calibration timings were 0.040–0.048 s for block QR and 0.755–0.773 s for the old setup. At degree 37 the S4 search (seed 11401) found the 2670-node candidate in 56.1 s with squared-residual cost 3.51e-27 at its second trial. The A4 search (seed 11406) independently reached the same count in 83.7 s. The S4 replay reproduced the pre-minimisation array exactly. Sources: atlas state at `9a3b207`, `tetra-basis-calibration.log`, `block-37-*.log`, and `replay-37.log`.
+- Tetrahedron degree 38, PI: two block-basis searches independently reduced `CA-T3-38-3296-PI-WHZ` from 3296 to 3292 nodes. The S4 run (seed 11402) removed a four-node orbit at trial 3 in 125.3 s, with cost 7.85e-28. The A4 run (seed 11405) also succeeded at trial 3. Source: `block-38-*.log`.
+
 - Orthonormal basis (Dubiner/PKD on simplices, Legendre products on boxes) with analytic or complex-step Jacobian; monomials are too ill-conditioned. Evaluate the recurrences once per index, not once per basis function (30x faster for the tetrahedron, bit-identical).
 - Own Levenberg–Marquardt instead of `scipy.optimize.least_squares(trf)`: Cholesky on the free variables, one basis evaluation per iteration, float64 on the CPU. This was the largest single speed-up (10x time to solution on the triangle). A start damping of 1e-4 gave wrong minima in one implementation, 0.1 worked; test your own.
 - Stagnation stop: stop a run when, over the last `win` steps, neither the residual fell by `gain` (relative) nor an unknown changed by `dq`. Hopeless starts then end after a few steps, and the saved time goes into more starts.
@@ -100,6 +103,9 @@ Before checking in a rule of this atlas, run `python tools/minimize_l2.py <rule.
 ### Tried without gain
 
 Repeat only with a new twist; add every new negative result with domain, degree, N, method, best residual.
+
+- Tetrahedron degree 40, PI: from 3815 nodes, no smaller rule in block-basis orbit removal with S4 or A4 (180 s timeout each, seeds 11403–11404). Best completed costs were 1.35e-6 and 1.04e-6, respectively, for a 3811-node target. Explicitly targeting the centroid at 3814 nodes (seeds 11706 and 12147, 160 s limits) ended before the first trial reported a cost. The old quadrature-based setup on degrees 37, 38 and 40 produced no candidate log before the 145 s timeout. Sources: `block-40-*.log`, `centroid-40-*.log`, and `tetra-*.log`.
+- Square degree 50, PI: free node removal with `square_elim.py refine` found no rule in three short runs. Starts were degree 50 with 452 and 454 nodes, and degree 51 with 456 nodes, giving first targets of 451, 453 and 455 nodes respectively. The 100 s search budgets ended without a residual report. Sources: `square-50-1131*.log`.
 
 - Random-start LM without a shell pattern where shells worked; node elimination from N + 1 rules; long basin hopping; GPU float32 searches; S3 stage for triangle degrees below 20; PO to PI conversion by shrinking outside nodes towards the centroid.
 - Triangle, N = Z, PI: degrees 8, 10, 12 (best residual symmetric 1.4e-1, 8.0e-2, 1.5e-1; unsymmetric 9.5e-2, 6.9e-2, not finished for 12), even degrees 10 to 18 with C3 symmetry up to `--relax 4`, degree 18 with noise starts (150 per pattern, residual about 1e-3).
