@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-38-2620-PI-MPC",
+ "file": "../cube-work/verified/CA-C3-38-2620-PI-MPC.json",
+ "domain": "cube",
+ "degree": 38,
+ "points": 2620,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "1f91722d20536753",
+ "stored": {
+  "res_bound": 1.1249622714101092e-14,
+  "res_ok": true,
+  "margin_exact": 4.69354043958e-05,
+  "minw_exact": 4.685669200800982e-05,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.2765295465712227e-16,
+  "kratio": 0.6666667035381122,
+  "mode": "sym24",
+  "equations": 551,
+  "unknowns": 556,
+  "dist": 7.414952515728373e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 101.79,
+ "ok_stored": true,
+ "ok_exist": true
+}
