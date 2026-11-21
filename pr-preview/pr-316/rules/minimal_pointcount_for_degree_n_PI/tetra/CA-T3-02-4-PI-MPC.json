@@ -1,0 +1,27 @@
+{
+  "id": "CA-T3-02-4-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "tetra",
+  "dimension": 3,
+  "degree": 2,
+  "points": 4,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "proven",
+  "residual_reported": 4.8616392938596603e-17,
+  "numerical_check": {"N": 4, "M": 10, "p": 16, "res": 4.8616392938596603e-17, "sigma": 1.4845352494012432, "h": 1.4049467670992234e-15, "rad": 5.4314753397832656e-17, "cert": true, "inside": true},
+  "nodes": [
+    [0.5724855376745766, 0.2210556869573854, 0.07096553948486858],
+    [0.19747927843207022, 0.17652132592244119, 0.5717507317535685],
+    [0.0566908716318387, 0.5643822949005013, 0.1326041892134082],
+    [0.1733439683480311, 0.03804016122017258, 0.22467910456618143]
+  ],
+  "weights": [
+    0.041666701594358174,
+    0.04166673735214756,
+    0.04166667795981848,
+    0.04166654976034253
+  ]
+}
