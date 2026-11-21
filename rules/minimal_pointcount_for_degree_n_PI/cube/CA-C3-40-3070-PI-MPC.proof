@@ -1,0 +1,33 @@
+{
+ "id": "CA-C3-40-3070-PI-MPC",
+ "file": "../cube-work/verified/CA-C3-40-3070-PI-MPC.json",
+ "domain": "cube",
+ "degree": 40,
+ "points": 3070,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "0ecc9b72938ccd97",
+ "stored": {
+  "res_bound": 1.292087692607917e-14,
+  "res_ok": true,
+  "margin_exact": 0.0,
+  "minw_exact": 3.855635372297906e-06,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 2.0962622114495085e-16,
+  "kratio": 0.6666667398863311,
+  "mode": "sym24",
+  "equations": 632,
+  "unknowns": 637,
+  "dist": 6.017920897126397e-14,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 62.67,
+ "ok_stored": true,
+ "ok_exist": true
+}
