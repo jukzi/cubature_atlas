@@ -82,6 +82,31 @@ class OrbitProblem(se.SymProb):
         self.T = invariant.T @ basis.T
 
 
+def linear_order(problem, x):
+    # In scaled coordinates, projecting a weight axis onto the Jacobian
+    # nullspace predicts how much the other unknowns must move to zero it.
+    q = problem.off[-1]
+    scale = np.r_[np.maximum(np.minimum(x[:q], 1 - x[:q]), 0.02), x[q:]]
+    jacobian = problem.jac(x) * scale
+    vectors, triangular, _ = qr(jacobian.T, mode="full", pivoting=True)
+    diagonal = np.abs(np.diag(triangular))
+    rank = np.count_nonzero(diagonal > diagonal[0] * 1e-10)
+    null = vectors[:, rank:]
+    scores = np.full(problem.n, np.inf)
+    for orbit, axis in enumerate(null[q:]):
+        freedom = axis @ axis
+        if freedom <= 1e-14:
+            continue
+        move = -(null @ axis) / freedom
+        trial = x + move * scale
+        violation = np.maximum(-trial, 0) / scale
+        violation[:q] += np.maximum(trial[:q] - 1, 0) / scale[:q]
+        # The removed weight is fixed to zero. Penalize other coordinates
+        # predicted to cross an active constraint, then prefer smaller steps.
+        scores[orbit] = np.linalg.norm(move) + 10 * np.linalg.norm(violation)
+    return np.argsort(scores, kind="stable"), scores
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("degree", type=int)
@@ -92,7 +117,7 @@ def main():
     parser.add_argument("--tries", type=int, default=12)
     parser.add_argument("--iterations", type=int, default=50)
     parser.add_argument("--noise", type=float, default=0)
-    parser.add_argument("--order", choices=["light", "heavy", "random"], default="light")
+    parser.add_argument("--order", choices=["light", "heavy", "random", "linear"], default="light")
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     then = perf_counter()
@@ -111,6 +136,10 @@ def main():
         order = order[::-1]
     if args.order == "random":
         rng.shuffle(order)
+    if args.order == "linear":
+        order, scores = linear_order(prob, x)
+        print("linear ordering:", [(int(i), int(orbits[i][0].size), float(scores[i]))
+                                  for i in order[:max(5, args.tries)]], flush=True)
     for attempt, drop in enumerate(order[:args.tries], 1):
         orbit, q, w = orbits[drop]
         # Preserve total mass and move the dropped mass into its closest orbit.
