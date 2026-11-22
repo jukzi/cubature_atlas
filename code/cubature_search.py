@@ -1988,19 +1988,19 @@ def verify(X, W, n, d=3):
     L, _ = legendre_table(X, n)
     # All multi-indices.
     idx = np.array([a for a in itertools.product(range(n + 1), repeat=d) if sum(a) <= n])
-    # Product basis values: (K, N).
-    V = np.ones((idx.shape[0], X.shape[0]))
-    # Multiply coordinate factors.
-    for i in range(d):
-        V *= L[idx[:, i], :, i]
-    # Quadrature approximations of the moments.
-    q = V @ W
-    # Exact moments.
-    exact = np.zeros(idx.shape[0])
-    # Constant has moment one.
-    exact[np.all(idx == 0, axis=1)] = 1.0
-    # Maximal error.
-    return float(np.max(np.abs(q - exact)))
+    # Bound temporary memory independently of the number of moment equations.
+    block_size = max(1, 1_000_000 // max(1, X.shape[0]))
+    max_error = 0.0
+    for start in range(0, len(idx), block_size):
+        block = idx[start:start + block_size]
+        values = np.ones((len(block), X.shape[0]))
+        for axis in range(d):
+            values *= L[block[:, axis], :, axis]
+        moments = values @ W
+        if start == 0:
+            moments[0] -= 1.0
+        max_error = np.maximum(max_error, np.max(np.abs(moments)))
+    return float(max_error)
 
 
 # ---------------------------------------------------------------------------
