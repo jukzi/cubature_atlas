@@ -1508,7 +1508,7 @@ def escape_step(rule, rng, tries=30, max_try=6):
     return None
 
 
-def eliminate(rule, max_try=12, rng=None, noise=0.0, log=None, time_limit=None, escape_tries=0, power=2.0, homotopy_tries=0, lexi=False):
+def eliminate(rule, max_try=12, rng=None, noise=0.0, log=None, time_limit=None, escape_tries=0, power=2.0, homotopy_tries=0, lexi=False, max_steps=None):
     """Greedy (optionally randomised) orbit elimination starting from an exact rule."""
     # Start time.
     t0 = time.time()
@@ -1516,8 +1516,9 @@ def eliminate(rule, max_try=12, rng=None, noise=0.0, log=None, time_limit=None, 
     cur = rule.copy()
     # Random generator for the escape moves.
     erng = rng if rng is not None else np.random.default_rng(0)
-    # Main loop.
-    while True:
+    # Main loop. The optional step limit makes runs independent of timing.
+    steps = itertools.count() if max_steps is None else range(max_steps)
+    for _ in steps:
         # Time limit check.
         if time_limit is not None and time.time() - t0 > time_limit:
             break
