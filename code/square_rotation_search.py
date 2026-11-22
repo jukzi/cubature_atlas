@@ -107,6 +107,8 @@ def main():
     parser.add_argument('--direct', action='store_true')
     parser.add_argument('--rank', action='store_true')
     parser.add_argument('--noise', type=float, default=0)
+    parser.add_argument('--checkpoint', action='store_true', help='save the best numerical iterate even before convergence')
+    parser.add_argument('--max-trials', type=int, help='stop after this many trials at each node count')
     parser.add_argument('--out', type=Path, required=True)
     args = parser.parse_args()
     if args.degree < 1 or args.degree % 2 == 0:
@@ -140,7 +142,7 @@ def main():
         centre = False
     count = 0
     best = np.inf
-    while time.monotonic() < stop:
+    while time.monotonic() < stop and (args.max_trials is None or count < args.max_trials):
         if not args.start:
             n = args.target // args.rotation
             q = rng.uniform(-0.85, 0.85, (n, 2))
@@ -192,6 +194,11 @@ def main():
         if residual < best:
             best = residual
             print('trial', count, 'best', f'{best:.8g}', flush=True)
+            if args.checkpoint:
+                nodes, weights = prob.full_rule(x, n, centre)
+                (args.out / 'closest.json').write_text(json.dumps(dict(
+                    nodes=nodes.tolist(), weights=weights.tolist(), residual=float(best),
+                    seed=args.seed, trial=count)))
         if residual < 1e-13:
             nodes, weights = prob.full_rule(x, n, centre)
             error = monomial_error(args.degree, nodes, weights)
