@@ -1011,28 +1011,18 @@ def generate_moves(rule, max_dist=0.35):
             # Only strictly smaller orbits.
             if pat.size >= size:
                 continue
-            # Best projection over all images.
-            best = None
-            # Loop over images.
-            for y in imgs:
-                # Least-squares coordinates in the smaller family.
-                v = pat.Apinv @ y
-                # Clip into the box.
-                v = np.clip(v, -1.0, 1.0)
-                # Distance to the projection.
-                dist = np.linalg.norm(pat.A @ v - y)
-                # Keep the closest.
-                if best is None or dist < best[0]:
-                    best = (dist, v)
-            # Skip far-away projections.
-            if best[0] > max_dist:
+            # Project the entire orbit onto the smaller family in one batch.
+            candidates = np.clip(imgs @ pat.Apinv.T, -1.0, 1.0)
+            distances = np.linalg.norm(candidates @ pat.A.T - imgs, axis=1)
+            index = np.argmin(distances)
+            if distances[index] > max_dist:
                 continue
             # Build the demoted rule.
             new = rule.copy()
             # New family.
             new.pat_ids[o] = q
             # New coordinates.
-            new.coords[o] = best[1]
+            new.coords[o] = candidates[index]
             # Record the move.
             moves.append((size - pat.size, new, o, q))
     # Return all moves.
