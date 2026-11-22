@@ -1,0 +1,33 @@
+{
+ "id": "CA-T3-37-2530-PI-MPC",
+ "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-37-2530-PI-MPC.json",
+ "domain": "tetra",
+ "degree": 37,
+ "points": 2530,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "170ad5cb548f72ca",
+ "stored": {
+  "res_bound": 1.0969817867094162e-14,
+  "res_ok": true,
+  "margin_exact": 1.0345392865162798e-07,
+  "minw_exact": 8.687768682045087e-07,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.931625270937246e-12,
+  "kratio": 0.6759049979771526,
+  "mode": "sym24",
+  "equations": 664,
+  "unknowns": 666,
+  "dist": 3.931847315764216e-12,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 380.66,
+ "ok_stored": true,
+ "ok_exist": true
+}
