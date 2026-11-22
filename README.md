@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24037245.svg)](https://doi.org/10.5281/zenodo.24037245)
 
-**How few points do you need to integrate a polynomial exactly?** The Cubature Atlas collects the answers for the interval, triangle, square, tetrahedron and cube, for every degree from 1 to 30. Every rule has positive weights, and **every rule comes with a computer-assisted proof**.
+**How few points do you need to integrate a polynomial exactly?** The Cubature Atlas collects the answers for the interval, triangle, square, tetrahedron and cube — complete for every degree from 1 to 30 and continuously extended to higher degrees. Every rule has positive weights, and **every rule comes with a computer-assisted proof**.
 
 **→ Explore it on the website: <https://jukzi.github.io/cubature_atlas/>** (interactive viewer, tables, charts, downloads)
 
@@ -29,7 +29,7 @@ In one dimension the answer has been known since Gauss. On triangles, squares, t
 
 ## What makes this atlas different
 
-**Complete.** All 5 domains × 30 degrees = 150 cells are filled, with over 300 rules in total.
+**Complete.** All 5 domains × degrees 1–30 (150 core cells, shown in the charts below) are filled, and the atlas continues to higher degrees with hundreds of proven rules in total.
 
 **Proven, not just computed.** Floating-point searches can be wrong in the last digits, or worse. Here every rule is checked with interval arithmetic: the proof shows that an *exact* rule, with positive weights and with its nodes where the file says they are, exists within about 10<sup>-10</sup> of the stored numbers (`tools/verify_rigorous.py`). A rule without such a proof is not accepted.
 
@@ -116,4 +116,4 @@ The DOI 10.5281/zenodo.24037245 always resolves to the latest version. To cite o
 
 Copyright © 2026 Jörg Kubitz. The Cubature Atlas (rules, data, texts, website and code) is licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/), see `LICENSE`. You may use, share and adapt it for any purpose, including commercially, as long as you give appropriate credit (see *Citing*) and indicate if changes were made.
 
-Exception: the rules in the literature families (`witherden_vincent_2015`, `jaskowiec_sukumar_2020`, `diallo_worku_2026`, `pinkse_2026`, `festa_sommariva_2012`, `omelyan_solovyan_2006`, `worku_hicken_zingg_2024`, `wandzura_xiao_2003`, `xiao_gimbutas_2010`, `albrecht_collatz_1958`) are reproduced from the cited publications for comparison and are not covered by this license; their original terms apply.
+Exception: the rules in the literature families (every directory under `rules/` whose `family.json` has `"role": "literature"`, including `witherden_vincent_2015`, `jaskowiec_sukumar_2020`, `jaskowiec_sukumar_2020_nonsym`, `chuluunbaatar_2022`, `diallo_worku_2026`, `pinkse_2026`, `festa_sommariva_2012`, `omelyan_solovyan_2006`, `worku_hicken_zingg_2024`, `wandzura_xiao_2003`, `xiao_gimbutas_2010`, `albrecht_collatz_1958`) are reproduced from the cited publications for comparison and are not covered by this license; their original terms apply.

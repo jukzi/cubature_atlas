@@ -1,7 +1,7 @@
 {
   "title": "Cubature Atlas: best known quadrature and cubature rules with positive weights",
   "upload_type": "dataset",
-  "description": "<p>Smallest known quadrature and cubature rules with few points and positive weights on the interval, triangle, square, tetrahedron and cube, degrees 1 to 30. One JSON file per rule (nodes, weights, metadata), grouped into families: minimal point count for degree n with all nodes inside the domain (PI) or with nodes allowed outside (PO), plus fully symmetric rules from the literature for comparison. Every rule is checked against all monomial moments up to its degree, and the rules of the atlas's own search carry a Newton–Kantorovich certificate. Includes the search and certificate code, a verifier and the bilingual (English/German) website <a href=\"https://jukzi.github.io/cubature_atlas/\">https://jukzi.github.io/cubature_atlas/</a>.</p><p><strong>AI-generated:</strong> the search, the computations, the certificates, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by the author. Please verify results before relying on them.</p>",
+  "description": "<p>Smallest known quadrature and cubature rules with few points and positive weights on the interval, triangle, square, tetrahedron and cube, continuously extended to higher degrees. One JSON file per rule (nodes, weights, metadata), grouped into families: minimal point count for degree n with all nodes inside the domain (PI) or with nodes allowed outside (PO), plus published rules from the literature for comparison. Every rule is verified with interval arithmetic: the stored numbers and the existence of an exact rule with the stored quality are proven rigorously by <code>tools/verify_rigorous.py</code>. Includes the search code, the verifier and the bilingual (English/German) website <a href=\"https://jukzi.github.io/cubature_atlas/\">https://jukzi.github.io/cubature_atlas/</a>.</p><p><strong>AI-generated:</strong> the search, the computations, the proofs, the code and the texts were produced by an AI (Claude, Anthropic), commissioned and directed by the author. Please verify results before relying on them.</p>",
   "creators": [
     {
       "name": "Kubitz, Jörg"
@@ -34,5 +34,5 @@
       "resource_type": "other"
     }
   ],
-  "notes": "Rules in the literature families (witherden_vincent_2015, jaskowiec_sukumar_2020, diallo_worku_2026) are reproduced from the cited publications for comparison and are not covered by the CC BY 4.0 license; cite the original publications for them."
+  "notes": "Rules in the literature families (all directories under rules/ whose family.json has \"role\": \"literature\") are reproduced from the cited publications for comparison and are not covered by the CC BY 4.0 license; their original terms apply and they must be cited with their original publications."
 }

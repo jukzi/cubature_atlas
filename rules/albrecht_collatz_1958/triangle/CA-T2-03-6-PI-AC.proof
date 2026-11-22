@@ -1,0 +1,33 @@
+{
+ "id": "CA-T2-03-6-PI-AC",
+ "file": "rules/albrecht_collatz_1958/triangle/CA-T2-03-6-PI-AC.json",
+ "domain": "triangle",
+ "degree": 3,
+ "points": 6,
+ "quality": "PI",
+ "status": "proven",
+ "sha": "4ad7e67cb6426cf6",
+ "stored": {
+  "res_bound": 1.776356839400252e-15,
+  "res_ok": true,
+  "margin_exact": 0.0,
+  "minw_exact": 0.016666666666666666,
+  "quality_exact": "PI"
+ },
+ "exist": {
+  "proved": true,
+  "r": 3.4040850495552064e-16,
+  "kratio": 0.6666666666666888,
+  "mode": "sym6",
+  "equations": 5,
+  "unknowns": 5,
+  "dist": 7.085726132822459e-16,
+  "pos": true,
+  "inside": true,
+  "outside": false,
+  "quality_proved": "PI"
+ },
+ "seconds": 0.04,
+ "ok_stored": true,
+ "ok_exist": true
+}
