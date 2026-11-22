@@ -42,7 +42,8 @@ jobs:
           fi
       - name: All rules
         if: github.event_name != 'pull_request'
-        run: python tools/verify_rigorous.py --report interval_proofs.json --update --summary "$GITHUB_STEP_SUMMARY"
+        run: |
+          python tools/verify_rigorous.py --report interval_proofs.json --update --summary "$GITHUB_STEP_SUMMARY"
           git ls-files --modified --others --exclude-standard rules | grep "\.proof$" > changed_proofs.txt || true
           if [ -s changed_proofs.txt ]; then tar czf proofs.tgz -T changed_proofs.txt; fi
       - uses: actions/upload-artifact@v4

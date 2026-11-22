@@ -32,7 +32,7 @@ SITE = os.path.join(ROOT, "site")
 BASE_URL = "https://jukzi.github.io/cubature_atlas/"
 REPO_URL = "https://github.com/jukzi/cubature_atlas"
 CONCEPT_DOI = "10.5281/zenodo.24037245"
-MAXN = 50
+MIN_MAXN = 50
 
 DOMAINS = ["interval", "triangle", "square", "tetra", "cube"]
 SYM = {"interval": "C1", "triangle": "T2", "square": "C2", "tetra": "T3", "cube": "C3"}
@@ -45,7 +45,7 @@ QUALITIES = {"PI", "PO", "NI", "NO"}
 # Tolerances of the build check
 RES_TOL = 1e-11          # max |sum w x^a - int x^a| / volume over all monomials up to the degree
 INSIDE_TOL = 1e-12       # a node counts as inside if its distance to the domain is below this
-ID_RE = re.compile(r"^CA-(C1|T2|C2|T3|C3)-(\d{2})-(\d+)-(PI|PO|NI|NO)-([A-Za-z0-9]+)(-[a-z])?$")
+ID_RE = re.compile(r"^CA-(C1|T2|C2|T3|C3)-(\d{2,})-(\d+)-(PI|PO|NI|NO)-([A-Za-z0-9]+)(-[a-z])?$")
 FAMILY_RE = re.compile(r"^[A-Za-z0-9_]+$")
 
 errors = []
@@ -145,9 +145,25 @@ def gauss_jacobi(m, a):
     return [float(v) for v in x], [float(v) for v in w]
 
 
-def gj_tables():
+def max_degree(fams, lc=None):
+    """Highest degree present in any rule file or literature count table (at least MIN_MAXN)."""
+    m = MIN_MAXN
+    for f in fams:
+        for r in f["rules"]:
+            if r["degree"] > m:
+                m = r["degree"]
+    if lc:
+        for cols in lc.values():
+            for c in cols:
+                for idx, val in enumerate(c.get("arr") or [], 1):
+                    if val is not None and idx > m:
+                        m = idx
+    return m
+
+
+def gj_tables(maxn=MIN_MAXN):
     out = {"L": {}, "J1": {}, "J2": {}}
-    for m in range(1, MAXN // 2 + 2):
+    for m in range(1, maxn // 2 + 2):
         x, w = np.polynomial.legendre.leggauss(m)
         out["L"][str(m)] = [[float(v) for v in x], [float(v) for v in w]]
         out["J1"][str(m)] = list(gauss_jacobi(m, 1.0))
@@ -466,6 +482,7 @@ def rule_url(r, lang="en", ext=".html"):
 def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
     refs = load_json(os.path.join(ROOT, "content", "references.json"))
     lc = load_json(os.path.join(ROOT, "reference_data", "literature_counts.json"))["domains"]
+    maxn = max_degree(fams, lc)
     out_f = []
     for f in fams:
         rules = {}
@@ -490,12 +507,12 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
                      {"quality": f.get("quality"), "searched_degrees": f.get("searched_degrees", {}), "rules": rules})
     return {
         "lang": lang,
-        "maxn": MAXN,
+        "maxn": maxn,
         "i18n": {"en": en, "de": de},
         "doc": {"en": doc_en, "de": doc_de},
         "docStale": stale_doc,
         "refs": refs,
-        "gj": gj_tables(),
+        "gj": gj_tables(maxn),
         "litcounts": lc,
         "links": {"repo": REPO_URL, "data": ("" if lang == "en" else "../") + "data/atlas.json",
                   "zip": ("" if lang == "en" else "../") + "downloads/cubature_atlas_rules.zip"},
@@ -619,7 +636,7 @@ def index_page(fams, lang, t):
 BYID = {}
 
 
-def write_stubs(fams):
+def write_stubs(fams, maxn=MIN_MAXN):
     """Small redirect pages for the paths <domain>/<source>/<degree>/ (also below de/).
     The application keeps language, domain, source and degree in such a path (tetra/npi/8/ is the numerical search PI,
     degree 8, on the tetrahedron). A static host has no page behind these paths, so each gets a stub that sends the
@@ -639,7 +656,7 @@ def write_stubs(fams):
             pages = [([dom], "dom=%s" % dom)]
             for code, key in srcs.items():
                 pages.append(([dom, code], "dom=%s&src=%s" % (dom, urllib.parse.quote(key))))
-                for n in range(1, MAXN + 1):
+                for n in range(1, maxn + 1):
                     pages.append(([dom, code, str(n)], "dom=%s&src=%s&n=%d" % (dom, urllib.parse.quote(key), n)))
             for parts, query in pages:
                 up = "../" * len(parts)
@@ -673,8 +690,10 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
     for f in fams:
         for r in f["rules"]:
             BYID[r["id"]] = r
+    maxn = MIN_MAXN
     for lang in ("en", "de"):
         data = payload(fams, en, de, doc_en, doc_de, stale_doc, lang)
+        maxn = data["maxn"]
         target = SITE if lang == "en" else os.path.join(SITE, "de")
         os.makedirs(target, exist_ok=True)
         with open(os.path.join(target, "index.html"), "w", encoding="utf8") as fh:
@@ -719,7 +738,7 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
         fh.write("User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % BASE_URL)
     with open(os.path.join(SITE, ".nojekyll"), "w") as fh:
         fh.write("")
-    write_stubs(fams)
+    write_stubs(fams, maxn)
     return len(urls)
 
 
