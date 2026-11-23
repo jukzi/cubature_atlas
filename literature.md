@@ -135,6 +135,12 @@ Node elimination on the square. Its node counts are in the column N_Lit of the s
 
 Summary in our own words, the publisher's abstract is not reproduced: the paper introduces a numerical method for computing cubature rules on the square [-1,1]^2 that are almost minimal, that is with few points for the degree of precision. The rules for all degrees from 24 to 55 are new, and new rules are also given for degrees 15, 17, 19 and 23, with 43, 54, 67 and 96 points.
 
+### M. K. Transtrum, J. P. Sethna: Improvements to the Levenberg-Marquardt algorithm for nonlinear least-squares minimization. arXiv:1201.5885 (2012). <https://arxiv.org/abs/1201.5885>
+
+Exact analytic geodesic acceleration, delayed gratification, and bold uphill acceptance used in the Levenberg–Marquardt solver of `code/square_cheb_c4.py`.
+
+> When minimizing a nonlinear least-squares function, the Levenberg-Marquardt algorithm can suffer from a slow convergence, particularly when it must navigate a narrow canyon en route to a best fit. On the other hand, when the least-squares function is very flat, the algorithm may easily become lost in parameter space. We introduce several improvements to the Levenberg-Marquardt algorithm in order to improve both its convergence speed and robustness to initial parameter guesses. We update the usual step to include a geodesic acceleration correction term, explore a systematic way of accepting uphill steps that may increase the residual sum of squares due to Umrigar and Nightingale, and employ the Broyden method to update the Jacobian matrix. We test these changes by comparing their performance on a number of test problems with standard implementations of the algorithm. We suggest that these two particular challenges, slow convergence and robustness to initial guesses, are complimentary problems. Schemes that improve convergence speed often make the algorithm less robust to the initial guess, and vice versa. We provide an open source implementation of our improvements that allow the user to adjust the algorithm parameters to suit particular needs.
+
 ### F. D. Witherden, P. E. Vincent: On the identification of symmetric quadrature rules for finite element methods. Comput. Math. Appl. 69 (2015) 1232–1241. <https://arxiv.org/abs/1409.1865>
 
 Orbit parametrisation and orthonormal-basis moment equations (`code/cubature_search.py`); the family `witherden_vincent_2015` reproduces its triangle rules; its node counts are in the column N_Lit.
@@ -284,12 +290,6 @@ Flat-extension test for the moment problem; not used (the semidefinite programs 
 Treats stagnation of Levenberg–Marquardt on ill-conditioned problems and proposes subset selection; a possible addition to the LM step.
 
 > We examine the local convergence of the Levenberg–Marquardt method for the solution of nonlinear least squares problems that are rank-deficient and have nonzero residual. We show that replacing the Jacobian by a truncated singular value decomposition can be numerically unstable. We recommend instead the use of subset selection. We corroborate our recommendations by perturbation analyses and numerical experiments.
-
-### M. K. Transtrum, J. P. Sethna: Improvements to the Levenberg-Marquardt algorithm for nonlinear least-squares minimization. arXiv:1201.5885 (2012). <https://arxiv.org/abs/1201.5885>
-
-Geodesic acceleration and Broyden updates could save Jacobian evaluations, which are the bottleneck at large moment counts; not used yet.
-
-> When minimizing a nonlinear least-squares function, the Levenberg-Marquardt algorithm can suffer from a slow convergence, particularly when it must navigate a narrow canyon en route to a best fit. On the other hand, when the least-squares function is very flat, the algorithm may easily become lost in parameter space. We introduce several improvements to the Levenberg-Marquardt algorithm in order to improve both its convergence speed and robustness to initial parameter guesses. We update the usual step to include a geodesic acceleration correction term, explore a systematic way of accepting uphill steps that may increase the residual sum of squares due to Umrigar and Nightingale, and employ the Broyden method to update the Jacobian matrix. We test these changes by comparing their performance on a number of test problems with standard implementations of the algorithm. We suggest that these two particular challenges, slow convergence and robustness to initial guesses, are complimentary problems. Schemes that improve convergence speed often make the algorithm less robust to the initial guess, and vice versa. We provide an open source implementation of our improvements that allow the user to adjust the algorithm parameters to suit particular needs.
 
 ### B. Vioreanu, V. Rokhlin: Spectra of multiplication operators as a numerical tool. SIAM J. Sci. Comput. 36 (2014) A267–A288. <https://doi.org/10.1137/110860082>
 
