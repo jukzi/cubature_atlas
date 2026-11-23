@@ -1,0 +1,22 @@
+{
+  "id": "albrecht_collatz_1958",
+  "tag": "AC",
+  "role": "literature",
+  "quality": "PI",
+  "name": {
+    "en": "Albrecht–Collatz (literature)",
+    "de": "Albrecht–Collatz (Literatur)"
+  },
+  "short": {
+    "en": "Albrecht–Collatz",
+    "de": "Albrecht–Collatz"
+  },
+  "description": {
+    "en": "The fully symmetric positive-interior triangle rule published by J. Albrecht and L. Collatz (1958): degree 3, six nodes. The rule consists of two three-node orbits; weights are scaled to the reference triangle of area 1/2.",
+    "de": "Die vollsymmetrische Dreiecksregel mit positiven Gewichten und inneren bzw. randständigen Knoten nach J. Albrecht und L. Collatz (1958): Grad 3, sechs Knoten. Die Regel besteht aus zwei Drei-Punkt-Orbits; die Gewichte sind auf das Referenzdreieck mit Fläche 1/2 skaliert."
+  },
+  "references": [
+    1
+  ],
+  "author": "J. Albrecht, L. Collatz"
+}
