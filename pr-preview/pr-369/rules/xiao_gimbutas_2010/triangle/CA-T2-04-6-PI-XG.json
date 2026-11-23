@@ -1,0 +1,49 @@
+{
+  "id": "CA-T2-04-6-PI-XG",
+  "family": "xiao_gimbutas_2010",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 4,
+  "points": 6,
+  "quality": "PI",
+  "origin": "literature",
+  "method": "Taken from the authors' triaarbq_table.txt on the standard equilateral triangle with vertices (-1,-1/sqrt(3)), (1,-1/sqrt(3)), (0,2/sqrt(3)); mapped affinely to the Atlas reference triangle (0,0), (1,0), (0,1), with weights scaled from area sqrt(3) to area 1/2.",
+  "author": "Xiao–Gimbutas",
+  "source": "H. Xiao, Z. Gimbutas: A numerical algorithm for the construction of efficient quadrature rules in two and higher dimensions. Comput. Math. Appl. 59 (2010), 663–676. Original data table: https://github.com/zgimbutas/triasymq/blob/master/triaarbq_table.txt.",
+  "status": "proven",
+  "symmetry": "asymmetric",
+  "nodes": [
+    [
+      0.3415842377514354,
+      0.010754624341483155
+    ],
+    [
+      0.34158423775143515,
+      0.6476611379070817
+    ],
+    [
+      0.011655117192617526,
+      0.807415204047568
+    ],
+    [
+      0.011655117192617526,
+      0.18092967875981486
+    ],
+    [
+      0.7315367325369326,
+      0.13423163373153377
+    ],
+    [
+      0.2529544328863079,
+      0.3735227835568462
+    ]
+  ],
+  "weights": [
+    0.058636839414825746,
+    0.058636839414825746,
+    0.04555761010373283,
+    0.04555761010373283,
+    0.10819779017353574,
+    0.18341331078934733
+  ]
+}
