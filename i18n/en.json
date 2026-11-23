@@ -12,7 +12,7 @@
     "Xiao–Gimbutas"
   ],
   "viewH": "Inspect a rule",
-  "viewSub": "Each dot is a node of the rule. Size and colour show the weight. With size by weight, the area of a circle (in 3D the volume of a ball, in 1D the diameter) equals the weight; the small dot marks the node. A dotted line leads from a node outside the domain to its centre. For 3D domains, dragging on the picture rotates the view.",
+  "viewSub": "Each dot is a node of the rule. Size and colour show the weight. With size by weight, the area of a circle (in 3D the volume of a ball, in 1D the diameter) equals the weight; the small dot marks the node. Switching to angle coordinates (x = sin u, y = sin v, z = sin w on boxes; normalized barycentric angles θ = arcsin √λ on the triangle and tetrahedron) spreads boundary nodes evenly and scales the weight sizes by the coordinate Jacobian. A dotted line leads from a node outside the domain to its centre. For 3D domains, dragging on the picture rotates the view.",
   "degree": "Degree n",
   "weight": "Weight",
   "rotate": "Rotate",
@@ -29,8 +29,7 @@
   "edge": "Domain edge",
   "cellsBtn": "Voronoi cells",
   "perspBtn": "Perspective",
-  "equiBtn2": "Equilateral",
-  "equiBtn3": "Regular",
+  "equiBtn": "Regular",
   "packBtn": "Sphere packing",
   "plist": "Point list with weights",
   "copyList": "Copy list",
@@ -258,5 +257,10 @@
   "ivSym": "symmetry-reduced equations, group of order {g}",
   "ivFull": "equations in all unknowns",
   "ivSumTpl": "Interval proof: for {iv} of the {all} degrees the rule in the table is proven to lie near an exact rule of its quality.",
-  "ivBtn": "Details of the interval proof"
+  "ivBtn": "Details of the interval proof",
+  "trigBtn": "Angle coordinates",
+  "trigTag1": "x = sin u,  u ∈ [−π/2, π/2]",
+  "trigTag2": "x = sin u, y = sin v,  u, v ∈ [−π/2, π/2]",
+  "trigTag3": "x = sin u, y = sin v, z = sin w,  u, v, w ∈ [−π/2, π/2]",
+  "trigTagS": "θ = arcsin √λ,  u = θ / Σθ"
 }

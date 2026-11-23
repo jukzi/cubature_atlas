@@ -6,7 +6,7 @@
     "ai": "add8220370a7183b",
     "kw": "eeb5953e13ab1c8e",
     "viewH": "4e3ba4c1a693e120",
-    "viewSub": "230b6e1af87ace4e",
+    "viewSub": "5d1f3cf014f63ff2",
     "degree": "a6da9ba3abb4f90a",
     "weight": "20dd61049d86d843",
     "rotate": "306d409f8a1cf480",
@@ -23,8 +23,7 @@
     "edge": "9408e82975950064",
     "cellsBtn": "ce36afc651ffd64f",
     "perspBtn": "316e25993ff72b88",
-    "equiBtn2": "6e1586f7b0765bae",
-    "equiBtn3": "cf73746490803a9f",
+    "equiBtn": "cf73746490803a9f",
     "packBtn": "39da07c53eddfa03",
     "plist": "7af10304678893a0",
     "copyList": "7bd777b1df34fe93",
@@ -236,7 +235,12 @@
     "ivSym": "1ef963c061b313e6",
     "ivFull": "09eda755f00289fe",
     "ivSumTpl": "c326c95979e264fb",
-    "ivBtn": "90aa2821946dc8f5"
+    "ivBtn": "90aa2821946dc8f5",
+    "trigTag1": "2e376a5d96a2bc12",
+    "trigTag2": "77c8285c22544626",
+    "trigTag3": "c736074ab53ec9bc",
+    "trigTagS": "b84accd2c54e6078",
+    "trigBtn": "613a0c67835e55e1"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -251,7 +255,7 @@
     "Xiao–Gimbutas"
   ],
   "viewH": "Regel ansehen",
-  "viewSub": "Jeder Punkt ist ein Knoten der Regel. Größe und Farbe zeigen das Gewicht. Bei „Größe nach Gewicht“ ist die Fläche eines Kreises (in 3D das Volumen einer Kugel, in 1D der Durchmesser) gleich dem Gewicht; der kleine Punkt markiert den Knoten. Eine gepunktete Linie führt von einem Knoten außerhalb des Gebiets zu dessen Mitte. Bei 3D-Gebieten dreht Ziehen auf dem Bild die Ansicht.",
+  "viewSub": "Jeder Punkt ist ein Knoten der Regel. Größe und Farbe zeigen das Gewicht. Bei „Größe nach Gewicht“ ist die Fläche eines Kreises (in 3D das Volumen einer Kugel, in 1D der Durchmesser) gleich dem Gewicht; der kleine Punkt markiert den Knoten. Die Ansicht in Winkelkoordinaten (x = sin u, y = sin v, z = sin w auf Intervall, Quadrat und Würfel; normierte baryzentrische Winkel θ = arcsin √λ auf Dreieck und Tetraeder) entzerrt randnahe Knoten und skaliert die Gewichtsgrößen mit der Jacobi-Determinante der Koordinatentransformation. Eine gepunktete Linie führt von einem Knoten außerhalb des Gebiets zu dessen Mitte. Bei 3D-Gebieten dreht Ziehen auf dem Bild die Ansicht.",
   "degree": "Grad n",
   "weight": "Gewicht",
   "rotate": "Drehen",
@@ -268,8 +272,7 @@
   "edge": "Gebietsrand",
   "cellsBtn": "Voronoi-Zellen",
   "perspBtn": "Perspektive",
-  "equiBtn2": "Gleichseitig",
-  "equiBtn3": "Regelmäßig",
+  "equiBtn": "Regulär",
   "packBtn": "Kugelpackung",
   "plist": "Punkteliste mit Gewichten",
   "copyList": "Liste kopieren",
@@ -497,5 +500,10 @@
   "ivSym": "symmetriereduzierte Gleichungen, Gruppe der Ordnung {g}",
   "ivFull": "Gleichungen in allen Unbekannten",
   "ivSumTpl": "Intervall-Beweis: Für {iv} der {all} Grade ist bewiesen, dass die Regel der Tabelle nahe einer exakten Regel ihrer Qualität liegt.",
-  "ivBtn": "Details des Intervall-Beweises"
+  "ivBtn": "Details des Intervall-Beweises",
+  "trigTag1": "x = sin u,  u ∈ [−π/2, π/2]",
+  "trigTag2": "x = sin u, y = sin v,  u, v ∈ [−π/2, π/2]",
+  "trigTag3": "x = sin u, y = sin v, z = sin w,  u, v, w ∈ [−π/2, π/2]",
+  "trigTagS": "θ = arcsin √λ,  u = θ / Σθ",
+  "trigBtn": "Winkelkoordinaten"
 }
