@@ -1302,11 +1302,11 @@ function compSeriesE(dom,piK,I,xmax){
     pi.sort(function(a,b){return a.N-b.N;});
     out.push({key:piK,k:k,c:c,pts:pi});
     if(dim===1)return;
-    var gq=[];
-    for(mm=1;mm<=17;mm++){
+    var gq=[],maxM=Math.min(dim===3?26:60,Math.ceil(Math.pow(xmax/c,1/dim))+1);
+    for(mm=1;mm<=maxM;mm++){
       var P=glProduct(dom,mm),q2=compRuleValue(dom,P,f,cells);
       gq.push({N:P.length*c,l:lg(q2),m:mm});
-      if(P.length*c>xmax)break;}
+      if(P.length*c>=xmax)break;}
     out.push({key:'gauss',k:k,c:c,pts:gq});});
   return COMP.val[key]=out;}
 function cutAt(pts,xmax){
@@ -1316,11 +1316,12 @@ function cutAt(pts,xmax){
   return k;}
 function exChartN(){var svg=$('#exchartN');svg.innerHTML='';var dom=st.dom,dim=DOM[dom].dim,res=exErrors(),ev=Math.abs(res.ex.val)||1,f=fdef(dom,st.fn),W=900,H=380,m={l:62,r:20,t:14,b:44},pw=W-m.l-m.r,ph=H-m.t-m.b,FLOOR=-16;
   var selk=st.src,ours=res.rows.filter(function(r){return r.ok;}).map(function(r){return {N:r.N,l:r.err>0?Math.max(FLOOR,Math.log10(r.err/ev)):FLOOR,n:r.n};});
-  var maxN=ours.length?Math.max.apply(null,ours.map(function(o){return o.N;})):1,gp=[];
-  if(dom!=='interval'){for(var mm=1;mm<=17;mm++){var N=Math.pow(mm,dim);if(N>maxN*1.35&&mm>2)break;var q=gaussProduct(dom,mm,f),e=Math.abs(q-res.ex.val)/ev;gp.push({N:N,l:e>0?Math.max(FLOOR,Math.log10(e)):FLOOR,m:mm});}}
   var lit=litPoints(dom,f,res.ex.val,ev,FLOOR);var tk=typeKeys(dom),tser={};tk.forEach(function(k){tser[k]=typeSeries(dom,k,f,res.ex.val,ev,FLOOR);});var allp=[].concat(ours);tk.forEach(function(k){allp=allp.concat(tser[k]);});
-  var oth=(selk==='gauss'&&dim>1?[]:ours);tk.forEach(function(k){if(k!=='gauss'||dim===1)oth=oth.concat(tser[k]);});var xmax=Math.max.apply(null,oth.concat(lit).map(function(o){return o.N;}).concat([1])),mxl=Math.max.apply(null,allp.concat(gp,lit).map(function(o){return o.l;}).concat([-16])),top=Math.min(2,Math.ceil(mxl+.3));
+  var oth=(selk==='gauss'&&dim>1?[]:ours);tk.forEach(function(k){if(k!=='gauss'||dim===1)oth=oth.concat(tser[k]);});var xmax=Math.max.apply(null,oth.concat(lit).map(function(o){return o.N;}).concat([1]));
   var nice=1;outer:for(var e2=0;e2<5;e2++){for(var q2=0;q2<3;q2++){nice=[1,2,5][q2]*Math.pow(10,e2);if(xmax/nice<=8)break outer;}}xmax=CEIL(xmax/nice)*nice;
+  var gp=[];
+  if(dom!=='interval'){var maxM=Math.min(dim===3?26:60,Math.ceil(Math.pow(xmax,1/dim))+1);for(var mm=1;mm<=maxM;mm++){var N=Math.pow(mm,dim);var q=gaussProduct(dom,mm,f),e=Math.abs(q-res.ex.val)/ev;gp.push({N:N,l:e>0?Math.max(FLOOR,Math.log10(e)):FLOOR,m:mm});if(N>=xmax&&mm>=2)break;}}
+  var mxl=Math.max.apply(null,allp.concat(gp,lit).map(function(o){return o.l;}).concat([-16])),top=Math.min(2,Math.ceil(mxl+.3));
   var X=function(n){return m.l+n/xmax*pw;},Y=function(l){return m.t+ph-(l-FLOOR)/(top-FLOOR)*ph;};
   /* The Gauss product does not set the length of the x axis: cut it at the right edge. */
   var gk=gp.filter(function(o){return o.N<=xmax;});

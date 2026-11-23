@@ -1,13 +1,13 @@
 name: Cubature Atlas
 
-# No run is cancelled by another run (a cancelled run is shown as an error): there is no concurrency
-# group; writes to gh-pages are repeated when two runs collide.
 # Pull requests: verify all rules, build the site, attach it as an artifact and
 # publish a live preview under https://jukzi.github.io/cubature_atlas/pr-preview/pr-<number>/
 # (the link is posted as a comment in the pull request; the preview is removed when
 # the pull request is closed or merged).
-# Pushes to main: build the site and deploy it to the root of the gh-pages branch,
-# keeping the pr-preview/ folder. GitHub Pages serves the gh-pages branch.
+# Pushes to main: build the site in an unlocked job, then deploy atomically to the root of
+# the gh-pages branch (keeping pr-preview/). Per-PR and main concurrency groups serialize
+# writes without letting one pull request cancel another; short fresh-worktree retries handle
+# any remaining cross-PR push collisions.
 
 on:
   pull_request:
@@ -41,12 +41,12 @@ jobs:
 
   preview:
     # Pull requests from forks get no write token, so they keep only the artifact.
-    # No concurrency group: GitHub cancels a pending run of a group when a newer one arrives, and a
-    # cancelled run is shown as an error. Instead the publishing step is repeated if two runs push to
-    # gh-pages at the same time (the push is then rejected), and a run whose commit is no longer the
-    # head of the pull request publishes nothing (the newer run publishes).
+    # Per-PR concurrency serializes deploy/remove for the same PR without cancelling other PRs.
     needs: check
     if: github.event.pull_request.head.repo.full_name == github.repository
+    concurrency:
+      group: gh-pages-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -78,43 +78,17 @@ jobs:
           umbrella-dir: pr-preview
           qr-code: false
           action: deploy
-      - name: Clean up failed deployment p1
+      - name: Clean up and wait before retry
         if: steps.p1.outcome == 'failure'
-        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
         run: |
           git rebase --abort || true
           git merge --abort || true
           git reset --hard HEAD || true
           git worktree prune || true
           rm -rf github-pages-deploy-action-temp-deployment-folder
-      - name: Wait before the next attempt
-        if: steps.p1.outcome == 'failure'
-        run: sleep $((RANDOM % 30 + 15))
+          sleep $((RANDOM % 25 + 10))
       - name: Publish the live preview (attempt 2)
-        id: p2
         if: steps.p1.outcome == 'failure'
-        continue-on-error: true
-        uses: rossjrw/pr-preview-action@v1.8.2
-        with:
-          source-dir: site
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          qr-code: false
-          action: deploy
-      - name: Clean up failed deployment p2
-        if: steps.p2.outcome == 'failure'
-        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
-        run: |
-          git rebase --abort || true
-          git merge --abort || true
-          git reset --hard HEAD || true
-          git worktree prune || true
-          rm -rf github-pages-deploy-action-temp-deployment-folder
-      - name: Wait before the last attempt
-        if: steps.p2.outcome == 'failure'
-        run: sleep $((RANDOM % 60 + 30))
-      - name: Publish the live preview (attempt 3)
-        if: steps.p2.outcome == 'failure'
         uses: rossjrw/pr-preview-action@v1.8.2
         with:
           source-dir: site
@@ -125,6 +99,9 @@ jobs:
 
   remove-preview:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    concurrency:
+      group: gh-pages-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -136,48 +113,24 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: remove
-      - name: Clean up failed deployment r1
+      - name: Clean up and wait before retry
         if: steps.r1.outcome == 'failure'
-        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
         run: |
           git rebase --abort || true
           git merge --abort || true
           git reset --hard HEAD || true
           git worktree prune || true
           rm -rf github-pages-deploy-action-temp-deployment-folder
-      - name: Wait before the next attempt
-        if: steps.r1.outcome == 'failure'
-        run: sleep $((RANDOM % 30 + 15))
+          sleep $((RANDOM % 25 + 10))
       - name: Remove the live preview (attempt 2)
-        id: r2
         if: steps.r1.outcome == 'failure'
-        continue-on-error: true
-        uses: rossjrw/pr-preview-action@v1.8.2
-        with:
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: remove
-      - name: Clean up failed deployment r2
-        if: steps.r2.outcome == 'failure'
-        # The nested deploy action can leave an unfinished worktree and conflicted index after a rejected push.
-        run: |
-          git rebase --abort || true
-          git merge --abort || true
-          git reset --hard HEAD || true
-          git worktree prune || true
-          rm -rf github-pages-deploy-action-temp-deployment-folder
-      - name: Wait before the last attempt
-        if: steps.r2.outcome == 'failure'
-        run: sleep $((RANDOM % 60 + 30))
-      - name: Remove the live preview (attempt 3)
-        if: steps.r2.outcome == 'failure'
         uses: rossjrw/pr-preview-action@v1.8.2
         with:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: remove
 
-  deploy:
+  build:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -190,62 +143,57 @@ jobs:
         run: python tools/build_atlas.py
       - name: Disable Jekyll processing on GitHub Pages
         run: touch site/.nojekyll
-      - name: Deploy to the gh-pages branch (previews are kept), attempt 1
-        id: d1
-        continue-on-error: true
-        uses: JamesIves/github-pages-deploy-action@v4.9.0
+      - uses: actions/upload-artifact@v4
         with:
-          folder: site
-          branch: gh-pages
-          clean-exclude: pr-preview
-          force: false
-      - name: Clean up the failed attempt 1
-        if: steps.d1.outcome == 'failure'
-        # The deploy action leaves its temporary worktree folder and an unresolved index (for example
-        # "downloads/cubature_atlas_rules.zip: needs merge") behind when the push is rejected because another
-        # run pushed to gh-pages at the same time. The next attempt then stops at once with
-        # "github-pages-deploy-action-temp-deployment-folder already exists". Remove the leftovers first.
+          name: site-main
+          path: site
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    concurrency:
+      group: gh-pages-main
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-main
+          path: site
+      - name: Deploy to the gh-pages branch (keeping pr-preview/)
+        shell: bash
         run: |
-          git rebase --abort || true
-          git merge --abort || true
-          git reset --hard HEAD || true
-          git worktree prune || true
-          rm -rf github-pages-deploy-action-temp-deployment-folder
-          git status --short | head -20 || true
-      - name: Wait before the next attempt
-        if: steps.d1.outcome == 'failure'
-        run: sleep $((RANDOM % 30 + 15))
-      - name: Deploy to the gh-pages branch, attempt 2
-        id: d2
-        if: steps.d1.outcome == 'failure'
-        continue-on-error: true
-        uses: JamesIves/github-pages-deploy-action@v4.9.0
-        with:
-          folder: site
-          branch: gh-pages
-          clean-exclude: pr-preview
-          force: false
-      - name: Clean up the failed attempt 2
-        if: steps.d2.outcome == 'failure'
-        # The deploy action leaves its temporary worktree folder and an unresolved index (for example
-        # "downloads/cubature_atlas_rules.zip: needs merge") behind when the push is rejected because another
-        # run pushed to gh-pages at the same time. The next attempt then stops at once with
-        # "github-pages-deploy-action-temp-deployment-folder already exists". Remove the leftovers first.
-        run: |
-          git rebase --abort || true
-          git merge --abort || true
-          git reset --hard HEAD || true
-          git worktree prune || true
-          rm -rf github-pages-deploy-action-temp-deployment-folder
-          git status --short | head -20 || true
-      - name: Wait before the last attempt
-        if: steps.d2.outcome == 'failure'
-        run: sleep $((RANDOM % 60 + 30))
-      - name: Deploy to the gh-pages branch, attempt 3
-        if: steps.d2.outcome == 'failure'
-        uses: JamesIves/github-pages-deploy-action@v4.9.0
-        with:
-          folder: site
-          branch: gh-pages
-          clean-exclude: pr-preview
-          force: false
+          set -euo pipefail
+          work="$(mktemp -d "${RUNNER_TEMP:-/tmp}/gh-pages.XXXXXX")"
+          cleanup() {
+            git worktree remove --force "$work" 2>/dev/null || true
+            rm -rf -- "$work"
+            git worktree prune 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          for attempt in 1 2 3 4; do
+            cleanup
+            git fetch --no-tags --depth=1 origin gh-pages
+            git worktree add --detach "$work" FETCH_HEAD
+            find "$work" -mindepth 1 -maxdepth 1 ! -name '.git' ! -name 'pr-preview' -exec rm -rf -- {} +
+            cp -a site/. "$work/"
+            git -C "$work" add -A
+            if git -C "$work" diff --cached --quiet; then
+              echo "No site changes to deploy."
+              exit 0
+            fi
+            git -C "$work" \
+              -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Deploy site (${GITHUB_SHA::7})"
+            if git -C "$work" push origin HEAD:gh-pages; then
+              echo "Deployed to gh-pages on attempt $attempt."
+              exit 0
+            fi
+            echo "Push to gh-pages rejected on attempt $attempt (concurrent update); retrying..."
+            sleep $((RANDOM % 15 + 5))
+          done
+          echo "Failed to push to gh-pages after 4 attempts." >&2
+          exit 1
