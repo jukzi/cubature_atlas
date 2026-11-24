@@ -96,6 +96,23 @@ class CubeChebS6Tests(unittest.TestCase):
         self.assertGreater(float(weights.min()), 0.0)
         self.assertLessEqual(float(np.abs(nodes).max()), 0.995 + 1e-10)
 
+    def test_nullspace_lift_minw(self):
+        B = cb.CubeS6Basis(17)
+        xg0, yg0, zg0, wg0, td0, wd0, hc, wc0 = cb.bcc_cheb_start(17, 268, 8.0, 0.30)
+        _, res, _, xg, yg, zg, wg, td, wd, wc = cb.solve_s6_lm(
+            B, xg0, yg0, zg0, wg0, td0, wd0, hc, wc0, 120, 35, 0.5, geo=True, geo_tau=0.05
+        )
+        self.assertLess(res, 1e-13)
+        _, w_before = cb.expand_s6(xg, yg, zg, wg, td, wd, hc, wc)
+        min_before = float(w_before.min())
+        xg, yg, zg, wg, td, wd, wc = cb.nullspace_lift_minw(
+            B, xg, yg, zg, wg, td, wd, hc, wc, steps=5, min_bdist=2e-4
+        )
+        nodes, weights = cb.expand_s6(xg, yg, zg, wg, td, wd, hc, wc)
+        self.assertGreater(float(weights.min()), min_before)
+        self.assertLess(cb.monomial_residual(17, nodes, weights), 1e-13)
+        self.assertLess(float(np.abs(nodes).max()), 1.0 - 2e-4)
+
 
 if __name__ == "__main__":
     unittest.main()
