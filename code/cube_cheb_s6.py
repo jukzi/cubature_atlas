@@ -119,22 +119,88 @@ class CubeS6Basis:
         self.a_idx = np.array([t[0] for t in self.triples])
         self.b_idx = np.array([t[1] for t in self.triples])
         self.c_idx = np.array([t[2] for t in self.triples])
-        self.sc = np.array([t[3] for t in self.triples])[:, None]
+        self.sc1 = np.array([t[3] for t in self.triples])
+        self.sc = self.sc1[:, None]
         self.rhs = np.zeros(self.M)
         self.rhs[0] = 2.0 * math.sqrt(2.0)
+        # Precompute unique (i, j) pairs with i + j <= n for fast BLAS contractions.
+        pairs = [(i, j) for i in range(n + 1) for j in range(n + 1 - i)]
+        pmap = {p: idx for idx, p in enumerate(pairs)}
+        self.pa = np.array([p[0] for p in pairs])
+        self.pb = np.array([p[1] for p in pairs])
+        self.p_ab = np.array(
+            [pmap[(int(i), int(j))] for i, j in zip(self.a_idx, self.b_idx)]
+        )
+        self.p_bc = np.array(
+            [pmap[(int(i), int(j))] for i, j in zip(self.b_idx, self.c_idx)]
+        )
+        self.p_ca = np.array(
+            [pmap[(int(i), int(j))] for i, j in zip(self.c_idx, self.a_idx)]
+        )
 
     def eval_values(self, x, y, z):
         """Return S6-invariant basis values V for generic orbit representatives."""
         Px = legendre_values(self.n, x)
         Py = legendre_values(self.n, y)
         Pz = legendre_values(self.n, z)
-        a = self.a_idx
-        b = self.b_idx
-        c = self.c_idx
+        XY = Px[self.pa] * Py[self.pb]
         return self.sc * (
-            Px[a] * Py[b] * Pz[c]
-            + Px[b] * Py[c] * Pz[a]
-            + Px[c] * Py[a] * Pz[b]
+            XY[self.p_ab] * Pz[self.c_idx]
+            + XY[self.p_bc] * Pz[self.a_idx]
+            + XY[self.p_ca] * Pz[self.b_idx]
+        )
+
+    def contract_values(self, x, y, z, w):
+        """Fast BLAS contraction V(x, y, z) @ w using (n+1)(n+2)/2 pair matrix."""
+        Px = legendre_values(self.n, x)
+        Py = legendre_values(self.n, y)
+        Pz = legendre_values(self.n, z)
+        XY = Px[self.pa] * Py[self.pb]
+        T = XY @ (Pz * w[None, :]).T
+        return self.sc1 * (
+            T[self.p_ab, self.c_idx]
+            + T[self.p_bc, self.a_idx]
+            + T[self.p_ca, self.b_idx]
+        )
+
+    def contract_d2(
+        self,
+        Px,
+        dPx,
+        ddPx,
+        Py,
+        dPy,
+        ddPy,
+        Pz,
+        dPz,
+        ddPz,
+        w6,
+        dx,
+        dy,
+        dz,
+    ):
+        """Fast BLAS contraction for the spatial 2nd-derivative terms in d2r."""
+        pa = self.pa
+        pb = self.pb
+        Ax = ddPx * (dx * dx)[None, :]
+        Bx = dPx * dx[None, :]
+        Ay = ddPy * (dy * dy)[None, :]
+        By = dPy * dy[None, :]
+        Az = ddPz * (dz * dz)[None, :]
+        Bz = dPz * dz[None, :]
+        S1 = Ax[pa] * Py[pb]
+        S1 += Px[pa] * Ay[pb]
+        S1 += 2.0 * (Bx[pa] * By[pb])
+        T = S1 @ (Pz * w6[None, :]).T
+        P0 = Px[pa] * Py[pb]
+        T += P0 @ (Az * w6[None, :]).T
+        S2 = Bx[pa] * Py[pb]
+        S2 += Px[pa] * By[pb]
+        T += S2 @ (Bz * (2.0 * w6)[None, :]).T
+        return self.sc1 * (
+            T[self.p_ab, self.c_idx]
+            + T[self.p_bc, self.a_idx]
+            + T[self.p_ca, self.b_idx]
         )
 
     def eval_diag_values(self, t):
@@ -153,25 +219,20 @@ class CubeS6Basis:
         a = self.a_idx
         b = self.b_idx
         c = self.c_idx
-        V = self.sc * (
-            Px[a] * Py[b] * Pz[c]
-            + Px[b] * Py[c] * Pz[a]
-            + Px[c] * Py[a] * Pz[b]
-        )
-        Vx = self.sc * (
-            dPx[a] * Py[b] * Pz[c]
-            + dPx[b] * Py[c] * Pz[a]
-            + dPx[c] * Py[a] * Pz[b]
-        )
-        Vy = self.sc * (
-            Px[a] * dPy[b] * Pz[c]
-            + Px[b] * dPy[c] * Pz[a]
-            + Px[c] * dPy[a] * Pz[b]
-        )
+        p_ab = self.p_ab
+        p_bc = self.p_bc
+        p_ca = self.p_ca
+        XY = Px[self.pa] * Py[self.pb]
+        dXY = dPx[self.pa] * Py[self.pb]
+        XdY = Px[self.pa] * dPy[self.pb]
+        Pzc = Pz[c]
+        Pza = Pz[a]
+        Pzb = Pz[b]
+        V = self.sc * (XY[p_ab] * Pzc + XY[p_bc] * Pza + XY[p_ca] * Pzb)
+        Vx = self.sc * (dXY[p_ab] * Pzc + dXY[p_bc] * Pza + dXY[p_ca] * Pzb)
+        Vy = self.sc * (XdY[p_ab] * Pzc + XdY[p_bc] * Pza + XdY[p_ca] * Pzb)
         Vz = self.sc * (
-            Px[a] * Py[b] * dPz[c]
-            + Px[b] * Py[c] * dPz[a]
-            + Px[c] * Py[a] * dPz[b]
+            XY[p_ab] * dPz[c] + XY[p_bc] * dPz[a] + XY[p_ca] * dPz[b]
         )
         return V, Vx, Vy, Vz
 
@@ -183,25 +244,20 @@ class CubeS6Basis:
         a = self.a_idx
         b = self.b_idx
         c = self.c_idx
-        V = self.sc * (
-            Px[a] * Py[b] * Pz[c]
-            + Px[b] * Py[c] * Pz[a]
-            + Px[c] * Py[a] * Pz[b]
-        )
-        Vx = self.sc * (
-            dPx[a] * Py[b] * Pz[c]
-            + dPx[b] * Py[c] * Pz[a]
-            + dPx[c] * Py[a] * Pz[b]
-        )
-        Vy = self.sc * (
-            Px[a] * dPy[b] * Pz[c]
-            + Px[b] * dPy[c] * Pz[a]
-            + Px[c] * dPy[a] * Pz[b]
-        )
+        p_ab = self.p_ab
+        p_bc = self.p_bc
+        p_ca = self.p_ca
+        XY = Px[self.pa] * Py[self.pb]
+        dXY = dPx[self.pa] * Py[self.pb]
+        XdY = Px[self.pa] * dPy[self.pb]
+        Pzc = Pz[c]
+        Pza = Pz[a]
+        Pzb = Pz[b]
+        V = self.sc * (XY[p_ab] * Pzc + XY[p_bc] * Pza + XY[p_ca] * Pzb)
+        Vx = self.sc * (dXY[p_ab] * Pzc + dXY[p_bc] * Pza + dXY[p_ca] * Pzb)
+        Vy = self.sc * (XdY[p_ab] * Pzc + XdY[p_bc] * Pza + XdY[p_ca] * Pzb)
         Vz = self.sc * (
-            Px[a] * Py[b] * dPz[c]
-            + Px[b] * Py[c] * dPz[a]
-            + Px[c] * Py[a] * dPz[b]
+            XY[p_ab] * dPz[c] + XY[p_bc] * dPz[a] + XY[p_ca] * dPz[b]
         )
         return V, Vx, Vy, Vz, Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz
 
@@ -457,8 +513,7 @@ def solve_s6_lm(
         y = np.sin(vec[kg:2 * kg])
         z = np.sin(vec[2 * kg:3 * kg])
         vg = vec[3 * kg:4 * kg]
-        V = B.eval_values(x, y, z)
-        r = 6.0 * (V @ (vg * vg)) - B.rhs
+        r = 6.0 * B.contract_values(x, y, z, vg * vg) - B.rhs
         off = 4 * kg
         if kd > 0:
             td = np.sin(vec[off:off + kd])
@@ -555,43 +610,9 @@ def solve_s6_lm(
         cVy = 24.0 * vg * dvg * dy - 6.0 * wg * y * (dsy * dsy)
         cVz = 24.0 * vg * dvg * dz - 6.0 * wg * z * (dsz * dsz)
         out = (V @ cV) + (Vx @ cVx) + (Vy @ cVy) + (Vz @ cVz)
-        # Contract each 2nd-derivative block immediately to keep peak RAM small.
-        blk = sc * (
-            ddPx[a_idx] * Py[b_idx] * Pz[c_idx]
-            + ddPx[b_idx] * Py[c_idx] * Pz[a_idx]
-            + ddPx[c_idx] * Py[a_idx] * Pz[b_idx]
+        out = out + B.contract_d2(
+            Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz, 6.0 * wg, dx, dy, dz
         )
-        out = out + (blk @ (6.0 * wg * dx * dx))
-        blk = sc * (
-            Px[a_idx] * ddPy[b_idx] * Pz[c_idx]
-            + Px[b_idx] * ddPy[c_idx] * Pz[a_idx]
-            + Px[c_idx] * ddPy[a_idx] * Pz[b_idx]
-        )
-        out = out + (blk @ (6.0 * wg * dy * dy))
-        blk = sc * (
-            Px[a_idx] * Py[b_idx] * ddPz[c_idx]
-            + Px[b_idx] * Py[c_idx] * ddPz[a_idx]
-            + Px[c_idx] * Py[a_idx] * ddPz[b_idx]
-        )
-        out = out + (blk @ (6.0 * wg * dz * dz))
-        blk = sc * (
-            dPx[a_idx] * dPy[b_idx] * Pz[c_idx]
-            + dPx[b_idx] * dPy[c_idx] * Pz[a_idx]
-            + dPx[c_idx] * dPy[a_idx] * Pz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dx * dy))
-        blk = sc * (
-            dPx[a_idx] * Py[b_idx] * dPz[c_idx]
-            + dPx[b_idx] * Py[c_idx] * dPz[a_idx]
-            + dPx[c_idx] * Py[a_idx] * dPz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dx * dz))
-        blk = sc * (
-            Px[a_idx] * dPy[b_idx] * dPz[c_idx]
-            + Px[b_idx] * dPy[c_idx] * dPz[a_idx]
-            + Px[c_idx] * dPy[a_idx] * dPz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dy * dz))
         off = 4 * kg
         if kd > 0:
             td, ctd, vd, wd, Vd, Vdt, Vdtt = dstate
@@ -808,8 +829,7 @@ def solve_s6_plain(
         y = vec[kg:2 * kg]
         z = vec[2 * kg:3 * kg]
         vg = vec[3 * kg:4 * kg]
-        V = B.eval_values(x, y, z)
-        r = 6.0 * (V @ (vg * vg)) - B.rhs
+        r = 6.0 * B.contract_values(x, y, z, vg * vg) - B.rhs
         off = 4 * kg
         if kd > 0:
             td = vec[off:off + kd]
@@ -906,42 +926,9 @@ def solve_s6_plain(
             + (Vy @ (24.0 * vg * dvg * dy))
             + (Vz @ (24.0 * vg * dvg * dz))
         )
-        blk = sc * (
-            ddPx[a_idx] * Py[b_idx] * Pz[c_idx]
-            + ddPx[b_idx] * Py[c_idx] * Pz[a_idx]
-            + ddPx[c_idx] * Py[a_idx] * Pz[b_idx]
+        out = out + B.contract_d2(
+            Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz, 6.0 * wg, dx, dy, dz
         )
-        out = out + (blk @ (6.0 * wg * dx * dx))
-        blk = sc * (
-            Px[a_idx] * ddPy[b_idx] * Pz[c_idx]
-            + Px[b_idx] * ddPy[c_idx] * Pz[a_idx]
-            + Px[c_idx] * ddPy[a_idx] * Pz[b_idx]
-        )
-        out = out + (blk @ (6.0 * wg * dy * dy))
-        blk = sc * (
-            Px[a_idx] * Py[b_idx] * ddPz[c_idx]
-            + Px[b_idx] * Py[c_idx] * ddPz[a_idx]
-            + Px[c_idx] * Py[a_idx] * ddPz[b_idx]
-        )
-        out = out + (blk @ (6.0 * wg * dz * dz))
-        blk = sc * (
-            dPx[a_idx] * dPy[b_idx] * Pz[c_idx]
-            + dPx[b_idx] * dPy[c_idx] * Pz[a_idx]
-            + dPx[c_idx] * dPy[a_idx] * Pz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dx * dy))
-        blk = sc * (
-            dPx[a_idx] * Py[b_idx] * dPz[c_idx]
-            + dPx[b_idx] * Py[c_idx] * dPz[a_idx]
-            + dPx[c_idx] * Py[a_idx] * dPz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dx * dz))
-        blk = sc * (
-            Px[a_idx] * dPy[b_idx] * dPz[c_idx]
-            + Px[b_idx] * dPy[c_idx] * dPz[a_idx]
-            + Px[c_idx] * dPy[a_idx] * dPz[b_idx]
-        )
-        out = out + (blk @ (12.0 * wg * dy * dz))
         off = 4 * kg
         if kd > 0:
             vd, wd, Vd, Vdt, Vdtt = dstate
