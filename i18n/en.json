@@ -262,5 +262,9 @@
   "trigTag1": "x = sin u,  u ∈ [−π/2, π/2]",
   "trigTag2": "x = sin u, y = sin v,  u, v ∈ [−π/2, π/2]",
   "trigTag3": "x = sin u, y = sin v, z = sin w,  u, v, w ∈ [−π/2, π/2]",
-  "trigTagS": "θ = arcsin √λ,  u = θ / Σθ"
+  "trigTagS": "θ = arcsin √λ,  u = θ / Σθ",
+  "tipNode": "Node #{i}",
+  "tipOrbit": "Orbit: {k}",
+  "tipOut": "outside",
+  "tipPin": "pinned"
 }
