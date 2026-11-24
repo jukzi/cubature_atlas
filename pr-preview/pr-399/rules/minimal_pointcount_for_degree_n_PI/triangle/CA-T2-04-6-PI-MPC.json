@@ -1,0 +1,31 @@
+{
+  "id": "CA-T2-04-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 4,
+  "points": 6,
+  "quality": "PI",
+  "origin": "found",
+  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "status": "proven",
+  "residual_reported": 8.132329445270645e-16,
+  "numerical_check": {"N": 6, "M": 15, "p": 18, "res": 8.132329445270645e-16, "sigma": 2.4236814086667136, "h": 6.4337146819866935e-15, "rad": 5.045514275930262e-16, "cert": true, "inside": true},
+  "nodes": [
+    [0.8168475729804587, 0.09157621350977059],
+    [0.44594849091596483, 0.10810301816807011],
+    [0.44594849091596495, 0.44594849091596495],
+    [0.09157621350977059, 0.8168475729804587],
+    [0.10810301816807011, 0.44594849091596495],
+    [0.09157621350977059, 0.09157621350977059]
+  ],
+  "weights": [
+    0.05497587182766098,
+    0.11169079483900572,
+    0.11169079483900572,
+    0.05497587182766098,
+    0.11169079483900572,
+    0.05497587182766098
+  ]
+}
