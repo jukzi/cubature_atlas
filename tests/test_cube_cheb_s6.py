@@ -78,6 +78,24 @@ class CubeChebS6Tests(unittest.TestCase):
         self.assertGreater(float(weights.min()), 0.0)
         self.assertLess(float(np.abs(nodes).max()), 1.0)
 
+    def test_solve_s6_plain_and_hinge_pull(self):
+        B = cb.CubeS6Basis(17)
+        xg0, yg0, zg0, wg0, td0, wd0, hc, wc0 = cb.bcc_cheb_start(17, 262, 8.0, 0.30)
+        _, res1, _, xg, yg, zg, wg, td, wd, wc = cb.solve_s6_plain(
+            B, xg0, yg0, zg0, wg0, td0, wd0, hc, wc0, 120, 35, 0.5, geo=True, geo_tau=0.05
+        )
+        self.assertLess(res1, 1e-13)
+        _, res2, _, xg, yg, zg, wg, td, wd, wc = cb.solve_s6_plain(
+            B, xg, yg, zg, wg, td, wd, hc, wc, 80, 35, 1e-3, geo=True, geo_tau=0.0,
+            pull_b=0.995, pull_wt=1.0
+        )
+        self.assertLess(res2, 1e-12)
+        nodes, weights = cb.expand_s6(xg, yg, zg, wg, td, wd, hc, wc)
+        self.assertEqual(len(nodes), 262)
+        self.assertLess(cb.monomial_residual(17, nodes, weights), 1e-13)
+        self.assertGreater(float(weights.min()), 0.0)
+        self.assertLessEqual(float(np.abs(nodes).max()), 0.995 + 1e-10)
+
 
 if __name__ == "__main__":
     unittest.main()
