@@ -1222,6 +1222,148 @@ def gn_polish(B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=3):
     return cur_norm, xg, yg, zg, wg, td, wd, wc
 
 
+def nullspace_lift_minw(
+    B,
+    xg,
+    yg,
+    zg,
+    wg,
+    td,
+    wd,
+    has_centre,
+    wc,
+    steps=12,
+    min_bdist=2e-4,
+    verbose=False,
+):
+    """Lift small orbit weights along the exact S6 nullspace to improve Krawczyk conditioning.
+
+    At each step, projects the inverse-weight barrier ascent gradient onto ker(J)
+    via G = J J^T Cholesky solve, takes the largest interior step that raises min_w
+    after 3 minimum-norm Gauss-Newton projection steps, and keeps ||r|| at machine floor.
+    """
+    kg = len(xg)
+    kd = len(td)
+    unk = 4 * kg + 2 * kd + (1 if has_centre else 0)
+    if unk <= B.M or steps <= 0:
+        return xg, yg, zg, wg, td, wd, wc
+    if has_centre:
+        v0 = B.eval_values(np.array([0.0]), np.array([0.0]), np.array([0.0]))[:, 0]
+    else:
+        v0 = None
+
+    def eval_r(x1, y1, z1, w1, t1, wd1, wc1):
+        r = 6.0 * B.contract_values(x1, y1, z1, w1) - B.rhs
+        if kd > 0:
+            r = r + 2.0 * (B.eval_diag_values(t1) @ wd1)
+        if has_centre:
+            r = r + v0 * wc1
+        return r
+
+    def min_weight(w1, wd1, wc1):
+        mw = float(w1.min())
+        if kd > 0:
+            mw = min(mw, float(wd1.min()))
+        if has_centre:
+            mw = min(mw, float(wc1))
+        return mw
+
+    def max_coord(x1, y1, z1, t1):
+        mx = max(
+            float(np.abs(x1).max()),
+            float(np.abs(y1).max()),
+            float(np.abs(z1).max()),
+        )
+        if kd > 0:
+            mx = max(mx, float(np.abs(t1).max()))
+        return mx
+
+    cap = 1.0 - min_bdist
+    for step in range(steps):
+        V, Vx, Vy, Vz = B.eval_and_grad(xg, yg, zg)
+        cols = [
+            Vx * (6.0 * wg)[None, :],
+            Vy * (6.0 * wg)[None, :],
+            Vz * (6.0 * wg)[None, :],
+            V * 6.0,
+        ]
+        if kd > 0:
+            Vd, Vdt = B.eval_diag_grad(td)
+            cols.append(Vdt * (2.0 * wd)[None, :])
+            cols.append(Vd * 2.0)
+        if has_centre:
+            cols.append(v0[:, None])
+        J = np.hstack(cols)
+        G = J @ J.T
+        try:
+            cf = cho_factor(G, lower=True, check_finite=False)
+        except np.linalg.LinAlgError:
+            break
+        wmin = min_weight(wg, wd, wc)
+        g = np.zeros(unk)
+        g[3 * kg:4 * kg] = (wmin / wg) ** 5
+        off = 4 * kg
+        if kd > 0:
+            g[off + kd:off + 2 * kd] = (wmin / wd) ** 5
+            off += 2 * kd
+        if has_centre:
+            g[off] = (wmin / wc) ** 5
+        d_null = g - J.T @ cho_solve(cf, J @ g, check_finite=False)
+        dn_x = float(np.abs(d_null[:3 * kg]).max())
+        if kd > 0:
+            dn_x = max(dn_x, float(np.abs(d_null[4 * kg:4 * kg + kd]).max()))
+        if dn_x <= 1e-18:
+            break
+        accepted = False
+        for scale in (5e-3, 2e-3, 1e-3, 4e-4, 1e-4):
+            s = scale / dn_x
+            x1 = xg + s * d_null[:kg]
+            y1 = yg + s * d_null[kg:2 * kg]
+            z1 = zg + s * d_null[2 * kg:3 * kg]
+            w1 = wg + s * d_null[3 * kg:4 * kg]
+            off = 4 * kg
+            if kd > 0:
+                t1 = td + s * d_null[off:off + kd]
+                wd1 = wd + s * d_null[off + kd:off + 2 * kd]
+                off += 2 * kd
+            else:
+                t1 = td
+                wd1 = wd
+            wc1 = wc + float(s * d_null[off]) if has_centre else wc
+            if min_weight(w1, wd1, wc1) <= 0.0:
+                continue
+            if max_coord(x1, y1, z1, t1) >= cap:
+                continue
+            if float(np.linalg.norm(eval_r(x1, y1, z1, w1, t1, wd1, wc1))) > 1e-2:
+                continue
+            res_p, xp, yp, zp, wp, tp, wdp, wcp = gn_polish(
+                B, x1, y1, z1, w1, t1, wd1, has_centre, wc1, steps=3
+            )
+            if (
+                res_p < 1e-13
+                and min_weight(wp, wdp, wcp) > wmin
+                and max_coord(xp, yp, zp, tp) < cap
+            ):
+                xg = xp
+                yg = yp
+                zg = zp
+                wg = wp
+                td = tp
+                wd = wdp
+                wc = wcp
+                accepted = True
+                if verbose:
+                    bd = 1.0 - max_coord(xg, yg, zg, td)
+                    print(
+                        f"  lift step={step:2d} scale={scale:.1e} min_w={min_weight(wg, wd, wc):.4e} bdist={bd:.3e}",
+                        flush=True,
+                    )
+                break
+        if not accepted:
+            break
+    return xg, yg, zg, wg, td, wd, wc
+
+
 def monomial_residual(n, nodes, weights):
     """Maximum |sum w x^a y^b z^c - int x^a y^b z^c| / 8 over all a + b + c <= n."""
     x = nodes[:, 0]
@@ -1276,6 +1418,8 @@ def main():
     ap.add_argument("--pull-lam0", type=float, default=1e-3, help="initial LM damping for --coords plain phase 2 pull")
     ap.add_argument("--xmax", type=float, default=1.12, help="coordinate escape cap for --coords plain")
     ap.add_argument("--merge-tol", type=float, default=0.0, help="Euclidean tolerance for merging near-coincident diagonal orbits post-solve (0 to disable)")
+    ap.add_argument("--lift-steps", type=int, default=0, help="post-solve S6 nullspace steps to lift minimum orbit weight (0 to disable)")
+    ap.add_argument("--lift-bdist", type=float, default=2e-4, help="minimum boundary distance floor preserved during --lift-steps")
     ap.add_argument("--verbose", action="store_true", help="print iteration progress")
     ap.add_argument("--out", required=True, help="output atlas JSON path")
     a = ap.parse_args()
@@ -1461,6 +1605,24 @@ def main():
         res, xg, yg, zg, wg, td, wd, wc = gn_polish(
             B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=3
         )
+    if a.lift_steps > 0 and res < 1e-12:
+        xg, yg, zg, wg, td, wd, wc = nullspace_lift_minw(
+            B,
+            xg,
+            yg,
+            zg,
+            wg,
+            td,
+            wd,
+            has_centre,
+            wc,
+            steps=a.lift_steps,
+            min_bdist=a.lift_bdist,
+            verbose=a.verbose,
+        )
+        res, xg, yg, zg, wg, td, wd, wc = gn_polish(
+            B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=2
+        )
     nodes, weights = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
     final_nodes = len(nodes)
     unk = 4 * len(xg) + 2 * len(td) + (1 if has_centre else 0)
@@ -1514,6 +1676,10 @@ def main():
             args.extend(["--xmax", f"{a.xmax:.17g}"])
     if a.merge_tol > 0.0:
         args.extend(["--merge-tol", f"{a.merge_tol:.17g}"])
+    if a.lift_steps > 0:
+        args.extend(["--lift-steps", str(a.lift_steps)])
+        if a.lift_bdist != 2e-4:
+            args.extend(["--lift-bdist", f"{a.lift_bdist:.17g}"])
     args.extend(["--out", a.out])
     cmd = "python code/cube_cheb_s6.py " + shlex.join(args)
     solver_desc = (
@@ -1525,6 +1691,8 @@ def main():
         solver_desc += " in fold-free (x, y, z, v^2) coordinates with boundary hinge pull"
     if final_nodes < target_nodes:
         solver_desc += f" and post-solve merging of coincident diagonal orbits ({target_nodes} -> {final_nodes})"
+    if a.lift_steps > 0:
+        solver_desc += f" plus {a.lift_steps} S6 nullspace min-weight lifting steps"
     norm_desc = f", L_{a.pnorm:.17g} cutoff" if a.pnorm > 0.0 else ""
     record = {
         "id": rule_id,
