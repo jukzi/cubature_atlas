@@ -249,6 +249,7 @@
   "evalsAx": "Function evaluations (nodes × cells)",
   "fsBtn": "Full screen",
   "fsExit": "Exit full screen (Esc)",
+  "zmReset": "Reset zoom",
   "rpIv": "Interval proof",
   "rpIvOk": "proven: an exact rule of quality {q} lies within {d} of the stored numbers ({m})",
   "rpIvNo": "not proven",
