@@ -1431,28 +1431,32 @@ def main():
     if a.merge_tol > 0.0 and res < 1e-12:
         td_m, wd_m, n_merged = merge_close_diag(td, wd, a.merge_tol)
         if n_merged > 0:
-            _, res, it_m, xg, yg, zg, wg, td, wd, wc = solve_s6_plain(
-                B,
-                xg,
-                yg,
-                zg,
-                wg,
-                td_m,
-                wd_m,
-                has_centre,
-                wc,
-                40,
-                a.win,
-                1e-4,
-                geo=use_geo,
-                alpha=a.alpha,
-                bold=a.bold,
-                geo_tau=0.0,
-                xmax=1.0 - 1e-7,
-                pull_b=None,
-                verbose=a.verbose,
+            res, xg, yg, zg, wg, td, wd, wc = gn_polish(
+                B, xg, yg, zg, wg, td_m, wd_m, has_centre, wc, steps=5
             )
-            used += it_m
+            if res >= 1e-12:
+                _, res, it_m, xg, yg, zg, wg, td, wd, wc = solve_s6_plain(
+                    B,
+                    xg,
+                    yg,
+                    zg,
+                    wg,
+                    td,
+                    wd,
+                    has_centre,
+                    wc,
+                    40,
+                    a.win,
+                    1e-6,
+                    geo=use_geo,
+                    alpha=a.alpha,
+                    bold=a.bold,
+                    geo_tau=0.0,
+                    xmax=1.0 - 1e-7,
+                    pull_b=None,
+                    verbose=a.verbose,
+                )
+                used += it_m
     if a.coords == "plain" and res < 1e-12:
         res, xg, yg, zg, wg, td, wd, wc = gn_polish(
             B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=3
