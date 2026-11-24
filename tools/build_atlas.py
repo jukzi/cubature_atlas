@@ -479,7 +479,21 @@ def rule_url(r, lang="en", ext=".html"):
     return "%srules/%s/%s/%s%s" % (pre, r["family"], r["domain"], r["id"], ext)
 
 
-def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
+def domain_pts(fams):
+    """Return per-domain JSON strings ({rule_id: [[x, ..., w], ...]}) and 8-char SHA-256 hashes for lazy loading."""
+    by_dom = {d: {} for d in DOMAINS}
+    for f in fams:
+        for r in f["rules"]:
+            by_dom[r["domain"]][r["id"]] = [list(p) + [w] for p, w in zip(r["nodes"], r["weights"])]
+    chunks, hashes = {}, {}
+    for d in DOMAINS:
+        raw = json.dumps(by_dom[d], ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+        chunks[d] = raw
+        hashes[d] = hashlib.sha256(raw.encode("utf8")).hexdigest()[:8]
+    return chunks, hashes
+
+
+def payload(fams, en, de, doc_en, doc_de, stale_doc, lang, include_pts=True, pts_hashes=None):
     refs = load_json(os.path.join(ROOT, "content", "references.json"))
     lc = load_json(os.path.join(ROOT, "reference_data", "literature_counts.json"))["domains"]
     maxn = max_degree(fams, lc)
@@ -487,9 +501,7 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
     for f in fams:
         rules = {}
         for r in sorted(f["rules"], key=lambda x: (x["domain"], x["degree"], x["points"])):
-            d = DIM[r["domain"]]
-            pts = [list(p) + [w] for p, w in zip(r["nodes"], r["weights"])]
-            rules.setdefault(r["domain"], []).append({
+            entry = {
                 "id": r["id"],
                 "deg": r["degree"],
                 "n": r["points"],
@@ -499,13 +511,17 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
                 "cert": r.get("numerical_check"),
                 "iv": r.get("_iv"),
                 "url": rule_url(r, lang),
-                "pts": pts,
                 "method": r.get("method", "") if f.get("role") == "pi" else "",
-            })
-            del d
+            }
+            if include_pts:
+                entry["pts"] = [list(p) + [w] for p, w in zip(r["nodes"], r["weights"])]
+            rules.setdefault(r["domain"], []).append(entry)
         out_f.append({k: f[k] for k in ("id", "tag", "role", "name", "short", "description", "references") if k in f} |
                      {"quality": f.get("quality"), "searched_degrees": f.get("searched_degrees", {}), "rules": rules})
-    return {
+    pre = "" if lang == "en" else "../"
+    links = {"repo": REPO_URL, "data": pre + "data/atlas.json",
+             "zip": pre + "downloads/cubature_atlas_rules.zip"}
+    res = {
         "lang": lang,
         "maxn": maxn,
         "i18n": {"en": en, "de": de},
@@ -514,10 +530,13 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang):
         "refs": refs,
         "gj": gj_tables(maxn),
         "litcounts": lc,
-        "links": {"repo": REPO_URL, "data": ("" if lang == "en" else "../") + "data/atlas.json",
-                  "zip": ("" if lang == "en" else "../") + "downloads/cubature_atlas_rules.zip"},
+        "links": links,
         "families": out_f,
     }
+    if not include_pts:
+        links["ptsBase"] = pre + "data/"
+        res["ptsHash"] = pts_hashes or {}
+    return res
 
 
 def page_html(template, data, lang, en, de):
@@ -691,17 +710,22 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
         for r in f["rules"]:
             BYID[r["id"]] = r
     maxn = MIN_MAXN
+    pts_chunks, pts_hashes = domain_pts(fams)
+    os.makedirs(os.path.join(SITE, "data"))
+    for dom, raw in pts_chunks.items():
+        with open(os.path.join(SITE, "data", "pts-%s.json" % dom), "w", encoding="utf8") as fh:
+            fh.write(raw)
     for lang in ("en", "de"):
-        data = payload(fams, en, de, doc_en, doc_de, stale_doc, lang)
+        data = payload(fams, en, de, doc_en, doc_de, stale_doc, lang, include_pts=False, pts_hashes=pts_hashes)
         maxn = data["maxn"]
         target = SITE if lang == "en" else os.path.join(SITE, "de")
         os.makedirs(target, exist_ok=True)
         with open(os.path.join(target, "index.html"), "w", encoding="utf8") as fh:
             fh.write(page_html(template, data, lang, en, de))
         if lang == "en":
-            os.makedirs(os.path.join(SITE, "data"))
+            full = payload(fams, en, de, doc_en, doc_de, stale_doc, lang, include_pts=True)
             with open(os.path.join(SITE, "data", "atlas.json"), "w", encoding="utf8") as fh:
-                json.dump({k: data[k] for k in ("families", "refs", "litcounts")}, fh, ensure_ascii=False)
+                json.dump({k: full[k] for k in ("families", "refs", "litcounts")}, fh, ensure_ascii=False)
     urls = [BASE_URL, BASE_URL + "de/"]
     for lang in ("en", "de"):
         t = en if lang == "en" else de

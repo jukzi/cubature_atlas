@@ -32,6 +32,33 @@ class BuildAtlasTests(unittest.TestCase):
         self.assertIsNotNone(build_atlas.ID_RE.match("CA-C3-100-50000-PI-MPC"))
         self.assertIsNone(build_atlas.ID_RE.match("CA-C3-5-13-PI-MPC"))
 
+    def test_domain_pts_and_lazy_payload(self):
+        import json
+        fams = [{
+            "id": "test_pi", "tag": "T", "role": "pi",
+            "name": {"en": "Test", "de": "Test"},
+            "short": {"en": "T", "de": "T"},
+            "rules": [{
+                "id": "CA-C2-01-1-PI-MPC", "family": "test_pi", "domain": "square",
+                "degree": 1, "points": 1, "_q": "PI", "_res": 0.0,
+                "nodes": [[0.0, 0.0]], "weights": [4.0],
+            }],
+        }]
+        chunks, hashes = build_atlas.domain_pts(fams)
+        self.assertEqual(set(chunks.keys()), set(build_atlas.DOMAINS))
+        self.assertEqual(json.loads(chunks["square"]), {"CA-C2-01-1-PI-MPC": [[0.0, 0.0, 4.0]]})
+        self.assertEqual(len(hashes["square"]), 8)
+        lazy = build_atlas.payload(fams, {}, {}, "", "", False, "de", include_pts=False, pts_hashes=hashes)
+        r_lazy = lazy["families"][0]["rules"]["square"][0]
+        self.assertNotIn("pts", r_lazy)
+        self.assertEqual(r_lazy["n"], 1)
+        self.assertEqual(lazy["links"]["ptsBase"], "../data/")
+        self.assertEqual(lazy["ptsHash"]["square"], hashes["square"])
+        full = build_atlas.payload(fams, {}, {}, "", "", False, "en", include_pts=True)
+        r_full = full["families"][0]["rules"]["square"][0]
+        self.assertEqual(r_full["pts"], [[0.0, 0.0, 4.0]])
+        self.assertNotIn("ptsBase", full["links"])
+
 
 if __name__ == "__main__":
     unittest.main()
