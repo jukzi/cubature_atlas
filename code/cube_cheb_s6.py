@@ -1112,6 +1112,32 @@ def expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc):
     return np.array(nodes), np.array(weights)
 
 
+def merge_close_diag(td, wd, tol):
+    """Merge pairs of near-coincident diagonal 2-orbits along (1, 1, 1)."""
+    if len(td) < 2 or tol <= 0.0:
+        return td, wd, 0
+    order = np.argsort(np.abs(td))
+    ts = np.abs(td[order])
+    ws = wd[order]
+    out_t = []
+    out_w = []
+    merged = 0
+    i = 0
+    while i < len(ts):
+        if i + 1 < len(ts) and abs(ts[i + 1] - ts[i]) * math.sqrt(3.0) < tol:
+            wsum = float(ws[i] + ws[i + 1])
+            tavg = float(ws[i] * ts[i] + ws[i + 1] * ts[i + 1]) / wsum
+            out_t.append(tavg)
+            out_w.append(wsum)
+            merged += 1
+            i += 2
+        else:
+            out_t.append(float(ts[i]))
+            out_w.append(float(ws[i]))
+            i += 1
+    return np.array(out_t, dtype=float), np.array(out_w, dtype=float), merged
+
+
 def monomial_residual(n, nodes, weights):
     """Maximum |sum w x^a y^b z^c - int x^a y^b z^c| / 8 over all a + b + c <= n."""
     x = nodes[:, 0]
@@ -1165,6 +1191,7 @@ def main():
     ap.add_argument("--pull-steps", type=int, default=120, help="maximum LM iterations for --coords plain phase 2 pull")
     ap.add_argument("--pull-lam0", type=float, default=1e-3, help="initial LM damping for --coords plain phase 2 pull")
     ap.add_argument("--xmax", type=float, default=1.12, help="coordinate escape cap for --coords plain")
+    ap.add_argument("--merge-tol", type=float, default=0.0, help="Euclidean tolerance for merging near-coincident diagonal orbits post-solve (0 to disable)")
     ap.add_argument("--verbose", action="store_true", help="print iteration progress")
     ap.add_argument("--out", required=True, help="output atlas JSON path")
     a = ap.parse_args()
@@ -1317,13 +1344,40 @@ def main():
                         verbose=a.verbose,
                     )
                     used += it4
+    if a.merge_tol > 0.0 and res < 1e-12:
+        td_m, wd_m, n_merged = merge_close_diag(td, wd, a.merge_tol)
+        if n_merged > 0:
+            _, res, it_m, xg, yg, zg, wg, td, wd, wc = solve_s6_plain(
+                B,
+                xg,
+                yg,
+                zg,
+                wg,
+                td_m,
+                wd_m,
+                has_centre,
+                wc,
+                40,
+                a.win,
+                1e-4,
+                geo=use_geo,
+                alpha=a.alpha,
+                bold=a.bold,
+                geo_tau=0.0,
+                xmax=1.0 - 1e-7,
+                pull_b=None,
+                verbose=a.verbose,
+            )
+            used += it_m
     nodes, weights = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
+    final_nodes = len(nodes)
+    unk = 4 * len(xg) + 2 * len(td) + (1 if has_centre else 0)
     merr = monomial_residual(a.degree, nodes, weights)
     min_w = float(weights.min())
     bdist = float(1.0 - np.abs(nodes).max())
     elapsed = time.time() - t0
     print(
-        f"cube deg={a.degree} N={target_nodes} (gen={len(xg)} diag={len(td)} c={int(has_centre)} "
+        f"cube deg={a.degree} N={final_nodes} (gen={len(xg)} diag={len(td)} c={int(has_centre)} "
         f"unk={unk}/{B.M}) ang={a.angle} r0={a.r0} p={a.pnorm} coords={a.coords}: "
         f"init={r0_val:.3e} -> res={res:.2e} monom={merr:.2e} min_w={min_w:.3e} "
         f"bdist={bdist:.3e} it={used} ({elapsed:.1f}s)",
@@ -1332,7 +1386,7 @@ def main():
     if res >= 1e-12 or merr >= 1e-11 or min_w <= 0.0 or bdist <= 0.0:
         print("no solution found", flush=True)
         sys.exit(1)
-    rule_id = f"CA-C3-{a.degree:02d}-{target_nodes}-PI-MPC"
+    rule_id = f"CA-C3-{a.degree:02d}-{final_nodes}-PI-MPC"
     args = [
         "--degree", str(a.degree),
         "--nodes", str(target_nodes),
@@ -1366,6 +1420,8 @@ def main():
             args.extend(["--pull-lam0", f"{a.pull_lam0:.17g}"])
         if a.xmax != 1.12:
             args.extend(["--xmax", f"{a.xmax:.17g}"])
+    if a.merge_tol > 0.0:
+        args.extend(["--merge-tol", f"{a.merge_tol:.17g}"])
     args.extend(["--out", a.out])
     cmd = "python code/cube_cheb_s6.py " + shlex.join(args)
     solver_desc = (
@@ -1375,6 +1431,8 @@ def main():
     )
     if a.coords == "plain":
         solver_desc += " in fold-free (x, y, z, v^2) coordinates with boundary hinge pull"
+    if final_nodes < target_nodes:
+        solver_desc += f" and post-solve merging of coincident diagonal orbits ({target_nodes} -> {final_nodes})"
     norm_desc = f", L_{a.pnorm:.17g} cutoff" if a.pnorm > 0.0 else ""
     record = {
         "id": rule_id,
@@ -1382,7 +1440,7 @@ def main():
         "domain": "cube",
         "dimension": 3,
         "degree": a.degree,
-        "points": target_nodes,
+        "points": final_nodes,
         "quality": "PI",
         "origin": "found",
         "method": (
