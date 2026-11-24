@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import re
 import subprocess
@@ -116,6 +117,60 @@ class GenericCubatureTests(unittest.TestCase):
             self.assertEqual(record["points"], 12)
             self.assertEqual(record["quality"], "PI")
             self.assertLess(record["residual_reported"], 1e-13)
+            self.assertIn("seed", record["reproduce"])
+            self.assertIsNone(record["reproduce"]["seed"])
+
+    def test_cli_out_directory(self):
+        script_path = os.path.join(
+            os.path.dirname(__file__), "..", "code", "cubature_generic.py"
+        )
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            subprocess.run(
+                [
+                    sys.executable,
+                    script_path,
+                    "--domain",
+                    "cube",
+                    "--degree",
+                    "5",
+                    "--out",
+                    tmp_dir,
+                ],
+                cwd=tmp_dir,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            written = [name for name in os.listdir(tmp_dir) if name.endswith(".json")]
+            self.assertEqual(len(written), 1)
+            self.assertRegex(written[0], r"^CA-C2-05-\d+-PI-MPC\.json$")
+
+    def test_inside_tolerance_matches_atlas(self):
+        self.assertTrue(cubature_generic.is_inside(0.0))
+        self.assertTrue(cubature_generic.is_inside(-5e-13))
+        self.assertFalse(cubature_generic.is_inside(-1e-9))
+
+    def test_collapsed_orbit_is_rejected(self):
+        # A C3 orbit of size 3 whose representative sits at the centroid has
+        # only one distinct image; the solution must be rejected.
+        base_basis = cubature_generic.SimplexBasis(2, 2)
+        group_transforms = cubature_generic.build_symmetry_group("simplex", 2, "chiral")
+        sym_basis = cubature_generic.SymmetricBasis(
+            base_basis, "chiral", group_transforms
+        )
+        centroid = np.array([1.0 / 3.0, 1.0 / 3.0])
+        orbit = cubature_generic.SymmetryOrbit(
+            size=3,
+            subspace_origin=np.zeros(2),
+            subspace_basis=np.eye(2),
+            subspace_coords=centroid.copy(),
+            weight_sqrt=math.sqrt(1.0 / 3.0),
+        )
+        params = cubature_generic.pack_orbit_parameters([orbit])
+        solution = cubature_generic._build_solution_if_positive(
+            sym_basis, [orbit], params, 0.0, 0.1, "PI"
+        )
+        self.assertIsNone(solution)
 
     def test_4d_cube_and_simplex_pi(self):
         for domain, degree, symmetry in (
