@@ -9,22 +9,24 @@ special cases:
   * Simplex Delta^d: division-free homogeneous Proriol-Koornwinder-Dubiner
     basis in barycentric coordinates (works identically inside and outside).
 - Exact analytic 1st derivatives and exact directional 2nd derivatives via
-  2nd-order Taylor-jet arithmetic (O(M * K) cost, zero finite-difference loss).
+  2nd-order Taylor-jet arithmetic (O(num_basis * num_points) cost, zero
+  finite-difference loss).
 - Generic finite symmetry engine (Reynolds projection + SVD invariant basis +
   stabilizer fixed-subspace orbit parameterization) supporting none, central,
   chiral, and full symmetry groups in arbitrary dimension d.
 - Deterministic equilibrium starts (rotated D_d* lattice in Chebyshev angle
   space for cubes; concentric geodesic S^d_+ shells for simplices) with
   dynamic-programming orbit selection for exact target point count N.
-- Fold-free (x, v^2) geodesic-accelerated Cholesky Levenberg-Marquardt
-  (Transtrum & Sethna 2012) with 3-phase PI-preferred / PO-fallback pipeline:
-  Phase 1 free solve -> Phase 2 smooth diagonal boundary hinge pull ->
-  Phase 3 interior pure-moment polish + automatic minimum-norm Gauss-Newton
-  end-stage. Logging and stopping criteria strictly report the pure moment
-  residual (excluding the boundary penalty).
+- Fold-free (x, sqrt(w)^2) geodesic-accelerated Cholesky Levenberg-Marquardt
+  (Transtrum & Sethna 2012) with a PI-preferred / PO-fallback pipeline:
+  Stage A strictly interior solve -> Stage B free solve -> smooth diagonal
+  boundary hinge pull -> interior pure-moment polish + automatic minimum-norm
+  Gauss-Newton end-stage. Logging and stopping criteria strictly report the
+  pure moment residual (excluding the boundary penalty).
 """
 
 import argparse
+from dataclasses import dataclass
 import itertools
 import json
 import math
@@ -37,1568 +39,2205 @@ import numpy as np
 from scipy.linalg import cho_factor, cho_solve
 
 
-def log(msg):
+# ---------------------------------------------------------------------------
+# Logging and deterministic combinatorics helpers
+# ---------------------------------------------------------------------------
+
+
+def log_message(message):
     """Print a timestamped log line with second-level resolution."""
-    ts = time.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{ts} | {msg}", flush=True)
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    print(f"{timestamp} | {message}", flush=True)
 
 
-def multi_indices(dim, degree):
-    """All d-tuples of non-negative integers with sum <= degree (graded order)."""
-    out = []
+def generate_multi_indices(dimension, max_degree):
+    """Return all d-tuples of non-negative integers with sum <= max_degree."""
+    indices = []
 
-    def rec(prefix, rem_dim, rem_deg):
-        if rem_dim == 1:
-            for k in range(rem_deg + 1):
-                out.append(prefix + (k,))
+    def append_recursive(prefix, remaining_dims, remaining_degree):
+        if remaining_dims == 1:
+            for exponent in range(remaining_degree + 1):
+                indices.append(prefix + (exponent,))
             return
-        for k in range(rem_deg + 1):
-            rec(prefix + (k,), rem_dim - 1, rem_deg - k)
+        for exponent in range(remaining_degree + 1):
+            append_recursive(
+                prefix + (exponent,),
+                remaining_dims - 1,
+                remaining_degree - exponent,
+            )
 
-    rec((), dim, degree)
-    return out
+    append_recursive((), dimension, max_degree)
+    return indices
 
 
-def halton_points(count, dim):
-    """Deterministic Halton low-discrepancy points in (0, 1)^dim."""
+def generate_halton_points(num_points, dimension):
+    """Return deterministic Halton low-discrepancy points in (0, 1)^dimension."""
     primes = []
-    cand = 2
-    while len(primes) < dim:
-        is_p = True
-        for p in primes:
-            if p * p > cand:
+    candidate = 2
+    while len(primes) < dimension:
+        is_prime = True
+        for prime in primes:
+            if prime * prime > candidate:
                 break
-            if cand % p == 0:
-                is_p = False
+            if candidate % prime == 0:
+                is_prime = False
                 break
-        if is_p:
-            primes.append(cand)
-        cand += 1
-    pts = np.zeros((count, dim), dtype=float)
-    for j, base in enumerate(primes):
-        for i in range(count):
-            idx = i + 1
-            f = 1.0
-            r = 0.0
-            while idx > 0:
-                f /= base
-                r += f * (idx % base)
-                idx //= base
-            pts[i, j] = r
-    return pts
+        if is_prime:
+            primes.append(candidate)
+        candidate += 1
+
+    points = np.zeros((num_points, dimension), dtype=float)
+    for axis, base in enumerate(primes):
+        for point_index in range(num_points):
+            index = point_index + 1
+            radix_fraction = 1.0
+            radical_inverse = 0.0
+            while index > 0:
+                radix_fraction /= base
+                radical_inverse += radix_fraction * (index % base)
+                index //= base
+            points[point_index, axis] = radical_inverse
+    return points
+
+
+# ---------------------------------------------------------------------------
+# Orthonormal polynomial bases with exact 1st and directional 2nd derivatives
+# ---------------------------------------------------------------------------
 
 
 class CubeBasis:
-    """Orthonormal tensor-Legendre basis on [-1, 1]^d with probability measure."""
+    """Orthonormal tensor-Legendre basis on [-1, 1]^d (probability measure)."""
 
-    def __init__(self, dim, degree):
+    def __init__(self, dimension, degree):
         self.domain = "cube"
-        self.dim = dim
+        self.dimension = dimension
         self.degree = degree
-        self.vol = float(2.0 ** dim)
-        self.alphas = multi_indices(dim, degree)
-        self.M = len(self.alphas)
-        self.alpha_arr = np.asarray(self.alphas, dtype=np.int32)
-        self.norm1d = np.sqrt(2.0 * np.arange(degree + 1, dtype=float) + 1.0)
-        self.rhs = np.zeros(self.M, dtype=float)
-        self.rhs[0] = 1.0
+        self.volume = float(2.0 ** dimension)
+        self.multi_indices = generate_multi_indices(dimension, degree)
+        self.num_basis = len(self.multi_indices)
+        self.multi_index_array = np.asarray(self.multi_indices, dtype=np.int32)
+        self.legendre_norms_1d = np.sqrt(
+            2.0 * np.arange(degree + 1, dtype=float) + 1.0
+        )
+        self.exact_moments = np.zeros(self.num_basis, dtype=float)
+        self.exact_moments[0] = 1.0
 
-    def _leg1d_val(self, x):
-        n = self.degree
-        P = np.empty((n + 1, len(x)), dtype=float)
-        P[0] = 1.0
-        if n >= 1:
-            P[1] = x
-        for k in range(2, n + 1):
-            P[k] = ((2 * k - 1) * x * P[k - 1] - (k - 1) * P[k - 2]) / k
-        return P * self.norm1d[:, None]
+    def _legendre_1d_values(self, coords):
+        """Evaluate orthonormal 1D Legendre polynomials P_0..P_degree at coords."""
+        max_deg = self.degree
+        values = np.empty((max_deg + 1, len(coords)), dtype=float)
+        values[0] = 1.0
+        if max_deg >= 1:
+            values[1] = coords
+        for deg in range(2, max_deg + 1):
+            values[deg] = (
+                (2 * deg - 1) * coords * values[deg - 1]
+                - (deg - 1) * values[deg - 2]
+            ) / deg
+        return values * self.legendre_norms_1d[:, None]
 
-    def _leg1d_val_grad(self, x):
-        n = self.degree
-        P = np.empty((n + 1, len(x)), dtype=float)
-        dP = np.empty((n + 1, len(x)), dtype=float)
-        P[0] = 1.0
-        dP[0] = 0.0
-        if n >= 1:
-            P[1] = x
-            dP[1] = 1.0
-        for k in range(2, n + 1):
-            P[k] = ((2 * k - 1) * x * P[k - 1] - (k - 1) * P[k - 2]) / k
-            dP[k] = ((2 * k - 1) * (P[k - 1] + x * dP[k - 1]) - (k - 1) * dP[k - 2]) / k
-        return P * self.norm1d[:, None], dP * self.norm1d[:, None]
+    def _legendre_1d_values_and_derivatives(self, coords):
+        """Evaluate orthonormal 1D Legendre polynomials and their 1st derivatives."""
+        max_deg = self.degree
+        values = np.empty((max_deg + 1, len(coords)), dtype=float)
+        derivatives = np.empty((max_deg + 1, len(coords)), dtype=float)
+        values[0] = 1.0
+        derivatives[0] = 0.0
+        if max_deg >= 1:
+            values[1] = coords
+            derivatives[1] = 1.0
+        for deg in range(2, max_deg + 1):
+            values[deg] = (
+                (2 * deg - 1) * coords * values[deg - 1]
+                - (deg - 1) * values[deg - 2]
+            ) / deg
+            derivatives[deg] = (
+                (2 * deg - 1) * (values[deg - 1] + coords * derivatives[deg - 1])
+                - (deg - 1) * derivatives[deg - 2]
+            ) / deg
+        scale = self.legendre_norms_1d[:, None]
+        return values * scale, derivatives * scale
 
-    def _leg1d_jet2(self, x, dx):
-        n = self.degree
-        P0 = np.empty((n + 1, len(x)), dtype=float)
-        P1 = np.empty((n + 1, len(x)), dtype=float)
-        P2 = np.empty((n + 1, len(x)), dtype=float)
-        P0[0] = 1.0
-        P1[0] = 0.0
-        P2[0] = 0.0
-        if n >= 1:
-            P0[1] = x
-            P1[1] = dx
-            P2[1] = 0.0
-        for k in range(2, n + 1):
-            c1 = (2 * k - 1) / k
-            c2 = (k - 1) / k
-            P0[k] = c1 * x * P0[k - 1] - c2 * P0[k - 2]
-            P1[k] = c1 * (dx * P0[k - 1] + x * P1[k - 1]) - c2 * P1[k - 2]
-            P2[k] = c1 * (2.0 * dx * P1[k - 1] + x * P2[k - 1]) - c2 * P2[k - 2]
-        s = self.norm1d[:, None]
-        return P0 * s, P1 * s, P2 * s
+    def _legendre_1d_second_order_jet(self, coords, coord_directions):
+        """Evaluate 2nd-order Taylor jet (f, f', f'') of 1D Legendre polynomials."""
+        max_deg = self.degree
+        values = np.empty((max_deg + 1, len(coords)), dtype=float)
+        first_deriv = np.empty((max_deg + 1, len(coords)), dtype=float)
+        second_deriv = np.empty((max_deg + 1, len(coords)), dtype=float)
+        values[0] = 1.0
+        first_deriv[0] = 0.0
+        second_deriv[0] = 0.0
+        if max_deg >= 1:
+            values[1] = coords
+            first_deriv[1] = coord_directions
+            second_deriv[1] = 0.0
+        for deg in range(2, max_deg + 1):
+            coeff_curr = (2 * deg - 1) / deg
+            coeff_prev = (deg - 1) / deg
+            values[deg] = (
+                coeff_curr * coords * values[deg - 1]
+                - coeff_prev * values[deg - 2]
+            )
+            first_deriv[deg] = (
+                coeff_curr
+                * (coord_directions * values[deg - 1] + coords * first_deriv[deg - 1])
+                - coeff_prev * first_deriv[deg - 2]
+            )
+            second_deriv[deg] = (
+                coeff_curr
+                * (
+                    2.0 * coord_directions * first_deriv[deg - 1]
+                    + coords * second_deriv[deg - 1]
+                )
+                - coeff_prev * second_deriv[deg - 2]
+            )
+        scale = self.legendre_norms_1d[:, None]
+        return values * scale, first_deriv * scale, second_deriv * scale
 
-    def eval_val(self, X):
-        K = len(X)
-        mats = [self._leg1d_val(X[:, j]) for j in range(self.dim)]
-        V = np.ones((self.M, K), dtype=float)
-        for j in range(self.dim):
-            V *= mats[j][self.alpha_arr[:, j]]
-        return V
+    def evaluate_values(self, points):
+        """Evaluate all basis polynomials at points, returning (num_basis, num_points)."""
+        num_points = len(points)
+        tables_by_axis = [
+            self._legendre_1d_values(points[:, axis])
+            for axis in range(self.dimension)
+        ]
+        values = np.ones((self.num_basis, num_points), dtype=float)
+        for axis in range(self.dimension):
+            values *= tables_by_axis[axis][self.multi_index_array[:, axis]]
+        return values
 
-    def eval_val_grad(self, X):
-        K = len(X)
-        P = []
-        dP = []
-        for j in range(self.dim):
-            pj, dpj = self._leg1d_val_grad(X[:, j])
-            P.append(pj[self.alpha_arr[:, j]])
-            dP.append(dpj[self.alpha_arr[:, j]])
-        V = np.ones((self.M, K), dtype=float)
-        for j in range(self.dim):
-            V *= P[j]
-        G = np.empty((self.dim, self.M, K), dtype=float)
-        for j in range(self.dim):
-            gj = dP[j].copy()
-            for r in range(self.dim):
-                if r != j:
-                    gj *= P[r]
-            G[j] = gj
-        return V, G
+    def evaluate_values_and_gradients(self, points):
+        """Evaluate basis values and coordinate gradients at points."""
+        num_points = len(points)
+        factors_by_axis = []
+        derivs_by_axis = []
+        for axis in range(self.dimension):
+            axis_vals, axis_derivs = self._legendre_1d_values_and_derivatives(
+                points[:, axis]
+            )
+            exponents = self.multi_index_array[:, axis]
+            factors_by_axis.append(axis_vals[exponents])
+            derivs_by_axis.append(axis_derivs[exponents])
 
-    def eval_jet2(self, X, dX):
-        K = len(X)
-        F0 = np.ones((self.M, K), dtype=float)
-        F1 = np.zeros((self.M, K), dtype=float)
-        F2 = np.zeros((self.M, K), dtype=float)
-        for j in range(self.dim):
-            p0, p1, p2 = self._leg1d_jet2(X[:, j], dX[:, j])
-            idx = self.alpha_arr[:, j]
-            q0 = p0[idx]
-            q1 = p1[idx]
-            q2 = p2[idx]
-            n0 = F0 * q0
-            n1 = F0 * q1 + F1 * q0
-            n2 = F0 * q2 + 2.0 * F1 * q1 + F2 * q0
-            F0 = n0
-            F1 = n1
-            F2 = n2
-        return F0, F1, F2
+        values = np.ones((self.num_basis, num_points), dtype=float)
+        for axis in range(self.dimension):
+            values *= factors_by_axis[axis]
 
-    def boundary_margin(self, X):
-        """Minimum distance to boundary (> 0 strictly interior, <= 0 outside/on)."""
-        return float(1.0 - np.abs(X).max())
+        gradients = np.empty(
+            (self.dimension, self.num_basis, num_points), dtype=float
+        )
+        for axis in range(self.dimension):
+            axis_grad = derivs_by_axis[axis].copy()
+            for other_axis in range(self.dimension):
+                if other_axis != axis:
+                    axis_grad *= factors_by_axis[other_axis]
+            gradients[axis] = axis_grad
+        return values, gradients
 
-    def boundary_hinge(self, X, margin):
-        """Return hinge violation values and gradients d(hinge)/dX for |x_j| > 1 - margin."""
-        cap = 1.0 - margin
-        ax = np.abs(X)
-        over = np.maximum(0.0, ax - cap)
-        grad = np.where(ax > cap, np.sign(X) * over, 0.0)
-        return over, grad
+    def evaluate_second_order_jet(self, points, directions):
+        """Evaluate (value, 1st directional deriv, 2nd directional deriv) along directions."""
+        num_points = len(points)
+        prod_val = np.ones((self.num_basis, num_points), dtype=float)
+        prod_first = np.zeros((self.num_basis, num_points), dtype=float)
+        prod_second = np.zeros((self.num_basis, num_points), dtype=float)
+        for axis in range(self.dimension):
+            axis_val, axis_first, axis_second = self._legendre_1d_second_order_jet(
+                points[:, axis], directions[:, axis]
+            )
+            exponents = self.multi_index_array[:, axis]
+            factor_val = axis_val[exponents]
+            factor_first = axis_first[exponents]
+            factor_second = axis_second[exponents]
+            # Leibniz product rule for 2nd-order Taylor jets
+            next_val = prod_val * factor_val
+            next_first = prod_val * factor_first + prod_first * factor_val
+            next_second = (
+                prod_val * factor_second
+                + 2.0 * prod_first * factor_first
+                + prod_second * factor_val
+            )
+            prod_val = next_val
+            prod_first = next_first
+            prod_second = next_second
+        return prod_val, prod_first, prod_second
+
+    def boundary_distance(self, points):
+        """Minimum distance to boundary (> 0 strictly interior, <= 0 on/outside)."""
+        return float(1.0 - np.abs(points).max())
+
+    def boundary_hinge_penalty(self, points, target_margin):
+        """Return hinge violations and gradients d(hinge)/dX for |x_j| > 1 - target_margin."""
+        inner_limit = 1.0 - target_margin
+        abs_coords = np.abs(points)
+        violations = np.maximum(0.0, abs_coords - inner_limit)
+        gradients = np.where(
+            abs_coords > inner_limit, np.sign(points) * violations, 0.0
+        )
+        return violations, gradients
 
 
 class SimplexBasis:
     """Orthonormal division-free homogeneous Dubiner basis on Delta^d (prob. measure)."""
 
-    def __init__(self, dim, degree):
+    def __init__(self, dimension, degree):
         self.domain = "simplex"
-        self.dim = dim
+        self.dimension = dimension
         self.degree = degree
-        self.vol = 1.0 / float(math.factorial(dim))
-        self.alphas = multi_indices(dim, degree)
-        self.M = len(self.alphas)
-        self.alpha_arr = np.asarray(self.alphas, dtype=np.int32)
-        # Precompute Jacobi parameter a_m = 2 * sum_{r > m} k_r + (d - 1 - m)
-        self.a_params = np.zeros((self.M, dim), dtype=np.int32)
-        self.norms = np.ones(self.M, dtype=float)
-        dfac = float(math.factorial(dim))
-        for idx, alpha in enumerate(self.alphas):
-            rem = 0
-            prod = 1.0
-            for m in range(dim - 1, -1, -1):
-                a_m = 2 * rem + (dim - 1 - m)
-                self.a_params[idx, m] = a_m
-                prod *= float(2 * alpha[m] + a_m + 1)
-                rem += alpha[m]
-            self.norms[idx] = math.sqrt(prod / dfac)
-        # Group unique (m, a_m) pairs to evaluate homogeneous Jacobi recurrences once
-        self.unique_a_by_m = []
-        self.a_to_slot = []
-        for m in range(dim):
-            uniq = sorted(set(int(v) for v in self.a_params[:, m]))
-            self.unique_a_by_m.append(uniq)
-            slot_map = {a_val: s for s, a_val in enumerate(uniq)}
-            self.a_to_slot.append(
-                np.array([slot_map[int(v)] for v in self.a_params[:, m]], dtype=np.int32)
+        self.volume = 1.0 / float(math.factorial(dimension))
+        self.multi_indices = generate_multi_indices(dimension, degree)
+        self.num_basis = len(self.multi_indices)
+        self.multi_index_array = np.asarray(self.multi_indices, dtype=np.int32)
+
+        # Precompute Jacobi parameter alpha_m = 2 * sum_{r > m} k_r + (d - 1 - m)
+        self.jacobi_alpha_params = np.zeros(
+            (self.num_basis, dimension), dtype=np.int32
+        )
+        self.normalization_factors = np.ones(self.num_basis, dtype=float)
+        dim_factorial = float(math.factorial(dimension))
+        for basis_idx, exponents in enumerate(self.multi_indices):
+            trailing_degree_sum = 0
+            norm_product = 1.0
+            for axis in range(dimension - 1, -1, -1):
+                alpha_param = 2 * trailing_degree_sum + (dimension - 1 - axis)
+                self.jacobi_alpha_params[basis_idx, axis] = alpha_param
+                norm_product *= float(2 * exponents[axis] + alpha_param + 1)
+                trailing_degree_sum += exponents[axis]
+            self.normalization_factors[basis_idx] = math.sqrt(
+                norm_product / dim_factorial
             )
-        self.rhs = np.zeros(self.M, dtype=float)
-        self.rhs[0] = 1.0
 
-    def _bary_and_tails(self, X):
-        K = len(X)
-        u = np.empty((self.dim + 1, K), dtype=float)
-        u[0] = 1.0 - np.sum(X, axis=1)
-        for j in range(self.dim):
-            u[j + 1] = X[:, j]
-        s = np.empty((self.dim + 1, K), dtype=float)
-        s[self.dim] = u[self.dim]
-        for m in range(self.dim - 1, -1, -1):
-            s[m] = u[m] + s[m + 1]
-        return u, s
-
-    def _hjac_val(self, v, s, a, kmax):
-        P = np.empty((kmax + 1, len(v)), dtype=float)
-        P[0] = 1.0
-        if kmax >= 1:
-            P[1] = (a + 2.0) * v - s
-        s2 = s * s
-        v2_s = 2.0 * v - s
-        for k in range(2, kmax + 1):
-            kf = float(k)
-            af = float(a)
-            den = 2.0 * kf * (kf + af) * (2.0 * kf + af - 2.0)
-            c1 = (2.0 * kf + af - 1.0) * (2.0 * kf + af) * (2.0 * kf + af - 2.0) / den
-            c2 = (2.0 * kf + af - 1.0) * (af * af) / den
-            c3 = 2.0 * (kf + af - 1.0) * (kf - 1.0) * (2.0 * kf + af) / den
-            P[k] = (c1 * v2_s + c2 * s) * P[k - 1] - c3 * s2 * P[k - 2]
-        return P
-
-    def _hjac_jet1(self, v, dv, s, ds, a, kmax):
-        P0 = np.empty((kmax + 1, len(v)), dtype=float)
-        P1 = np.empty((kmax + 1, len(v)), dtype=float)
-        P0[0] = 1.0
-        P1[0] = 0.0
-        if kmax >= 1:
-            P0[1] = (a + 2.0) * v - s
-            P1[1] = (a + 2.0) * dv - ds
-        s2 = s * s
-        ds2 = 2.0 * s * ds
-        v2_s = 2.0 * v - s
-        dv2_s = 2.0 * dv - ds
-        for k in range(2, kmax + 1):
-            kf = float(k)
-            af = float(a)
-            den = 2.0 * kf * (kf + af) * (2.0 * kf + af - 2.0)
-            c1 = (2.0 * kf + af - 1.0) * (2.0 * kf + af) * (2.0 * kf + af - 2.0) / den
-            c2 = (2.0 * kf + af - 1.0) * (af * af) / den
-            c3 = 2.0 * (kf + af - 1.0) * (kf - 1.0) * (2.0 * kf + af) / den
-            q0 = c1 * v2_s + c2 * s
-            q1 = c1 * dv2_s + c2 * ds
-            P0[k] = q0 * P0[k - 1] - c3 * s2 * P0[k - 2]
-            P1[k] = q1 * P0[k - 1] + q0 * P1[k - 1] - c3 * (ds2 * P0[k - 2] + s2 * P1[k - 2])
-        return P0, P1
-
-    def _hjac_jet2(self, v, dv, s, ds, a, kmax):
-        P0 = np.empty((kmax + 1, len(v)), dtype=float)
-        P1 = np.empty((kmax + 1, len(v)), dtype=float)
-        P2 = np.empty((kmax + 1, len(v)), dtype=float)
-        P0[0] = 1.0
-        P1[0] = 0.0
-        P2[0] = 0.0
-        if kmax >= 1:
-            P0[1] = (a + 2.0) * v - s
-            P1[1] = (a + 2.0) * dv - ds
-            P2[1] = 0.0
-        s2 = s * s
-        ds2 = 2.0 * s * ds
-        d2s2 = 2.0 * ds * ds
-        v2_s = 2.0 * v - s
-        dv2_s = 2.0 * dv - ds
-        for k in range(2, kmax + 1):
-            kf = float(k)
-            af = float(a)
-            den = 2.0 * kf * (kf + af) * (2.0 * kf + af - 2.0)
-            c1 = (2.0 * kf + af - 1.0) * (2.0 * kf + af) * (2.0 * kf + af - 2.0) / den
-            c2 = (2.0 * kf + af - 1.0) * (af * af) / den
-            c3 = 2.0 * (kf + af - 1.0) * (kf - 1.0) * (2.0 * kf + af) / den
-            q0 = c1 * v2_s + c2 * s
-            q1 = c1 * dv2_s + c2 * ds
-            P0[k] = q0 * P0[k - 1] - c3 * s2 * P0[k - 2]
-            P1[k] = q1 * P0[k - 1] + q0 * P1[k - 1] - c3 * (ds2 * P0[k - 2] + s2 * P1[k - 2])
-            P2[k] = (
-                2.0 * q1 * P1[k - 1]
-                + q0 * P2[k - 1]
-                - c3 * (d2s2 * P0[k - 2] + 2.0 * ds2 * P1[k - 2] + s2 * P2[k - 2])
+        # Group unique (axis, alpha_param) pairs so each Jacobi recurrence runs once
+        self.unique_alphas_by_axis = []
+        self.alpha_slot_by_axis = []
+        for axis in range(dimension):
+            unique_alphas = sorted(
+                set(int(val) for val in self.jacobi_alpha_params[:, axis])
             )
-        return P0, P1, P2
+            self.unique_alphas_by_axis.append(unique_alphas)
+            alpha_to_slot = {
+                alpha_val: slot for slot, alpha_val in enumerate(unique_alphas)
+            }
+            self.alpha_slot_by_axis.append(
+                np.array(
+                    [
+                        alpha_to_slot[int(val)]
+                        for val in self.jacobi_alpha_params[:, axis]
+                    ],
+                    dtype=np.int32,
+                )
+            )
 
-    def eval_val(self, X):
-        K = len(X)
-        u, s = self._bary_and_tails(X)
-        V = np.repeat(self.norms[:, None], K, axis=1)
-        for m in range(self.dim):
-            uniq = self.unique_a_by_m[m]
-            tables = []
-            for a_val in uniq:
-                kmax = self.degree - max(0, (a_val - (self.dim - 1 - m)) // 2)
-                tables.append(self._hjac_val(u[m], s[m], a_val, kmax))
-            factor = np.empty((self.M, K), dtype=float)
-            slots = self.a_to_slot[m]
-            ks = self.alpha_arr[:, m]
-            for slot, tab in enumerate(tables):
-                mask = slots == slot
-                factor[mask] = tab[ks[mask]]
-            V *= factor
-        return V
+        self.exact_moments = np.zeros(self.num_basis, dtype=float)
+        self.exact_moments[0] = 1.0
 
-    def eval_val_grad(self, X):
-        K = len(X)
-        u, s = self._bary_and_tails(X)
-        # Precompute factors and directional derivatives along each coordinate e_j
-        # du[0]/dx_j = -1, du[j+1]/dx_j = +1; ds[0]/dx_j = 0, ds[m]/dx_j = 1 if m <= j+1 else 0
-        F0_list = []
-        dF_list = [[None] * self.dim for _ in range(self.dim)]
-        for m in range(self.dim):
-            uniq = self.unique_a_by_m[m]
-            slots = self.a_to_slot[m]
-            ks = self.alpha_arr[:, m]
-            # Evaluate partial derivatives wrt v = u[m] and s = s[m] once!
-            dv1 = np.ones(K, dtype=float)
-            dz0 = np.zeros(K, dtype=float)
-            tab_v0 = []
-            tab_dv = []
-            tab_ds = []
-            for a_val in uniq:
-                kmax = self.degree - max(0, (a_val - (self.dim - 1 - m)) // 2)
-                p0, pv = self._hjac_jet1(u[m], dv1, s[m], dz0, a_val, kmax)
-                _, ps = self._hjac_jet1(u[m], dz0, s[m], dv1, a_val, kmax)
-                tab_v0.append(p0)
-                tab_dv.append(pv)
-                tab_ds.append(ps)
-            f0 = np.empty((self.M, K), dtype=float)
-            fv = np.empty((self.M, K), dtype=float)
-            fs = np.empty((self.M, K), dtype=float)
-            for slot in range(len(uniq)):
-                mask = slots == slot
-                f0[mask] = tab_v0[slot][ks[mask]]
-                fv[mask] = tab_dv[slot][ks[mask]]
-                fs[mask] = tab_ds[slot][ks[mask]]
-            F0_list.append(f0)
-            for j in range(self.dim):
-                du_m = -1.0 if m == 0 else (1.0 if m == j + 1 else 0.0)
-                ds_m = 0.0 if m == 0 else (1.0 if m <= j + 1 else 0.0)
-                if du_m == 0.0 and ds_m == 0.0:
-                    dF_list[j][m] = None
-                else:
-                    dF_list[j][m] = du_m * fv + ds_m * fs
-        V = np.repeat(self.norms[:, None], K, axis=1)
-        for m in range(self.dim):
-            V *= F0_list[m]
-        G = np.zeros((self.dim, self.M, K), dtype=float)
-        for j in range(self.dim):
-            for m in range(self.dim):
-                dfm = dF_list[j][m]
-                if dfm is None:
-                    continue
-                term = self.norms[:, None] * dfm
-                for r in range(self.dim):
-                    if r != m:
-                        term *= F0_list[r]
-                G[j] += term
-        return V, G
+    @staticmethod
+    def _homogeneous_jacobi_recurrence_coeffs(degree_k, alpha_param):
+        """3-term recurrence coefficients for homogeneous Jacobi polynomials P_k^{(a, 0)}."""
+        k_val = float(degree_k)
+        a_val = float(alpha_param)
+        denominator = 2.0 * k_val * (k_val + a_val) * (2.0 * k_val + a_val - 2.0)
+        coeff_shifted = (
+            (2.0 * k_val + a_val - 1.0)
+            * (2.0 * k_val + a_val)
+            * (2.0 * k_val + a_val - 2.0)
+            / denominator
+        )
+        coeff_tail = (2.0 * k_val + a_val - 1.0) * (a_val * a_val) / denominator
+        coeff_prev = (
+            2.0
+            * (k_val + a_val - 1.0)
+            * (k_val - 1.0)
+            * (2.0 * k_val + a_val)
+            / denominator
+        )
+        return coeff_shifted, coeff_tail, coeff_prev
 
-    def eval_jet2(self, X, dX):
-        K = len(X)
-        u, s = self._bary_and_tails(X)
-        du = np.empty((self.dim + 1, K), dtype=float)
-        du[0] = -np.sum(dX, axis=1)
-        for j in range(self.dim):
-            du[j + 1] = dX[:, j]
-        ds = np.empty((self.dim + 1, K), dtype=float)
-        ds[self.dim] = du[self.dim]
-        for m in range(self.dim - 1, -1, -1):
-            ds[m] = du[m] + ds[m + 1]
-        F0 = np.repeat(self.norms[:, None], K, axis=1)
-        F1 = np.zeros((self.M, K), dtype=float)
-        F2 = np.zeros((self.M, K), dtype=float)
-        for m in range(self.dim):
-            uniq = self.unique_a_by_m[m]
-            slots = self.a_to_slot[m]
-            ks = self.alpha_arr[:, m]
-            q0 = np.empty((self.M, K), dtype=float)
-            q1 = np.empty((self.M, K), dtype=float)
-            q2 = np.empty((self.M, K), dtype=float)
-            for slot, a_val in enumerate(uniq):
-                kmax = self.degree - max(0, (a_val - (self.dim - 1 - m)) // 2)
-                p0, p1, p2 = self._hjac_jet2(u[m], du[m], s[m], ds[m], a_val, kmax)
-                mask = slots == slot
-                q0[mask] = p0[ks[mask]]
-                q1[mask] = p1[ks[mask]]
-                q2[mask] = p2[ks[mask]]
-            n0 = F0 * q0
-            n1 = F0 * q1 + F1 * q0
-            n2 = F0 * q2 + 2.0 * F1 * q1 + F2 * q0
-            F0 = n0
-            F1 = n1
-            F2 = n2
-        return F0, F1, F2
+    def _barycentric_and_tail_sums(self, points):
+        """Compute barycentric coordinates u_0..u_d and suffix sums s_m = sum_{r>=m} u_r."""
+        num_points = len(points)
+        barycentric = np.empty((self.dimension + 1, num_points), dtype=float)
+        barycentric[0] = 1.0 - np.sum(points, axis=1)
+        for axis in range(self.dimension):
+            barycentric[axis + 1] = points[:, axis]
 
-    def boundary_margin(self, X):
-        """Minimum barycentric coordinate (> 0 strictly interior, <= 0 outside/on)."""
-        u0 = 1.0 - np.sum(X, axis=1)
-        return float(min(float(u0.min()), float(X.min())))
+        tail_sums = np.empty((self.dimension + 1, num_points), dtype=float)
+        tail_sums[self.dimension] = barycentric[self.dimension]
+        for axis in range(self.dimension - 1, -1, -1):
+            tail_sums[axis] = barycentric[axis] + tail_sums[axis + 1]
+        return barycentric, tail_sums
 
-    def boundary_hinge(self, X, margin):
-        """Return hinge violation values and gradients d(hinge)/dX for u_j < margin."""
-        u0 = 1.0 - np.sum(X, axis=1)
-        v0 = np.maximum(0.0, margin - u0)
-        vx = np.maximum(0.0, margin - X)
-        # Penalty = 0.5 * (sum v0^2 + sum vx^2) -> d/dX_j = +v0 - vx_j
-        grad = v0[:, None] - vx
-        over = np.concatenate([v0[:, None], vx], axis=1)
-        return over, grad
+    def _homogeneous_jacobi_values(self, coord, tail_sum, alpha_param, max_degree):
+        """Evaluate s^k * P_k^{(alpha, 0)}(2*coord/tail_sum - 1) without division."""
+        values = np.empty((max_degree + 1, len(coord)), dtype=float)
+        values[0] = 1.0
+        if max_degree >= 1:
+            values[1] = (alpha_param + 2.0) * coord - tail_sum
 
+        tail_squared = tail_sum * tail_sum
+        shifted_coord = 2.0 * coord - tail_sum
+        for deg in range(2, max_degree + 1):
+            coeff_shifted, coeff_tail, coeff_prev = (
+                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
+            )
+            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
+            values[deg] = (
+                linear_factor * values[deg - 1]
+                - coeff_prev * tail_squared * values[deg - 2]
+            )
+        return values
 
-def build_group_ops(domain, dim, sym_name):
-    """Return list of affine symmetry ops (A, t) with g(x) = x @ A.T + t."""
-    if sym_name == "none":
-        return [(np.eye(dim, dtype=float), np.zeros(dim, dtype=float))]
-    if domain == "cube":
-        if sym_name == "central":
-            return [
-                (np.eye(dim, dtype=float), np.zeros(dim, dtype=float)),
-                (-np.eye(dim, dtype=float), np.zeros(dim, dtype=float)),
+    def _homogeneous_jacobi_first_order_jet(
+        self, coord, coord_dir, tail_sum, tail_sum_dir, alpha_param, max_degree
+    ):
+        """Evaluate (value, 1st directional deriv) of homogeneous Jacobi polynomials."""
+        values = np.empty((max_degree + 1, len(coord)), dtype=float)
+        first_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
+        values[0] = 1.0
+        first_deriv[0] = 0.0
+        if max_degree >= 1:
+            values[1] = (alpha_param + 2.0) * coord - tail_sum
+            first_deriv[1] = (alpha_param + 2.0) * coord_dir - tail_sum_dir
+
+        tail_squared = tail_sum * tail_sum
+        tail_squared_deriv = 2.0 * tail_sum * tail_sum_dir
+        shifted_coord = 2.0 * coord - tail_sum
+        shifted_coord_dir = 2.0 * coord_dir - tail_sum_dir
+
+        for deg in range(2, max_degree + 1):
+            coeff_shifted, coeff_tail, coeff_prev = (
+                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
+            )
+            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
+            linear_factor_dir = (
+                coeff_shifted * shifted_coord_dir + coeff_tail * tail_sum_dir
+            )
+            values[deg] = (
+                linear_factor * values[deg - 1]
+                - coeff_prev * tail_squared * values[deg - 2]
+            )
+            first_deriv[deg] = (
+                linear_factor_dir * values[deg - 1]
+                + linear_factor * first_deriv[deg - 1]
+                - coeff_prev
+                * (
+                    tail_squared_deriv * values[deg - 2]
+                    + tail_squared * first_deriv[deg - 2]
+                )
+            )
+        return values, first_deriv
+
+    def _homogeneous_jacobi_second_order_jet(
+        self, coord, coord_dir, tail_sum, tail_sum_dir, alpha_param, max_degree
+    ):
+        """Evaluate (value, 1st, 2nd directional derivs) of homogeneous Jacobi polynomials."""
+        values = np.empty((max_degree + 1, len(coord)), dtype=float)
+        first_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
+        second_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
+        values[0] = 1.0
+        first_deriv[0] = 0.0
+        second_deriv[0] = 0.0
+        if max_degree >= 1:
+            values[1] = (alpha_param + 2.0) * coord - tail_sum
+            first_deriv[1] = (alpha_param + 2.0) * coord_dir - tail_sum_dir
+            second_deriv[1] = 0.0
+
+        tail_squared = tail_sum * tail_sum
+        tail_squared_first_deriv = 2.0 * tail_sum * tail_sum_dir
+        tail_squared_second_deriv = 2.0 * tail_sum_dir * tail_sum_dir
+        shifted_coord = 2.0 * coord - tail_sum
+        shifted_coord_dir = 2.0 * coord_dir - tail_sum_dir
+
+        for deg in range(2, max_degree + 1):
+            coeff_shifted, coeff_tail, coeff_prev = (
+                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
+            )
+            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
+            linear_factor_dir = (
+                coeff_shifted * shifted_coord_dir + coeff_tail * tail_sum_dir
+            )
+            values[deg] = (
+                linear_factor * values[deg - 1]
+                - coeff_prev * tail_squared * values[deg - 2]
+            )
+            first_deriv[deg] = (
+                linear_factor_dir * values[deg - 1]
+                + linear_factor * first_deriv[deg - 1]
+                - coeff_prev
+                * (
+                    tail_squared_first_deriv * values[deg - 2]
+                    + tail_squared * first_deriv[deg - 2]
+                )
+            )
+            second_deriv[deg] = (
+                2.0 * linear_factor_dir * first_deriv[deg - 1]
+                + linear_factor * second_deriv[deg - 1]
+                - coeff_prev
+                * (
+                    tail_squared_second_deriv * values[deg - 2]
+                    + 2.0 * tail_squared_first_deriv * first_deriv[deg - 2]
+                    + tail_squared * second_deriv[deg - 2]
+                )
+            )
+        return values, first_deriv, second_deriv
+
+    def _max_axis_degree(self, axis, alpha_param):
+        """Maximum polynomial degree needed along axis for a given Jacobi alpha."""
+        trailing_sum = max(0, (alpha_param - (self.dimension - 1 - axis)) // 2)
+        return self.degree - trailing_sum
+
+    def evaluate_values(self, points):
+        """Evaluate all Dubiner basis polynomials at points."""
+        num_points = len(points)
+        barycentric, tail_sums = self._barycentric_and_tail_sums(points)
+        values = np.repeat(
+            self.normalization_factors[:, None], num_points, axis=1
+        )
+        for axis in range(self.dimension):
+            unique_alphas = self.unique_alphas_by_axis[axis]
+            tables = [
+                self._homogeneous_jacobi_values(
+                    barycentric[axis],
+                    tail_sums[axis],
+                    alpha_val,
+                    self._max_axis_degree(axis, alpha_val),
+                )
+                for alpha_val in unique_alphas
             ]
-        if sym_name == "chiral":
-            if dim == 1:
+            axis_factor = np.empty((self.num_basis, num_points), dtype=float)
+            slots = self.alpha_slot_by_axis[axis]
+            exponents = self.multi_index_array[:, axis]
+            for slot, table in enumerate(tables):
+                mask = slots == slot
+                axis_factor[mask] = table[exponents[mask]]
+            values *= axis_factor
+        return values
+
+    def evaluate_values_and_gradients(self, points):
+        """Evaluate Dubiner basis values and Cartesian coordinate gradients at points."""
+        num_points = len(points)
+        barycentric, tail_sums = self._barycentric_and_tail_sums(points)
+        unit_direction = np.ones(num_points, dtype=float)
+        zero_direction = np.zeros(num_points, dtype=float)
+
+        # Partial derivatives wrt barycentric u_m and tail sum s_m, then chain rule:
+        # du_0/dx_j = -1, du_{j+1}/dx_j = +1; ds_0/dx_j = 0, ds_m/dx_j = 1 if m <= j+1
+        factor_values_by_axis = []
+        factor_grads = [[None] * self.dimension for _ in range(self.dimension)]
+
+        for axis in range(self.dimension):
+            unique_alphas = self.unique_alphas_by_axis[axis]
+            slots = self.alpha_slot_by_axis[axis]
+            exponents = self.multi_index_array[:, axis]
+
+            tables_val = []
+            tables_dcoord = []
+            tables_dtail = []
+            for alpha_val in unique_alphas:
+                max_deg = self._max_axis_degree(axis, alpha_val)
+                val_tab, dcoord_tab = self._homogeneous_jacobi_first_order_jet(
+                    barycentric[axis],
+                    unit_direction,
+                    tail_sums[axis],
+                    zero_direction,
+                    alpha_val,
+                    max_deg,
+                )
+                _, dtail_tab = self._homogeneous_jacobi_first_order_jet(
+                    barycentric[axis],
+                    zero_direction,
+                    tail_sums[axis],
+                    unit_direction,
+                    alpha_val,
+                    max_deg,
+                )
+                tables_val.append(val_tab)
+                tables_dcoord.append(dcoord_tab)
+                tables_dtail.append(dtail_tab)
+
+            factor_val = np.empty((self.num_basis, num_points), dtype=float)
+            factor_dcoord = np.empty((self.num_basis, num_points), dtype=float)
+            factor_dtail = np.empty((self.num_basis, num_points), dtype=float)
+            for slot in range(len(unique_alphas)):
+                mask = slots == slot
+                factor_val[mask] = tables_val[slot][exponents[mask]]
+                factor_dcoord[mask] = tables_dcoord[slot][exponents[mask]]
+                factor_dtail[mask] = tables_dtail[slot][exponents[mask]]
+            factor_values_by_axis.append(factor_val)
+
+            for coord_idx in range(self.dimension):
+                du_dx = (
+                    -1.0
+                    if axis == 0
+                    else (1.0 if axis == coord_idx + 1 else 0.0)
+                )
+                ds_dx = (
+                    0.0
+                    if axis == 0
+                    else (1.0 if axis <= coord_idx + 1 else 0.0)
+                )
+                if du_dx != 0.0 or ds_dx != 0.0:
+                    factor_grads[coord_idx][axis] = (
+                        du_dx * factor_dcoord + ds_dx * factor_dtail
+                    )
+
+        values = np.repeat(
+            self.normalization_factors[:, None], num_points, axis=1
+        )
+        for axis in range(self.dimension):
+            values *= factor_values_by_axis[axis]
+
+        gradients = np.zeros(
+            (self.dimension, self.num_basis, num_points), dtype=float
+        )
+        for coord_idx in range(self.dimension):
+            for axis in range(self.dimension):
+                axis_deriv = factor_grads[coord_idx][axis]
+                if axis_deriv is None:
+                    continue
+                term = self.normalization_factors[:, None] * axis_deriv
+                for other_axis in range(self.dimension):
+                    if other_axis != axis:
+                        term *= factor_values_by_axis[other_axis]
+                gradients[coord_idx] += term
+        return values, gradients
+
+    def evaluate_second_order_jet(self, points, directions):
+        """Evaluate (value, 1st directional deriv, 2nd directional deriv) along directions."""
+        num_points = len(points)
+        barycentric, tail_sums = self._barycentric_and_tail_sums(points)
+
+        barycentric_dir = np.empty((self.dimension + 1, num_points), dtype=float)
+        barycentric_dir[0] = -np.sum(directions, axis=1)
+        for axis in range(self.dimension):
+            barycentric_dir[axis + 1] = directions[:, axis]
+
+        tail_sums_dir = np.empty((self.dimension + 1, num_points), dtype=float)
+        tail_sums_dir[self.dimension] = barycentric_dir[self.dimension]
+        for axis in range(self.dimension - 1, -1, -1):
+            tail_sums_dir[axis] = (
+                barycentric_dir[axis] + tail_sums_dir[axis + 1]
+            )
+
+        prod_val = np.repeat(
+            self.normalization_factors[:, None], num_points, axis=1
+        )
+        prod_first = np.zeros((self.num_basis, num_points), dtype=float)
+        prod_second = np.zeros((self.num_basis, num_points), dtype=float)
+
+        for axis in range(self.dimension):
+            unique_alphas = self.unique_alphas_by_axis[axis]
+            slots = self.alpha_slot_by_axis[axis]
+            exponents = self.multi_index_array[:, axis]
+            factor_val = np.empty((self.num_basis, num_points), dtype=float)
+            factor_first = np.empty((self.num_basis, num_points), dtype=float)
+            factor_second = np.empty((self.num_basis, num_points), dtype=float)
+
+            for slot, alpha_val in enumerate(unique_alphas):
+                max_deg = self._max_axis_degree(axis, alpha_val)
+                val_tab, first_tab, second_tab = (
+                    self._homogeneous_jacobi_second_order_jet(
+                        barycentric[axis],
+                        barycentric_dir[axis],
+                        tail_sums[axis],
+                        tail_sums_dir[axis],
+                        alpha_val,
+                        max_deg,
+                    )
+                )
+                mask = slots == slot
+                factor_val[mask] = val_tab[exponents[mask]]
+                factor_first[mask] = first_tab[exponents[mask]]
+                factor_second[mask] = second_tab[exponents[mask]]
+
+            next_val = prod_val * factor_val
+            next_first = prod_val * factor_first + prod_first * factor_val
+            next_second = (
+                prod_val * factor_second
+                + 2.0 * prod_first * factor_first
+                + prod_second * factor_val
+            )
+            prod_val = next_val
+            prod_first = next_first
+            prod_second = next_second
+        return prod_val, prod_first, prod_second
+
+    def boundary_distance(self, points):
+        """Minimum barycentric coordinate (> 0 strictly interior, <= 0 on/outside)."""
+        first_bary = 1.0 - np.sum(points, axis=1)
+        return float(min(float(first_bary.min()), float(points.min())))
+
+    def boundary_hinge_penalty(self, points, target_margin):
+        """Return hinge violations and gradients d(hinge)/dX for u_j < target_margin."""
+        first_bary = 1.0 - np.sum(points, axis=1)
+        first_violation = np.maximum(0.0, target_margin - first_bary)
+        coord_violations = np.maximum(0.0, target_margin - points)
+        # Penalty = 0.5 * (sum v0^2 + sum vx^2) -> d/dX_j = +v0 - vx_j
+        gradients = first_violation[:, None] - coord_violations
+        violations = np.concatenate(
+            [first_violation[:, None], coord_violations], axis=1
+        )
+        return violations, gradients
+
+
+# ---------------------------------------------------------------------------
+# Finite symmetry groups and Reynolds-projected invariant polynomial basis
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class AffineTransform:
+    """Affine symmetry operation g(x) = linear @ x + translation."""
+
+    linear: np.ndarray
+    translation: np.ndarray
+
+
+def build_symmetry_group(domain, dimension, symmetry_name):
+    """Build affine symmetry group operations for (domain, dimension, symmetry_name)."""
+    identity = np.eye(dimension, dtype=float)
+    zero_shift = np.zeros(dimension, dtype=float)
+
+    if symmetry_name == "none":
+        return [AffineTransform(identity, zero_shift)]
+
+    if domain == "cube":
+        if symmetry_name == "central":
+            return [
+                AffineTransform(identity, zero_shift),
+                AffineTransform(-identity, zero_shift),
+            ]
+        if symmetry_name == "chiral":
+            if dimension == 1:
                 return [
-                    (np.eye(1, dtype=float), np.zeros(1, dtype=float)),
-                    (-np.eye(1, dtype=float), np.zeros(1, dtype=float)),
+                    AffineTransform(identity, zero_shift),
+                    AffineTransform(-identity, zero_shift),
                 ]
-            if dim == 2:
-                # C4: 90-degree rotations
-                ops = []
-                R = np.array([[0.0, -1.0], [1.0, 0.0]])
-                cur = np.eye(2, dtype=float)
+            if dimension == 2:
+                # C4: 90-degree rotations of the square
+                transforms = []
+                rot_90 = np.array([[0.0, -1.0], [1.0, 0.0]])
+                current = identity.copy()
                 for _ in range(4):
-                    ops.append((cur.copy(), np.zeros(2, dtype=float)))
-                    cur = cur @ R
-                return ops
+                    transforms.append(AffineTransform(current.copy(), zero_shift))
+                    current = current @ rot_90
+                return transforms
             # d >= 3: cyclic coordinate shifts x {+I, -I} (order 2d; S6 in 3D)
-            ops = []
-            for shift in range(dim):
-                P = np.roll(np.eye(dim, dtype=float), shift, axis=0)
-                ops.append((P, np.zeros(dim, dtype=float)))
-                ops.append((-P, np.zeros(dim, dtype=float)))
-            return ops
-        if sym_name == "full":
-            if dim > 3:
+            transforms = []
+            for shift in range(dimension):
+                perm_matrix = np.roll(identity, shift, axis=0)
+                transforms.append(AffineTransform(perm_matrix, zero_shift))
+                transforms.append(AffineTransform(-perm_matrix, zero_shift))
+            return transforms
+        if symmetry_name == "full":
+            if dimension > 3:
                 return None
-            ops = []
-            for perm in itertools.permutations(range(dim)):
-                P = np.zeros((dim, dim), dtype=float)
-                for i, p in enumerate(perm):
-                    P[i, p] = 1.0
-                for signs in itertools.product((-1.0, 1.0), repeat=dim):
-                    ops.append((P * np.asarray(signs)[:, None], np.zeros(dim, dtype=float)))
-            return ops
-        raise ValueError(f"unknown symmetry '{sym_name}' for cube")
+            transforms = []
+            for perm in itertools.permutations(range(dimension)):
+                perm_matrix = np.zeros((dimension, dimension), dtype=float)
+                for row, col in enumerate(perm):
+                    perm_matrix[row, col] = 1.0
+                for signs in itertools.product((-1.0, 1.0), repeat=dimension):
+                    signed_matrix = perm_matrix * np.asarray(signs)[:, None]
+                    transforms.append(AffineTransform(signed_matrix, zero_shift))
+            return transforms
+        raise ValueError(f"unknown symmetry '{symmetry_name}' for cube")
+
     # Simplex Delta^d: vertex permutations of v_0 = 0, v_1 = e_1, ..., v_d = e_d
-    if sym_name == "central":
-        if dim == 1:
-            sym_name = "full"
+    if symmetry_name == "central":
+        if dimension == 1:
+            symmetry_name = "full"
         else:
             return None
-    verts = np.zeros((dim + 1, dim), dtype=float)
-    for j in range(dim):
-        verts[j + 1, j] = 1.0
 
-    def perm_to_affine(perm):
+    vertices = np.zeros((dimension + 1, dimension), dtype=float)
+    for axis in range(dimension):
+        vertices[axis + 1, axis] = 1.0
+
+    def vertex_perm_to_transform(perm):
         # x = sum_{j=1}^d x_j v_j + (1 - sum x_j) v_0 -> map v_k -> v_{perm[k]}
-        t = verts[perm[0]].copy()
-        A = np.zeros((dim, dim), dtype=float)
-        for j in range(dim):
-            A[:, j] = verts[perm[j + 1]] - t
-        return A, t
+        translation = vertices[perm[0]].copy()
+        linear = np.zeros((dimension, dimension), dtype=float)
+        for axis in range(dimension):
+            linear[:, axis] = vertices[perm[axis + 1]] - translation
+        return AffineTransform(linear, translation)
 
-    if sym_name == "chiral":
-        if dim == 1:
+    if symmetry_name == "chiral":
+        if dimension == 1:
             perms = [(0, 1), (1, 0)]
-        elif dim == 3:
-            # A4: all even permutations of 4 vertices (order 12)
+        elif dimension == 3:
+            # A4: all even permutations of the 4 tetrahedron vertices (order 12)
             perms = []
-            for p in itertools.permutations(range(4)):
-                inv = sum(1 for i in range(4) for j in range(i + 1, 4) if p[i] > p[j])
-                if inv % 2 == 0:
-                    perms.append(p)
+            for perm in itertools.permutations(range(4)):
+                inversions = sum(
+                    1
+                    for i in range(4)
+                    for j in range(i + 1, 4)
+                    if perm[i] > perm[j]
+                )
+                if inversions % 2 == 0:
+                    perms.append(perm)
         else:
             # Cyclic group C_{d+1} (C3 in 2D, C5 in 4D, ...)
-            perms = [tuple((i + s) % (dim + 1) for i in range(dim + 1)) for s in range(dim + 1)]
-        return [perm_to_affine(p) for p in perms]
-    if sym_name == "full":
-        if dim > 3:
+            perms = [
+                tuple((i + shift) % (dimension + 1) for i in range(dimension + 1))
+                for shift in range(dimension + 1)
+            ]
+        return [vertex_perm_to_transform(perm) for perm in perms]
+
+    if symmetry_name == "full":
+        if dimension > 3:
             return None
-        return [perm_to_affine(p) for p in itertools.permutations(range(dim + 1))]
-    raise ValueError(f"unknown symmetry '{sym_name}' for simplex")
+        return [
+            vertex_perm_to_transform(perm)
+            for perm in itertools.permutations(range(dimension + 1))
+        ]
+
+    raise ValueError(f"unknown symmetry '{symmetry_name}' for simplex")
 
 
 class SymmetricBasis:
     """Symmetry-reduced orthonormal polynomial basis via Reynolds projection + SVD."""
 
-    def __init__(self, base, sym_name, ops):
-        self.base = base
-        self.domain = base.domain
-        self.dim = base.dim
-        self.degree = base.degree
-        self.sym_name = sym_name
-        self.ops = ops
-        self.gsize = len(ops)
-        if self.gsize == 1:
-            self.C = np.eye(base.M, dtype=float)
-            self.M = base.M
-            self.rhs = base.rhs.copy()
+    def __init__(self, base_basis, symmetry_name, group_transforms):
+        self.base_basis = base_basis
+        self.domain = base_basis.domain
+        self.dimension = base_basis.dimension
+        self.degree = base_basis.degree
+        self.symmetry_name = symmetry_name
+        self.group_transforms = group_transforms
+        self.group_order = len(group_transforms)
+
+        if self.group_order == 1:
+            self.projection_matrix = np.eye(base_basis.num_basis, dtype=float)
+            self.num_basis = base_basis.num_basis
+            self.exact_moments = base_basis.exact_moments.copy()
             return
+
         # Deterministic probe points strictly inside the domain
-        n_probe = max(2 * base.M + 16, 40)
-        H = halton_points(n_probe, base.dim)
-        if base.domain == "cube":
-            Xp = 1.9 * H - 0.95
+        num_probes = max(2 * base_basis.num_basis + 16, 40)
+        halton = generate_halton_points(num_probes, base_basis.dimension)
+        if base_basis.domain == "cube":
+            probe_points = 1.9 * halton - 0.95
         else:
-            # Map (0,1)^d smoothly into interior of Delta^d via stick-breaking
-            Xp = np.zeros_like(H)
-            rem = np.ones(n_probe, dtype=float)
-            for j in range(base.dim):
-                frac = 0.05 + 0.85 * H[:, j]
-                Xp[:, j] = rem * frac / float(base.dim - j + 1)
-                rem -= Xp[:, j]
-        Vbar = np.zeros((base.M, n_probe), dtype=float)
-        for A, t in ops:
-            Xg = Xp @ A.T + t[None, :]
-            Vbar += base.eval_val(Xg)
-        Vbar /= float(self.gsize)
-        U, sv, _ = np.linalg.svd(Vbar, full_matrices=False)
-        tol = 1e-10 * float(sv[0]) if len(sv) > 0 else 1e-10
-        rank = int(np.sum(sv > tol))
-        self.C = U[:, :rank].T.copy()
-        self.M = rank
-        self.rhs = self.C @ base.rhs
+            # Map (0, 1)^d smoothly into interior of Delta^d via stick-breaking
+            probe_points = np.zeros_like(halton)
+            remaining = np.ones(num_probes, dtype=float)
+            for axis in range(base_basis.dimension):
+                fraction = 0.05 + 0.85 * halton[:, axis]
+                probe_points[:, axis] = (
+                    remaining * fraction / float(base_basis.dimension - axis + 1)
+                )
+                remaining -= probe_points[:, axis]
 
-    def eval_val(self, X):
-        return self.C @ self.base.eval_val(X)
+        reynolds_avg = np.zeros((base_basis.num_basis, num_probes), dtype=float)
+        for transform in group_transforms:
+            transformed = probe_points @ transform.linear.T + transform.translation[None, :]
+            reynolds_avg += base_basis.evaluate_values(transformed)
+        reynolds_avg /= float(self.group_order)
 
-    def eval_val_grad(self, X):
-        V0, G0 = self.base.eval_val_grad(X)
-        V = self.C @ V0
-        G = np.empty((self.dim, self.M, len(X)), dtype=float)
-        for j in range(self.dim):
-            G[j] = self.C @ G0[j]
-        return V, G
+        left_singular, singular_values, _ = np.linalg.svd(
+            reynolds_avg, full_matrices=False
+        )
+        rank_tol = (
+            1e-10 * float(singular_values[0])
+            if len(singular_values) > 0
+            else 1e-10
+        )
+        invariant_rank = int(np.sum(singular_values > rank_tol))
+        self.projection_matrix = left_singular[:, :invariant_rank].T.copy()
+        self.num_basis = invariant_rank
+        self.exact_moments = self.projection_matrix @ base_basis.exact_moments
 
-    def eval_jet2(self, X, dX):
-        F0, F1, F2 = self.base.eval_jet2(X, dX)
-        return self.C @ F0, self.C @ F1, self.C @ F2
+    def evaluate_values(self, points):
+        return self.projection_matrix @ self.base_basis.evaluate_values(points)
+
+    def evaluate_values_and_gradients(self, points):
+        base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(points)
+        values = self.projection_matrix @ base_vals
+        gradients = np.empty((self.dimension, self.num_basis, len(points)), dtype=float)
+        for axis in range(self.dimension):
+            gradients[axis] = self.projection_matrix @ base_grads[axis]
+        return values, gradients
+
+    def evaluate_second_order_jet(self, points, directions):
+        base_val, base_first, base_second = (
+            self.base_basis.evaluate_second_order_jet(points, directions)
+        )
+        return (
+            self.projection_matrix @ base_val,
+            self.projection_matrix @ base_first,
+            self.projection_matrix @ base_second,
+        )
 
 
-def orbit_subspace(point, ops, tol=1e-7):
-    """Compute orbit size, fixed-point subspace (c0, U), and canonical images."""
-    dim = len(point)
-    imgs = []
-    stab = []
-    for A, t in ops:
-        q = A @ point + t
-        if float(np.linalg.norm(q - point)) < tol:
-            stab.append((A, t))
-        is_new = True
-        for prev in imgs:
-            if float(np.linalg.norm(q - prev)) < tol:
-                is_new = False
-                break
-        if is_new:
-            imgs.append(q)
-    size = len(imgs)
-    if len(stab) == 1:
-        return size, np.zeros(dim, dtype=float), np.eye(dim, dtype=float), np.asarray(imgs)
-    # Fixed subspace: (A - I) x = -t for all (A, t) in stab
-    # Since point itself is fixed, x = point + U xi with (A - I) U = 0
-    rows = [A - np.eye(dim, dtype=float) for A, _ in stab]
-    S = np.vstack(rows)
-    _, sv, Vt = np.linalg.svd(S, full_matrices=True)
-    rank = int(np.sum(sv > 1e-9))
-    U = Vt[rank:].T.copy()
-    # Particular fixed point c0 = projection of point orthogonal to U
-    if U.shape[1] > 0:
-        c0 = point - U @ (U.T @ point)
+# ---------------------------------------------------------------------------
+# Orbit parameterization and deterministic equilibrium initializations
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class SymmetryOrbit:
+    """Single symmetry orbit parameterized on its stabilizer fixed subspace."""
+
+    size: int
+    subspace_origin: np.ndarray
+    subspace_basis: np.ndarray
+    subspace_coords: np.ndarray
+    weight_sqrt: float
+    initial_point: np.ndarray = None
+
+    @property
+    def spatial_dof(self):
+        return int(self.subspace_basis.shape[1])
+
+    @property
+    def num_unknowns(self):
+        return self.spatial_dof + 1
+
+    def representative_point(self):
+        if self.spatial_dof > 0:
+            return self.subspace_origin + self.subspace_basis @ self.subspace_coords
+        return self.subspace_origin.copy()
+
+
+@dataclass
+class CubatureSolution:
+    """Converged cubature rule with quality tag and diagnostic metrics."""
+
+    quality: str
+    moment_residual: float
+    boundary_distance: float
+    nodes: np.ndarray
+    weights: np.ndarray
+    orbits: list
+
+
+def compute_orbit_subspace(point, group_transforms, tol=1e-7):
+    """Compute orbit size, stabilizer fixed subspace (origin, basis), and orbit images."""
+    dimension = len(point)
+    images = []
+    stabilizer = []
+    for transform in group_transforms:
+        image = transform.linear @ point + transform.translation
+        if float(np.linalg.norm(image - point)) < tol:
+            stabilizer.append(transform)
+        if all(float(np.linalg.norm(image - prev)) >= tol for prev in images):
+            images.append(image)
+
+    orbit_size = len(images)
+    if len(stabilizer) == 1:
+        return (
+            orbit_size,
+            np.zeros(dimension, dtype=float),
+            np.eye(dimension, dtype=float),
+            np.asarray(images),
+        )
+
+    # Fixed subspace: (A - I) x = -t for all (A, t) in stabilizer.
+    # Since point is fixed, x = point + U @ xi with (A - I) @ U = 0.
+    identity = np.eye(dimension, dtype=float)
+    constraint_matrix = np.vstack(
+        [transform.linear - identity for transform in stabilizer]
+    )
+    _, singular_values, right_singular_t = np.linalg.svd(
+        constraint_matrix, full_matrices=True
+    )
+    constraint_rank = int(np.sum(singular_values > 1e-9))
+    subspace_basis = right_singular_t[constraint_rank:].T.copy()
+
+    if subspace_basis.shape[1] > 0:
+        subspace_origin = point - subspace_basis @ (subspace_basis.T @ point)
     else:
-        c0 = point.copy()
-    return size, c0, U, np.asarray(imgs)
+        subspace_origin = point.copy()
+    return orbit_size, subspace_origin, subspace_basis, np.asarray(images)
 
 
-def expand_orbits(orbits, ops):
-    """Expand list of orbit dicts into full (nodes, weights) arrays."""
-    all_pts = []
-    all_w = []
-    for orb in orbits:
-        x = orb["c0"] + orb["U"] @ orb["xi"]
-        w = float(orb["v"] * orb["v"])
-        imgs = []
-        for A, t in ops:
-            q = A @ x + t
-            is_new = True
-            for prev in imgs:
-                if float(np.linalg.norm(q - prev)) < 1e-7:
-                    is_new = False
-                    break
-            if is_new:
-                imgs.append(q)
-        for q in imgs:
-            all_pts.append(q)
-            all_w.append(w)
-    return np.asarray(all_pts, dtype=float), np.asarray(all_w, dtype=float)
+def expand_orbits_to_nodes(orbits, group_transforms):
+    """Expand symmetry orbits into full (nodes, probability_weights) arrays."""
+    all_nodes = []
+    all_weights = []
+    for orbit in orbits:
+        rep_point = orbit.representative_point()
+        orbit_weight = float(orbit.weight_sqrt * orbit.weight_sqrt)
+        images = []
+        for transform in group_transforms:
+            image = transform.linear @ rep_point + transform.translation
+            if all(float(np.linalg.norm(image - prev)) >= 1e-7 for prev in images):
+                images.append(image)
+        for image in images:
+            all_nodes.append(image)
+            all_weights.append(orbit_weight)
+    return np.asarray(all_nodes, dtype=float), np.asarray(all_weights, dtype=float)
 
 
-def group_points_into_orbits(pts, ops, tol=1e-6):
+def cluster_points_into_orbits(points, group_transforms, tol=1e-6):
     """Cluster a symmetric point cloud into distinct G-orbits with fixed subspaces."""
-    n_pts = len(pts)
-    used = np.zeros(n_pts, dtype=bool)
+    num_points = len(points)
+    visited = np.zeros(num_points, dtype=bool)
     orbits = []
-    for i in range(n_pts):
-        if used[i]:
+    for idx in range(num_points):
+        if visited[idx]:
             continue
-        p = pts[i]
-        size, c0, U, imgs = orbit_subspace(p, ops, tol=tol)
-        # Mark all points in pts that match any orbit image
-        for q in imgs:
-            d = np.linalg.norm(pts - q[None, :], axis=1)
-            used[d < tol] = True
-        xi = U.T @ (p - c0) if U.shape[1] > 0 else np.zeros(0, dtype=float)
+        point = points[idx]
+        orbit_size, origin, basis, images = compute_orbit_subspace(
+            point, group_transforms, tol=tol
+        )
+        for image in images:
+            distances = np.linalg.norm(points - image[None, :], axis=1)
+            visited[distances < tol] = True
+        subspace_coords = (
+            basis.T @ (point - origin)
+            if basis.shape[1] > 0
+            else np.zeros(0, dtype=float)
+        )
         orbits.append(
-            {
-                "point": p.copy(),
-                "size": size,
-                "c0": c0,
-                "U": U,
-                "dof": int(U.shape[1]),
-                "unk": int(U.shape[1]) + 1,
-                "xi": xi,
-                "v": 1.0,
-            }
+            SymmetryOrbit(
+                size=orbit_size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=1.0,
+                initial_point=point.copy(),
+            )
         )
     return orbits
 
 
-def select_orbits_exact_n(candidates, target_n, min_unk):
-    """Deterministic DP selecting orbits with sum(size) == target_n and sum(unk) >= min_unk.
+def select_orbits_for_point_count(candidate_orbits, target_points, min_unknowns):
+    """Deterministic DP selecting orbits with sum(size) == target_points and sum(unk) >= min_unknowns.
 
     Prefers inner orbits (lower candidate index) and higher unknown count.
     """
-    # Limit pool to avoid huge DP tables when candidates >> target_n
-    pool = candidates[: max(target_n + 64, 160)]
-    # DP state: dp[s] = (score, unk_sum, prev_idx, prev_s)
-    # Maximize (unk_capped * 1e6 - radius_rank_sum)
-    dp = {0: (0.0, 0, -1, -1)}
-    parent = []
-    for idx, orb in enumerate(pool):
-        sz = orb["size"]
-        uk = orb["unk"]
-        cost = float(idx) * 1.0
-        new_dp = dict(dp)
-        chosen_map = {}
-        for s, (sc, u_sum, _, _) in dp.items():
-            ns = s + sz
-            if ns > target_n:
+    candidate_pool = candidate_orbits[: max(target_points + 64, 160)]
+    # DP state: best_by_count[point_count] = (score, total_unknowns, orbit_idx, prev_count)
+    best_by_count = {0: (0.0, 0, -1, -1)}
+    parent_pointers = []
+
+    for orbit_idx, orbit in enumerate(candidate_pool):
+        orbit_size = orbit.size
+        orbit_unknowns = orbit.num_unknowns
+        rank_penalty = float(orbit_idx)
+        next_by_count = dict(best_by_count)
+        chosen_prev = {}
+
+        for point_count, (_, unk_sum, _, _) in best_by_count.items():
+            next_count = point_count + orbit_size
+            if next_count > target_points:
                 continue
-            nu = u_sum + uk
-            # Strongly reward reaching min_unk, then prefer inner orbits (smaller idx sum)
-            nsc = float(min(nu, min_unk + 4)) * 1e5 + float(nu) * 10.0 - cost
-            prev = new_dp.get(ns)
-            if prev is None or nsc > prev[0]:
-                new_dp[ns] = (nsc, nu, idx, s)
-                chosen_map[ns] = s
-        dp = new_dp
-        parent.append(chosen_map)
-    if target_n not in dp:
+            next_unknowns = unk_sum + orbit_unknowns
+            # Strongly reward reaching min_unknowns, then prefer inner orbits
+            next_score = (
+                float(min(next_unknowns, min_unknowns + 4)) * 1e5
+                + float(next_unknowns) * 10.0
+                - rank_penalty
+            )
+            existing = next_by_count.get(next_count)
+            if existing is None or next_score > existing[0]:
+                next_by_count[next_count] = (
+                    next_score,
+                    next_unknowns,
+                    orbit_idx,
+                    point_count,
+                )
+                chosen_prev[next_count] = point_count
+
+        best_by_count = next_by_count
+        parent_pointers.append(chosen_prev)
+
+    if target_points not in best_by_count:
         return None
-    _, total_unk, _, _ = dp[target_n]
-    if total_unk < min_unk:
+    _, total_unknowns, _, _ = best_by_count[target_points]
+    if total_unknowns < min_unknowns:
         return None
-    # Backtrack selected orbit indices
-    chosen = []
-    cur_s = target_n
-    for idx in range(len(pool) - 1, -1, -1):
-        if cur_s in parent[idx]:
-            chosen.append(pool[idx])
-            cur_s = parent[idx][cur_s]
-    chosen.reverse()
-    return chosen
+
+    selected = []
+    remaining_count = target_points
+    for orbit_idx in range(len(candidate_pool) - 1, -1, -1):
+        if remaining_count in parent_pointers[orbit_idx]:
+            selected.append(candidate_pool[orbit_idx])
+            remaining_count = parent_pointers[orbit_idx][remaining_count]
+    selected.reverse()
+    return selected
 
 
-def rotation_around_diag(dim, deg):
-    """Deterministic chiral orthogonal rotation fixing (1, ..., 1) for dim >= 2."""
-    if dim < 2 or abs(deg) < 1e-12:
-        return np.eye(dim, dtype=float)
-    th = math.radians(deg)
-    if dim == 2:
-        c = math.cos(th)
-        s = math.sin(th)
-        return np.array([[c, -s], [s, c]], dtype=float)
-    # Construct orthonormal basis of (1, ..., 1)^perp and apply 2D rotations in pairs
-    ones = np.ones((dim, 1), dtype=float) / math.sqrt(dim)
-    Q, _ = np.linalg.qr(np.hstack([ones, np.eye(dim, dtype=float)]), mode="complete")
-    R_sub = np.eye(dim, dtype=float)
-    c = math.cos(th)
-    s = math.sin(th)
-    # Rotate in plane spanned by Q[:, 1], Q[:, 2] (for d=3: exact Rodrigues around (1,1,1))
-    i = 1
-    while i + 1 < dim:
-        R_sub[i, i] = c
-        R_sub[i, i + 1] = -s
-        R_sub[i + 1, i] = s
-        R_sub[i + 1, i + 1] = c
-        i += 2
-    return Q @ R_sub @ Q.T
+def rotation_around_main_diagonal(dimension, angle_degrees):
+    """Deterministic chiral orthogonal rotation fixing (1, ..., 1) for dimension >= 2."""
+    if dimension < 2 or abs(angle_degrees) < 1e-12:
+        return np.eye(dimension, dtype=float)
+    angle_rad = math.radians(angle_degrees)
+    cos_a = math.cos(angle_rad)
+    sin_a = math.sin(angle_rad)
+    if dimension == 2:
+        return np.array([[cos_a, -sin_a], [sin_a, cos_a]], dtype=float)
+
+    # Orthonormal basis of (1, ..., 1)^perp; apply 2D rotations in orthogonal pairs
+    diagonal_unit = np.ones((dimension, 1), dtype=float) / math.sqrt(dimension)
+    ortho_basis, _ = np.linalg.qr(
+        np.hstack([diagonal_unit, np.eye(dimension, dtype=float)]),
+        mode="complete",
+    )
+    subspace_rot = np.eye(dimension, dtype=float)
+    idx = 1
+    while idx + 1 < dimension:
+        subspace_rot[idx, idx] = cos_a
+        subspace_rot[idx, idx + 1] = -sin_a
+        subspace_rot[idx + 1, idx] = sin_a
+        subspace_rot[idx + 1, idx + 1] = cos_a
+        idx += 2
+    return ortho_basis @ subspace_rot @ ortho_basis.T
 
 
-def cube_equilibrium_start(dim, degree, target_n, sym_name, ops, r0=0.35, angle=6.0, pnorm=12.0, min_unk=1):
+def build_cube_equilibrium_start(
+    dimension,
+    degree,
+    target_points,
+    symmetry_name,
+    group_transforms,
+    boundary_inset=0.35,
+    rotation_degrees=6.0,
+    norm_order=12.0,
+    min_unknowns=1,
+):
     """Deterministic rotated D_d* Chebyshev-angle lattice start on [-1, 1]^d."""
-    # Estimate half-width L of integer D_d* lattice Z^d U (Z + 1/2)^d (2 pts per unit cell)
-    # Parity shift: odd N -> include origin (0-shift), even N -> (1/4)-shift
-    shift = 0.0 if (target_n % 2 == 1) else 0.25
-    pts_per_cell = 2.0 if dim >= 2 else 1.0
-    side = max(1.5, ((target_n * 1.8) / pts_per_cell) ** (1.0 / dim))
-    L = int(math.ceil(side / 2.0)) + 2
-    # Cap L for high dimensions so grid generation stays fast
-    while (2 * L + 1) ** dim > 25000 and L > 1:
-        L -= 1
-    grid1 = np.arange(-L, L + 1, dtype=float)
-    mesh = np.meshgrid(*([grid1] * dim), indexing="ij")
-    base_pts = np.stack([m.ravel() for m in mesh], axis=1)
-    if dim >= 2:
-        pts_a = base_pts + shift
-        pts_b = base_pts + (shift + 0.5)
-        if sym_name == "full":
-            raw = np.vstack([base_pts, pts_a, pts_b])
+    # Parity shift: odd N includes origin (0-shift); even N uses (1/4)-shift
+    lattice_shift = 0.0 if (target_points % 2 == 1) else 0.25
+    points_per_cell = 2.0 if dimension >= 2 else 1.0
+    estimated_side = max(
+        1.5, ((target_points * 1.8) / points_per_cell) ** (1.0 / dimension)
+    )
+    half_width = int(math.ceil(estimated_side / 2.0)) + 2
+    while (2 * half_width + 1) ** dimension > 25000 and half_width > 1:
+        half_width -= 1
+
+    axis_grid = np.arange(-half_width, half_width + 1, dtype=float)
+    mesh = np.meshgrid(*([axis_grid] * dimension), indexing="ij")
+    integer_grid = np.stack([coord_grid.ravel() for coord_grid in mesh], axis=1)
+
+    if dimension >= 2:
+        shifted_a = integer_grid + lattice_shift
+        shifted_b = integer_grid + (lattice_shift + 0.5)
+        if symmetry_name == "full":
+            raw_points = np.vstack([integer_grid, shifted_a, shifted_b])
         else:
-            raw = np.vstack([pts_a, pts_b])
+            raw_points = np.vstack([shifted_a, shifted_b])
     else:
-        raw = base_pts + (0.0 if target_n % 2 == 1 else 0.5)
-    # Apply chiral rotation for mirror-free groups (preserving G-symmetry)
-    if sym_name in ("chiral", "central", "none") and dim >= 2:
-        R = rotation_around_diag(dim, angle)
-        raw = raw @ R.T
-    # Keep symmetric closure under G around inner region
-    rad = np.max(np.abs(raw), axis=1)
-    keep = rad <= float(L) + 0.6
-    raw = raw[keep]
-    # Close under G to guarantee exact symmetry of candidate pool
-    closed = [raw]
-    for A, t in ops[1:]:
-        closed.append(raw @ A.T + t[None, :])
-    raw = np.vstack(closed)
-    # Order by L_p norm before clustering so inner orbits come first
-    if pnorm > 0.0:
-        norms = np.sum(np.abs(raw) ** pnorm, axis=1) ** (1.0 / pnorm)
-    else:
-        norms = np.max(np.abs(raw), axis=1)
-    order = np.argsort(norms)
-    raw = raw[order]
-    # Trim raw pool to a generous multiple of target_n before orbit clustering
-    raw = raw[: max(target_n * 8, 500)]
-    orbits = group_points_into_orbits(raw, ops, tol=1e-5)
-    # Sort orbits by L_p norm of representative
-    if pnorm > 0.0:
-        orbits.sort(key=lambda o: float(np.sum(np.abs(o["point"]) ** pnorm) ** (1.0 / pnorm)))
-    else:
-        orbits.sort(key=lambda o: float(np.max(np.abs(o["point"]))))
-    chosen = select_orbits_exact_n(orbits, target_n, min_unk)
-    if chosen is None:
-        return None
-    # Scale angle coordinates into [-pi/2 * (1 - 2*r0/n), pi/2 * (1 - 2*r0/n)]^d
-    all_raw = np.vstack([o["point"] for o in chosen])
-    max_ang = float(np.abs(all_raw).max())
-    target_ang = 0.5 * math.pi * max(0.35, 1.0 - 2.0 * r0 / max(degree, 1))
-    scale = (target_ang / max_ang) if max_ang > 1e-12 else 0.0
-    out = []
-    w_sum = 0.0
-    for o in chosen:
-        ang = o["point"] * scale
-        x = np.sin(ang)
-        # Re-project onto exact fixed subspace of orbit
-        size, c0, U, _ = orbit_subspace(x, ops, tol=1e-6)
-        xi = U.T @ (x - c0) if U.shape[1] > 0 else np.zeros(0, dtype=float)
-        x_proj = c0 + (U @ xi if U.shape[1] > 0 else 0.0)
-        eq_w = float(np.prod(np.sqrt(np.maximum(1.0 - x_proj * x_proj, 1e-4))))
-        w_sum += size * eq_w
-        out.append(
-            {
-                "size": size,
-                "c0": c0,
-                "U": U,
-                "dof": int(U.shape[1]),
-                "unk": int(U.shape[1]) + 1,
-                "xi": xi,
-                "w": eq_w,
-            }
+        raw_points = integer_grid + (0.0 if target_points % 2 == 1 else 0.5)
+
+    # Apply chiral rotation for mirror-free groups while preserving G-symmetry
+    if symmetry_name in ("chiral", "central", "none") and dimension >= 2:
+        rot_matrix = rotation_around_main_diagonal(dimension, rotation_degrees)
+        raw_points = raw_points @ rot_matrix.T
+
+    max_abs_coord = np.max(np.abs(raw_points), axis=1)
+    raw_points = raw_points[max_abs_coord <= float(half_width) + 0.6]
+
+    # Close under G to guarantee exact symmetry of the candidate pool
+    closed_clouds = [raw_points]
+    for transform in group_transforms[1:]:
+        closed_clouds.append(
+            raw_points @ transform.linear.T + transform.translation[None, :]
         )
-    for o in out:
-        o["v"] = math.sqrt(o["w"] / max(w_sum, 1e-30))
-        del o["w"]
-    return out
+    raw_points = np.vstack(closed_clouds)
+
+    if norm_order > 0.0:
+        point_radii = np.sum(np.abs(raw_points) ** norm_order, axis=1) ** (
+            1.0 / norm_order
+        )
+    else:
+        point_radii = np.max(np.abs(raw_points), axis=1)
+    raw_points = raw_points[np.argsort(point_radii)]
+    raw_points = raw_points[: max(target_points * 8, 500)]
+
+    candidate_orbits = cluster_points_into_orbits(
+        raw_points, group_transforms, tol=1e-5
+    )
+    if norm_order > 0.0:
+        candidate_orbits.sort(
+            key=lambda orb: float(
+                np.sum(np.abs(orb.initial_point) ** norm_order) ** (1.0 / norm_order)
+            )
+        )
+    else:
+        candidate_orbits.sort(
+            key=lambda orb: float(np.max(np.abs(orb.initial_point)))
+        )
+
+    selected = select_orbits_for_point_count(
+        candidate_orbits, target_points, min_unknowns
+    )
+    if selected is None:
+        return None
+
+    # Map lattice coordinates to Chebyshev angles in [-target_angle, target_angle]^d
+    selected_raw = np.vstack([orb.initial_point for orb in selected])
+    max_angle = float(np.abs(selected_raw).max())
+    target_angle = (
+        0.5 * math.pi * max(0.35, 1.0 - 2.0 * boundary_inset / max(degree, 1))
+    )
+    angle_scale = (target_angle / max_angle) if max_angle > 1e-12 else 0.0
+
+    initialized_orbits = []
+    raw_weights = []
+    total_weight = 0.0
+    for orb in selected:
+        coords = np.sin(orb.initial_point * angle_scale)
+        orbit_size, origin, basis, _ = compute_orbit_subspace(
+            coords, group_transforms, tol=1e-6
+        )
+        subspace_coords = (
+            basis.T @ (coords - origin)
+            if basis.shape[1] > 0
+            else np.zeros(0, dtype=float)
+        )
+        projected = (
+            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
+        )
+        equilibrium_weight = float(
+            np.prod(np.sqrt(np.maximum(1.0 - projected * projected, 1e-4)))
+        )
+        total_weight += orbit_size * equilibrium_weight
+        raw_weights.append(equilibrium_weight)
+        initialized_orbits.append(
+            SymmetryOrbit(
+                size=orbit_size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=0.0,
+            )
+        )
+
+    weight_norm = max(total_weight, 1e-30)
+    for orb, raw_w in zip(initialized_orbits, raw_weights):
+        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
+    return initialized_orbits
 
 
-def simplex_bary_lattice(dim, level):
-    """All barycentric integer points m in Z_>=0^{dim+1} with sum(m) == level."""
-    pts = []
+def generate_simplex_barycentric_lattice(dimension, level):
+    """Return all barycentric grid points m / level with m in Z_>=0^{d+1}, sum(m) == level."""
+    lattice_points = []
 
-    def rec(prefix, rem_slots, rem_sum):
-        if rem_slots == 1:
-            pts.append(prefix + (rem_sum,))
+    def append_recursive(prefix, remaining_slots, remaining_sum):
+        if remaining_slots == 1:
+            lattice_points.append(prefix + (remaining_sum,))
             return
-        for k in range(rem_sum + 1):
-            rec(prefix + (k,), rem_slots - 1, rem_sum - k)
+        for count in range(remaining_sum + 1):
+            append_recursive(
+                prefix + (count,), remaining_slots - 1, remaining_sum - count
+            )
 
-    rec((), dim + 1, level)
-    return np.asarray(pts, dtype=float) / float(max(level, 1))
+    append_recursive((), dimension + 1, level)
+    return np.asarray(lattice_points, dtype=float) / float(max(level, 1))
 
 
-def simplex_equilibrium_start(dim, degree, target_n, sym_name, ops, r0=0.45, twist=0.06, min_unk=1):
+def build_simplex_equilibrium_start(
+    dimension,
+    degree,
+    target_points,
+    symmetry_name,
+    group_transforms,
+    boundary_inset=0.45,
+    chiral_twist=0.06,
+    min_unknowns=1,
+):
     """Deterministic S^d_+ concentric-shell equilibrium start on standard simplex Delta^d."""
-    # Choose barycentric grid level L so comb(L + d, d) generously covers target_n
-    L = 1
-    while math.comb(L + dim, dim) < max(int(target_n * 1.6), target_n + 16):
-        L += 1
-        if math.comb(L + dim, dim) > 15000:
+    max_level = 1
+    while math.comb(max_level + dimension, dimension) < max(
+        int(target_points * 1.6), target_points + 16
+    ):
+        max_level += 1
+        if math.comb(max_level + dimension, dimension) > 15000:
             break
-    # Include all concentric shell levels 1..L so every stabilizer orbit type is available
-    bary_list = []
-    eps = max(0.03, min(0.60, r0 / float(max(degree, 2))))
-    for lv in range(1, L + 1):
-        b = simplex_bary_lattice(dim, lv)
-        b_in = (1.0 - eps) * b + eps / float(dim + 1)
-        # Map to S^d_+ equilibrium density via sin(pi/2 * b_in) -> normalize -> u = s^2
-        s = np.sin(0.5 * math.pi * b_in)
-        s /= np.linalg.norm(s, axis=1, keepdims=True)
-        u = s * s
-        # Apply gentle chiral cyclic twist for mirror-free groups
-        if sym_name in ("chiral", "none") and twist > 0.0 and dim >= 2:
-            # Preserve lower-dimensional fixed axes (repeated coordinates) while twisting generic shells
-            u_sorted = np.sort(u, axis=1)
-            diffs = np.diff(u_sorted, axis=1)
-            is_gen = np.all(diffs > 1e-6, axis=1)
-            u_tw = u.copy()
-            u_tw[is_gen] = (1.0 - twist) * u[is_gen] + twist * np.roll(u[is_gen], 1, axis=1)
-            u = u_tw
-        bary_list.append(u)
-    # Also include exact centroid explicitly
-    bary_list.append(np.full((1, dim + 1), 1.0 / float(dim + 1), dtype=float))
-    u_all = np.vstack(bary_list)
-    raw = u_all[:, 1:]
-    # Close under G
-    closed = [raw]
-    for A, t in ops[1:]:
-        closed.append(raw @ A.T + t[None, :])
-    raw = np.vstack(closed)
-    # Rank by distance from centroid so inner shells come first
-    u0 = 1.0 - np.sum(raw, axis=1, keepdims=True)
-    ub = np.hstack([u0, raw])
-    cent = 1.0 / float(dim + 1)
-    dist = np.linalg.norm(ub - cent, axis=1)
-    raw = raw[np.argsort(dist)]
-    raw = raw[: max(target_n * 6, 400)]
-    orbits = group_points_into_orbits(raw, ops, tol=1e-4)
-    orbits.sort(key=lambda o: float(np.linalg.norm(
-        np.concatenate([[1.0 - np.sum(o["point"])], o["point"]]) - cent
-    )))
-    chosen = select_orbits_exact_n(orbits, target_n, min_unk)
-    if chosen is None:
-        return None
-    out = []
-    w_sum = 0.0
-    for o in chosen:
-        x = o["point"]
-        size, c0, U, _ = orbit_subspace(x, ops, tol=1e-6)
-        xi = U.T @ (x - c0) if U.shape[1] > 0 else np.zeros(0, dtype=float)
-        x_proj = c0 + (U @ xi if U.shape[1] > 0 else 0.0)
-        u_vec = np.concatenate([[1.0 - float(np.sum(x_proj))], x_proj])
-        eq_w = float(np.prod(np.sqrt(np.maximum(u_vec, 1e-4))))
-        w_sum += size * eq_w
-        out.append(
-            {
-                "size": size,
-                "c0": c0,
-                "U": U,
-                "dof": int(U.shape[1]),
-                "unk": int(U.shape[1]) + 1,
-                "xi": xi,
-                "w": eq_w,
-            }
+
+    # Include all concentric levels 1..max_level so every stabilizer orbit type exists
+    barycentric_shells = []
+    inset_eps = max(0.03, min(0.60, boundary_inset / float(max(degree, 2))))
+    for level in range(1, max_level + 1):
+        bary_grid = generate_simplex_barycentric_lattice(dimension, level)
+        bary_interior = (1.0 - inset_eps) * bary_grid + inset_eps / float(
+            dimension + 1
         )
-    for o in out:
-        o["v"] = math.sqrt(o["w"] / max(w_sum, 1e-30))
-        del o["w"]
-    return out
+        # Map to S^d_+ equilibrium density via sin(pi/2 * bary) -> normalize -> u = s^2
+        sphere_coords = np.sin(0.5 * math.pi * bary_interior)
+        sphere_coords /= np.linalg.norm(sphere_coords, axis=1, keepdims=True)
+        bary_mapped = sphere_coords * sphere_coords
+
+        if symmetry_name in ("chiral", "none") and chiral_twist > 0.0 and dimension >= 2:
+            # Keep lower-dimensional fixed axes intact while twisting generic shells
+            sorted_bary = np.sort(bary_mapped, axis=1)
+            is_generic = np.all(np.diff(sorted_bary, axis=1) > 1e-6, axis=1)
+            twisted = bary_mapped.copy()
+            twisted[is_generic] = (
+                (1.0 - chiral_twist) * bary_mapped[is_generic]
+                + chiral_twist * np.roll(bary_mapped[is_generic], 1, axis=1)
+            )
+            bary_mapped = twisted
+        barycentric_shells.append(bary_mapped)
+
+    # Always include the exact centroid explicitly
+    centroid_bary = np.full((1, dimension + 1), 1.0 / float(dimension + 1), dtype=float)
+    barycentric_shells.append(centroid_bary)
+
+    raw_points = np.vstack(barycentric_shells)[:, 1:]
+    closed_clouds = [raw_points]
+    for transform in group_transforms[1:]:
+        closed_clouds.append(
+            raw_points @ transform.linear.T + transform.translation[None, :]
+        )
+    raw_points = np.vstack(closed_clouds)
+
+    # Sort by distance from centroid so inner shells are preferred
+    first_bary = 1.0 - np.sum(raw_points, axis=1, keepdims=True)
+    full_bary = np.hstack([first_bary, raw_points])
+    centroid_coord = 1.0 / float(dimension + 1)
+    centroid_dist = np.linalg.norm(full_bary - centroid_coord, axis=1)
+    raw_points = raw_points[np.argsort(centroid_dist)]
+    raw_points = raw_points[: max(target_points * 6, 400)]
+
+    candidate_orbits = cluster_points_into_orbits(
+        raw_points, group_transforms, tol=1e-4
+    )
+    candidate_orbits.sort(
+        key=lambda orb: float(
+            np.linalg.norm(
+                np.concatenate(
+                    [[1.0 - np.sum(orb.initial_point)], orb.initial_point]
+                )
+                - centroid_coord
+            )
+        )
+    )
+
+    selected = select_orbits_for_point_count(
+        candidate_orbits, target_points, min_unknowns
+    )
+    if selected is None:
+        return None
+
+    initialized_orbits = []
+    raw_weights = []
+    total_weight = 0.0
+    for orb in selected:
+        coords = orb.initial_point
+        orbit_size, origin, basis, _ = compute_orbit_subspace(
+            coords, group_transforms, tol=1e-6
+        )
+        subspace_coords = (
+            basis.T @ (coords - origin)
+            if basis.shape[1] > 0
+            else np.zeros(0, dtype=float)
+        )
+        projected = (
+            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
+        )
+        bary_vec = np.concatenate([[1.0 - float(np.sum(projected))], projected])
+        equilibrium_weight = float(np.prod(np.sqrt(np.maximum(bary_vec, 1e-4))))
+        total_weight += orbit_size * equilibrium_weight
+        raw_weights.append(equilibrium_weight)
+        initialized_orbits.append(
+            SymmetryOrbit(
+                size=orbit_size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=0.0,
+            )
+        )
+
+    weight_norm = max(total_weight, 1e-30)
+    for orb, raw_w in zip(initialized_orbits, raw_weights):
+        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
+    return initialized_orbits
 
 
-def pack_orbits(orbits):
-    """Pack orbit (xi, v) parameters into a single flat vector q."""
-    parts = []
-    for o in orbits:
-        if o["dof"] > 0:
-            parts.append(o["xi"])
-        parts.append(np.array([o["v"]], dtype=float))
-    return np.concatenate(parts)
+# ---------------------------------------------------------------------------
+# Flat parameter packing, moment residuals, exact Jacobians, and penalties
+# ---------------------------------------------------------------------------
 
 
-def unpack_orbits(orbits, q):
-    """Return list of orbit copies with parameters populated from flat vector q."""
-    out = []
-    off = 0
-    for o in orbits:
-        dof = o["dof"]
-        xi = q[off:off + dof].copy() if dof > 0 else np.zeros(0, dtype=float)
-        off += dof
-        v = float(q[off])
-        off += 1
-        no = dict(o)
-        no["xi"] = xi
-        no["v"] = v
-        out.append(no)
-    return out
+def pack_orbit_parameters(orbits):
+    """Pack all orbit (subspace_coords, weight_sqrt) into a single 1D vector."""
+    chunks = []
+    for orbit in orbits:
+        if orbit.spatial_dof > 0:
+            chunks.append(orbit.subspace_coords)
+        chunks.append(np.array([orbit.weight_sqrt], dtype=float))
+    return np.concatenate(chunks)
 
 
-def orbits_to_reps(orbits, q):
-    """Map flat parameter vector q -> representative points X (K, d), weights w (K,), sizes (K,)."""
-    K = len(orbits)
-    dim = len(orbits[0]["c0"])
-    X = np.empty((K, dim), dtype=float)
-    w = np.empty(K, dtype=float)
-    v_arr = np.empty(K, dtype=float)
-    sizes = np.empty(K, dtype=float)
-    off = 0
-    for k, o in enumerate(orbits):
-        dof = o["dof"]
+def unpack_orbit_parameters(orbits, param_vector):
+    """Return copies of orbits populated from a flat parameter vector."""
+    unpacked = []
+    offset = 0
+    for orbit in orbits:
+        dof = orbit.spatial_dof
         if dof > 0:
-            xi = q[off:off + dof]
-            X[k] = o["c0"] + o["U"] @ xi
+            subspace_coords = param_vector[offset : offset + dof].copy()
         else:
-            X[k] = o["c0"]
-        off += dof
-        v = q[off]
-        off += 1
-        v_arr[k] = v
-        w[k] = v * v
-        sizes[k] = float(o["size"])
-    return X, w, v_arr, sizes
+            subspace_coords = np.zeros(0, dtype=float)
+        offset += dof
+        weight_sqrt = float(param_vector[offset])
+        offset += 1
+        unpacked.append(
+            SymmetryOrbit(
+                size=orbit.size,
+                subspace_origin=orbit.subspace_origin,
+                subspace_basis=orbit.subspace_basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=weight_sqrt,
+            )
+        )
+    return unpacked
 
 
-def eval_residual(SB, orbits, q):
-    """Pure moment residual vector r (excluding any boundary penalty)."""
-    X, w, _, sizes = orbits_to_reps(orbits, q)
-    V = SB.eval_val(X)
-    return V @ (sizes * w) - SB.rhs
+def decode_orbit_representatives(orbits, param_vector):
+    """Decode flat parameter vector into (representatives, weights, weight_sqrts, sizes)."""
+    num_orbits = len(orbits)
+    dimension = len(orbits[0].subspace_origin)
+    representatives = np.empty((num_orbits, dimension), dtype=float)
+    orbit_weights = np.empty(num_orbits, dtype=float)
+    weight_sqrts = np.empty(num_orbits, dtype=float)
+    orbit_sizes = np.empty(num_orbits, dtype=float)
 
-
-def eval_res_jac(SB, orbits, q):
-    """Pure moment residual r and exact Jacobian J wrt flat parameter vector q."""
-    X, w, v_arr, sizes = orbits_to_reps(orbits, q)
-    V, G = SB.eval_val_grad(X)
-    sw = sizes * w
-    r = V @ sw - SB.rhs
-    n_unk = len(q)
-    J = np.empty((SB.M, n_unk), dtype=float)
-    off = 0
-    for k, o in enumerate(orbits):
-        dof = o["dof"]
+    offset = 0
+    for idx, orbit in enumerate(orbits):
+        dof = orbit.spatial_dof
         if dof > 0:
-            # G[:, :, k] has shape (dim, M); U has shape (dim, dof)
-            # d(sw_k * phi(x_k))/d(xi_k) = sw_k * (G[:, :, k].T @ U)
-            J[:, off:off + dof] = sw[k] * (G[:, :, k].T @ o["U"])
-            off += dof
-        J[:, off] = (2.0 * sizes[k] * v_arr[k]) * V[:, k]
-        off += 1
-    return r, J, X
-
-
-def eval_d2_dir(SB, orbits, q, dq):
-    """Exact directional 2nd derivative D^2 r(q)[dq, dq] via 2nd-order Taylor jets."""
-    K = len(orbits)
-    dim = SB.dim
-    X = np.empty((K, dim), dtype=float)
-    dX = np.empty((K, dim), dtype=float)
-    w0 = np.empty(K, dtype=float)
-    w1 = np.empty(K, dtype=float)
-    w2 = np.empty(K, dtype=float)
-    off = 0
-    for k, o in enumerate(orbits):
-        dof = o["dof"]
-        if dof > 0:
-            xi = q[off:off + dof]
-            dxi = dq[off:off + dof]
-            X[k] = o["c0"] + o["U"] @ xi
-            dX[k] = o["U"] @ dxi
+            subspace_coords = param_vector[offset : offset + dof]
+            representatives[idx] = (
+                orbit.subspace_origin + orbit.subspace_basis @ subspace_coords
+            )
         else:
-            X[k] = o["c0"]
-            dX[k] = 0.0
-        off += dof
-        v = q[off]
-        dv = dq[off]
-        off += 1
-        sz = float(o["size"])
-        w0[k] = sz * (v * v)
-        w1[k] = sz * (2.0 * v * dv)
-        w2[k] = sz * (2.0 * dv * dv)
-    F0, F1, F2 = SB.eval_jet2(X, dX)
-    return F2 @ w0 + 2.0 * (F1 @ w1) + F0 @ w2
+            representatives[idx] = orbit.subspace_origin
+        offset += dof
+        weight_sqrt = param_vector[offset]
+        offset += 1
+        weight_sqrts[idx] = weight_sqrt
+        orbit_weights[idx] = weight_sqrt * weight_sqrt
+        orbit_sizes[idx] = float(orbit.size)
+    return representatives, orbit_weights, weight_sqrts, orbit_sizes
 
 
-def penalty_terms(SB, orbits, q, pull_margin, pull_wt):
-    """Smooth diagonal boundary hinge penalty value, gradient, and diagonal Hessian."""
-    if pull_wt <= 0.0 or pull_margin is None:
+def evaluate_moment_residual(sym_basis, orbits, param_vector):
+    """Evaluate pure moment residual vector r (excluding any boundary penalty)."""
+    representatives, orbit_weights, _, orbit_sizes = decode_orbit_representatives(
+        orbits, param_vector
+    )
+    basis_values = sym_basis.evaluate_values(representatives)
+    return basis_values @ (orbit_sizes * orbit_weights) - sym_basis.exact_moments
+
+
+def evaluate_residual_and_jacobian(sym_basis, orbits, param_vector):
+    """Evaluate pure moment residual r, exact Jacobian J, and orbit representatives."""
+    representatives, orbit_weights, weight_sqrts, orbit_sizes = (
+        decode_orbit_representatives(orbits, param_vector)
+    )
+    basis_values, basis_grads = sym_basis.evaluate_values_and_gradients(
+        representatives
+    )
+    total_orbit_weights = orbit_sizes * orbit_weights
+    residual = basis_values @ total_orbit_weights - sym_basis.exact_moments
+
+    num_unknowns = len(param_vector)
+    jacobian = np.empty((sym_basis.num_basis, num_unknowns), dtype=float)
+    offset = 0
+    for idx, orbit in enumerate(orbits):
+        dof = orbit.spatial_dof
+        if dof > 0:
+            # basis_grads[:, :, idx] has shape (dim, num_basis); basis has (dim, dof)
+            jacobian[:, offset : offset + dof] = total_orbit_weights[idx] * (
+                basis_grads[:, :, idx].T @ orbit.subspace_basis
+            )
+            offset += dof
+        jacobian[:, offset] = (
+            2.0 * orbit_sizes[idx] * weight_sqrts[idx]
+        ) * basis_values[:, idx]
+        offset += 1
+    return residual, jacobian, representatives
+
+
+def evaluate_directional_second_derivative(sym_basis, orbits, param_vector, direction):
+    """Compute exact directional 2nd derivative D^2 r(q)[dq, dq] via 2nd-order Taylor jets."""
+    num_orbits = len(orbits)
+    dimension = sym_basis.dimension
+    representatives = np.empty((num_orbits, dimension), dtype=float)
+    rep_directions = np.empty((num_orbits, dimension), dtype=float)
+    weight_val = np.empty(num_orbits, dtype=float)
+    weight_first_deriv = np.empty(num_orbits, dtype=float)
+    weight_second_deriv = np.empty(num_orbits, dtype=float)
+
+    offset = 0
+    for idx, orbit in enumerate(orbits):
+        dof = orbit.spatial_dof
+        if dof > 0:
+            coords = param_vector[offset : offset + dof]
+            coords_dir = direction[offset : offset + dof]
+            representatives[idx] = (
+                orbit.subspace_origin + orbit.subspace_basis @ coords
+            )
+            rep_directions[idx] = orbit.subspace_basis @ coords_dir
+        else:
+            representatives[idx] = orbit.subspace_origin
+            rep_directions[idx] = 0.0
+        offset += dof
+
+        weight_sqrt = param_vector[offset]
+        weight_sqrt_dir = direction[offset]
+        offset += 1
+        orbit_size = float(orbit.size)
+        weight_val[idx] = orbit_size * (weight_sqrt * weight_sqrt)
+        weight_first_deriv[idx] = orbit_size * (2.0 * weight_sqrt * weight_sqrt_dir)
+        weight_second_deriv[idx] = orbit_size * (
+            2.0 * weight_sqrt_dir * weight_sqrt_dir
+        )
+
+    jet_val, jet_first, jet_second = sym_basis.evaluate_second_order_jet(
+        representatives, rep_directions
+    )
+    return (
+        jet_second @ weight_val
+        + 2.0 * (jet_first @ weight_first_deriv)
+        + jet_val @ weight_second_deriv
+    )
+
+
+def evaluate_boundary_penalty(
+    sym_basis, orbits, param_vector, target_margin, penalty_weight
+):
+    """Compute smooth diagonal boundary hinge penalty cost, gradient, and diagonal Hessian."""
+    if penalty_weight <= 0.0 or target_margin is None:
         return 0.0, None, None
-    X, _, _, sizes = orbits_to_reps(orbits, q)
-    over, grad_X = SB.base.boundary_hinge(X, pull_margin)
-    if float(over.max()) <= 0.0:
-        return 0.0, np.zeros(len(q), dtype=float), np.zeros(len(q), dtype=float)
-    # Weight each orbit's boundary penalty by orbit size so all nodes weigh equally
-    cost = 0.5 * pull_wt * float(np.sum((sizes[:, None] * over) * over))
-    g_pen = np.zeros(len(q), dtype=float)
-    h_pen = np.zeros(len(q), dtype=float)
-    active_any = np.any(over > 0.0, axis=1)
-    off = 0
-    for k, o in enumerate(orbits):
-        dof = o["dof"]
-        if dof > 0 and active_any[k]:
-            # Chain rule onto fixed subspace U: d/dxi = U^T @ grad_X[k]
-            g_pen[off:off + dof] = (pull_wt * sizes[k]) * (o["U"].T @ grad_X[k])
-            h_pen[off:off + dof] = pull_wt * sizes[k]
-        off += dof + 1
-    return cost, g_pen, h_pen
+    representatives, _, _, orbit_sizes = decode_orbit_representatives(
+        orbits, param_vector
+    )
+    violations, rep_grads = sym_basis.base_basis.boundary_hinge_penalty(
+        representatives, target_margin
+    )
+    if float(violations.max()) <= 0.0:
+        zeros = np.zeros(len(param_vector), dtype=float)
+        return 0.0, zeros, zeros.copy()
+
+    # Weight each orbit's boundary penalty by orbit size so every node weighs equally
+    penalty_cost = (
+        0.5 * penalty_weight * float(np.sum((orbit_sizes[:, None] * violations) * violations))
+    )
+    penalty_grad = np.zeros(len(param_vector), dtype=float)
+    penalty_diag_hessian = np.zeros(len(param_vector), dtype=float)
+    has_violation = np.any(violations > 0.0, axis=1)
+
+    offset = 0
+    for idx, orbit in enumerate(orbits):
+        dof = orbit.spatial_dof
+        if dof > 0 and has_violation[idx]:
+            # Chain rule onto fixed subspace: d/dxi = subspace_basis^T @ rep_grads[idx]
+            orbit_scale = penalty_weight * orbit_sizes[idx]
+            penalty_grad[offset : offset + dof] = orbit_scale * (
+                orbit.subspace_basis.T @ rep_grads[idx]
+            )
+            penalty_diag_hessian[offset : offset + dof] = orbit_scale
+        offset += dof + 1
+    return penalty_cost, penalty_grad, penalty_diag_hessian
 
 
-def gn_polish(SB, orbits, q, steps=5, require_interior=False):
-    """Minimum-norm Gauss-Newton polish in (xi, w) driving pure moment residual to machine floor."""
-    r = eval_residual(SB, orbits, q)
-    cur_norm = float(np.linalg.norm(r))
-    if cur_norm < 1e-15:
-        return cur_norm, q
-    for _ in range(steps):
-        X, w, v_arr, sizes = orbits_to_reps(orbits, q)
-        V, G = SB.eval_val_grad(X)
-        sw = sizes * w
-        n_unk = len(q)
-        # Build Jacobian wrt (xi, w) directly so small weights stay well-scaled
-        J = np.empty((SB.M, n_unk), dtype=float)
-        off = 0
-        for k, o in enumerate(orbits):
-            dof = o["dof"]
+# ---------------------------------------------------------------------------
+# Nonlinear solvers: Geodesic-accelerated Cholesky LM & Minimum-Norm GN
+# ---------------------------------------------------------------------------
+
+
+def polish_minimum_norm_gauss_newton(
+    sym_basis, orbits, param_vector, max_steps=5, require_interior=False
+):
+    """Minimum-norm Gauss-Newton polish in (subspace_coords, weight) to machine floor."""
+    residual = evaluate_moment_residual(sym_basis, orbits, param_vector)
+    current_norm = float(np.linalg.norm(residual))
+    if current_norm < 1e-15:
+        return current_norm, param_vector
+
+    params = param_vector
+    for _ in range(max_steps):
+        representatives, orbit_weights, weight_sqrts, orbit_sizes = (
+            decode_orbit_representatives(orbits, params)
+        )
+        basis_values, basis_grads = sym_basis.evaluate_values_and_gradients(
+            representatives
+        )
+        total_orbit_weights = orbit_sizes * orbit_weights
+        num_unknowns = len(params)
+
+        # Build Jacobian wrt (subspace_coords, weight) directly so tiny weights stay well-scaled
+        jacobian = np.empty((sym_basis.num_basis, num_unknowns), dtype=float)
+        offset = 0
+        for idx, orbit in enumerate(orbits):
+            dof = orbit.spatial_dof
             if dof > 0:
-                J[:, off:off + dof] = sw[k] * (G[:, :, k].T @ o["U"])
-                off += dof
-            J[:, off] = sizes[k] * V[:, k]
-            off += 1
-        GG = J @ J.T
+                jacobian[:, offset : offset + dof] = total_orbit_weights[idx] * (
+                    basis_grads[:, :, idx].T @ orbit.subspace_basis
+                )
+                offset += dof
+            jacobian[:, offset] = orbit_sizes[idx] * basis_values[:, idx]
+            offset += 1
+
+        gram_matrix = jacobian @ jacobian.T
         try:
-            cf = cho_factor(GG, lower=True, check_finite=False)
-            dq_w = -(J.T @ cho_solve(cf, r, check_finite=False))
+            cholesky_factor = cho_factor(gram_matrix, lower=True, check_finite=False)
+            weight_space_step = -(
+                jacobian.T @ cho_solve(cholesky_factor, residual, check_finite=False)
+            )
         except np.linalg.LinAlgError:
             break
-        # Apply step to (xi, w) and convert back to v = sqrt(w)
-        q1 = q.copy()
-        off = 0
-        valid = True
-        for k, o in enumerate(orbits):
-            dof = o["dof"]
+
+        # Apply step to (subspace_coords, weight) and map weight back to sqrt(weight)
+        trial_params = params.copy()
+        offset = 0
+        step_valid = True
+        for idx, orbit in enumerate(orbits):
+            dof = orbit.spatial_dof
             if dof > 0:
-                q1[off:off + dof] = q[off:off + dof] + dq_w[off:off + dof]
-                off += dof
-            w_new = w[k] + float(dq_w[off])
-            if w_new <= 0.0:
-                valid = False
+                trial_params[offset : offset + dof] = (
+                    params[offset : offset + dof]
+                    + weight_space_step[offset : offset + dof]
+                )
+                offset += dof
+            updated_weight = orbit_weights[idx] + float(weight_space_step[offset])
+            if updated_weight <= 0.0:
+                step_valid = False
                 break
-            q1[off] = math.copysign(math.sqrt(w_new), v_arr[k] if v_arr[k] != 0.0 else 1.0)
-            off += 1
-        if not valid:
+            sign_ref = weight_sqrts[idx] if weight_sqrts[idx] != 0.0 else 1.0
+            trial_params[offset] = math.copysign(math.sqrt(updated_weight), sign_ref)
+            offset += 1
+
+        if not step_valid:
             break
-        X1, _, _, _ = orbits_to_reps(orbits, q1)
-        if require_interior and SB.base.boundary_margin(X1) <= 1e-8:
+
+        trial_reps, _, _, _ = decode_orbit_representatives(orbits, trial_params)
+        if require_interior and sym_basis.base_basis.boundary_distance(trial_reps) <= 1e-8:
             break
-        r1 = eval_residual(SB, orbits, q1)
-        n1 = float(np.linalg.norm(r1))
-        if not math.isfinite(n1) or n1 >= cur_norm:
+
+        trial_residual = evaluate_moment_residual(sym_basis, orbits, trial_params)
+        trial_norm = float(np.linalg.norm(trial_residual))
+        if not math.isfinite(trial_norm) or trial_norm >= current_norm:
             break
-        q = q1
-        r = r1
-        cur_norm = n1
-        if cur_norm < 1e-15:
+
+        params = trial_params
+        residual = trial_residual
+        current_norm = trial_norm
+        if current_norm < 1e-15:
             break
-    return cur_norm, q
+
+    return current_norm, params
 
 
-def solve_geodesic_lm(
-    SB,
+def solve_geodesic_levenberg_marquardt(
+    sym_basis,
     orbits,
-    q0,
+    initial_params,
     max_steps=150,
-    win=25,
-    lam0=0.2,
-    geo_tau=0.05,
-    pull_margin=None,
-    pull_wt=0.0,
+    stagnation_window=25,
+    initial_damping=0.2,
+    geodesic_threshold=0.05,
+    penalty_margin=None,
+    penalty_weight=0.0,
     require_interior=False,
     phase_label="P1",
     verbose=False,
 ):
-    """Exact analytic geodesic-accelerated Cholesky LM with delayed gratification & bold uphill.
+    """Analytic geodesic-accelerated Cholesky LM with delayed gratification and bold uphill.
 
     Stopping criteria and logged residuals strictly use the pure moment residual
     (never including the boundary hinge penalty).
     """
-    q = q0.copy()
-    r, J, X = eval_res_jac(SB, orbits, q)
-    mom = float(np.linalg.norm(r))
-    bdist = SB.base.boundary_margin(X)
-    p_cost, g_pen, h_pen = penalty_terms(SB, orbits, q, pull_margin, pull_wt)
-    tot_cost = 0.5 * (mom * mom) + p_cost
-    best_mom = mom
-    best_cost = tot_cost
-    best_q = q.copy()
-    lam = lam0
-    n_unk = len(q)
-    diag_idx = np.arange(n_unk)
-    hist = []
-    used = 0
-    v_prev = None
-    in_geo = (mom < geo_tau) if geo_tau > 0.0 else True
+    params = initial_params.copy()
+    residual, jacobian, representatives = evaluate_residual_and_jacobian(
+        sym_basis, orbits, params
+    )
+    moment_norm = float(np.linalg.norm(residual))
+    boundary_dist = sym_basis.base_basis.boundary_distance(representatives)
+    penalty_cost, penalty_grad, penalty_diag_hessian = evaluate_boundary_penalty(
+        sym_basis, orbits, params, penalty_margin, penalty_weight
+    )
+    total_cost = 0.5 * (moment_norm * moment_norm) + penalty_cost
 
-    for it in range(1, max_steps + 1):
-        used = it
-        # Pure moment stop condition (ignoring penalty!)
-        if mom < 1e-13 and (pull_wt <= 0.0 or bdist > 0.0):
+    best_moment_norm = moment_norm
+    best_total_cost = total_cost
+    best_params = params.copy()
+
+    damping = initial_damping
+    diag_indices = np.arange(len(params))
+    residual_history = []
+    steps_taken = 0
+    prev_step = None
+    geodesic_active = (
+        (moment_norm < geodesic_threshold) if geodesic_threshold > 0.0 else True
+    )
+
+    for iteration in range(1, max_steps + 1):
+        steps_taken = iteration
+        # Pure moment stopping criterion (ignores boundary penalty!)
+        if moment_norm < 1e-13 and (penalty_weight <= 0.0 or boundary_dist > 0.0):
             break
-        H = J.T @ J
-        g = J.T @ r
-        if g_pen is not None:
-            g = g + g_pen
-            H[diag_idx, diag_idx] += h_pen
-        d_scale = np.maximum(np.diag(H), 1e-12)
-        accepted = False
+
+        normal_matrix = jacobian.T @ jacobian
+        gradient = jacobian.T @ residual
+        if penalty_grad is not None:
+            gradient = gradient + penalty_grad
+            normal_matrix[diag_indices, diag_indices] += penalty_diag_hessian
+        diag_scale = np.maximum(np.diag(normal_matrix), 1e-12)
+
+        step_accepted = False
         for _ in range(12):
-            H_d = H.copy()
-            H_d[diag_idx, diag_idx] += lam * d_scale
+            damped_matrix = normal_matrix.copy()
+            damped_matrix[diag_indices, diag_indices] += damping * diag_scale
             try:
-                cf = cho_factor(H_d, lower=True, check_finite=False)
-                v = cho_solve(cf, -g, check_finite=False)
+                cholesky_factor = cho_factor(
+                    damped_matrix, lower=True, check_finite=False
+                )
+                velocity_step = cho_solve(
+                    cholesky_factor, -gradient, check_finite=False
+                )
             except np.linalg.LinAlgError:
-                lam = min(lam * 5.0, 1e10)
+                damping = min(damping * 5.0, 1e10)
                 continue
-            step = v
-            if in_geo:
-                d2r = eval_d2_dir(SB, orbits, q, v)
-                a = cho_solve(cf, -(J.T @ d2r), check_finite=False)
-                vn = float(np.linalg.norm(v))
-                an = float(np.linalg.norm(a))
-                if vn > 0.0 and an <= 0.75 * vn:
-                    step = v + 0.5 * a
-            q1 = q + step
-            X1, _, _, _ = orbits_to_reps(orbits, q1)
-            if not np.all(np.isfinite(X1)):
-                lam = min(lam * 5.0, 1e10)
+
+            trial_step = velocity_step
+            if geodesic_active:
+                directional_d2 = evaluate_directional_second_derivative(
+                    sym_basis, orbits, params, velocity_step
+                )
+                acceleration_step = cho_solve(
+                    cholesky_factor, -(jacobian.T @ directional_d2), check_finite=False
+                )
+                velocity_norm = float(np.linalg.norm(velocity_step))
+                accel_norm = float(np.linalg.norm(acceleration_step))
+                if velocity_norm > 0.0 and accel_norm <= 0.75 * velocity_norm:
+                    trial_step = velocity_step + 0.5 * acceleration_step
+
+            trial_params = params + trial_step
+            trial_reps, _, _, _ = decode_orbit_representatives(orbits, trial_params)
+            if not np.all(np.isfinite(trial_reps)):
+                damping = min(damping * 5.0, 1e10)
                 continue
-            bd1 = SB.base.boundary_margin(X1)
-            # Escape cap prevents runaway outside domain
-            if bd1 < -0.35:
-                lam = min(lam * 5.0, 1e10)
+
+            trial_boundary_dist = sym_basis.base_basis.boundary_distance(trial_reps)
+            # Escape cap prevents runaway far outside the domain
+            if trial_boundary_dist < -0.35:
+                damping = min(damping * 5.0, 1e10)
                 continue
-            if require_interior and bd1 <= 1e-7:
-                lam = min(lam * 5.0, 1e10)
+            if require_interior and trial_boundary_dist <= 1e-7:
+                damping = min(damping * 5.0, 1e10)
                 continue
-            r1 = eval_residual(SB, orbits, q1)
-            mom1 = float(np.linalg.norm(r1))
-            if not math.isfinite(mom1):
-                lam = min(lam * 5.0, 1e10)
+
+            trial_residual = evaluate_moment_residual(sym_basis, orbits, trial_params)
+            trial_moment_norm = float(np.linalg.norm(trial_residual))
+            if not math.isfinite(trial_moment_norm):
+                damping = min(damping * 5.0, 1e10)
                 continue
-            pc1, _, _ = penalty_terms(SB, orbits, q1, pull_margin, pull_wt)
-            c1 = 0.5 * (mom1 * mom1) + pc1
-            downhill = c1 < tot_cost
-            uphill_ok = False
-            if (not downhill) and in_geo and v_prev is not None:
-                n1 = float(np.linalg.norm(step))
-                n0 = float(np.linalg.norm(v_prev))
-                if n1 > 0.0 and n0 > 0.0:
-                    cos_b = float(np.dot(step, v_prev)) / (n1 * n0)
-                    if cos_b > 0.0 and ((1.0 - cos_b) ** 2) * c1 <= best_cost:
-                        uphill_ok = True
-            if downhill or uphill_ok:
-                q = q1
-                r, J, X = eval_res_jac(SB, orbits, q)
-                mom = float(np.linalg.norm(r))
-                bdist = SB.base.boundary_margin(X)
-                p_cost, g_pen, h_pen = penalty_terms(SB, orbits, q, pull_margin, pull_wt)
-                tot_cost = 0.5 * (mom * mom) + p_cost
-                v_prev = step
-                if tot_cost < best_cost:
-                    best_cost = tot_cost
-                    best_mom = mom
-                    best_q = q.copy()
-                if downhill:
-                    lam = max(lam / (1.5 if in_geo else 3.0), 1e-13)
-                if (not in_geo) and mom < geo_tau:
-                    in_geo = True
-                accepted = True
+
+            trial_penalty_cost, _, _ = evaluate_boundary_penalty(
+                sym_basis, orbits, trial_params, penalty_margin, penalty_weight
+            )
+            trial_total_cost = (
+                0.5 * (trial_moment_norm * trial_moment_norm) + trial_penalty_cost
+            )
+
+            is_downhill = trial_total_cost < total_cost
+            is_bold_uphill_ok = False
+            if (not is_downhill) and geodesic_active and prev_step is not None:
+                step_norm = float(np.linalg.norm(trial_step))
+                prev_norm = float(np.linalg.norm(prev_step))
+                if step_norm > 0.0 and prev_norm > 0.0:
+                    cos_angle = float(np.dot(trial_step, prev_step)) / (
+                        step_norm * prev_norm
+                    )
+                    if (
+                        cos_angle > 0.0
+                        and ((1.0 - cos_angle) ** 2) * trial_total_cost
+                        <= best_total_cost
+                    ):
+                        is_bold_uphill_ok = True
+
+            if is_downhill or is_bold_uphill_ok:
+                params = trial_params
+                residual, jacobian, representatives = evaluate_residual_and_jacobian(
+                    sym_basis, orbits, params
+                )
+                moment_norm = float(np.linalg.norm(residual))
+                boundary_dist = sym_basis.base_basis.boundary_distance(representatives)
+                penalty_cost, penalty_grad, penalty_diag_hessian = (
+                    evaluate_boundary_penalty(
+                        sym_basis, orbits, params, penalty_margin, penalty_weight
+                    )
+                )
+                total_cost = 0.5 * (moment_norm * moment_norm) + penalty_cost
+                prev_step = trial_step
+
+                if total_cost < best_total_cost:
+                    best_total_cost = total_cost
+                    best_moment_norm = moment_norm
+                    best_params = params.copy()
+                if is_downhill:
+                    damping = max(damping / (1.5 if geodesic_active else 3.0), 1e-13)
+                if (not geodesic_active) and moment_norm < geodesic_threshold:
+                    geodesic_active = True
+                step_accepted = True
                 break
-            lam = min(lam * 5.0, 1e10)
-        if not accepted:
+
+            damping = min(damping * 5.0, 1e10)
+
+        if not step_accepted:
             break
-        hist.append(best_mom)
-        if verbose and (it <= 5 or it % 10 == 0 or mom < 1e-13):
-            log(f"{phase_label} it={it:3d} mom_res={mom:.3e} bdist={bdist:+.3e} lam={lam:.1e} geo={int(in_geo)}")
-        if mom < 1e-13 and (pull_wt <= 0.0 or bdist > 0.0):
+
+        residual_history.append(best_moment_norm)
+        if verbose and (iteration <= 5 or iteration % 10 == 0 or moment_norm < 1e-13):
+            log_message(
+                f"{phase_label} it={iteration:3d} mom_res={moment_norm:.3e} "
+                f"bdist={boundary_dist:+.3e} lam={damping:.1e} geo={int(geodesic_active)}"
+            )
+        if moment_norm < 1e-13 and (penalty_weight <= 0.0 or boundary_dist > 0.0):
             break
-        if win > 0 and len(hist) >= win:
-            if hist[-1] > 0.99 * hist[-win] and lam > 1e-2:
+        if stagnation_window > 0 and len(residual_history) >= stagnation_window:
+            if (
+                residual_history[-1] > 0.99 * residual_history[-stagnation_window]
+                and damping > 1e-2
+            ):
                 break
-    # Return best point found
-    X_b, _, _, _ = orbits_to_reps(orbits, best_q)
-    bd_b = SB.base.boundary_margin(X_b)
-    return best_mom, bd_b, used, best_q
+
+    best_reps, _, _, _ = decode_orbit_representatives(orbits, best_params)
+    best_boundary_dist = sym_basis.base_basis.boundary_distance(best_reps)
+    return best_moment_norm, best_boundary_dist, steps_taken, best_params
 
 
-def merge_close_orbits(orbits, ops, tol=1e-4):
-    """Merge pairs of orbits whose expanded clouds collide within tol."""
-    if tol <= 0.0 or len(orbits) <= 1:
-        return orbits, 0
-    merged = list(orbits)
-    n_merged = 0
-    changed = True
-    while changed:
-        changed = False
-        for i in range(len(merged)):
-            xi = merged[i]["c0"] + merged[i]["U"] @ merged[i]["xi"]
-            for j in range(i + 1, len(merged)):
-                if merged[i]["size"] != merged[j]["size"]:
-                    continue
-                xj = merged[j]["c0"] + merged[j]["U"] @ merged[j]["xi"]
-                # Check minimum distance across G-images
-                dmin = min(float(np.linalg.norm(xi - (A @ xj + t))) for A, t in ops)
-                if dmin < tol:
-                    wi = merged[i]["v"] ** 2
-                    wj = merged[j]["v"] ** 2
-                    wsum = wi + wj
-                    # Find closest image of xj to xi
-                    best_xj = min((A @ xj + t for A, t in ops), key=lambda p: float(np.linalg.norm(xi - p)))
-                    xavg = (wi * xi + wj * best_xj) / max(wsum, 1e-30)
-                    sz, c0, U, _ = orbit_subspace(xavg, ops, tol=1e-6)
-                    xi_new = U.T @ (xavg - c0) if U.shape[1] > 0 else np.zeros(0, dtype=float)
-                    merged[i] = {
-                        "size": sz,
-                        "c0": c0,
-                        "U": U,
-                        "dof": int(U.shape[1]),
-                        "unk": int(U.shape[1]) + 1,
-                        "xi": xi_new,
-                        "v": math.sqrt(wsum),
-                    }
-                    del merged[j]
-                    n_merged += 1
-                    changed = True
-                    break
-            if changed:
-                break
-    return merged, n_merged
+def _build_solution_if_positive(
+    sym_basis, orbits, params, moment_residual, boundary_distance, quality
+):
+    """Unpack orbits and construct a CubatureSolution if all weights are positive."""
+    solved_orbits = unpack_orbit_parameters(orbits, params)
+    nodes, weights = expand_orbits_to_nodes(solved_orbits, sym_basis.group_transforms)
+    if float(weights.min()) <= 0.0:
+        return None
+    return CubatureSolution(
+        quality=quality,
+        moment_residual=moment_residual,
+        boundary_distance=boundary_distance,
+        nodes=nodes,
+        weights=weights,
+        orbits=solved_orbits,
+    )
 
 
-def solve_single_start(SB, orbits, verbose=False):
+def solve_from_single_start(sym_basis, orbits, verbose=False):
     """Run PI-preferred / PO-fallback solve on one orbit initialization.
 
-    Stage A: strictly-interior geodesic LM from the interior start q0 (prevents
+    Stage A: strictly-interior geodesic LM from the interior start (prevents
     jumping across the boundary into a PO basin when a nearby PI basin exists).
     Stage B (if Stage A did not reach PI): free fold-free geodesic LM (records
     any converged PO rule as fallback) followed by smooth diagonal boundary
     hinge pull (Phase 2) and penalty-free interior polish (Phase 3) with
     automatic minimum-norm Gauss-Newton end-stage.
     """
-    q0 = pack_orbits(orbits)
-    # Stage A: strictly interior geodesic LM directly from interior start q0
-    mom0, bd0, _, q_in = solve_geodesic_lm(
-        SB,
-        orbits,
-        q0,
-        max_steps=160,
-        win=30,
-        lam0=0.25,
-        geo_tau=0.05,
-        pull_margin=None,
-        pull_wt=0.0,
-        require_interior=True,
-        phase_label="PI",
-        verbose=verbose,
+    initial_params = pack_orbit_parameters(orbits)
+
+    # Stage A: strictly interior geodesic LM directly from interior start
+    interior_res, interior_bdist, _, interior_params = (
+        solve_geodesic_levenberg_marquardt(
+            sym_basis,
+            orbits,
+            initial_params,
+            max_steps=160,
+            stagnation_window=30,
+            initial_damping=0.25,
+            geodesic_threshold=0.05,
+            penalty_margin=None,
+            penalty_weight=0.0,
+            require_interior=True,
+            phase_label="PI",
+            verbose=verbose,
+        )
     )
-    if mom0 < 1e-9:
-        mom0, q_in = gn_polish(SB, orbits, q_in, steps=5, require_interior=True)
-        X0, _, _, _ = orbits_to_reps(orbits, q_in)
-        bd0 = SB.base.boundary_margin(X0)
-    if mom0 < 1e-12 and bd0 > 0.0:
-        orb0 = unpack_orbits(orbits, q_in)
-        nodes0, weights0 = expand_orbits(orb0, SB.ops)
-        if float(weights0.min()) > 0.0:
-            return {
-                "quality": "PI",
-                "mom_res": mom0,
-                "bdist": bd0,
-                "nodes": nodes0,
-                "weights": weights0,
-                "orbits": orb0,
-            }
-    # Stage B / Phase 1: free fold-free geodesic LM (can step outside and pull back)
-    mom1, bd1, _, q1 = solve_geodesic_lm(
-        SB,
+    if interior_res < 1e-9:
+        interior_res, interior_params = polish_minimum_norm_gauss_newton(
+            sym_basis, orbits, interior_params, max_steps=5, require_interior=True
+        )
+        interior_reps, _, _, _ = decode_orbit_representatives(
+            orbits, interior_params
+        )
+        interior_bdist = sym_basis.base_basis.boundary_distance(interior_reps)
+    if interior_res < 1e-12 and interior_bdist > 0.0:
+        solution = _build_solution_if_positive(
+            sym_basis, orbits, interior_params, interior_res, interior_bdist, "PI"
+        )
+        if solution is not None:
+            return solution
+
+    # Stage B / Phase 1: free fold-free geodesic LM (allowed to step outside)
+    free_res, free_bdist, _, free_params = solve_geodesic_levenberg_marquardt(
+        sym_basis,
         orbits,
-        q0,
+        initial_params,
         max_steps=160,
-        win=30,
-        lam0=0.25,
-        geo_tau=0.05,
-        pull_margin=None,
-        pull_wt=0.0,
+        stagnation_window=30,
+        initial_damping=0.25,
+        geodesic_threshold=0.05,
+        penalty_margin=None,
+        penalty_weight=0.0,
         require_interior=False,
         phase_label="P1",
         verbose=verbose,
     )
-    if mom1 < 1e-9:
-        mom1, q1 = gn_polish(SB, orbits, q1, steps=5, require_interior=False)
-        X1, _, _, _ = orbits_to_reps(orbits, q1)
-        bd1 = SB.base.boundary_margin(X1)
-    po_backup = None
-    if mom1 < 1e-12:
-        orb1 = unpack_orbits(orbits, q1)
-        nodes1, weights1 = expand_orbits(orb1, SB.ops)
-        if float(weights1.min()) > 0.0:
-            if bd1 > 0.0:
-                return {
-                    "quality": "PI",
-                    "mom_res": mom1,
-                    "bdist": bd1,
-                    "nodes": nodes1,
-                    "weights": weights1,
-                    "orbits": orb1,
-                }
-            po_backup = {
-                "quality": "PO",
-                "mom_res": mom1,
-                "bdist": bd1,
-                "nodes": nodes1,
-                "weights": weights1,
-                "orbits": orb1,
-            }
-    # Phase 2: smooth diagonal boundary hinge pull from Phase 1 back inside
-    if mom1 < 1e-2:
-        target_margin = 5e-4 if SB.degree >= 12 else 2e-3
-        _, bd2, _, q2 = solve_geodesic_lm(
-            SB,
+    if free_res < 1e-9:
+        free_res, free_params = polish_minimum_norm_gauss_newton(
+            sym_basis, orbits, free_params, max_steps=5, require_interior=False
+        )
+        free_reps, _, _, _ = decode_orbit_representatives(orbits, free_params)
+        free_bdist = sym_basis.base_basis.boundary_distance(free_reps)
+
+    po_fallback = None
+    if free_res < 1e-12:
+        quality = "PI" if free_bdist > 0.0 else "PO"
+        solution = _build_solution_if_positive(
+            sym_basis, orbits, free_params, free_res, free_bdist, quality
+        )
+        if solution is not None:
+            if quality == "PI":
+                return solution
+            po_fallback = solution
+
+    # Stage B / Phase 2: smooth diagonal boundary hinge pull back inside
+    if free_res < 1e-2:
+        target_margin = 5e-4 if sym_basis.degree >= 12 else 2e-3
+        _, pulled_bdist, _, pulled_params = solve_geodesic_levenberg_marquardt(
+            sym_basis,
             orbits,
-            q1,
+            free_params,
             max_steps=120,
-            win=25,
-            lam0=1e-2,
-            geo_tau=0.0,
-            pull_margin=target_margin,
-            pull_wt=10.0,
+            stagnation_window=25,
+            initial_damping=1e-2,
+            geodesic_threshold=0.0,
+            penalty_margin=target_margin,
+            penalty_weight=10.0,
             require_interior=False,
             phase_label="P2",
             verbose=verbose,
         )
-        # Phase 3: turn penalty OFF once strictly inside; pure-moment polish + GN end-stage
-        if bd2 > 0.0:
-            mom3, bd3, _, q3 = solve_geodesic_lm(
-                SB,
-                orbits,
-                q2,
-                max_steps=120,
-                win=25,
-                lam0=1e-3,
-                geo_tau=0.0,
-                pull_margin=None,
-                pull_wt=0.0,
-                require_interior=True,
-                phase_label="P3",
-                verbose=verbose,
+        # Stage B / Phase 3: turn penalty OFF once inside; pure-moment polish + GN
+        if pulled_bdist > 0.0:
+            polish_res, polish_bdist, _, polish_params = (
+                solve_geodesic_levenberg_marquardt(
+                    sym_basis,
+                    orbits,
+                    pulled_params,
+                    max_steps=120,
+                    stagnation_window=25,
+                    initial_damping=1e-3,
+                    geodesic_threshold=0.0,
+                    penalty_margin=None,
+                    penalty_weight=0.0,
+                    require_interior=True,
+                    phase_label="P3",
+                    verbose=verbose,
+                )
             )
-            if mom3 < 1e-9:
-                mom3, q3 = gn_polish(SB, orbits, q3, steps=5, require_interior=True)
-                X3, _, _, _ = orbits_to_reps(orbits, q3)
-                bd3 = SB.base.boundary_margin(X3)
-            if mom3 < 1e-12 and bd3 > 0.0:
-                orb3 = unpack_orbits(orbits, q3)
-                nodes3, weights3 = expand_orbits(orb3, SB.ops)
-                if float(weights3.min()) > 0.0:
-                    return {
-                        "quality": "PI",
-                        "mom_res": mom3,
-                        "bdist": bd3,
-                        "nodes": nodes3,
-                        "weights": weights3,
-                        "orbits": orb3,
-                    }
-    return po_backup
+            if polish_res < 1e-9:
+                polish_res, polish_params = polish_minimum_norm_gauss_newton(
+                    sym_basis, orbits, polish_params, max_steps=5, require_interior=True
+                )
+                polish_reps, _, _, _ = decode_orbit_representatives(
+                    orbits, polish_params
+                )
+                polish_bdist = sym_basis.base_basis.boundary_distance(polish_reps)
+            if polish_res < 1e-12 and polish_bdist > 0.0:
+                solution = _build_solution_if_positive(
+                    sym_basis, orbits, polish_params, polish_res, polish_bdist, "PI"
+                )
+                if solution is not None:
+                    return solution
+
+    return po_fallback
 
 
-def monomial_residual(domain, dim, degree, nodes, weights_scaled):
-    """Exact max normalized monomial residual over all |alpha| <= degree."""
-    vol = float(2.0 ** dim) if domain == "cube" else (1.0 / float(math.factorial(dim)))
-    alphas = multi_indices(dim, degree)
-    pows = []
-    for j in range(dim):
-        xj = nodes[:, j]
-        pj = np.ones((degree + 1, len(xj)), dtype=float)
-        for k in range(1, degree + 1):
-            pj[k] = pj[k - 1] * xj
-        pows.append(pj)
-    max_err = 0.0
-    for alpha in alphas:
-        val = weights_scaled.copy()
-        for j in range(dim):
-            if alpha[j] > 0:
-                val *= pows[j][alpha[j]]
-        num = float(np.sum(val))
+# ---------------------------------------------------------------------------
+# Verification, default point-count inference, orchestration, and Atlas I/O
+# ---------------------------------------------------------------------------
+
+
+def compute_monomial_residual(domain, dimension, degree, nodes, scaled_weights):
+    """Compute exact max normalized monomial residual over all |alpha| <= degree."""
+    volume = (
+        float(2.0 ** dimension)
+        if domain == "cube"
+        else (1.0 / float(math.factorial(dimension)))
+    )
+    all_exponents = generate_multi_indices(dimension, degree)
+
+    coord_powers = []
+    for axis in range(dimension):
+        axis_coords = nodes[:, axis]
+        powers = np.ones((degree + 1, len(axis_coords)), dtype=float)
+        for exp in range(1, degree + 1):
+            powers[exp] = powers[exp - 1] * axis_coords
+        coord_powers.append(powers)
+
+    max_error = 0.0
+    for exponents in all_exponents:
+        weighted_monomial = scaled_weights.copy()
+        for axis in range(dimension):
+            if exponents[axis] > 0:
+                weighted_monomial *= coord_powers[axis][exponents[axis]]
+        numerical_integral = float(np.sum(weighted_monomial))
+
         if domain == "cube":
-            if all(a % 2 == 0 for a in alpha):
-                exact = 1.0
-                for a in alpha:
-                    exact *= 2.0 / float(a + 1)
+            if all(exp % 2 == 0 for exp in exponents):
+                exact_integral = 1.0
+                for exp in exponents:
+                    exact_integral *= 2.0 / float(exp + 1)
             else:
-                exact = 0.0
+                exact_integral = 0.0
         else:
-            num_fac = 1.0
-            for a in alpha:
-                num_fac *= float(math.factorial(a))
-            exact = num_fac / float(math.factorial(sum(alpha) + dim))
-        err = abs(num - exact) / vol
-        if err > max_err:
-            max_err = err
-    return max_err
+            numerator_factorial = 1.0
+            for exp in exponents:
+                numerator_factorial *= float(math.factorial(exp))
+            exact_integral = numerator_factorial / float(
+                math.factorial(sum(exponents) + dimension)
+            )
+
+        error = abs(numerical_integral - exact_integral) / volume
+        if error > max_error:
+            max_error = error
+    return max_error
 
 
-def infer_default_points(domain, dim, degree, sym_name, SB):
-    """Compute smallest natural target N near Z respecting Stroud bound and full-dim span."""
-    M_full = math.comb(degree + dim, dim)
-    Z = int(math.ceil(M_full / float(dim + 1)))
+def infer_default_point_count(domain, dimension, degree, symmetry_name, sym_basis):
+    """Find smallest natural target N near Z respecting Stroud bound and full-dim span."""
+    num_full_moments = math.comb(degree + dimension, dimension)
+    degree_of_freedom_target = int(
+        math.ceil(num_full_moments / float(dimension + 1))
+    )
     # Classical Stroud lower bound: N >= comb(floor(degree / 2) + dim, dim)
-    stroud_lb = math.comb(degree // 2 + dim, dim)
+    stroud_lower_bound = math.comb(degree // 2 + dimension, dimension)
     if domain == "cube" and degree >= 3:
-        stroud_lb = max(stroud_lb, 2 * dim)
-    if sym_name == "none":
-        return max(Z, stroud_lb)
-    if domain == "cube" and degree % 2 == 1 and sym_name in ("central", "chiral"):
-        n_start = max(stroud_lb, int(math.ceil(SB.M * (SB.gsize / float(dim + 1)))) - dim * 2)
-    else:
-        n_start = max(
-            stroud_lb,
-            Z - (dim if (domain == "simplex" and degree % 2 == 1 and sym_name == "chiral") else 0),
+        stroud_lower_bound = max(stroud_lower_bound, 2 * dimension)
+
+    if symmetry_name == "none":
+        return max(degree_of_freedom_target, stroud_lower_bound)
+
+    if (
+        domain == "cube"
+        and degree % 2 == 1
+        and symmetry_name in ("central", "chiral")
+    ):
+        search_start = max(
+            stroud_lower_bound,
+            int(
+                math.ceil(
+                    sym_basis.num_basis
+                    * (sym_basis.group_order / float(dimension + 1))
+                )
+            )
+            - dimension * 2,
         )
-    need_full_dof = (degree >= 2 and dim >= 2)
-    for cand_n in range(n_start, max(Z, stroud_lb) + max(32, 3 * SB.gsize) + 1):
+    else:
+        simplex_chiral_offset = (
+            dimension
+            if (domain == "simplex" and degree % 2 == 1 and symmetry_name == "chiral")
+            else 0
+        )
+        search_start = max(
+            stroud_lower_bound, degree_of_freedom_target - simplex_chiral_offset
+        )
+
+    require_full_dim_orbit = degree >= 2 and dimension >= 2
+    search_end = max(degree_of_freedom_target, stroud_lower_bound) + max(
+        32, 3 * sym_basis.group_order
+    )
+    for candidate_n in range(search_start, search_end + 1):
         if domain == "cube":
-            orbs = cube_equilibrium_start(dim, degree, cand_n, sym_name, SB.ops, min_unk=SB.M)
+            orbits = build_cube_equilibrium_start(
+                dimension,
+                degree,
+                candidate_n,
+                symmetry_name,
+                sym_basis.group_transforms,
+                min_unknowns=sym_basis.num_basis,
+            )
         else:
-            orbs = simplex_equilibrium_start(dim, degree, cand_n, sym_name, SB.ops, min_unk=SB.M)
-        if orbs is not None:
-            if (not need_full_dof) or any(o["dof"] == dim for o in orbs):
-                return cand_n
-    return max(Z, stroud_lb)
+            orbits = build_simplex_equilibrium_start(
+                dimension,
+                degree,
+                candidate_n,
+                symmetry_name,
+                sym_basis.group_transforms,
+                min_unknowns=sym_basis.num_basis,
+            )
+        if orbits is not None:
+            if (not require_full_dim_orbit) or any(
+                orb.spatial_dof == dimension for orb in orbits
+            ):
+                return candidate_n
+    return max(degree_of_freedom_target, stroud_lower_bound)
 
 
-def atlas_domain_name(domain, dim):
-    """Return Atlas-style domain name and filename prefix."""
+def get_atlas_domain_info(domain, dimension):
+    """Return (atlas_domain_name, filename_prefix) for a domain and dimension."""
     if domain == "cube":
-        names = {1: "interval", 2: "square", 3: "cube"}
-        return names.get(dim, f"cube{dim}"), f"C{dim}"
-    names = {1: "simplex1", 2: "triangle", 3: "tetra"}
-    return names.get(dim, f"simplex{dim}"), f"T{dim}"
+        cube_names = {1: "interval", 2: "square", 3: "cube"}
+        return cube_names.get(dimension, f"cube{dimension}"), f"C{dimension}"
+    simplex_names = {1: "simplex1", 2: "triangle", 3: "tetra"}
+    return simplex_names.get(dimension, f"simplex{dimension}"), f"T{dimension}"
 
 
-def solve_for_symmetry(base, sym_name, target_n, seed=None, verbose=False):
+def solve_for_symmetry(
+    base_basis, symmetry_name, target_points, seed=None, verbose=False
+):
     """Run deterministic mini-ladder (plus optional seeded jitter) for one symmetry group."""
-    ops = build_group_ops(base.domain, base.dim, sym_name)
-    if ops is None:
+    group_transforms = build_symmetry_group(
+        base_basis.domain, base_basis.dimension, symmetry_name
+    )
+    if group_transforms is None:
         return None
-    SB = SymmetricBasis(base, sym_name, ops)
-    n_use = target_n if target_n > 0 else infer_default_points(base.domain, base.dim, base.degree, sym_name, SB)
-    log(f"Trying symmetry={sym_name} (|G|={SB.gsize}, M_G={SB.M}, N={n_use})")
+
+    sym_basis = SymmetricBasis(base_basis, symmetry_name, group_transforms)
+    num_points = (
+        target_points
+        if target_points > 0
+        else infer_default_point_count(
+            base_basis.domain,
+            base_basis.dimension,
+            base_basis.degree,
+            symmetry_name,
+            sym_basis,
+        )
+    )
+    log_message(
+        f"Trying symmetry={symmetry_name} "
+        f"(|G|={sym_basis.group_order}, M_G={sym_basis.num_basis}, N={num_points})"
+    )
+
     # Deterministic generic mini-ladder (no per-configuration special cases)
-    if base.domain == "cube":
-        ladder = [
+    if base_basis.domain == "cube":
+        start_ladder = [
             (0.30, 6.0, 12.0),
             (0.45, 8.0, 12.0),
             (0.25, 4.0, 0.0),
             (0.55, 11.0, 8.0),
         ]
     else:
-        ladder = [
+        start_ladder = [
             (0.50, 0.06, 0.0),
             (1.10, 0.12, 0.0),
             (1.80, 0.04, 0.0),
             (0.30, 0.18, 0.0),
         ]
-    best_po = None
-    first_orbs = None
-    for idx, (p1, p2, p3) in enumerate(ladder):
-        if base.domain == "cube":
-            orbs = cube_equilibrium_start(
-                base.dim, base.degree, n_use, sym_name, ops, r0=p1, angle=p2, pnorm=p3, min_unk=SB.M
+
+    best_po_solution = None
+    first_valid_orbits = None
+    for step_idx, (inset, twist_or_angle, norm_order) in enumerate(start_ladder):
+        if base_basis.domain == "cube":
+            orbits = build_cube_equilibrium_start(
+                base_basis.dimension,
+                base_basis.degree,
+                num_points,
+                symmetry_name,
+                group_transforms,
+                boundary_inset=inset,
+                rotation_degrees=twist_or_angle,
+                norm_order=norm_order,
+                min_unknowns=sym_basis.num_basis,
             )
         else:
-            orbs = simplex_equilibrium_start(
-                base.dim, base.degree, n_use, sym_name, ops, r0=p1, twist=p2, min_unk=SB.M
+            orbits = build_simplex_equilibrium_start(
+                base_basis.dimension,
+                base_basis.degree,
+                num_points,
+                symmetry_name,
+                group_transforms,
+                boundary_inset=inset,
+                chiral_twist=twist_or_angle,
+                min_unknowns=sym_basis.num_basis,
             )
-        if orbs is None:
-            if idx == 0:
-                log(f"symmetry={sym_name}: N={n_use} infeasible for orbit/unknown count (M_G={SB.M})")
+
+        if orbits is None:
+            if step_idx == 0:
+                log_message(
+                    f"symmetry={symmetry_name}: N={num_points} infeasible "
+                    f"for orbit/unknown count (M_G={sym_basis.num_basis})"
+                )
                 return None
             continue
-        if first_orbs is None:
-            first_orbs = orbs
-        unk = sum(o["unk"] for o in orbs)
-        log(f"symmetry={sym_name} ladder[{idx}] unk={unk}/{SB.M} (orbits={len(orbs)})")
-        res = solve_single_start(SB, orbs, verbose=verbose)
-        if res is not None:
-            log(
-                f"symmetry={sym_name} ladder[{idx}] -> {res['quality']} "
-                f"mom_res={res['mom_res']:.2e} bdist={res['bdist']:+.3e}"
+
+        if first_valid_orbits is None:
+            first_valid_orbits = orbits
+        total_unknowns = sum(orb.num_unknowns for orb in orbits)
+        log_message(
+            f"symmetry={symmetry_name} ladder[{step_idx}] "
+            f"unk={total_unknowns}/{sym_basis.num_basis} (orbits={len(orbits)})"
+        )
+
+        solution = solve_from_single_start(sym_basis, orbits, verbose=verbose)
+        if solution is not None:
+            log_message(
+                f"symmetry={symmetry_name} ladder[{step_idx}] -> {solution.quality} "
+                f"mom_res={solution.moment_residual:.2e} "
+                f"bdist={solution.boundary_distance:+.3e}"
             )
-            if res["quality"] == "PI":
-                return res, SB, n_use
-            if best_po is None or res["bdist"] > best_po["bdist"]:
-                best_po = res
+            if solution.quality == "PI":
+                return solution, sym_basis, num_points
+            if (
+                best_po_solution is None
+                or solution.boundary_distance > best_po_solution.boundary_distance
+            ):
+                best_po_solution = solution
+
     # Optional seeded perturbation stage when --seed is supplied
-    if seed is not None and first_orbs is not None:
+    if seed is not None and first_valid_orbits is not None:
         rng = np.random.default_rng(seed)
         for trial in range(8):
-            j_orbs = []
-            scale = 0.03 if trial < 4 else 0.08
-            for o in first_orbs:
-                no = dict(o)
-                if o["dof"] > 0:
-                    no["xi"] = o["xi"] + rng.normal(0.0, scale, size=o["dof"])
-                no["v"] = o["v"] * math.exp(float(rng.normal(0.0, 0.05)))
-                j_orbs.append(no)
-            res = solve_single_start(SB, j_orbs, verbose=verbose)
-            if res is not None:
-                log(
-                    f"symmetry={sym_name} seed={seed} trial={trial} -> {res['quality']} "
-                    f"mom_res={res['mom_res']:.2e} bdist={res['bdist']:+.3e}"
+            jitter_scale = 0.03 if trial < 4 else 0.08
+            jittered_orbits = []
+            for orb in first_valid_orbits:
+                coords = (
+                    orb.subspace_coords
+                    + rng.normal(0.0, jitter_scale, size=orb.spatial_dof)
+                    if orb.spatial_dof > 0
+                    else orb.subspace_coords.copy()
                 )
-                if res["quality"] == "PI":
-                    return res, SB, n_use
-                if best_po is None or res["bdist"] > best_po["bdist"]:
-                    best_po = res
-    if best_po is not None:
-        return best_po, SB, n_use
+                weight_sqrt = orb.weight_sqrt * math.exp(
+                    float(rng.normal(0.0, 0.05))
+                )
+                jittered_orbits.append(
+                    SymmetryOrbit(
+                        size=orb.size,
+                        subspace_origin=orb.subspace_origin,
+                        subspace_basis=orb.subspace_basis,
+                        subspace_coords=coords,
+                        weight_sqrt=weight_sqrt,
+                    )
+                )
+
+            solution = solve_from_single_start(
+                sym_basis, jittered_orbits, verbose=verbose
+            )
+            if solution is not None:
+                log_message(
+                    f"symmetry={symmetry_name} seed={seed} trial={trial} -> "
+                    f"{solution.quality} mom_res={solution.moment_residual:.2e} "
+                    f"bdist={solution.boundary_distance:+.3e}"
+                )
+                if solution.quality == "PI":
+                    return solution, sym_basis, num_points
+                if (
+                    best_po_solution is None
+                    or solution.boundary_distance
+                    > best_po_solution.boundary_distance
+                ):
+                    best_po_solution = solution
+
+    if best_po_solution is not None:
+        return best_po_solution, sym_basis, num_points
     return None
 
 
-def symmetry_schedule(domain, dim, degree):
+def get_symmetry_schedule(domain, dimension, degree):
     """Generic symmetry trial order when --symmetry is omitted."""
-    if dim == 1:
+    if dimension == 1:
         return ["full", "none"]
     if domain == "cube":
         if degree % 2 == 1:
@@ -1607,136 +2246,193 @@ def symmetry_schedule(domain, dim, degree):
     return ["chiral", "full", "none"]
 
 
-def save_atlas_json(out_path, domain, dim, degree, res, sym_name, cmd):
-    """Write rule in Atlas-standard JSON format."""
-    dom_name, prefix = atlas_domain_name(domain, dim)
-    vol = float(2.0 ** dim) if domain == "cube" else (1.0 / float(math.factorial(dim)))
-    nodes = res["nodes"]
-    weights = res["weights"] * vol
-    N = len(weights)
-    qual = res["quality"]
-    rule_id = f"CA-{prefix}-{degree:02d}-{N}-{qual}-MPC"
-    merr = monomial_residual(domain, dim, degree, nodes, weights)
-    fam = (
+def save_atlas_rule_json(
+    output_path, domain, dimension, degree, solution, symmetry_name, reproduce_command
+):
+    """Write a converged cubature rule in Atlas-standard JSON format."""
+    atlas_domain, prefix = get_atlas_domain_info(domain, dimension)
+    volume = (
+        float(2.0 ** dimension)
+        if domain == "cube"
+        else (1.0 / float(math.factorial(dimension)))
+    )
+    nodes = solution.nodes
+    scaled_weights = solution.weights * volume
+    num_points = len(scaled_weights)
+    quality = solution.quality
+    rule_id = f"CA-{prefix}-{degree:02d}-{num_points}-{quality}-MPC"
+    monomial_err = compute_monomial_residual(
+        domain, dimension, degree, nodes, scaled_weights
+    )
+    family = (
         "minimal_pointcount_for_degree_n_PI"
-        if qual == "PI"
+        if quality == "PI"
         else "minimal_pointcount_for_degree_n_PO"
     )
     record = {
         "id": rule_id,
-        "family": fam,
-        "domain": dom_name,
-        "dimension": dim,
+        "family": family,
+        "domain": atlas_domain,
+        "dimension": dimension,
         "degree": degree,
-        "points": int(N),
-        "quality": qual,
-        "symmetry": sym_name,
+        "points": int(num_points),
+        "quality": quality,
+        "symmetry": symmetry_name,
         "origin": "found",
         "method": (
-            f"Generic deterministic equilibrium-start solver (domain={domain}, dim={dim}, "
-            f"symmetry={sym_name}) with fold-free geodesic-accelerated Cholesky LM, "
+            f"Generic deterministic equilibrium-start solver (domain={domain}, dim={dimension}, "
+            f"symmetry={symmetry_name}) with fold-free geodesic-accelerated Cholesky LM, "
             f"smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage"
         ),
         "author": "Antigravity (AI-assisted)",
         "reproduce": {
             "script": "code/cubature_generic.py",
-            "command": cmd,
+            "command": reproduce_command,
         },
         "status": "numerical",
-        "residual_reported": float(merr),
-        "nodes": [[float(c) for c in row] for row in nodes],
-        "weights": [float(w) for w in weights],
+        "residual_reported": float(monomial_err),
+        "nodes": [[float(coord) for coord in row] for row in nodes],
+        "weights": [float(weight) for weight in scaled_weights],
     }
-    if out_path is None:
-        out_path = f"{rule_id}.json"
-    parent = os.path.dirname(os.path.abspath(out_path))
-    if parent:
-        os.makedirs(parent, exist_ok=True)
-    with open(out_path, "w", encoding="utf-8") as fh:
-        json.dump(record, fh, indent=2)
-        fh.write("\n")
-    return out_path, rule_id, merr
+    if output_path is None:
+        output_path = f"{rule_id}.json"
+    parent_dir = os.path.dirname(os.path.abspath(output_path))
+    if parent_dir:
+        os.makedirs(parent_dir, exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as file_handle:
+        json.dump(record, file_handle, indent=2)
+        file_handle.write("\n")
+    return output_path, rule_id, monomial_err
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--dim", type=int, default=2, help="spatial dimension d >= 1 (default: 2)")
-    ap.add_argument("--degree", type=int, default=7, help="polynomial degree n >= 1 (default: 7)")
-    ap.add_argument(
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--dim", type=int, default=2, help="spatial dimension d >= 1 (default: 2)"
+    )
+    parser.add_argument(
+        "--degree", type=int, default=7, help="polynomial degree n >= 1 (default: 7)"
+    )
+    parser.add_argument(
         "--domain",
         choices=("simplex", "cube"),
         default="simplex",
         help="reference domain: simplex or cube (default: simplex)",
     )
-    ap.add_argument(
+    parser.add_argument(
         "--symmetry",
         choices=("auto", "none", "central", "chiral", "full"),
         default="auto",
         help="symmetry group (default: auto = try all applicable symmetries)",
     )
-    ap.add_argument(
+    parser.add_argument(
         "--points",
         type=int,
         default=0,
         help="target number of nodes N (default: 0 = automatic near Z)",
     )
-    ap.add_argument(
+    parser.add_argument(
         "--seed",
         type=int,
         default=None,
         help="optional RNG seed for jittered fallback starts after deterministic mini-ladder",
     )
-    a = ap.parse_args()
-    if a.dim < 1:
+    args = parser.parse_args()
+    if args.dim < 1:
         raise ValueError("dim must be >= 1")
-    if a.degree < 1:
+    if args.degree < 1:
         raise ValueError("degree must be >= 1")
-    t0 = time.time()
-    base = CubeBasis(a.dim, a.degree) if a.domain == "cube" else SimplexBasis(a.dim, a.degree)
-    Z = int(math.ceil(base.M / float(a.dim + 1)))
-    log(
-        f"Start generic solver: domain={a.domain} dim={a.dim} degree={a.degree} "
-        f"M={base.M} Z={Z} symmetry={a.symmetry} points={a.points} seed={a.seed}"
+
+    start_time = time.time()
+    base_basis = (
+        CubeBasis(args.dim, args.degree)
+        if args.domain == "cube"
+        else SimplexBasis(args.dim, args.degree)
     )
-    syms = symmetry_schedule(a.domain, a.dim, a.degree) if a.symmetry == "auto" else [a.symmetry]
-    best = None
-    best_sym = None
-    for sym in syms:
-        if a.points == 0 and sym == "none" and best is not None and best["quality"] == "PI" and len(best["weights"]) <= Z:
+    dof_target_z = int(math.ceil(base_basis.num_basis / float(args.dim + 1)))
+    log_message(
+        f"Start generic solver: domain={args.domain} dim={args.dim} "
+        f"degree={args.degree} M={base_basis.num_basis} Z={dof_target_z} "
+        f"symmetry={args.symmetry} points={args.points} seed={args.seed}"
+    )
+
+    symmetries = (
+        get_symmetry_schedule(args.domain, args.dim, args.degree)
+        if args.symmetry == "auto"
+        else [args.symmetry]
+    )
+    best_solution = None
+    best_symmetry = None
+
+    for symmetry_name in symmetries:
+        if (
+            args.points == 0
+            and symmetry_name == "none"
+            and best_solution is not None
+            and best_solution.quality == "PI"
+            and len(best_solution.weights) <= dof_target_z
+        ):
             continue
-        out = solve_for_symmetry(base, sym, a.points, seed=a.seed, verbose=False)
-        if out is None:
+        outcome = solve_for_symmetry(
+            base_basis, symmetry_name, args.points, seed=args.seed, verbose=False
+        )
+        if outcome is None:
             continue
-        res, _, _ = out
-        if res["quality"] == "PI":
-            if best is None or best["quality"] != "PI" or len(res["weights"]) < len(best["weights"]):
-                best = res
-                best_sym = sym
-            if a.points > 0:
+        solution, _, _ = outcome
+        if solution.quality == "PI":
+            if (
+                best_solution is None
+                or best_solution.quality != "PI"
+                or len(solution.weights) < len(best_solution.weights)
+            ):
+                best_solution = solution
+                best_symmetry = symmetry_name
+            if args.points > 0:
                 break
-        elif best is None or (best["quality"] != "PI" and res["bdist"] > best["bdist"]):
-            best = res
-            best_sym = sym
-    elapsed = time.time() - t0
-    if best is None:
-        log(f"No solution found in {elapsed:.2f}s")
+        elif best_solution is None or (
+            best_solution.quality != "PI"
+            and solution.boundary_distance > best_solution.boundary_distance
+        ):
+            best_solution = solution
+            best_symmetry = symmetry_name
+
+    elapsed = time.time() - start_time
+    if best_solution is None:
+        log_message(f"No solution found in {elapsed:.2f}s")
         sys.exit(1)
-    cmd_args = [
-        "--dim", str(a.dim),
-        "--degree", str(a.degree),
-        "--domain", a.domain,
-        "--symmetry", best_sym,
-        "--points", str(len(best["weights"])),
+
+    command_args = [
+        "--dim",
+        str(args.dim),
+        "--degree",
+        str(args.degree),
+        "--domain",
+        args.domain,
+        "--symmetry",
+        best_symmetry,
+        "--points",
+        str(len(best_solution.weights)),
     ]
-    if a.seed is not None:
-        cmd_args.extend(["--seed", str(a.seed)])
-    cmd = "python code/cubature_generic.py " + shlex.join(cmd_args)
-    out_path, rule_id, merr = save_atlas_json(None, a.domain, a.dim, a.degree, best, best_sym, cmd)
-    log(
-        f"FOUND {rule_id} ({best['quality']}, sym={best_sym}) "
-        f"N={len(best['weights'])} mom_res={best['mom_res']:.2e} monom={merr:.2e} "
-        f"min_w={float(best['weights'].min() * base.vol):.3e} bdist={best['bdist']:+.3e} "
-        f"wrote={out_path} ({elapsed:.2f}s)"
+    if args.seed is not None:
+        command_args.extend(["--seed", str(args.seed)])
+    reproduce_command = "python code/cubature_generic.py " + shlex.join(command_args)
+
+    output_path, rule_id, monomial_err = save_atlas_rule_json(
+        None,
+        args.domain,
+        args.dim,
+        args.degree,
+        best_solution,
+        best_symmetry,
+        reproduce_command,
+    )
+    log_message(
+        f"FOUND {rule_id} ({best_solution.quality}, sym={best_symmetry}) "
+        f"N={len(best_solution.weights)} mom_res={best_solution.moment_residual:.2e} "
+        f"monom={monomial_err:.2e} "
+        f"min_w={float(best_solution.weights.min() * base_basis.volume):.3e} "
+        f"bdist={best_solution.boundary_distance:+.3e} "
+        f"wrote={output_path} ({elapsed:.2f}s)"
     )
 
 
