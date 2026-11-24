@@ -1275,8 +1275,9 @@ def main():
             nodes_p2, _ = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
             mx_p2 = float(np.abs(nodes_p2).max())
             if res >= 1e-12 and mx_p2 < 1.0 - 1e-7:
-                # Phase 2 pulled every node inside [-1, 1]^3; polish moments in sin(s).
-                _, res, it3, xg, yg, zg, wg, td, wd, wc = solve_s6_lm(
+                # Phase 2 pulled every node inside [-1, 1]^3; try fold-free pure-moment
+                # polish capped inside the cube before falling back to sin(s).
+                _, res3, it3, x3, y3, z3, w3, t3, wd3, wc3 = solve_s6_plain(
                     B,
                     xg,
                     yg,
@@ -1286,16 +1287,49 @@ def main():
                     wd,
                     has_centre,
                     wc,
-                    a.pull_steps,
+                    a.steps,
                     a.win,
                     a.pull_lam0,
                     geo=use_geo,
                     alpha=a.alpha,
                     bold=a.bold,
                     geo_tau=0.0,
+                    xmax=1.0 - 1e-7,
+                    pull_b=None,
                     verbose=a.verbose,
                 )
                 used += it3
+                nodes_p3, _ = expand_s6(x3, y3, z3, w3, t3, wd3, has_centre, wc3)
+                if res3 < 1e-12 and float(np.abs(nodes_p3).max()) < 1.0 - 1e-7:
+                    res = res3
+                    xg = x3
+                    yg = y3
+                    zg = z3
+                    wg = w3
+                    td = t3
+                    wd = wd3
+                    wc = wc3
+                else:
+                    _, res, it4, xg, yg, zg, wg, td, wd, wc = solve_s6_lm(
+                        B,
+                        xg,
+                        yg,
+                        zg,
+                        wg,
+                        td,
+                        wd,
+                        has_centre,
+                        wc,
+                        a.steps,
+                        a.win,
+                        a.pull_lam0,
+                        geo=use_geo,
+                        alpha=a.alpha,
+                        bold=a.bold,
+                        geo_tau=0.0,
+                        verbose=a.verbose,
+                    )
+                    used += it4
     nodes, weights = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
     merr = monomial_residual(a.degree, nodes, weights)
     min_w = float(weights.min())
