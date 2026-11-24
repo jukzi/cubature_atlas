@@ -245,7 +245,9 @@
     "tipNode": "5ec048fa8d838611",
     "tipOrbit": "ddc5d8caafdc297b",
     "tipOut": "f78ea72183ac831b",
-    "tipPin": "36e0b7062f77d8cf"
+    "tipPin": "36e0b7062f77d8cf",
+    "loadingPts": "9ac17dc33c9d4a31",
+    "loadPtsErr": "3bd8c120732ed80e"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -515,5 +517,7 @@
   "tipNode": "Knoten #{i}",
   "tipOrbit": "Orbit: {k}",
   "tipOut": "außerhalb",
-  "tipPin": "fixiert"
+  "tipPin": "fixiert",
+  "loadingPts": "Lade Knoten…",
+  "loadPtsErr": "Knotendaten konnten nicht geladen werden – zum Wiederholen klicken."
 }

@@ -267,5 +267,7 @@
   "tipNode": "Node #{i}",
   "tipOrbit": "Orbit: {k}",
   "tipOut": "outside",
-  "tipPin": "pinned"
+  "tipPin": "pinned",
+  "loadingPts": "Loading nodes…",
+  "loadPtsErr": "Could not load node data — click to retry."
 }
