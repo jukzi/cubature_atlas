@@ -6,14 +6,22 @@
   "degree": 1,
   "points": 1,
   "quality": "PI",
+  "symmetry": "chiral",
   "origin": "found",
-  "method": "numerical search of this atlas (moment equations, least squares), checked numerically",
-  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=3, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "command": "python code/cubature_generic.py --dim 3 --degree 1 --domain cube --symmetry chiral --points 1"
+  },
   "status": "proven",
   "residual_reported": 0.0,
-  "numerical_check": {"N": 1, "M": 1, "p": 1, "res": 4.440892098500626e-16, "sigma": 0.3535533905932738, "h": 0.0, "rad": 2.51214793389404e-15, "cert": true, "inside": true, "sym": true},
   "nodes": [
-    [0.0, 0.0, 0.0]
+    [
+      0.0,
+      0.0,
+      0.0
+    ]
   ],
   "weights": [
     8.0

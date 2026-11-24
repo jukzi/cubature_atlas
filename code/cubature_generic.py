@@ -37,6 +37,7 @@ import time
 
 import numpy as np
 from scipy.linalg import cho_factor, cho_solve
+from scipy.special import betaincinv
 
 
 # ---------------------------------------------------------------------------
@@ -70,7 +71,7 @@ def generate_multi_indices(dimension, max_degree):
     return indices
 
 
-def generate_halton_points(num_points, dimension):
+def generate_halton_points(num_points, dimension, skip=0):
     """Return deterministic Halton low-discrepancy points in (0, 1)^dimension."""
     primes = []
     candidate = 2
@@ -89,7 +90,7 @@ def generate_halton_points(num_points, dimension):
     points = np.zeros((num_points, dimension), dtype=float)
     for axis, base in enumerate(primes):
         for point_index in range(num_points):
-            index = point_index + 1
+            index = point_index + skip + 1
             radix_fraction = 1.0
             radical_inverse = 0.0
             while index > 0:
@@ -266,14 +267,16 @@ class CubeBasis:
         return float(1.0 - np.abs(points).max())
 
     def boundary_hinge_penalty(self, points, target_margin):
-        """Return hinge violations and gradients d(hinge)/dX for |x_j| > 1 - target_margin."""
+        """Return (violations, gradients, exact_hessians) for |x_j| > 1 - target_margin."""
         inner_limit = 1.0 - target_margin
         abs_coords = np.abs(points)
+        active = abs_coords > inner_limit
         violations = np.maximum(0.0, abs_coords - inner_limit)
-        gradients = np.where(
-            abs_coords > inner_limit, np.sign(points) * violations, 0.0
-        )
-        return violations, gradients
+        gradients = np.where(active, np.sign(points) * violations, 0.0)
+        hessians = np.zeros((len(points), self.dimension, self.dimension), dtype=float)
+        diag_axes = np.arange(self.dimension)
+        hessians[:, diag_axes, diag_axes] = active.astype(float)
+        return violations, gradients, hessians
 
 
 class SimplexBasis:
@@ -306,9 +309,10 @@ class SimplexBasis:
                 norm_product / dim_factorial
             )
 
-        # Group unique (axis, alpha_param) pairs so each Jacobi recurrence runs once
+        # Group unique (axis, alpha_param) pairs and precompute vectorized recurrence tables
         self.unique_alphas_by_axis = []
         self.alpha_slot_by_axis = []
+        self.jacobi_tables_by_axis = []
         for axis in range(dimension):
             unique_alphas = sorted(
                 set(int(val) for val in self.jacobi_alpha_params[:, axis])
@@ -326,31 +330,35 @@ class SimplexBasis:
                     dtype=np.int32,
                 )
             )
+            alpha_vec = np.asarray(unique_alphas, dtype=float)
+            coeff_shifted = np.zeros((degree + 1, len(unique_alphas)), dtype=float)
+            coeff_tail = np.zeros((degree + 1, len(unique_alphas)), dtype=float)
+            coeff_prev = np.zeros((degree + 1, len(unique_alphas)), dtype=float)
+            for deg in range(2, degree + 1):
+                k_val = float(deg)
+                denom = 2.0 * k_val * (k_val + alpha_vec) * (2.0 * k_val + alpha_vec - 2.0)
+                coeff_shifted[deg] = (
+                    (2.0 * k_val + alpha_vec - 1.0)
+                    * (2.0 * k_val + alpha_vec)
+                    * (2.0 * k_val + alpha_vec - 2.0)
+                    / denom
+                )
+                coeff_tail[deg] = (
+                    (2.0 * k_val + alpha_vec - 1.0) * (alpha_vec * alpha_vec) / denom
+                )
+                coeff_prev[deg] = (
+                    2.0
+                    * (k_val + alpha_vec - 1.0)
+                    * (k_val - 1.0)
+                    * (2.0 * k_val + alpha_vec)
+                    / denom
+                )
+            self.jacobi_tables_by_axis.append(
+                (alpha_vec, coeff_shifted, coeff_tail, coeff_prev)
+            )
 
         self.exact_moments = np.zeros(self.num_basis, dtype=float)
         self.exact_moments[0] = 1.0
-
-    @staticmethod
-    def _homogeneous_jacobi_recurrence_coeffs(degree_k, alpha_param):
-        """3-term recurrence coefficients for homogeneous Jacobi polynomials P_k^{(a, 0)}."""
-        k_val = float(degree_k)
-        a_val = float(alpha_param)
-        denominator = 2.0 * k_val * (k_val + a_val) * (2.0 * k_val + a_val - 2.0)
-        coeff_shifted = (
-            (2.0 * k_val + a_val - 1.0)
-            * (2.0 * k_val + a_val)
-            * (2.0 * k_val + a_val - 2.0)
-            / denominator
-        )
-        coeff_tail = (2.0 * k_val + a_val - 1.0) * (a_val * a_val) / denominator
-        coeff_prev = (
-            2.0
-            * (k_val + a_val - 1.0)
-            * (k_val - 1.0)
-            * (2.0 * k_val + a_val)
-            / denominator
-        )
-        return coeff_shifted, coeff_tail, coeff_prev
 
     def _barycentric_and_tail_sums(self, points):
         """Compute barycentric coordinates u_0..u_d and suffix sums s_m = sum_{r>=m} u_r."""
@@ -366,103 +374,125 @@ class SimplexBasis:
             tail_sums[axis] = barycentric[axis] + tail_sums[axis + 1]
         return barycentric, tail_sums
 
-    def _homogeneous_jacobi_values(self, coord, tail_sum, alpha_param, max_degree):
-        """Evaluate s^k * P_k^{(alpha, 0)}(2*coord/tail_sum - 1) without division."""
-        values = np.empty((max_degree + 1, len(coord)), dtype=float)
+    def _axis_jacobi_values(self, axis, coord, tail_sum):
+        """Vectorized evaluation of homogeneous Jacobi polynomials for all alphas on axis."""
+        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
+            self.jacobi_tables_by_axis[axis]
+        )
+        max_deg = self.degree
+        num_alphas = len(alpha_vec)
+        num_points = len(coord)
+        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
         values[0] = 1.0
-        if max_degree >= 1:
-            values[1] = (alpha_param + 2.0) * coord - tail_sum
+        if max_deg >= 1:
+            values[1] = (alpha_vec[:, None] + 2.0) * coord[None, :] - tail_sum[None, :]
 
-        tail_squared = tail_sum * tail_sum
-        shifted_coord = 2.0 * coord - tail_sum
-        for deg in range(2, max_degree + 1):
-            coeff_shifted, coeff_tail, coeff_prev = (
-                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
+        tail_squared = (tail_sum * tail_sum)[None, :]
+        shifted_coord = (2.0 * coord - tail_sum)[None, :]
+        tail_row = tail_sum[None, :]
+        for deg in range(2, max_deg + 1):
+            linear_factor = (
+                coeff_shifted[deg][:, None] * shifted_coord
+                + coeff_tail[deg][:, None] * tail_row
             )
-            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
             values[deg] = (
                 linear_factor * values[deg - 1]
-                - coeff_prev * tail_squared * values[deg - 2]
+                - coeff_prev[deg][:, None] * tail_squared * values[deg - 2]
             )
         return values
 
-    def _homogeneous_jacobi_first_order_jet(
-        self, coord, coord_dir, tail_sum, tail_sum_dir, alpha_param, max_degree
-    ):
-        """Evaluate (value, 1st directional deriv) of homogeneous Jacobi polynomials."""
-        values = np.empty((max_degree + 1, len(coord)), dtype=float)
-        first_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
+    def _axis_jacobi_values_and_partials(self, axis, coord, tail_sum):
+        """Single-pass evaluation of (value, d/dcoord, d/dtail_sum) for all alphas on axis."""
+        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
+            self.jacobi_tables_by_axis[axis]
+        )
+        max_deg = self.degree
+        num_alphas = len(alpha_vec)
+        num_points = len(coord)
+        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        dcoord = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        dtail = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+
         values[0] = 1.0
-        first_deriv[0] = 0.0
-        if max_degree >= 1:
-            values[1] = (alpha_param + 2.0) * coord - tail_sum
-            first_deriv[1] = (alpha_param + 2.0) * coord_dir - tail_sum_dir
+        dcoord[0] = 0.0
+        dtail[0] = 0.0
+        if max_deg >= 1:
+            values[1] = (alpha_vec[:, None] + 2.0) * coord[None, :] - tail_sum[None, :]
+            dcoord[1] = alpha_vec[:, None] + 2.0
+            dtail[1] = -1.0
 
-        tail_squared = tail_sum * tail_sum
-        tail_squared_deriv = 2.0 * tail_sum * tail_sum_dir
-        shifted_coord = 2.0 * coord - tail_sum
-        shifted_coord_dir = 2.0 * coord_dir - tail_sum_dir
+        tail_squared = (tail_sum * tail_sum)[None, :]
+        two_tail = (2.0 * tail_sum)[None, :]
+        shifted_coord = (2.0 * coord - tail_sum)[None, :]
+        tail_row = tail_sum[None, :]
+        for deg in range(2, max_deg + 1):
+            c_shift = coeff_shifted[deg][:, None]
+            c_tail = coeff_tail[deg][:, None]
+            c_prev = coeff_prev[deg][:, None]
+            linear_factor = c_shift * shifted_coord + c_tail * tail_row
+            dlinear_dcoord = 2.0 * c_shift
+            dlinear_dtail = c_tail - c_shift
+            prev_val = values[deg - 1]
+            prev2_val = values[deg - 2]
+            values[deg] = linear_factor * prev_val - c_prev * tail_squared * prev2_val
+            dcoord[deg] = (
+                dlinear_dcoord * prev_val
+                + linear_factor * dcoord[deg - 1]
+                - c_prev * tail_squared * dcoord[deg - 2]
+            )
+            dtail[deg] = (
+                dlinear_dtail * prev_val
+                + linear_factor * dtail[deg - 1]
+                - c_prev * (two_tail * prev2_val + tail_squared * dtail[deg - 2])
+            )
+        return values, dcoord, dtail
 
-        for deg in range(2, max_degree + 1):
-            coeff_shifted, coeff_tail, coeff_prev = (
-                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
-            )
-            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
-            linear_factor_dir = (
-                coeff_shifted * shifted_coord_dir + coeff_tail * tail_sum_dir
-            )
-            values[deg] = (
-                linear_factor * values[deg - 1]
-                - coeff_prev * tail_squared * values[deg - 2]
-            )
-            first_deriv[deg] = (
-                linear_factor_dir * values[deg - 1]
-                + linear_factor * first_deriv[deg - 1]
-                - coeff_prev
-                * (
-                    tail_squared_deriv * values[deg - 2]
-                    + tail_squared * first_deriv[deg - 2]
-                )
-            )
-        return values, first_deriv
-
-    def _homogeneous_jacobi_second_order_jet(
-        self, coord, coord_dir, tail_sum, tail_sum_dir, alpha_param, max_degree
+    def _axis_jacobi_second_order_jet(
+        self, axis, coord, coord_dir, tail_sum, tail_sum_dir
     ):
-        """Evaluate (value, 1st, 2nd directional derivs) of homogeneous Jacobi polynomials."""
-        values = np.empty((max_degree + 1, len(coord)), dtype=float)
-        first_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
-        second_deriv = np.empty((max_degree + 1, len(coord)), dtype=float)
+        """Vectorized 2nd-order Taylor jet (f, f', f'') for all alphas on axis."""
+        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
+            self.jacobi_tables_by_axis[axis]
+        )
+        max_deg = self.degree
+        num_alphas = len(alpha_vec)
+        num_points = len(coord)
+        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        first_deriv = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        second_deriv = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+
         values[0] = 1.0
         first_deriv[0] = 0.0
         second_deriv[0] = 0.0
-        if max_degree >= 1:
-            values[1] = (alpha_param + 2.0) * coord - tail_sum
-            first_deriv[1] = (alpha_param + 2.0) * coord_dir - tail_sum_dir
+        if max_deg >= 1:
+            alpha_col = alpha_vec[:, None] + 2.0
+            values[1] = alpha_col * coord[None, :] - tail_sum[None, :]
+            first_deriv[1] = alpha_col * coord_dir[None, :] - tail_sum_dir[None, :]
             second_deriv[1] = 0.0
 
-        tail_squared = tail_sum * tail_sum
-        tail_squared_first_deriv = 2.0 * tail_sum * tail_sum_dir
-        tail_squared_second_deriv = 2.0 * tail_sum_dir * tail_sum_dir
-        shifted_coord = 2.0 * coord - tail_sum
-        shifted_coord_dir = 2.0 * coord_dir - tail_sum_dir
+        tail_squared = (tail_sum * tail_sum)[None, :]
+        tail_squared_first_deriv = (2.0 * tail_sum * tail_sum_dir)[None, :]
+        tail_squared_second_deriv = (2.0 * tail_sum_dir * tail_sum_dir)[None, :]
+        shifted_coord = (2.0 * coord - tail_sum)[None, :]
+        shifted_coord_dir = (2.0 * coord_dir - tail_sum_dir)[None, :]
+        tail_row = tail_sum[None, :]
+        tail_dir_row = tail_sum_dir[None, :]
 
-        for deg in range(2, max_degree + 1):
-            coeff_shifted, coeff_tail, coeff_prev = (
-                self._homogeneous_jacobi_recurrence_coeffs(deg, alpha_param)
-            )
-            linear_factor = coeff_shifted * shifted_coord + coeff_tail * tail_sum
-            linear_factor_dir = (
-                coeff_shifted * shifted_coord_dir + coeff_tail * tail_sum_dir
-            )
+        for deg in range(2, max_deg + 1):
+            c_shift = coeff_shifted[deg][:, None]
+            c_tail = coeff_tail[deg][:, None]
+            c_prev = coeff_prev[deg][:, None]
+            linear_factor = c_shift * shifted_coord + c_tail * tail_row
+            linear_factor_dir = c_shift * shifted_coord_dir + c_tail * tail_dir_row
+
             values[deg] = (
                 linear_factor * values[deg - 1]
-                - coeff_prev * tail_squared * values[deg - 2]
+                - c_prev * tail_squared * values[deg - 2]
             )
             first_deriv[deg] = (
                 linear_factor_dir * values[deg - 1]
                 + linear_factor * first_deriv[deg - 1]
-                - coeff_prev
+                - c_prev
                 * (
                     tail_squared_first_deriv * values[deg - 2]
                     + tail_squared * first_deriv[deg - 2]
@@ -471,7 +501,7 @@ class SimplexBasis:
             second_deriv[deg] = (
                 2.0 * linear_factor_dir * first_deriv[deg - 1]
                 + linear_factor * second_deriv[deg - 1]
-                - coeff_prev
+                - c_prev
                 * (
                     tail_squared_second_deriv * values[deg - 2]
                     + 2.0 * tail_squared_first_deriv * first_deriv[deg - 2]
@@ -479,11 +509,6 @@ class SimplexBasis:
                 )
             )
         return values, first_deriv, second_deriv
-
-    def _max_axis_degree(self, axis, alpha_param):
-        """Maximum polynomial degree needed along axis for a given Jacobi alpha."""
-        trailing_sum = max(0, (alpha_param - (self.dimension - 1 - axis)) // 2)
-        return self.degree - trailing_sum
 
     def evaluate_values(self, points):
         """Evaluate all Dubiner basis polynomials at points."""
@@ -493,31 +518,18 @@ class SimplexBasis:
             self.normalization_factors[:, None], num_points, axis=1
         )
         for axis in range(self.dimension):
-            unique_alphas = self.unique_alphas_by_axis[axis]
-            tables = [
-                self._homogeneous_jacobi_values(
-                    barycentric[axis],
-                    tail_sums[axis],
-                    alpha_val,
-                    self._max_axis_degree(axis, alpha_val),
-                )
-                for alpha_val in unique_alphas
+            table = self._axis_jacobi_values(
+                axis, barycentric[axis], tail_sums[axis]
+            )
+            values *= table[
+                self.multi_index_array[:, axis], self.alpha_slot_by_axis[axis]
             ]
-            axis_factor = np.empty((self.num_basis, num_points), dtype=float)
-            slots = self.alpha_slot_by_axis[axis]
-            exponents = self.multi_index_array[:, axis]
-            for slot, table in enumerate(tables):
-                mask = slots == slot
-                axis_factor[mask] = table[exponents[mask]]
-            values *= axis_factor
         return values
 
     def evaluate_values_and_gradients(self, points):
         """Evaluate Dubiner basis values and Cartesian coordinate gradients at points."""
         num_points = len(points)
         barycentric, tail_sums = self._barycentric_and_tail_sums(points)
-        unit_direction = np.ones(num_points, dtype=float)
-        zero_direction = np.zeros(num_points, dtype=float)
 
         # Partial derivatives wrt barycentric u_m and tail sum s_m, then chain rule:
         # du_0/dx_j = -1, du_{j+1}/dx_j = +1; ds_0/dx_j = 0, ds_m/dx_j = 1 if m <= j+1
@@ -525,43 +537,14 @@ class SimplexBasis:
         factor_grads = [[None] * self.dimension for _ in range(self.dimension)]
 
         for axis in range(self.dimension):
-            unique_alphas = self.unique_alphas_by_axis[axis]
             slots = self.alpha_slot_by_axis[axis]
             exponents = self.multi_index_array[:, axis]
-
-            tables_val = []
-            tables_dcoord = []
-            tables_dtail = []
-            for alpha_val in unique_alphas:
-                max_deg = self._max_axis_degree(axis, alpha_val)
-                val_tab, dcoord_tab = self._homogeneous_jacobi_first_order_jet(
-                    barycentric[axis],
-                    unit_direction,
-                    tail_sums[axis],
-                    zero_direction,
-                    alpha_val,
-                    max_deg,
-                )
-                _, dtail_tab = self._homogeneous_jacobi_first_order_jet(
-                    barycentric[axis],
-                    zero_direction,
-                    tail_sums[axis],
-                    unit_direction,
-                    alpha_val,
-                    max_deg,
-                )
-                tables_val.append(val_tab)
-                tables_dcoord.append(dcoord_tab)
-                tables_dtail.append(dtail_tab)
-
-            factor_val = np.empty((self.num_basis, num_points), dtype=float)
-            factor_dcoord = np.empty((self.num_basis, num_points), dtype=float)
-            factor_dtail = np.empty((self.num_basis, num_points), dtype=float)
-            for slot in range(len(unique_alphas)):
-                mask = slots == slot
-                factor_val[mask] = tables_val[slot][exponents[mask]]
-                factor_dcoord[mask] = tables_dcoord[slot][exponents[mask]]
-                factor_dtail[mask] = tables_dtail[slot][exponents[mask]]
+            val_tab, dcoord_tab, dtail_tab = self._axis_jacobi_values_and_partials(
+                axis, barycentric[axis], tail_sums[axis]
+            )
+            factor_val = val_tab[exponents, slots]
+            factor_dcoord = dcoord_tab[exponents, slots]
+            factor_dtail = dtail_tab[exponents, slots]
             factor_values_by_axis.append(factor_val)
 
             for coord_idx in range(self.dimension):
@@ -625,29 +608,18 @@ class SimplexBasis:
         prod_second = np.zeros((self.num_basis, num_points), dtype=float)
 
         for axis in range(self.dimension):
-            unique_alphas = self.unique_alphas_by_axis[axis]
             slots = self.alpha_slot_by_axis[axis]
             exponents = self.multi_index_array[:, axis]
-            factor_val = np.empty((self.num_basis, num_points), dtype=float)
-            factor_first = np.empty((self.num_basis, num_points), dtype=float)
-            factor_second = np.empty((self.num_basis, num_points), dtype=float)
-
-            for slot, alpha_val in enumerate(unique_alphas):
-                max_deg = self._max_axis_degree(axis, alpha_val)
-                val_tab, first_tab, second_tab = (
-                    self._homogeneous_jacobi_second_order_jet(
-                        barycentric[axis],
-                        barycentric_dir[axis],
-                        tail_sums[axis],
-                        tail_sums_dir[axis],
-                        alpha_val,
-                        max_deg,
-                    )
-                )
-                mask = slots == slot
-                factor_val[mask] = val_tab[exponents[mask]]
-                factor_first[mask] = first_tab[exponents[mask]]
-                factor_second[mask] = second_tab[exponents[mask]]
+            val_tab, first_tab, second_tab = self._axis_jacobi_second_order_jet(
+                axis,
+                barycentric[axis],
+                barycentric_dir[axis],
+                tail_sums[axis],
+                tail_sums_dir[axis],
+            )
+            factor_val = val_tab[exponents, slots]
+            factor_first = first_tab[exponents, slots]
+            factor_second = second_tab[exponents, slots]
 
             next_val = prod_val * factor_val
             next_first = prod_val * factor_first + prod_first * factor_val
@@ -667,7 +639,7 @@ class SimplexBasis:
         return float(min(float(first_bary.min()), float(points.min())))
 
     def boundary_hinge_penalty(self, points, target_margin):
-        """Return hinge violations and gradients d(hinge)/dX for u_j < target_margin."""
+        """Return (violations, gradients, exact_hessians) for u_j < target_margin."""
         first_bary = 1.0 - np.sum(points, axis=1)
         first_violation = np.maximum(0.0, target_margin - first_bary)
         coord_violations = np.maximum(0.0, target_margin - points)
@@ -676,7 +648,15 @@ class SimplexBasis:
         violations = np.concatenate(
             [first_violation[:, None], coord_violations], axis=1
         )
-        return violations, gradients
+        hessians = np.zeros((len(points), self.dimension, self.dimension), dtype=float)
+        # Active u_0 face has outward normal (1, ..., 1), so Hessian += 1 1^T
+        first_active = first_violation > 0.0
+        if np.any(first_active):
+            hessians[first_active] += 1.0
+        # Active u_{j+1} = x_j face has outward normal -e_j, so Hessian[j, j] += 1
+        diag_axes = np.arange(self.dimension)
+        hessians[:, diag_axes, diag_axes] += (coord_violations > 0.0).astype(float)
+        return violations, gradients, hessians
 
 
 # ---------------------------------------------------------------------------
@@ -728,6 +708,21 @@ def build_symmetry_group(domain, dimension, symmetry_name):
                 transforms.append(AffineTransform(perm_matrix, zero_shift))
                 transforms.append(AffineTransform(-perm_matrix, zero_shift))
             return transforms
+        if symmetry_name == "demi":
+            # Demihypercube group D_d: all permutations with prod(signs) == +1
+            # (D_2 of order 4 in 2D, tetrahedral Td of order 24 in 3D, D_4 in 4D)
+            if dimension < 2 or dimension > 4:
+                return None
+            transforms = []
+            for perm in itertools.permutations(range(dimension)):
+                perm_matrix = np.zeros((dimension, dimension), dtype=float)
+                for row, col in enumerate(perm):
+                    perm_matrix[row, col] = 1.0
+                for signs in itertools.product((-1.0, 1.0), repeat=dimension):
+                    if math.prod(signs) > 0.0:
+                        signed_matrix = perm_matrix * np.asarray(signs)[:, None]
+                        transforms.append(AffineTransform(signed_matrix, zero_shift))
+            return transforms
         if symmetry_name == "full":
             if dimension > 3:
                 return None
@@ -743,11 +738,8 @@ def build_symmetry_group(domain, dimension, symmetry_name):
         raise ValueError(f"unknown symmetry '{symmetry_name}' for cube")
 
     # Simplex Delta^d: vertex permutations of v_0 = 0, v_1 = e_1, ..., v_d = e_d
-    if symmetry_name == "central":
-        if dimension == 1:
-            symmetry_name = "full"
-        else:
-            return None
+    if symmetry_name == "demi":
+        return None
 
     vertices = np.zeros((dimension + 1, dimension), dtype=float)
     for axis in range(dimension):
@@ -760,6 +752,16 @@ def build_symmetry_group(domain, dimension, symmetry_name):
         for axis in range(dimension):
             linear[:, axis] = vertices[perm[axis + 1]] - translation
         return AffineTransform(linear, translation)
+
+    if symmetry_name == "central":
+        # Order-2 vertex reversal (0, ..., d) -> (d, ..., 0):
+        # 1D interval reflection, 2D altitude mirror, 3D 180-deg C2 rotation, ...
+        identity_perm = tuple(range(dimension + 1))
+        reversed_perm = tuple(range(dimension, -1, -1))
+        return [
+            vertex_perm_to_transform(identity_perm),
+            vertex_perm_to_transform(reversed_perm),
+        ]
 
     if symmetry_name == "chiral":
         if dimension == 1:
@@ -1004,58 +1006,65 @@ def cluster_points_into_orbits(points, group_transforms, tol=1e-6):
 
 
 def select_orbits_for_point_count(candidate_orbits, target_points, min_unknowns):
-    """Deterministic DP selecting orbits with sum(size) == target_points and sum(unk) >= min_unknowns.
+    """Exact Pareto-pruned DP minimizing total orbit rank for exact target_points.
 
-    Prefers inner orbits (lower candidate index) and higher unknown count.
+    Finds a subset of candidate_orbits with sum(size) == target_points and
+    sum(num_unknowns) >= min_unknowns that minimizes the sum of candidate rank
+    indices (selecting the innermost natural equilibrium lattice shells).
     """
     candidate_pool = candidate_orbits[: max(target_points + 64, 160)]
-    # DP state: best_by_count[point_count] = (score, total_unknowns, orbit_idx, prev_count)
-    best_by_count = {0: (0.0, 0, -1, -1)}
+    # State: pareto_by_count[point_count] = {capped_unknowns: min_rank_cost}
+    pareto_by_count = {0: {0: 0.0}}
     parent_pointers = []
 
     for orbit_idx, orbit in enumerate(candidate_pool):
         orbit_size = orbit.size
         orbit_unknowns = orbit.num_unknowns
-        rank_penalty = float(orbit_idx)
-        next_by_count = dict(best_by_count)
+        rank_cost = float(orbit_idx)
+        next_by_count = {
+            cnt: dict(unk_map) for cnt, unk_map in pareto_by_count.items()
+        }
         chosen_prev = {}
 
-        for point_count, (_, unk_sum, _, _) in best_by_count.items():
+        for point_count, unk_map in pareto_by_count.items():
             next_count = point_count + orbit_size
             if next_count > target_points:
                 continue
-            next_unknowns = unk_sum + orbit_unknowns
-            # Strongly reward reaching min_unknowns, then prefer inner orbits
-            next_score = (
-                float(min(next_unknowns, min_unknowns + 4)) * 1e5
-                + float(next_unknowns) * 10.0
-                - rank_penalty
-            )
-            existing = next_by_count.get(next_count)
-            if existing is None or next_score > existing[0]:
-                next_by_count[next_count] = (
-                    next_score,
-                    next_unknowns,
-                    orbit_idx,
-                    point_count,
-                )
-                chosen_prev[next_count] = point_count
+            target_map = next_by_count.setdefault(next_count, {})
+            for unk_sum, cur_cost in unk_map.items():
+                next_unknowns = min(min_unknowns, unk_sum + orbit_unknowns)
+                next_cost = cur_cost + rank_cost
+                if next_unknowns not in target_map or next_cost < target_map[next_unknowns]:
+                    target_map[next_unknowns] = next_cost
+                    chosen_prev[(next_count, next_unknowns)] = (point_count, unk_sum)
 
-        best_by_count = next_by_count
+        # Prune strictly dominated states: (u1 >= u2 and cost1 <= cost2) drops (u2, cost2)
+        for point_count, unk_map in next_by_count.items():
+            if len(unk_map) <= 1:
+                continue
+            kept = {}
+            best_cost_so_far = float("inf")
+            for unk_val, cost_val in sorted(unk_map.items(), key=lambda kv: -kv[0]):
+                if cost_val < best_cost_so_far:
+                    kept[unk_val] = cost_val
+                    best_cost_so_far = cost_val
+            next_by_count[point_count] = kept
+
+        pareto_by_count = next_by_count
         parent_pointers.append(chosen_prev)
 
-    if target_points not in best_by_count:
-        return None
-    _, total_unknowns, _, _ = best_by_count[target_points]
-    if total_unknowns < min_unknowns:
+    if (
+        target_points not in pareto_by_count
+        or min_unknowns not in pareto_by_count[target_points]
+    ):
         return None
 
     selected = []
-    remaining_count = target_points
+    current_state = (target_points, min_unknowns)
     for orbit_idx in range(len(candidate_pool) - 1, -1, -1):
-        if remaining_count in parent_pointers[orbit_idx]:
+        if current_state in parent_pointers[orbit_idx]:
             selected.append(candidate_pool[orbit_idx])
-            remaining_count = parent_pointers[orbit_idx][remaining_count]
+            current_state = parent_pointers[orbit_idx][current_state]
     selected.reverse()
     return selected
 
@@ -1087,6 +1096,79 @@ def rotation_around_main_diagonal(dimension, angle_degrees):
     return ortho_basis @ subspace_rot @ ortho_basis.T
 
 
+def _initialize_cube_orbits_from_points(points, group_transforms):
+    """Project cube representative points onto stabilizer subspaces with Chebyshev weights."""
+    initialized_orbits = []
+    raw_weights = []
+    total_weight = 0.0
+    for coords in points:
+        orbit_size, origin, basis, _ = compute_orbit_subspace(
+            coords, group_transforms, tol=1e-6
+        )
+        subspace_coords = (
+            basis.T @ (coords - origin)
+            if basis.shape[1] > 0
+            else np.zeros(0, dtype=float)
+        )
+        projected = (
+            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
+        )
+        equilibrium_weight = float(
+            np.prod(np.sqrt(np.maximum(1.0 - projected * projected, 1e-4)))
+        )
+        total_weight += orbit_size * equilibrium_weight
+        raw_weights.append(equilibrium_weight)
+        initialized_orbits.append(
+            SymmetryOrbit(
+                size=orbit_size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=0.0,
+            )
+        )
+    weight_norm = max(total_weight, 1e-30)
+    for orb, raw_w in zip(initialized_orbits, raw_weights):
+        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
+    return initialized_orbits
+
+
+def _initialize_simplex_orbits_from_points(points, group_transforms):
+    """Project simplex representative points onto stabilizer subspaces with equilibrium weights."""
+    initialized_orbits = []
+    raw_weights = []
+    total_weight = 0.0
+    for coords in points:
+        orbit_size, origin, basis, _ = compute_orbit_subspace(
+            coords, group_transforms, tol=1e-6
+        )
+        subspace_coords = (
+            basis.T @ (coords - origin)
+            if basis.shape[1] > 0
+            else np.zeros(0, dtype=float)
+        )
+        projected = (
+            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
+        )
+        bary_vec = np.concatenate([[1.0 - float(np.sum(projected))], projected])
+        equilibrium_weight = float(np.prod(np.sqrt(np.maximum(bary_vec, 1e-4))))
+        total_weight += orbit_size * equilibrium_weight
+        raw_weights.append(equilibrium_weight)
+        initialized_orbits.append(
+            SymmetryOrbit(
+                size=orbit_size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=subspace_coords,
+                weight_sqrt=0.0,
+            )
+        )
+    weight_norm = max(total_weight, 1e-30)
+    for orb, raw_w in zip(initialized_orbits, raw_weights):
+        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
+    return initialized_orbits
+
+
 def build_cube_equilibrium_start(
     dimension,
     degree,
@@ -1097,8 +1179,46 @@ def build_cube_equilibrium_start(
     rotation_degrees=6.0,
     norm_order=12.0,
     min_unknowns=1,
+    halton_skip=0,
 ):
-    """Deterministic rotated D_d* Chebyshev-angle lattice start on [-1, 1]^d."""
+    """Deterministic equilibrium start on [-1, 1]^d (Halton-Chebyshev or rotated D_d*)."""
+    # For mirror-free none / central symmetry in d >= 2, use exact arcsine-mapped
+    # Halton equilibrium clouds to avoid accidental grid symmetries and rank drops.
+    if dimension >= 2 and symmetry_name in ("none", "central"):
+        eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+        if symmetry_name == "none":
+            if target_points * (dimension + 1) < min_unknowns:
+                return None
+            halton = generate_halton_points(
+                target_points, dimension, skip=halton_skip
+            )
+            angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
+            coords_list = -np.cos(angles)
+            return _initialize_cube_orbits_from_points(coords_list, group_transforms)
+
+        # central symmetry {+I, -I}: draw pairs in half-space x_0 > 0 (+ origin if odd N)
+        num_pairs = target_points // 2
+        has_origin = (target_points % 2) == 1
+        total_unk = num_pairs * (dimension + 1) + (1 if has_origin else 0)
+        if total_unk < min_unknowns:
+            return None
+        coords_list = []
+        if has_origin:
+            coords_list.append(np.zeros(dimension, dtype=float))
+        if num_pairs > 0:
+            halton = generate_halton_points(
+                num_pairs, dimension, skip=halton_skip
+            )
+            angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
+            # Restrict first coordinate to (0, 1) so each antipodal pair is distinct
+            angles[:, 0] = math.pi * (
+                0.5 + 0.5 * eps + (0.5 - 1.5 * eps) * halton[:, 0]
+            )
+            pair_reps = -np.cos(angles)
+            for row in pair_reps:
+                coords_list.append(row)
+        return _initialize_cube_orbits_from_points(coords_list, group_transforms)
+
     # Parity shift: odd N includes origin (0-shift); even N uses (1/4)-shift
     lattice_shift = 0.0 if (target_points % 2 == 1) else 0.25
     points_per_cell = 2.0 if dimension >= 2 else 1.0
@@ -1114,30 +1234,37 @@ def build_cube_equilibrium_start(
     integer_grid = np.stack([coord_grid.ravel() for coord_grid in mesh], axis=1)
 
     if dimension >= 2:
-        shifted_a = integer_grid + lattice_shift
-        shifted_b = integer_grid + (lattice_shift + 0.5)
-        if symmetry_name == "full":
-            raw_points = np.vstack([integer_grid, shifted_a, shifted_b])
+        if symmetry_name in ("demi", "full"):
+            # Standard D_d* lattice Z^d U (Z + 1/2)^d covers every stabilizer orbit type
+            raw_points = np.vstack([integer_grid, integer_grid + 0.5])
         else:
+            shifted_a = integer_grid + lattice_shift
+            shifted_b = integer_grid + (lattice_shift + 0.5)
             raw_points = np.vstack([shifted_a, shifted_b])
     else:
         raw_points = integer_grid + (0.0 if target_points % 2 == 1 else 0.5)
 
     # Apply chiral rotation for mirror-free groups while preserving G-symmetry
-    if symmetry_name in ("chiral", "central", "none") and dimension >= 2:
+    if symmetry_name == "chiral" and dimension >= 2:
         rot_matrix = rotation_around_main_diagonal(dimension, rotation_degrees)
         raw_points = raw_points @ rot_matrix.T
 
     max_abs_coord = np.max(np.abs(raw_points), axis=1)
     raw_points = raw_points[max_abs_coord <= float(half_width) + 0.6]
 
-    # Close under G to guarantee exact symmetry of the candidate pool
+    # Close under G to guarantee exact symmetry of the candidate pool, then deduplicate
+    # so large symmetry groups (e.g. demi/Td order 24 or full/Oh order 48) do not fill
+    # the trimmed pool with redundant copies of inner points.
     closed_clouds = [raw_points]
     for transform in group_transforms[1:]:
         closed_clouds.append(
             raw_points @ transform.linear.T + transform.translation[None, :]
         )
     raw_points = np.vstack(closed_clouds)
+    _, unique_indices = np.unique(
+        np.round(raw_points, decimals=6), axis=0, return_index=True
+    )
+    raw_points = raw_points[unique_indices]
 
     if norm_order > 0.0:
         point_radii = np.sum(np.abs(raw_points) ** norm_order, axis=1) ** (
@@ -1175,42 +1302,8 @@ def build_cube_equilibrium_start(
         0.5 * math.pi * max(0.35, 1.0 - 2.0 * boundary_inset / max(degree, 1))
     )
     angle_scale = (target_angle / max_angle) if max_angle > 1e-12 else 0.0
-
-    initialized_orbits = []
-    raw_weights = []
-    total_weight = 0.0
-    for orb in selected:
-        coords = np.sin(orb.initial_point * angle_scale)
-        orbit_size, origin, basis, _ = compute_orbit_subspace(
-            coords, group_transforms, tol=1e-6
-        )
-        subspace_coords = (
-            basis.T @ (coords - origin)
-            if basis.shape[1] > 0
-            else np.zeros(0, dtype=float)
-        )
-        projected = (
-            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
-        )
-        equilibrium_weight = float(
-            np.prod(np.sqrt(np.maximum(1.0 - projected * projected, 1e-4)))
-        )
-        total_weight += orbit_size * equilibrium_weight
-        raw_weights.append(equilibrium_weight)
-        initialized_orbits.append(
-            SymmetryOrbit(
-                size=orbit_size,
-                subspace_origin=origin,
-                subspace_basis=basis,
-                subspace_coords=subspace_coords,
-                weight_sqrt=0.0,
-            )
-        )
-
-    weight_norm = max(total_weight, 1e-30)
-    for orb, raw_w in zip(initialized_orbits, raw_weights):
-        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
-    return initialized_orbits
+    mapped_points = [np.sin(orb.initial_point * angle_scale) for orb in selected]
+    return _initialize_cube_orbits_from_points(mapped_points, group_transforms)
 
 
 def generate_simplex_barycentric_lattice(dimension, level):
@@ -1230,6 +1323,55 @@ def generate_simplex_barycentric_lattice(dimension, level):
     return np.asarray(lattice_points, dtype=float) / float(max(level, 1))
 
 
+def _sample_dirichlet_half_halton(num_points, dimension, margin_eps, skip=0):
+    """Deterministic Halton points mapped to exact Dirichlet(1/2, ..., 1/2) equilibrium measure."""
+    halton = generate_halton_points(num_points, dimension, skip=skip)
+    clipped = margin_eps + (1.0 - 2.0 * margin_eps) * halton
+    bary = np.empty((num_points, dimension + 1), dtype=float)
+    remaining = np.ones(num_points, dtype=float)
+    for axis in range(dimension):
+        beta_param = 0.5 * float(dimension - axis)
+        fraction = betaincinv(0.5, beta_param, clipped[:, axis])
+        bary[:, axis] = remaining * fraction
+        remaining = remaining * (1.0 - fraction)
+    bary[:, dimension] = remaining
+    return bary
+
+
+def _riesz_relax_on_positive_sphere(bary_points, margin_eps, num_steps=50):
+    """Relax barycentric points into a well-separated crystal on S^d_+ via Riesz repulsion."""
+    num_points, num_bary = bary_points.shape
+    dimension = num_bary - 1
+    if num_points <= 1 or num_steps <= 0 or num_points > 400:
+        return bary_points
+
+    sphere = np.sqrt(np.maximum(bary_points, 1e-8))
+    sphere /= np.linalg.norm(sphere, axis=1, keepdims=True)
+    min_coord = math.sqrt(max(1e-4, 0.25 * margin_eps))
+    spacing = (1.0 / float(max(num_points, 1))) ** (1.0 / float(dimension))
+    step_size = 0.08 * spacing
+    softening_sq = (0.05 * spacing) ** 2
+    riesz_power = -0.5 * float(dimension + 2)
+
+    for _ in range(num_steps):
+        diff = sphere[:, None, :] - sphere[None, :, :]
+        dist_sq = np.sum(diff * diff, axis=2) + softening_sq
+        np.fill_diagonal(dist_sq, 1e30)
+        force = np.sum(diff * (dist_sq ** riesz_power)[:, :, None], axis=1)
+        # Mirror-image repulsion across each boundary wall s_m = 0
+        wall_dist_sq = (2.0 * np.maximum(sphere, 0.5 * min_coord)) ** 2 + softening_sq
+        force += (2.0 * sphere) * (wall_dist_sq ** riesz_power)
+        # Project force onto tangent space of unit sphere S^d_+
+        force -= np.sum(force * sphere, axis=1, keepdims=True) * sphere
+        force_norm = np.linalg.norm(force, axis=1, keepdims=True)
+        step_scale = np.minimum(1.0, step_size / np.maximum(force_norm, 1e-12))
+        sphere = np.maximum(sphere + force * step_scale, min_coord)
+        sphere /= np.linalg.norm(sphere, axis=1, keepdims=True)
+        step_size *= 0.96
+
+    return sphere * sphere
+
+
 def build_simplex_equilibrium_start(
     dimension,
     degree,
@@ -1239,20 +1381,62 @@ def build_simplex_equilibrium_start(
     boundary_inset=0.45,
     chiral_twist=0.06,
     min_unknowns=1,
+    halton_skip=0,
+    riesz_steps=0,
 ):
-    """Deterministic S^d_+ concentric-shell equilibrium start on standard simplex Delta^d."""
-    max_level = 1
-    while math.comb(max_level + dimension, dimension) < max(
-        int(target_points * 1.6), target_points + 16
-    ):
-        max_level += 1
-        if math.comb(max_level + dimension, dimension) > 15000:
-            break
+    """Deterministic equilibrium start on Delta^d (Riesz-S^d_+/Halton or S^d_+ shells)."""
+    if dimension >= 2 and symmetry_name == "none":
+        if target_points * (dimension + 1) < min_unknowns:
+            return None
+        eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+        bary = _sample_dirichlet_half_halton(
+            target_points, dimension, eps, skip=halton_skip
+        )
+        if riesz_steps > 0:
+            bary = _riesz_relax_on_positive_sphere(bary, eps, num_steps=riesz_steps)
+        return _initialize_simplex_orbits_from_points(bary[:, 1:], group_transforms)
 
-    # Include all concentric levels 1..max_level so every stabilizer orbit type exists
-    barycentric_shells = []
+    if dimension >= 2 and symmetry_name == "central":
+        # Order-2 vertex reversal (u_0, ..., u_d) -> (u_d, ..., u_0):
+        # Fixed subspace has dimension floor(d / 2) (1D line in 3D).
+        fixed_dof = dimension // 2
+        num_fixed = 1 if (target_points % 2 == 1) else 0
+        num_pairs = (target_points - num_fixed) // 2
+        total_unk = num_pairs * (dimension + 1) + num_fixed * (fixed_dof + 1)
+        if total_unk < min_unknowns:
+            return None
+        eps = max(0.02, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+        coords_list = []
+        if num_fixed > 0:
+            centroid = np.full(dimension, 1.0 / float(dimension + 1), dtype=float)
+            coords_list.append(centroid)
+        if num_pairs > 0:
+            bary = _sample_dirichlet_half_halton(
+                num_pairs, dimension, eps, skip=halton_skip
+            )
+            for row in bary:
+                if row[0] < row[dimension]:
+                    row = row[::-1]
+                coords_list.append(row[1:])
+        return _initialize_simplex_orbits_from_points(coords_list, group_transforms)
+
+    # Choose primary barycentric level L whose simplex lattice first covers target_points
+    primary_level = 1
+    while math.comb(primary_level + dimension, dimension) < target_points:
+        primary_level += 1
+        if math.comb(primary_level + dimension, dimension) > 15000:
+            break
+    max_level = primary_level
+    while math.comb(max_level + dimension, dimension) < max(
+        int(target_points * 1.4), target_points + 12
+    ):
+        if math.comb(max_level + 1 + dimension, dimension) > 15000:
+            break
+        max_level += 1
+
     inset_eps = max(0.03, min(0.60, boundary_inset / float(max(degree, 2))))
-    for level in range(1, max_level + 1):
+
+    def map_level_to_equilibrium(level):
         bary_grid = generate_simplex_barycentric_lattice(dimension, level)
         bary_interior = (1.0 - inset_eps) * bary_grid + inset_eps / float(
             dimension + 1
@@ -1261,8 +1445,7 @@ def build_simplex_equilibrium_start(
         sphere_coords = np.sin(0.5 * math.pi * bary_interior)
         sphere_coords /= np.linalg.norm(sphere_coords, axis=1, keepdims=True)
         bary_mapped = sphere_coords * sphere_coords
-
-        if symmetry_name in ("chiral", "none") and chiral_twist > 0.0 and dimension >= 2:
+        if symmetry_name == "chiral" and chiral_twist > 0.0 and dimension >= 2:
             # Keep lower-dimensional fixed axes intact while twisting generic shells
             sorted_bary = np.sort(bary_mapped, axis=1)
             is_generic = np.all(np.diff(sorted_bary, axis=1) > 1e-6, axis=1)
@@ -1272,82 +1455,69 @@ def build_simplex_equilibrium_start(
                 + chiral_twist * np.roll(bary_mapped[is_generic], 1, axis=1)
             )
             bary_mapped = twisted
-        barycentric_shells.append(bary_mapped)
+        return bary_mapped[:, 1:]
 
-    # Always include the exact centroid explicitly
-    centroid_bary = np.full((1, dimension + 1), 1.0 / float(dimension + 1), dtype=float)
-    barycentric_shells.append(centroid_bary)
-
-    raw_points = np.vstack(barycentric_shells)[:, 1:]
-    closed_clouds = [raw_points]
-    for transform in group_transforms[1:]:
-        closed_clouds.append(
-            raw_points @ transform.linear.T + transform.translation[None, :]
-        )
-    raw_points = np.vstack(closed_clouds)
-
-    # Sort by distance from centroid so inner shells are preferred
-    first_bary = 1.0 - np.sum(raw_points, axis=1, keepdims=True)
-    full_bary = np.hstack([first_bary, raw_points])
+    # Build primary-level orbits first (so full-simplex equilibrium shells are preferred),
+    # then auxiliary levels 1..max_level + centroid so any exact N decomposition is feasible.
     centroid_coord = 1.0 / float(dimension + 1)
-    centroid_dist = np.linalg.norm(full_bary - centroid_coord, axis=1)
-    raw_points = raw_points[np.argsort(centroid_dist)]
-    raw_points = raw_points[: max(target_points * 6, 400)]
 
-    candidate_orbits = cluster_points_into_orbits(
-        raw_points, group_transforms, tol=1e-4
-    )
-    candidate_orbits.sort(
-        key=lambda orb: float(
-            np.linalg.norm(
-                np.concatenate(
-                    [[1.0 - np.sum(orb.initial_point)], orb.initial_point]
-                )
-                - centroid_coord
+    def centroid_distance(point):
+        bary_vec = np.concatenate([[1.0 - float(np.sum(point))], point])
+        return float(np.linalg.norm(bary_vec - centroid_coord))
+
+    def collect_orbits_for_cloud(cloud):
+        closed_clouds = [cloud]
+        for transform in group_transforms[1:]:
+            closed_clouds.append(
+                cloud @ transform.linear.T + transform.translation[None, :]
             )
-        )
-    )
+        full_cloud = np.vstack(closed_clouds)
+        orbs = cluster_points_into_orbits(full_cloud, group_transforms, tol=1e-4)
+        orbs.sort(key=lambda orb: centroid_distance(orb.initial_point))
+        return orbs
+
+    primary_orbits = collect_orbits_for_cloud(map_level_to_equilibrium(primary_level))
+
+    auxiliary_clouds = [
+        np.full((1, dimension), centroid_coord, dtype=float)
+    ]
+    for level in range(1, max_level + 1):
+        if level != primary_level:
+            auxiliary_clouds.append(map_level_to_equilibrium(level))
+    aux_raw = np.vstack(auxiliary_clouds)
+    aux_dists = np.array([centroid_distance(pt) for pt in aux_raw], dtype=float)
+    aux_raw = aux_raw[np.argsort(aux_dists)][: max(target_points * 5, 300)]
+    auxiliary_orbits = collect_orbits_for_cloud(aux_raw)
+
+    # Combine primary orbits first, then non-duplicate auxiliary orbits
+    candidate_orbits = list(primary_orbits)
+    for aux_orb in auxiliary_orbits:
+        is_duplicate = False
+        for existing in candidate_orbits:
+            if existing.size != aux_orb.size:
+                continue
+            min_dist = min(
+                float(
+                    np.linalg.norm(
+                        existing.initial_point
+                        - (transform.linear @ aux_orb.initial_point + transform.translation)
+                    )
+                )
+                for transform in group_transforms
+            )
+            if min_dist < 1e-3:
+                is_duplicate = True
+                break
+        if not is_duplicate:
+            candidate_orbits.append(aux_orb)
 
     selected = select_orbits_for_point_count(
         candidate_orbits, target_points, min_unknowns
     )
     if selected is None:
         return None
-
-    initialized_orbits = []
-    raw_weights = []
-    total_weight = 0.0
-    for orb in selected:
-        coords = orb.initial_point
-        orbit_size, origin, basis, _ = compute_orbit_subspace(
-            coords, group_transforms, tol=1e-6
-        )
-        subspace_coords = (
-            basis.T @ (coords - origin)
-            if basis.shape[1] > 0
-            else np.zeros(0, dtype=float)
-        )
-        projected = (
-            origin + basis @ subspace_coords if basis.shape[1] > 0 else origin
-        )
-        bary_vec = np.concatenate([[1.0 - float(np.sum(projected))], projected])
-        equilibrium_weight = float(np.prod(np.sqrt(np.maximum(bary_vec, 1e-4))))
-        total_weight += orbit_size * equilibrium_weight
-        raw_weights.append(equilibrium_weight)
-        initialized_orbits.append(
-            SymmetryOrbit(
-                size=orbit_size,
-                subspace_origin=origin,
-                subspace_basis=basis,
-                subspace_coords=subspace_coords,
-                weight_sqrt=0.0,
-            )
-        )
-
-    weight_norm = max(total_weight, 1e-30)
-    for orb, raw_w in zip(initialized_orbits, raw_weights):
-        orb.weight_sqrt = math.sqrt(raw_w / weight_norm)
-    return initialized_orbits
+    mapped_points = [orb.initial_point for orb in selected]
+    return _initialize_simplex_orbits_from_points(mapped_points, group_transforms)
 
 
 # ---------------------------------------------------------------------------
@@ -1504,39 +1674,43 @@ def evaluate_directional_second_derivative(sym_basis, orbits, param_vector, dire
 def evaluate_boundary_penalty(
     sym_basis, orbits, param_vector, target_margin, penalty_weight
 ):
-    """Compute smooth diagonal boundary hinge penalty cost, gradient, and diagonal Hessian."""
+    """Compute smooth boundary hinge cost, gradient, and exact face-normal Hessian blocks."""
     if penalty_weight <= 0.0 or target_margin is None:
         return 0.0, None, None
     representatives, _, _, orbit_sizes = decode_orbit_representatives(
         orbits, param_vector
     )
-    violations, rep_grads = sym_basis.base_basis.boundary_hinge_penalty(
-        representatives, target_margin
+    violations, rep_grads, rep_hessians = (
+        sym_basis.base_basis.boundary_hinge_penalty(representatives, target_margin)
     )
     if float(violations.max()) <= 0.0:
         zeros = np.zeros(len(param_vector), dtype=float)
-        return 0.0, zeros, zeros.copy()
+        return 0.0, zeros, []
 
     # Weight each orbit's boundary penalty by orbit size so every node weighs equally
     penalty_cost = (
-        0.5 * penalty_weight * float(np.sum((orbit_sizes[:, None] * violations) * violations))
+        0.5
+        * penalty_weight
+        * float(np.sum((orbit_sizes[:, None] * violations) * violations))
     )
     penalty_grad = np.zeros(len(param_vector), dtype=float)
-    penalty_diag_hessian = np.zeros(len(param_vector), dtype=float)
+    penalty_hessian_blocks = []
     has_violation = np.any(violations > 0.0, axis=1)
 
     offset = 0
     for idx, orbit in enumerate(orbits):
         dof = orbit.spatial_dof
         if dof > 0 and has_violation[idx]:
-            # Chain rule onto fixed subspace: d/dxi = subspace_basis^T @ rep_grads[idx]
+            # Chain rule onto fixed subspace U: grad = U^T g_x, hess = U^T H_x U
             orbit_scale = penalty_weight * orbit_sizes[idx]
+            basis = orbit.subspace_basis
             penalty_grad[offset : offset + dof] = orbit_scale * (
-                orbit.subspace_basis.T @ rep_grads[idx]
+                basis.T @ rep_grads[idx]
             )
-            penalty_diag_hessian[offset : offset + dof] = orbit_scale
+            hess_block = orbit_scale * (basis.T @ rep_hessians[idx] @ basis)
+            penalty_hessian_blocks.append((offset, dof, hess_block))
         offset += dof + 1
-    return penalty_cost, penalty_grad, penalty_diag_hessian
+    return penalty_cost, penalty_grad, penalty_hessian_blocks
 
 
 # ---------------------------------------------------------------------------
@@ -1652,7 +1826,7 @@ def solve_geodesic_levenberg_marquardt(
     )
     moment_norm = float(np.linalg.norm(residual))
     boundary_dist = sym_basis.base_basis.boundary_distance(representatives)
-    penalty_cost, penalty_grad, penalty_diag_hessian = evaluate_boundary_penalty(
+    penalty_cost, penalty_grad, penalty_hessian_blocks = evaluate_boundary_penalty(
         sym_basis, orbits, params, penalty_margin, penalty_weight
     )
     total_cost = 0.5 * (moment_norm * moment_norm) + penalty_cost
@@ -1680,7 +1854,10 @@ def solve_geodesic_levenberg_marquardt(
         gradient = jacobian.T @ residual
         if penalty_grad is not None:
             gradient = gradient + penalty_grad
-            normal_matrix[diag_indices, diag_indices] += penalty_diag_hessian
+            for blk_off, blk_dof, hess_block in penalty_hessian_blocks:
+                normal_matrix[
+                    blk_off : blk_off + blk_dof, blk_off : blk_off + blk_dof
+                ] += hess_block
         diag_scale = np.maximum(np.diag(normal_matrix), 1e-12)
 
         step_accepted = False
@@ -1718,11 +1895,27 @@ def solve_geodesic_levenberg_marquardt(
                 continue
 
             trial_boundary_dist = sym_basis.base_basis.boundary_distance(trial_reps)
+            if require_interior and trial_boundary_dist <= 1e-7:
+                # Gently backtrack along the same step before escalating damping
+                backtracked = False
+                for _ in range(3):
+                    trial_step = 0.5 * trial_step
+                    trial_params = params + trial_step
+                    trial_reps, _, _, _ = decode_orbit_representatives(
+                        orbits, trial_params
+                    )
+                    if np.all(np.isfinite(trial_reps)):
+                        trial_boundary_dist = sym_basis.base_basis.boundary_distance(
+                            trial_reps
+                        )
+                        if trial_boundary_dist > 1e-7:
+                            backtracked = True
+                            break
+                if not backtracked:
+                    damping = min(damping * 5.0, 1e10)
+                    continue
             # Escape cap prevents runaway far outside the domain
             if trial_boundary_dist < -0.35:
-                damping = min(damping * 5.0, 1e10)
-                continue
-            if require_interior and trial_boundary_dist <= 1e-7:
                 damping = min(damping * 5.0, 1e10)
                 continue
 
@@ -1762,7 +1955,7 @@ def solve_geodesic_levenberg_marquardt(
                 )
                 moment_norm = float(np.linalg.norm(residual))
                 boundary_dist = sym_basis.base_basis.boundary_distance(representatives)
-                penalty_cost, penalty_grad, penalty_diag_hessian = (
+                penalty_cost, penalty_grad, penalty_hessian_blocks = (
                     evaluate_boundary_penalty(
                         sym_basis, orbits, params, penalty_margin, penalty_weight
                     )
@@ -1824,56 +2017,112 @@ def _build_solution_if_positive(
     )
 
 
+def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verbose):
+    """Pull a near-solution inside with exact face-normal hinge, then polish penalty-free."""
+    target_margin = 5e-4 if sym_basis.degree >= 12 else 2e-3
+    pulled_params = start_params
+    pulled_bdist = start_bdist
+    if pulled_bdist <= 1e-5:
+        for pull_weight in (10.0, 100.0):
+            _, pulled_bdist, _, pulled_params = solve_geodesic_levenberg_marquardt(
+                sym_basis,
+                orbits,
+                pulled_params,
+                max_steps=140,
+                stagnation_window=25,
+                initial_damping=1e-2,
+                geodesic_threshold=0.0,
+                penalty_margin=target_margin,
+                penalty_weight=pull_weight,
+                require_interior=False,
+                phase_label="P2",
+                verbose=verbose,
+            )
+            if pulled_bdist > 1e-5:
+                break
+
+    if pulled_bdist <= 1e-6:
+        return None
+
+    polish_res, polish_bdist, _, polish_params = solve_geodesic_levenberg_marquardt(
+        sym_basis,
+        orbits,
+        pulled_params,
+        max_steps=150,
+        stagnation_window=25,
+        initial_damping=1e-3,
+        geodesic_threshold=0.0,
+        penalty_margin=None,
+        penalty_weight=0.0,
+        require_interior=True,
+        phase_label="P3",
+        verbose=verbose,
+    )
+    if polish_res < 1e-9:
+        polish_res, polish_params = polish_minimum_norm_gauss_newton(
+            sym_basis, orbits, polish_params, max_steps=5, require_interior=True
+        )
+        polish_reps, _, _, _ = decode_orbit_representatives(orbits, polish_params)
+        polish_bdist = sym_basis.base_basis.boundary_distance(polish_reps)
+    if polish_res < 1e-12 and polish_bdist > 0.0:
+        return _build_solution_if_positive(
+            sym_basis, orbits, polish_params, polish_res, polish_bdist, "PI"
+        )
+    return None
+
+
 def solve_from_single_start(sym_basis, orbits, verbose=False):
     """Run PI-preferred / PO-fallback solve on one orbit initialization.
 
-    Stage A: strictly-interior geodesic LM from the interior start (prevents
-    jumping across the boundary into a PO basin when a nearby PI basin exists).
+    Stage A: smooth sliding-wall geodesic LM from the interior start (zero cost
+    strictly inside; exact rank-1 face-normal wall outside so nodes glide along
+    faces without slamming into a hard wall or escaping into a deep PO basin).
     Stage B (if Stage A did not reach PI): free fold-free geodesic LM (records
-    any converged PO rule as fallback) followed by smooth diagonal boundary
-    hinge pull (Phase 2) and penalty-free interior polish (Phase 3) with
-    automatic minimum-norm Gauss-Newton end-stage.
+    any converged PO rule as fallback) followed by exact face-normal boundary
+    hinge pull and penalty-free interior polish + minimum-norm Gauss-Newton.
     """
     initial_params = pack_orbit_parameters(orbits)
 
-    # Stage A: strictly interior geodesic LM directly from interior start
-    interior_res, interior_bdist, _, interior_params = (
-        solve_geodesic_levenberg_marquardt(
-            sym_basis,
-            orbits,
-            initial_params,
-            max_steps=160,
-            stagnation_window=30,
-            initial_damping=0.25,
-            geodesic_threshold=0.05,
-            penalty_margin=None,
-            penalty_weight=0.0,
-            require_interior=True,
-            phase_label="PI",
-            verbose=verbose,
-        )
+    # Stage A: smooth sliding-wall geodesic LM (zero penalty inside, rank-1 face wall outside)
+    wall_res, wall_bdist, _, wall_params = solve_geodesic_levenberg_marquardt(
+        sym_basis,
+        orbits,
+        initial_params,
+        max_steps=250,
+        stagnation_window=30,
+        initial_damping=0.25,
+        geodesic_threshold=0.05,
+        penalty_margin=0.0,
+        penalty_weight=25.0,
+        require_interior=False,
+        phase_label="PI",
+        verbose=verbose,
     )
-    if interior_res < 1e-9:
-        interior_res, interior_params = polish_minimum_norm_gauss_newton(
-            sym_basis, orbits, interior_params, max_steps=5, require_interior=True
+    if wall_res < 1e-9 and wall_bdist > 0.0:
+        wall_res, wall_params = polish_minimum_norm_gauss_newton(
+            sym_basis, orbits, wall_params, max_steps=5, require_interior=True
         )
-        interior_reps, _, _, _ = decode_orbit_representatives(
-            orbits, interior_params
-        )
-        interior_bdist = sym_basis.base_basis.boundary_distance(interior_reps)
-    if interior_res < 1e-12 and interior_bdist > 0.0:
+        wall_reps, _, _, _ = decode_orbit_representatives(orbits, wall_params)
+        wall_bdist = sym_basis.base_basis.boundary_distance(wall_reps)
+    if wall_res < 1e-12 and wall_bdist > 1e-6:
         solution = _build_solution_if_positive(
-            sym_basis, orbits, interior_params, interior_res, interior_bdist, "PI"
+            sym_basis, orbits, wall_params, wall_res, wall_bdist, "PI"
         )
         if solution is not None:
             return solution
+    if wall_res < 1e-2:
+        pulled_solution = _pull_and_polish_interior(
+            sym_basis, orbits, wall_params, wall_bdist, verbose
+        )
+        if pulled_solution is not None:
+            return pulled_solution
 
     # Stage B / Phase 1: free fold-free geodesic LM (allowed to step outside)
     free_res, free_bdist, _, free_params = solve_geodesic_levenberg_marquardt(
         sym_basis,
         orbits,
         initial_params,
-        max_steps=160,
+        max_steps=250,
         stagnation_window=30,
         initial_damping=0.25,
         geodesic_threshold=0.05,
@@ -1892,7 +2141,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
 
     po_fallback = None
     if free_res < 1e-12:
-        quality = "PI" if free_bdist > 0.0 else "PO"
+        quality = "PI" if free_bdist > 1e-6 else "PO"
         solution = _build_solution_if_positive(
             sym_basis, orbits, free_params, free_res, free_bdist, quality
         )
@@ -1901,55 +2150,13 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
                 return solution
             po_fallback = solution
 
-    # Stage B / Phase 2: smooth diagonal boundary hinge pull back inside
+    # Stage B / Phase 2 & 3: exact face-normal hinge pull + pure interior polish
     if free_res < 1e-2:
-        target_margin = 5e-4 if sym_basis.degree >= 12 else 2e-3
-        _, pulled_bdist, _, pulled_params = solve_geodesic_levenberg_marquardt(
-            sym_basis,
-            orbits,
-            free_params,
-            max_steps=120,
-            stagnation_window=25,
-            initial_damping=1e-2,
-            geodesic_threshold=0.0,
-            penalty_margin=target_margin,
-            penalty_weight=10.0,
-            require_interior=False,
-            phase_label="P2",
-            verbose=verbose,
+        pulled_solution = _pull_and_polish_interior(
+            sym_basis, orbits, free_params, free_bdist, verbose
         )
-        # Stage B / Phase 3: turn penalty OFF once inside; pure-moment polish + GN
-        if pulled_bdist > 0.0:
-            polish_res, polish_bdist, _, polish_params = (
-                solve_geodesic_levenberg_marquardt(
-                    sym_basis,
-                    orbits,
-                    pulled_params,
-                    max_steps=120,
-                    stagnation_window=25,
-                    initial_damping=1e-3,
-                    geodesic_threshold=0.0,
-                    penalty_margin=None,
-                    penalty_weight=0.0,
-                    require_interior=True,
-                    phase_label="P3",
-                    verbose=verbose,
-                )
-            )
-            if polish_res < 1e-9:
-                polish_res, polish_params = polish_minimum_norm_gauss_newton(
-                    sym_basis, orbits, polish_params, max_steps=5, require_interior=True
-                )
-                polish_reps, _, _, _ = decode_orbit_representatives(
-                    orbits, polish_params
-                )
-                polish_bdist = sym_basis.base_basis.boundary_distance(polish_reps)
-            if polish_res < 1e-12 and polish_bdist > 0.0:
-                solution = _build_solution_if_positive(
-                    sym_basis, orbits, polish_params, polish_res, polish_bdist, "PI"
-                )
-                if solution is not None:
-                    return solution
+        if pulled_solution is not None:
+            return pulled_solution
 
     return po_fallback
 
@@ -2111,25 +2318,36 @@ def solve_for_symmetry(
         f"(|G|={sym_basis.group_order}, M_G={sym_basis.num_basis}, N={num_points})"
     )
 
-    # Deterministic generic mini-ladder (no per-configuration special cases)
+    # Deterministic generic mini-ladder (no per-configuration special cases).
+    # For low-order Halton/Riesz starts (none/central in d >= 2), allow up to 16
+    # deterministic slices; easy cases return immediately on step 0.
     if base_basis.domain == "cube":
-        start_ladder = [
+        base_ladder = [
             (0.30, 6.0, 12.0),
             (0.45, 8.0, 12.0),
             (0.25, 4.0, 0.0),
             (0.55, 11.0, 8.0),
         ]
     else:
-        start_ladder = [
+        base_ladder = [
             (0.50, 0.06, 0.0),
             (1.10, 0.12, 0.0),
             (1.80, 0.04, 0.0),
             (0.30, 0.18, 0.0),
         ]
 
+    if base_basis.dimension >= 2 and symmetry_name == "central" and base_basis.domain == "simplex":
+        num_ladder_steps = 8
+    elif base_basis.dimension >= 2 and symmetry_name in ("none", "central"):
+        num_ladder_steps = 16
+    else:
+        num_ladder_steps = len(base_ladder)
+
     best_po_solution = None
     first_valid_orbits = None
-    for step_idx, (inset, twist_or_angle, norm_order) in enumerate(start_ladder):
+    for step_idx in range(num_ladder_steps):
+        inset, twist_or_angle, norm_order = base_ladder[step_idx % len(base_ladder)]
+        halton_skip = step_idx * max(num_points, 17)
         if base_basis.domain == "cube":
             orbits = build_cube_equilibrium_start(
                 base_basis.dimension,
@@ -2141,8 +2359,11 @@ def solve_for_symmetry(
                 rotation_degrees=twist_or_angle,
                 norm_order=norm_order,
                 min_unknowns=sym_basis.num_basis,
+                halton_skip=halton_skip,
             )
         else:
+            # Alternate Riesz-S^d_+ crystal and raw Dirichlet(1/2) Halton starts for none
+            riesz_steps = 50 if (symmetry_name == "none" and step_idx % 2 == 0) else 0
             orbits = build_simplex_equilibrium_start(
                 base_basis.dimension,
                 base_basis.degree,
@@ -2152,6 +2373,8 @@ def solve_for_symmetry(
                 boundary_inset=inset,
                 chiral_twist=twist_or_angle,
                 min_unknowns=sym_basis.num_basis,
+                halton_skip=halton_skip,
+                riesz_steps=riesz_steps,
             )
 
         if orbits is None:
@@ -2242,8 +2465,8 @@ def get_symmetry_schedule(domain, dimension, degree):
     if domain == "cube":
         if degree % 2 == 1:
             return ["chiral", "central", "full", "none"]
-        return ["none", "central", "chiral", "full"]
-    return ["chiral", "full", "none"]
+        return ["demi", "chiral", "central", "full", "none"]
+    return ["chiral", "full", "central", "none"]
 
 
 def save_atlas_rule_json(
@@ -2321,7 +2544,7 @@ def main():
     )
     parser.add_argument(
         "--symmetry",
-        choices=("auto", "none", "central", "chiral", "full"),
+        choices=("auto", "none", "central", "chiral", "demi", "full"),
         default="auto",
         help="symmetry group (default: auto = try all applicable symmetries)",
     )

@@ -17,7 +17,7 @@
  "exist": {
   "proved": true,
   "r": 1e-300,
-  "kratio": 0.2799790855509672,
+  "kratio": 0.6532845329522551,
   "mode": "sym48",
   "equations": 1,
   "unknowns": 1,
@@ -27,7 +27,7 @@
   "outside": false,
   "quality_proved": "PI"
  },
- "seconds": 0.01,
+ "seconds": 0.02,
  "ok_stored": true,
  "ok_exist": true
 }

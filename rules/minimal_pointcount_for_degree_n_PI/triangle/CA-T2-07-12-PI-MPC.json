@@ -6,39 +6,78 @@
   "degree": 7,
   "points": 12,
   "quality": "PI",
+  "symmetry": "chiral",
   "origin": "found",
-  "method": "numerical search of this atlas: Gauss shell pattern with 12 nodes (shells with 4, 2 points per edge, outside to inside, in relative notation 4 -2), no S3 stage (--skip-s3: the pattern is rotated as it is and the C3 solve starts with equal weights), rotation (outer shell slides by 1/8 spacing along its edge, the 2 innermost shells turn), then a C3 symmetric Levenberg-Marquardt search in float64 with the nodes kept inside the triangle by barycentric coordinates b = s^2 / sum s^2 (code/shell_c3_bary.py, no random numbers); all nodes lie inside the triangle",
-  "reproduce": {"script": "code/shell_c3_bary.py", "command": "python code/shell_c3_bary.py --deg 7 --seq 4,2 --target 12 --turn 2 --steps 600 --win 15 --gain 0.05 --dq 0.001 --skip-s3", "seed": 0},
-  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "method": "Generic deterministic equilibrium-start solver (domain=simplex, dim=2, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "command": "python code/cubature_generic.py --dim 2 --degree 7 --domain simplex --symmetry chiral --points 12"
+  },
   "status": "proven",
-  "residual_reported": 4.262446616589144e-16,
-  "numerical_check": {"N": 12, "M": 36, "p": 36, "res": 4.262446616589144e-16, "sigma": 0.567831604725377, "h": 5.486459520154187e-13, "rad": 6.463595844025063e-16, "cert": true, "inside": true},
+  "residual_reported": 2.220446049250313e-16,
   "nodes": [
-    [0.062382265094402055, 0.06751786707391602],
-    [0.870099867831682, 0.062382265094402055],
-    [0.06751786707391602, 0.870099867831682],
-    [0.20644149867001646, 0.5158423343535917],
-    [0.2777161669763917, 0.20644149867001646],
-    [0.5158423343535917, 0.2777161669763917],
-    [0.6232720494910916, 0.055225456656926554],
-    [0.3215024938519818, 0.6232720494910916],
-    [0.055225456656926554, 0.3215024938519818],
-    [0.3047265008681672, 0.0343243029450972],
-    [0.6609491961867356, 0.3047265008681672],
-    [0.0343243029450972, 0.6609491961867356]
+    [
+      0.20644149867001654,
+      0.5158423343535917
+    ],
+    [
+      0.2777161669763917,
+      0.20644149867001654
+    ],
+    [
+      0.5158423343535917,
+      0.2777161669763917
+    ],
+    [
+      0.3215024938519817,
+      0.6232720494910917
+    ],
+    [
+      0.055225456656926575,
+      0.3215024938519817
+    ],
+    [
+      0.6232720494910917,
+      0.055225456656926575
+    ],
+    [
+      0.6609491961867355,
+      0.3047265008681672
+    ],
+    [
+      0.03432430294509725,
+      0.6609491961867355
+    ],
+    [
+      0.3047265008681672,
+      0.03432430294509725
+    ],
+    [
+      0.06751786707391594,
+      0.870099867831682
+    ],
+    [
+      0.062382265094402034,
+      0.06751786707391594
+    ],
+    [
+      0.870099867831682,
+      0.062382265094402034
+    ]
   ],
   "weights": [
-    0.026517028157436253,
-    0.026517028157436253,
-    0.026517028157436253,
-    0.06749318700980277,
-    0.06749318700980277,
-    0.06749318700980277,
+    0.06749318700980278,
+    0.06749318700980278,
+    0.06749318700980278,
     0.043881408714446055,
     0.043881408714446055,
     0.043881408714446055,
-    0.0287750427849816,
-    0.0287750427849816,
-    0.0287750427849816
+    0.028775042784981615,
+    0.028775042784981615,
+    0.028775042784981615,
+    0.026517028157436253,
+    0.026517028157436253,
+    0.026517028157436253
   ]
 }
