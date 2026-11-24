@@ -1138,6 +1138,90 @@ def merge_close_diag(td, wd, tol):
     return np.array(out_t, dtype=float), np.array(out_w, dtype=float), merged
 
 
+def gn_polish(B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=3):
+    """Minimum-norm Gauss-Newton steps in (x, y, z, w) to drive ||r|| to machine floor."""
+    kg = len(xg)
+    kd = len(td)
+    if has_centre:
+        v0 = B.eval_values(np.array([0.0]), np.array([0.0]), np.array([0.0]))[:, 0]
+    else:
+        v0 = None
+
+    def eval_r(x1, y1, z1, w1, t1, wd1, wc1):
+        r = 6.0 * B.contract_values(x1, y1, z1, w1) - B.rhs
+        if kd > 0:
+            r = r + 2.0 * (B.eval_diag_values(t1) @ wd1)
+        if has_centre:
+            r = r + v0 * wc1
+        return r
+
+    cur_r = eval_r(xg, yg, zg, wg, td, wd, wc)
+    cur_norm = float(np.linalg.norm(cur_r))
+    for _ in range(steps):
+        V, Vx, Vy, Vz = B.eval_and_grad(xg, yg, zg)
+        cols = [
+            Vx * (6.0 * wg)[None, :],
+            Vy * (6.0 * wg)[None, :],
+            Vz * (6.0 * wg)[None, :],
+            V * 6.0,
+        ]
+        if kd > 0:
+            Vd, Vdt = B.eval_diag_grad(td)
+            cols.append(Vdt * (2.0 * wd)[None, :])
+            cols.append(Vd * 2.0)
+        if has_centre:
+            cols.append(v0[:, None])
+        J = np.hstack(cols)
+        G = J @ J.T
+        try:
+            cf = cho_factor(G, lower=True, check_finite=False)
+            dq = -(J.T @ cho_solve(cf, cur_r, check_finite=False))
+        except np.linalg.LinAlgError:
+            break
+        x1 = xg + dq[:kg]
+        y1 = yg + dq[kg:2 * kg]
+        z1 = zg + dq[2 * kg:3 * kg]
+        w1 = wg + dq[3 * kg:4 * kg]
+        off = 4 * kg
+        if kd > 0:
+            t1 = td + dq[off:off + kd]
+            wd1 = wd + dq[off + kd:off + 2 * kd]
+            off += 2 * kd
+        else:
+            t1 = td
+            wd1 = wd
+        wc1 = wc + float(dq[off]) if has_centre else wc
+        if float(w1.min()) <= 0.0:
+            break
+        if kd > 0 and float(wd1.min()) <= 0.0:
+            break
+        if has_centre and wc1 <= 0.0:
+            break
+        mx = max(
+            float(np.abs(x1).max()),
+            float(np.abs(y1).max()),
+            float(np.abs(z1).max()),
+        )
+        if kd > 0:
+            mx = max(mx, float(np.abs(t1).max()))
+        if mx >= 1.0 - 1e-8:
+            break
+        r1 = eval_r(x1, y1, z1, w1, t1, wd1, wc1)
+        n1 = float(np.linalg.norm(r1))
+        if not math.isfinite(n1) or n1 >= cur_norm:
+            break
+        xg = x1
+        yg = y1
+        zg = z1
+        wg = w1
+        td = t1
+        wd = wd1
+        wc = wc1
+        cur_r = r1
+        cur_norm = n1
+    return cur_norm, xg, yg, zg, wg, td, wd, wc
+
+
 def monomial_residual(n, nodes, weights):
     """Maximum |sum w x^a y^b z^c - int x^a y^b z^c| / 8 over all a + b + c <= n."""
     x = nodes[:, 0]
@@ -1369,6 +1453,10 @@ def main():
                 verbose=a.verbose,
             )
             used += it_m
+    if a.coords == "plain" and res < 1e-12:
+        res, xg, yg, zg, wg, td, wd, wc = gn_polish(
+            B, xg, yg, zg, wg, td, wd, has_centre, wc, steps=3
+        )
     nodes, weights = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
     final_nodes = len(nodes)
     unk = 4 * len(xg) + 2 * len(td) + (1 if has_centre else 0)
