@@ -5,13 +5,13 @@
  "degree": 1,
  "points": 1,
  "quality": "PI",
- "status": "verified",
- "sha": "a0b54f5ba562459e",
+ "status": "proven",
+ "sha": "5e7660e440167121",
  "stored": {
-  "res_bound": 1.6764367671839873e-14,
+  "res_bound": 1.665334536937736e-15,
   "res_ok": true,
-  "margin_exact": 0.333333333333333,
-  "minw_exact": 0.499999999999992,
+  "margin_exact": 0.3333333333333333,
+  "minw_exact": 0.5,
   "quality_exact": "PI"
  },
  "exist": {
@@ -21,13 +21,13 @@
   "mode": "sym6",
   "equations": 2,
   "unknowns": 2,
-  "dist": 9.492415187217776e-15,
+  "dist": 1.1657341758564157e-15,
   "pos": true,
   "inside": true,
   "outside": false,
   "quality_proved": "PI"
  },
- "seconds": 0.01,
+ "seconds": 0.03,
  "ok_stored": true,
  "ok_exist": true
 }

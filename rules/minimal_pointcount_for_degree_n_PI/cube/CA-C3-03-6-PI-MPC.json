@@ -6,26 +6,54 @@
   "degree": 3,
   "points": 6,
   "quality": "PI",
+  "symmetry": "chiral",
   "origin": "found",
-  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
-  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=3, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "command": "python code/cubature_generic.py --dim 3 --degree 3 --domain cube --symmetry chiral --points 6"
+  },
   "status": "proven",
-  "residual_reported": 2.715132753421715e-16,
-  "numerical_check": {"N": 6, "M": 7, "p": 12, "res": 2.5390056314011964e-16, "sigma": 1.2247448713909195, "h": 5.7690445499319455e-16, "rad": 1.2586966262087025e-16, "cert": true, "inside": true},
+  "residual_reported": 1.1102230246251565e-16,
   "nodes": [
-    [0.12872954743807305, 0.7692558814393683, -0.6258354791509976],
-    [0.6464762599551142, -0.5436545903950307, -0.5352667049395329],
-    [0.7519966942778116, 0.3356837205531516, 0.5672910569881758],
-    [-0.12872954743807305, -0.7692558814393683, 0.6258354791509976],
-    [-0.6464762599551142, 0.5436545903950307, 0.5352667049395329],
-    [-0.7519966942778116, -0.3356837205531516, -0.5672910569881758]
+    [
+      0.2951295444869318,
+      0.9288367251710258,
+      -0.22396626965795724
+    ],
+    [
+      -0.2951295444869318,
+      -0.9288367251710258,
+      0.22396626965795724
+    ],
+    [
+      -0.22396626965795724,
+      0.2951295444869318,
+      0.9288367251710258
+    ],
+    [
+      0.22396626965795724,
+      -0.2951295444869318,
+      -0.9288367251710258
+    ],
+    [
+      0.9288367251710258,
+      -0.22396626965795724,
+      0.2951295444869318
+    ],
+    [
+      -0.9288367251710258,
+      0.22396626965795724,
+      -0.2951295444869318
+    ]
   ],
   "weights": [
-    1.3333387273860502,
-    1.3333302483271838,
-    1.3333310242867666,
-    1.3333387273860502,
-    1.3333302483271838,
-    1.3333310242867666
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333
   ]
 }

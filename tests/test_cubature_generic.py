@@ -142,6 +142,43 @@ class GenericCubatureTests(unittest.TestCase):
             )
             self.assertLess(monomial_err, 1e-13)
 
+    def test_demi_and_simplex_central_symmetries(self):
+        # 3D cube degree 10 with 71 nodes (< Z = 72) via demihypercube (Td) symmetry
+        cube_basis = cubature_generic.CubeBasis(3, 10)
+        cube_out = cubature_generic.solve_for_symmetry(
+            cube_basis, "demi", 71, seed=None, verbose=False
+        )
+        self.assertIsNotNone(cube_out)
+        cube_sol, _, _ = cube_out
+        self.assertEqual(cube_sol.quality, "PI")
+        self.assertEqual(len(cube_sol.weights), 71)
+        self.assertLess(
+            cubature_generic.compute_monomial_residual(
+                "cube", 3, 10, cube_sol.nodes, cube_sol.weights * cube_basis.volume
+            ),
+            1e-13,
+        )
+
+        # 3D simplex degree 4 with 11 nodes via order-2 vertex-reversal (central) symmetry
+        tetra_basis = cubature_generic.SimplexBasis(3, 4)
+        tetra_out = cubature_generic.solve_for_symmetry(
+            tetra_basis, "central", 11, seed=None, verbose=False
+        )
+        self.assertIsNotNone(tetra_out)
+        tetra_sol, _, _ = tetra_out
+        self.assertEqual(tetra_sol.quality, "PI")
+        self.assertEqual(len(tetra_sol.weights), 11)
+        self.assertLess(
+            cubature_generic.compute_monomial_residual(
+                "simplex",
+                3,
+                4,
+                tetra_sol.nodes,
+                tetra_sol.weights * tetra_basis.volume,
+            ),
+            1e-13,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
