@@ -240,7 +240,11 @@
     "trigTag1": "2e376a5d96a2bc12",
     "trigTag2": "77c8285c22544626",
     "trigTag3": "c736074ab53ec9bc",
-    "trigTagS": "b84accd2c54e6078"
+    "trigTagS": "b84accd2c54e6078",
+    "tipNode": "5ec048fa8d838611",
+    "tipOrbit": "ddc5d8caafdc297b",
+    "tipOut": "f78ea72183ac831b",
+    "tipPin": "36e0b7062f77d8cf"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -505,5 +509,9 @@
   "trigTag2": "x = sin u, y = sin v,  u, v ∈ [−π/2, π/2]",
   "trigTag3": "x = sin u, y = sin v, z = sin w,  u, v, w ∈ [−π/2, π/2]",
   "trigTagS": "θ = arcsin √λ,  u = θ / Σθ",
-  "trigBtn": "Winkelkoordinaten"
+  "trigBtn": "Winkelkoordinaten",
+  "tipNode": "Knoten #{i}",
+  "tipOrbit": "Orbit: {k}",
+  "tipOut": "außerhalb",
+  "tipPin": "fixiert"
 }
