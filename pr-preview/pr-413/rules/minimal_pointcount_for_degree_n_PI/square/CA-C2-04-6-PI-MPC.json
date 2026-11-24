@@ -1,0 +1,53 @@
+{
+  "id": "CA-C2-04-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "square",
+  "dimension": 2,
+  "degree": 4,
+  "points": 6,
+  "quality": "PI",
+  "symmetry": "none",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=2, symmetry=none) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "command": "python code/cubature_generic.py --dim 2 --degree 4 --domain cube --symmetry none --points 6"
+  },
+  "status": "proven",
+  "residual_reported": 2.8492833092919293e-16,
+  "nodes": [
+    [
+      0.039871517326815584,
+      0.03984690473186001
+    ],
+    [
+      -0.5624449129114241,
+      0.7898325013522673
+    ],
+    [
+      0.7897907219619914,
+      -0.5625253583478231
+    ],
+    [
+      -0.9105240372432923,
+      -0.2624601259237932
+    ],
+    [
+      0.7005139016659426,
+      0.700470059490769
+    ],
+    [
+      -0.2626584376454971,
+      -0.9104692455997044
+    ]
+  ],
+  "weights": [
+    1.1475191199381425,
+    0.6107513126989491,
+    0.610758041433259,
+    0.5155229032865507,
+    0.5998589972200798,
+    0.5155896254230197
+  ]
+}

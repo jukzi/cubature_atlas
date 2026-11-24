@@ -1,0 +1,83 @@
+{
+  "id": "CA-C2-07-12-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "square",
+  "dimension": 2,
+  "degree": 7,
+  "points": 12,
+  "quality": "PI",
+  "symmetry": "chiral",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=2, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "command": "python code/cubature_generic.py --dim 2 --degree 7 --domain cube --symmetry chiral --points 12"
+  },
+  "status": "proven",
+  "residual_reported": 1.166169560247654e-15,
+  "nodes": [
+    [
+      0.38055443320831583,
+      -0.38055443320831583
+    ],
+    [
+      0.38055443320831583,
+      0.38055443320831583
+    ],
+    [
+      -0.38055443320831583,
+      0.38055443320831583
+    ],
+    [
+      -0.38055443320831583,
+      -0.38055443320831583
+    ],
+    [
+      -0.805979782918599,
+      -0.805979782918599
+    ],
+    [
+      0.805979782918599,
+      -0.805979782918599
+    ],
+    [
+      0.805979782918599,
+      0.805979782918599
+    ],
+    [
+      -0.805979782918599,
+      0.805979782918599
+    ],
+    [
+      0.0,
+      0.9258200997725518
+    ],
+    [
+      -0.9258200997725518,
+      0.0
+    ],
+    [
+      -9.62964972193618e-35,
+      -0.9258200997725518
+    ],
+    [
+      0.9258200997725518,
+      0.0
+    ]
+  ],
+  "weights": [
+    0.5205929166673949,
+    0.5205929166673949,
+    0.5205929166673947,
+    0.5205929166673949,
+    0.23743177469063026,
+    0.23743177469063026,
+    0.23743177469063026,
+    0.23743177469063026,
+    0.24197530864197533,
+    0.2419753086419754,
+    0.24197530864197533,
+    0.2419753086419754
+  ]
+}
