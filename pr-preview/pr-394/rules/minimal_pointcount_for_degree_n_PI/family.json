@@ -1,0 +1,20 @@
+{
+  "id": "minimal_pointcount_for_degree_n_PI",
+  "tag": "MPC",
+  "role": "pi",
+  "quality": "PI",
+  "name": {
+    "en": "Minimal point count for degree n (PI)",
+    "de": "Minimale Knotenzahl für Grad n (PI)"
+  },
+  "short": {
+    "en": "Numerical search PI",
+    "de": "Numerische Suche PI"
+  },
+  "description": {
+    "en": "Smallest rules found by the numerical search of this atlas: positive weights, all nodes in the closed domain (PI). One rule per domain and degree; every rule is proven with interval arithmetic (an exact rule with this quality exists within about 1e-10 of the stored numbers, see the documentation). On the interval these are the Gauss–Legendre rules, which are optimal.",
+    "de": "Kleinste Regeln aus der numerischen Suche dieses Atlas: positive Gewichte, alle Knoten im abgeschlossenen Gebiet (PI). Eine Regel je Gebiet und Grad; jede Regel ist mit Intervallarithmetik bewiesen (eine exakte Regel mit dieser Qualität liegt im Abstand von etwa 1e-10 der gespeicherten Zahlen, siehe Dokumentation). Im Intervall sind es die Gauß-Legendre-Regeln, die optimal sind."
+  },
+  "references": [],
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz"
+}
