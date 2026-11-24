@@ -19,13 +19,17 @@ mapped back via x = sin(u), and assigned equilibrium weights proportional to
 sqrt((1 - x^2)(1 - y^2)(1 - z^2)).
 
 Solves the exact S6-invariant Legendre moment system with Marquardt-scaled
-Levenberg-Marquardt (PI by construction: x = sin(sx), w = v^2) using Cholesky
-factorization, residual-only trial evaluations, and exact analytic geodesic
-acceleration (Transtrum & Sethna 2012, arXiv:1201.5885) with Legendre ODE second
-derivatives (1 - x^2) P_k''(x) = 2 x P_k'(x) - k(k + 1) P_k(x).
+Levenberg-Marquardt using Cholesky factorization, residual-only trial evaluations,
+and exact analytic geodesic acceleration (Transtrum & Sethna 2012, arXiv:1201.5885)
+with the exact 3-term differentiated Legendre recurrence for P_k''(x) (free of
+boundary cancellation at |x| -> 1). Supports PI-by-construction coordinates
+(--coords sin: x = sin(s), w = v^2) and a fold-free two-phase mode (--coords plain:
+plain (x, y, z, v^2) geodesic LM followed by a diagonal boundary hinge pull inside
+[-1, 1]^3) that removes the dx/ds = 0 boundary fold at high degrees.
 
 Usage:
     python code/cube_cheb_s6.py --degree 17 --nodes 262 --angle 8 --r0 0.3 --out rule.json
+    python code/cube_cheb_s6.py --degree 43 --nodes 3685 --angle 6 --r0 0.25 --pnorm 12 --lam0 0.5 --geo-tau 0.05 --coords plain --out rule.json
 """
 import argparse
 import json
@@ -730,6 +734,369 @@ def solve_s6_lm(
     return r_init, math.sqrt(best_cost), used, xg, yg, zg, wg, td, wd, wc
 
 
+def solve_s6_plain(
+    B,
+    x0,
+    y0,
+    z0,
+    wg0,
+    td0,
+    wd0,
+    has_centre,
+    wc0,
+    steps,
+    win,
+    lam0,
+    geo=True,
+    alpha=0.75,
+    bold=2,
+    geo_tau=0.05,
+    lam_down=1.5,
+    lam_up=5.0,
+    xmax=1.12,
+    pull_b=None,
+    pull_wt=1.0,
+    verbose=False,
+):
+    """Fold-free Marquardt-scaled geodesic LM in plain (x, y, z, v^2) coordinates.
+
+    Avoiding x = sin(s) removes the dx/ds = 0 fold singularity at |x| = 1 that traps
+    outer-face orbits at high degree. An optional piecewise-linear boundary hinge
+    pull_wt * max(0, |x| - pull_b) is folded directly into the gradient and diagonal
+    of H = J^T J without extra matrix allocations to pull a PO solution strictly
+    inside [-1, 1]^3.
+    """
+    kg = len(x0)
+    kd = len(td0)
+    parts = [
+        x0.copy(),
+        y0.copy(),
+        z0.copy(),
+        np.sqrt(np.maximum(wg0, 1e-14)),
+    ]
+    if kd > 0:
+        parts.append(td0.copy())
+        parts.append(np.sqrt(np.maximum(wd0, 1e-14)))
+    if has_centre:
+        parts.append(np.array([math.sqrt(max(wc0, 1e-14))]))
+        V0 = B.eval_values(np.array([0.0]), np.array([0.0]), np.array([0.0]))
+        v_origin = V0[:, 0]
+    else:
+        v_origin = None
+    q = np.concatenate(parts)
+    a_idx = B.a_idx
+    b_idx = B.b_idx
+    c_idx = B.c_idx
+    sc = B.sc
+    if kd > 0:
+        coord_idx = np.concatenate(
+            [np.arange(0, 3 * kg), np.arange(4 * kg, 4 * kg + kd)]
+        ).astype(int)
+    else:
+        coord_idx = np.arange(0, 3 * kg, dtype=int)
+    nvar = len(q)
+
+    def pen_vec(vec):
+        xc = vec[coord_idx]
+        exc = np.maximum(0.0, np.abs(xc) - pull_b)
+        return pull_wt * exc * np.sign(xc)
+
+    def eval_moment_res(vec):
+        if len(coord_idx) > 0 and float(np.abs(vec[coord_idx]).max()) > xmax:
+            return None
+        x = vec[:kg]
+        y = vec[kg:2 * kg]
+        z = vec[2 * kg:3 * kg]
+        vg = vec[3 * kg:4 * kg]
+        V = B.eval_values(x, y, z)
+        r = 6.0 * (V @ (vg * vg)) - B.rhs
+        off = 4 * kg
+        if kd > 0:
+            td = vec[off:off + kd]
+            vd = vec[off + kd:off + 2 * kd]
+            Vd = B.eval_diag_values(td)
+            r = r + 2.0 * (Vd @ (vd * vd))
+            off += 2 * kd
+        if has_centre:
+            vc = vec[off]
+            r = r + v_origin * (vc * vc)
+        return r
+
+    def eval_cost(vec):
+        rm = eval_moment_res(vec)
+        if rm is None:
+            return math.inf
+        val = float(rm @ rm)
+        if pull_b is not None:
+            pv = pen_vec(vec)
+            val += float(pv @ pv)
+        return val
+
+    def eval_full(vec, need_jet):
+        x = vec[:kg]
+        y = vec[kg:2 * kg]
+        z = vec[2 * kg:3 * kg]
+        vg = vec[3 * kg:4 * kg]
+        wg = vg * vg
+        if need_jet:
+            V, Vx, Vy, Vz, Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz = B.eval_jet(
+                x, y, z
+            )
+        else:
+            V, Vx, Vy, Vz = B.eval_and_grad(x, y, z)
+            Px = None
+            dPx = None
+            ddPx = None
+            Py = None
+            dPy = None
+            ddPy = None
+            Pz = None
+            dPz = None
+            ddPz = None
+        r = 6.0 * (V @ wg) - B.rhs
+        cols = [
+            Vx * (6.0 * wg)[None, :],
+            Vy * (6.0 * wg)[None, :],
+            Vz * (6.0 * wg)[None, :],
+            V * (12.0 * vg)[None, :],
+        ]
+        off = 4 * kg
+        dstate = None
+        if kd > 0:
+            td = vec[off:off + kd]
+            vd = vec[off + kd:off + 2 * kd]
+            wd = vd * vd
+            if need_jet:
+                Vd, Vdt, Vdtt = B.eval_diag_jet(td)
+                dstate = (vd, wd, Vd, Vdt, Vdtt)
+            else:
+                Vd, Vdt = B.eval_diag_grad(td)
+            r = r + 2.0 * (Vd @ wd)
+            cols.append(Vdt * (2.0 * wd)[None, :])
+            cols.append(Vd * (4.0 * vd)[None, :])
+            off += 2 * kd
+        if has_centre:
+            vc = vec[off]
+            r = r + v_origin * (vc * vc)
+            cols.append((v_origin * (2.0 * vc))[:, None])
+        if need_jet:
+            state = (
+                vg, wg,
+                Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz,
+                V, Vx, Vy, Vz, dstate,
+            )
+        else:
+            state = None
+        return r, np.hstack(cols), state
+
+    def d2r(state, vel):
+        """Exact directional second derivative r''(vel) in plain (x, y, z, v^2)."""
+        (
+            vg, wg,
+            Px, dPx, ddPx, Py, dPy, ddPy, Pz, dPz, ddPz,
+            V, Vx, Vy, Vz, dstate,
+        ) = state
+        dx = vel[:kg]
+        dy = vel[kg:2 * kg]
+        dz = vel[2 * kg:3 * kg]
+        dvg = vel[3 * kg:4 * kg]
+        out = (
+            (V @ (12.0 * dvg * dvg))
+            + (Vx @ (24.0 * vg * dvg * dx))
+            + (Vy @ (24.0 * vg * dvg * dy))
+            + (Vz @ (24.0 * vg * dvg * dz))
+        )
+        blk = sc * (
+            ddPx[a_idx] * Py[b_idx] * Pz[c_idx]
+            + ddPx[b_idx] * Py[c_idx] * Pz[a_idx]
+            + ddPx[c_idx] * Py[a_idx] * Pz[b_idx]
+        )
+        out = out + (blk @ (6.0 * wg * dx * dx))
+        blk = sc * (
+            Px[a_idx] * ddPy[b_idx] * Pz[c_idx]
+            + Px[b_idx] * ddPy[c_idx] * Pz[a_idx]
+            + Px[c_idx] * ddPy[a_idx] * Pz[b_idx]
+        )
+        out = out + (blk @ (6.0 * wg * dy * dy))
+        blk = sc * (
+            Px[a_idx] * Py[b_idx] * ddPz[c_idx]
+            + Px[b_idx] * Py[c_idx] * ddPz[a_idx]
+            + Px[c_idx] * Py[a_idx] * ddPz[b_idx]
+        )
+        out = out + (blk @ (6.0 * wg * dz * dz))
+        blk = sc * (
+            dPx[a_idx] * dPy[b_idx] * Pz[c_idx]
+            + dPx[b_idx] * dPy[c_idx] * Pz[a_idx]
+            + dPx[c_idx] * dPy[a_idx] * Pz[b_idx]
+        )
+        out = out + (blk @ (12.0 * wg * dx * dy))
+        blk = sc * (
+            dPx[a_idx] * Py[b_idx] * dPz[c_idx]
+            + dPx[b_idx] * Py[c_idx] * dPz[a_idx]
+            + dPx[c_idx] * Py[a_idx] * dPz[b_idx]
+        )
+        out = out + (blk @ (12.0 * wg * dx * dz))
+        blk = sc * (
+            Px[a_idx] * dPy[b_idx] * dPz[c_idx]
+            + Px[b_idx] * dPy[c_idx] * dPz[a_idx]
+            + Px[c_idx] * dPy[a_idx] * dPz[b_idx]
+        )
+        out = out + (blk @ (12.0 * wg * dy * dz))
+        off = 4 * kg
+        if kd > 0:
+            vd, wd, Vd, Vdt, Vdtt = dstate
+            dt = vel[off:off + kd]
+            dvd = vel[off + kd:off + 2 * kd]
+            out = out + (Vd @ (4.0 * dvd * dvd))
+            out = out + (Vdt @ (8.0 * vd * dvd * dt))
+            out = out + (Vdtt @ (2.0 * wd * dt * dt))
+            off += 2 * kd
+        if has_centre:
+            dvc = vel[off]
+            out = out + v_origin * (2.0 * dvc * dvc)
+        return out
+
+    t_start = time.time()
+    geo_active = geo and (geo_tau <= 0.0)
+    rm, Jm, state = eval_full(q, geo_active)
+    r_init = float(np.linalg.norm(rm))
+    cost = float(rm @ rm)
+    if pull_b is not None:
+        pv = pen_vec(q)
+        cost += float(pv @ pv)
+    best_cost = cost
+    best_q = q.copy()
+    lam = lam0
+    hist = [best_cost]
+    prev_step = None
+    cur_bold = bold
+    restarted = False
+    used = 0
+
+    for it in range(steps):
+        used = it + 1
+        if geo and not geo_active and math.sqrt(cost) < geo_tau:
+            geo_active = True
+            rm, Jm, state = eval_full(q, True)
+        g = Jm.T @ rm
+        H = Jm.T @ Jm
+        if pull_b is not None:
+            xc = q[coord_idx]
+            active = np.abs(xc) > pull_b
+            if np.any(active):
+                ai = coord_idx[active]
+                exc = (np.abs(xc[active]) - pull_b) * np.sign(xc[active])
+                pw2 = pull_wt * pull_wt
+                g[ai] += pw2 * exc
+                H[ai, ai] += pw2
+        diag = np.diag(H)
+        dmax = float(diag.max()) + 1e-300
+        dscale = diag + 1e-12 * dmax
+        accepted = False
+        for _ in range(25):
+            Hd = H.copy()
+            Hd.flat[::nvar + 1] += lam * dscale
+            try:
+                cf = cho_factor(Hd, lower=True, check_finite=False)
+                vel = -cho_solve(cf, g, check_finite=False)
+            except np.linalg.LinAlgError:
+                lam *= 10.0
+                continue
+            step = vel
+            if geo_active and alpha > 0.0:
+                rpp = d2r(state, vel)
+                accel = -cho_solve(cf, Jm.T @ rpp, check_finite=False)
+                nv = math.sqrt(float(np.dot(dscale, vel * vel)))
+                na = math.sqrt(float(np.dot(dscale, accel * accel)))
+                if nv > 0.0 and na <= alpha * nv:
+                    step = vel + 0.5 * accel
+            qn = q + step
+            cn = eval_cost(qn)
+            if step is not vel:
+                qv = q + vel
+                cv = eval_cost(qv)
+                if not np.isfinite(cn) or cv < cn:
+                    qn = qv
+                    cn = cv
+                    step = vel
+            ok = False
+            uphill = False
+            if np.isfinite(cn):
+                if cn < cost:
+                    ok = True
+                elif geo_active and cur_bold > 0 and prev_step is not None:
+                    sn1 = math.sqrt(float(np.dot(dscale, step * step)))
+                    sn0 = math.sqrt(float(np.dot(dscale, prev_step * prev_step)))
+                    if sn1 > 0.0 and sn0 > 0.0:
+                        cos_b = float(np.dot(dscale, step * prev_step)) / (sn1 * sn0)
+                        cos_b = max(-1.0, min(1.0, cos_b))
+                        if cos_b > 0.0 and ((1.0 - cos_b) ** cur_bold) * cn <= best_cost:
+                            ok = True
+                            uphill = True
+            if ok:
+                q = qn
+                rm, Jm, state = eval_full(q, geo_active)
+                cost = float(rm @ rm)
+                if pull_b is not None:
+                    pv = pen_vec(q)
+                    cost += float(pv @ pv)
+                if cost < best_cost:
+                    best_cost = cost
+                    best_q = q.copy()
+                prev_step = step
+                if not uphill:
+                    factor = lam_down if geo_active else (1.0 / 0.3)
+                    lam = max(lam / factor, 1e-15)
+                accepted = True
+                break
+            lam *= lam_up
+        hist.append(best_cost)
+        if verbose and (used <= 5 or used % 10 == 0 or math.sqrt(best_cost) < 1e-13):
+            dt = time.time() - t_start
+            mx = float(np.abs(q[coord_idx]).max()) if len(coord_idx) > 0 else 0.0
+            print(
+                f"  it={used:4d} tot={math.sqrt(best_cost):.3e} mom={float(np.linalg.norm(rm)):.3e} "
+                f"bd={1.0 - mx:+.2e} lam={lam:.1e} geo={int(geo_active)} ({dt:.1f}s)",
+                flush=True,
+            )
+        if math.sqrt(best_cost) < 1e-13:
+            break
+        stagnated = not accepted
+        if not stagnated and win > 0 and len(hist) > win:
+            if math.sqrt(best_cost) > 0.995 * math.sqrt(hist[-1 - win]):
+                stagnated = True
+        if stagnated:
+            if geo_active and not restarted and cost > 1.01 * best_cost:
+                restarted = True
+                q = best_q.copy()
+                rm, Jm, state = eval_full(q, True)
+                cost = best_cost
+                lam = min(lam, 1e-4)
+                cur_bold = 0
+                prev_step = None
+                hist = [best_cost]
+                continue
+            break
+
+    q = best_q
+    xg = q[:kg].copy()
+    yg = q[kg:2 * kg].copy()
+    zg = q[2 * kg:3 * kg].copy()
+    wg = q[3 * kg:4 * kg] ** 2
+    off = 4 * kg
+    if kd > 0:
+        td = q[off:off + kd].copy()
+        wd = q[off + kd:off + 2 * kd] ** 2
+        off += 2 * kd
+    else:
+        td = np.array([], dtype=float)
+        wd = np.array([], dtype=float)
+    wc = float(q[off] ** 2) if has_centre else 0.0
+    rm_best = eval_moment_res(q)
+    mom_res = float(np.linalg.norm(rm_best)) if rm_best is not None else math.inf
+    return r_init, mom_res, used, xg, yg, zg, wg, td, wd, wc
+
+
 def expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc):
     """Expand S6 orbit representatives to full node and weight arrays."""
     nodes = []
@@ -805,6 +1172,12 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.75, help="geodesic acceleration ratio cap |a|/|v|")
     ap.add_argument("--bold", type=int, default=2, help="Transtrum uphill boldness exponent (0 to disable)")
     ap.add_argument("--geo-tau", type=float, default=0.0, help="residual threshold to activate geodesic phase (0 for immediate)")
+    ap.add_argument("--coords", choices=("sin", "plain"), default="sin", help="coordinate map: sin (x=sin(s) PI by construction) or plain (fold-free x + hinge pull)")
+    ap.add_argument("--pull-margin", type=float, default=5e-4, help="target interior margin 1 - max|x| for --coords plain hinge pull")
+    ap.add_argument("--pull-weight", type=float, default=1.0, help="hinge penalty weight for --coords plain phase 2")
+    ap.add_argument("--pull-steps", type=int, default=120, help="maximum LM iterations for --coords plain phase 2 pull")
+    ap.add_argument("--pull-lam0", type=float, default=1e-3, help="initial LM damping for --coords plain phase 2 pull")
+    ap.add_argument("--xmax", type=float, default=1.12, help="coordinate escape cap for --coords plain")
     ap.add_argument("--verbose", action="store_true", help="print iteration progress")
     ap.add_argument("--out", required=True, help="output atlas JSON path")
     a = ap.parse_args()
@@ -831,25 +1204,98 @@ def main():
         a.degree, target_nodes, a.angle, a.r0, pnorm=a.pnorm
     )
     unk = 4 * len(xg0) + 2 * len(td0) + (1 if has_centre else 0)
-    r0_val, res, used, xg, yg, zg, wg, td, wd, wc = solve_s6_lm(
-        B,
-        xg0,
-        yg0,
-        zg0,
-        wg0,
-        td0,
-        wd0,
-        has_centre,
-        wc0,
-        a.steps,
-        a.win,
-        a.lam0,
-        geo=use_geo,
-        alpha=a.alpha,
-        bold=a.bold,
-        geo_tau=a.geo_tau,
-        verbose=a.verbose,
-    )
+    if a.coords == "sin":
+        r0_val, res, used, xg, yg, zg, wg, td, wd, wc = solve_s6_lm(
+            B,
+            xg0,
+            yg0,
+            zg0,
+            wg0,
+            td0,
+            wd0,
+            has_centre,
+            wc0,
+            a.steps,
+            a.win,
+            a.lam0,
+            geo=use_geo,
+            alpha=a.alpha,
+            bold=a.bold,
+            geo_tau=a.geo_tau,
+            verbose=a.verbose,
+        )
+    else:
+        r0_val, res, used, xg, yg, zg, wg, td, wd, wc = solve_s6_plain(
+            B,
+            xg0,
+            yg0,
+            zg0,
+            wg0,
+            td0,
+            wd0,
+            has_centre,
+            wc0,
+            a.steps,
+            a.win,
+            a.lam0,
+            geo=use_geo,
+            alpha=a.alpha,
+            bold=a.bold,
+            geo_tau=a.geo_tau,
+            xmax=a.xmax,
+            pull_b=None,
+            verbose=a.verbose,
+        )
+        nodes_p1, _ = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
+        mx_p1 = float(np.abs(nodes_p1).max())
+        if res < 1e-12 and mx_p1 >= 1.0 - a.pull_margin and a.pull_steps > 0:
+            _, res, it2, xg, yg, zg, wg, td, wd, wc = solve_s6_plain(
+                B,
+                xg,
+                yg,
+                zg,
+                wg,
+                td,
+                wd,
+                has_centre,
+                wc,
+                a.pull_steps,
+                a.win,
+                a.pull_lam0,
+                geo=use_geo,
+                alpha=a.alpha,
+                bold=a.bold,
+                geo_tau=0.0,
+                xmax=a.xmax,
+                pull_b=1.0 - a.pull_margin,
+                pull_wt=a.pull_weight,
+                verbose=a.verbose,
+            )
+            used += it2
+            nodes_p2, _ = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
+            mx_p2 = float(np.abs(nodes_p2).max())
+            if res >= 1e-12 and mx_p2 < 1.0 - 1e-7:
+                # Phase 2 pulled every node inside [-1, 1]^3; polish moments in sin(s).
+                _, res, it3, xg, yg, zg, wg, td, wd, wc = solve_s6_lm(
+                    B,
+                    xg,
+                    yg,
+                    zg,
+                    wg,
+                    td,
+                    wd,
+                    has_centre,
+                    wc,
+                    a.pull_steps,
+                    a.win,
+                    a.pull_lam0,
+                    geo=use_geo,
+                    alpha=a.alpha,
+                    bold=a.bold,
+                    geo_tau=0.0,
+                    verbose=a.verbose,
+                )
+                used += it3
     nodes, weights = expand_s6(xg, yg, zg, wg, td, wd, has_centre, wc)
     merr = monomial_residual(a.degree, nodes, weights)
     min_w = float(weights.min())
@@ -857,12 +1303,12 @@ def main():
     elapsed = time.time() - t0
     print(
         f"cube deg={a.degree} N={target_nodes} (gen={len(xg)} diag={len(td)} c={int(has_centre)} "
-        f"unk={unk}/{B.M}) ang={a.angle} r0={a.r0} p={a.pnorm}: "
+        f"unk={unk}/{B.M}) ang={a.angle} r0={a.r0} p={a.pnorm} coords={a.coords}: "
         f"init={r0_val:.3e} -> res={res:.2e} monom={merr:.2e} min_w={min_w:.3e} "
         f"bdist={bdist:.3e} it={used} ({elapsed:.1f}s)",
         flush=True,
     )
-    if res >= 1e-12 or merr >= 1e-11 or min_w <= 0.0 or bdist < -1e-12:
+    if res >= 1e-12 or merr >= 1e-11 or min_w <= 0.0 or bdist <= 0.0:
         print("no solution found", flush=True)
         sys.exit(1)
     rule_id = f"CA-C3-{a.degree:02d}-{target_nodes}-PI-MPC"
@@ -887,6 +1333,18 @@ def main():
             args.extend(["--bold", str(a.bold)])
         if a.geo_tau != 0.0:
             args.extend(["--geo-tau", f"{a.geo_tau:.17g}"])
+    if a.coords != "sin":
+        args.extend(["--coords", a.coords])
+        if a.pull_margin != 5e-4:
+            args.extend(["--pull-margin", f"{a.pull_margin:.17g}"])
+        if a.pull_weight != 1.0:
+            args.extend(["--pull-weight", f"{a.pull_weight:.17g}"])
+        if a.pull_steps != 120:
+            args.extend(["--pull-steps", str(a.pull_steps)])
+        if a.pull_lam0 != 1e-3:
+            args.extend(["--pull-lam0", f"{a.pull_lam0:.17g}"])
+        if a.xmax != 1.12:
+            args.extend(["--xmax", f"{a.xmax:.17g}"])
     args.extend(["--out", a.out])
     cmd = "python code/cube_cheb_s6.py " + shlex.join(args)
     solver_desc = (
@@ -894,6 +1352,8 @@ def main():
         if use_geo
         else "Marquardt-scaled Levenberg-Marquardt"
     )
+    if a.coords == "plain":
+        solver_desc += " in fold-free (x, y, z, v^2) coordinates with boundary hinge pull"
     norm_desc = f", L_{a.pnorm:.17g} cutoff" if a.pnorm > 0.0 else ""
     record = {
         "id": rule_id,
