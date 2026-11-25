@@ -10,11 +10,13 @@ Usage:
 Needs only Python 3.9+ and numpy.
 """
 import argparse
+from concurrent.futures import ProcessPoolExecutor
+import glob
 import hashlib
 import html
 import json
 import math
-import glob
+import multiprocessing
 import os
 import re
 import shutil
@@ -23,6 +25,19 @@ import sys
 import urllib.parse
 import zipfile
 from itertools import product
+
+# Keep BLAS/OpenMP strictly single-threaded per process so parallel verification
+# does not oversubscribe CPU threads (must be set before importing numpy).
+BLAS_THREAD_VARS = (
+    "OPENBLAS_NUM_THREADS",
+    "OMP_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "BLIS_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+)
+for _v in BLAS_THREAD_VARS:
+    os.environ[_v] = "1"
 
 import numpy as np
 
@@ -102,11 +117,19 @@ def moment_residual(dom, n, X, W):
     exps, exact = monomials(dom, n)
     d = DIM[dom]
     powers = [np.vstack([X[:, c] ** k for k in range(n + 1)]) for c in range(d)]
-    vals = np.ones((len(exps), len(W)))
-    for c in range(d):
-        vals *= powers[c][exps[:, c]]
-    q = vals @ W
-    return float(np.max(np.abs(q - exact)) / VOL[dom])
+    worst = 0.0
+    m_tot = len(exps)
+    for start in range(0, m_tot, 2048):
+        sl = slice(start, min(start + 2048, m_tot))
+        e_sl = exps[sl]
+        vals = powers[0][e_sl[:, 0]]
+        for c in range(1, d):
+            vals = vals * powers[c][e_sl[:, c]]
+        q = vals @ W
+        w = float(np.max(np.abs(q - exact[sl])))
+        if w > worst:
+            worst = w
+    return worst / VOL[dom]
 
 
 def margin(dom, X):
@@ -228,6 +251,24 @@ def load_families():
     return fams
 
 
+def _load_and_check_rule(task):
+    """Worker-safe rule loader and verifier: returns (rule_dict_or_None, error_messages)."""
+    fam_id, fam_tag, fam_quality, dom, fn, path, do_check = task
+    where = rel(path)
+    try:
+        with open(path, encoding="utf8") as fh:
+            raw = fh.read()
+        r = json.loads(raw)
+    except Exception as e:  # noqa: BLE001
+        return None, ["%s: cannot read JSON (%s)" % (where, e)]
+    r["_path"] = path
+    r["_sha"] = content_sha(raw)
+    errs = []
+    if do_check:
+        errs = _check_rule_data(fam_id, fam_tag, fam_quality, dom, r, fn)
+    return r, errs
+
+
 def load_rules(fam, only=None):
     fdir = os.path.join(RULES, fam["id"])
     for dom in sorted(os.listdir(fdir)):
@@ -241,15 +282,52 @@ def load_rules(fam, only=None):
             if not fn.endswith(".json"):
                 continue
             path = os.path.join(ddir, fn)
-            r = load_json(path)
-            if r is None:
+            do_check = only is None or os.path.abspath(path) in only
+            r, r_errs = _load_and_check_rule((fam["id"], fam.get("tag"), fam.get("quality"), dom, fn, path, do_check))
+            for m in r_errs:
+                err(m)
+            if r is not None:
+                fam["rules"].append(r)
+
+
+def load_all_rules(fams, only=None, jobs=None):
+    """Load and verify all rules across families, optionally in parallel using single-threaded spawned workers."""
+    tasks = []
+    for fi, fam in enumerate(fams):
+        fdir = os.path.join(RULES, fam["id"])
+        for dom in sorted(os.listdir(fdir)):
+            ddir = os.path.join(fdir, dom)
+            if not os.path.isdir(ddir):
                 continue
-            r["_path"] = path
-            with open(path, encoding="utf8") as fh:
-                r["_sha"] = content_sha(fh.read())
-            if only is None or os.path.abspath(path) in only:
-                check_rule(fam, dom, r, fn)
-            fam["rules"].append(r)
+            if dom not in DOMAINS:
+                err("%s: unknown domain directory (allowed: %s)" % (rel(ddir), ", ".join(DOMAINS)))
+                continue
+            for fn in sorted(os.listdir(ddir)):
+                if not fn.endswith(".json"):
+                    continue
+                path = os.path.join(ddir, fn)
+                do_check = only is None or os.path.abspath(path) in only
+                tasks.append((fi, (fam["id"], fam.get("tag"), fam.get("quality"), dom, fn, path, do_check)))
+    checked_count = sum(1 for _, t in tasks if t[6])
+    if jobs is None or jobs <= 0:
+        jobs = min(os.cpu_count() or 1, 8)
+    jobs = max(1, min(jobs, len(tasks) or 1))
+    results = [None] * len(tasks)
+    if jobs > 1 and checked_count >= 4:
+        # Longest-processing-time-first (largest files first) avoids tail stragglers on 3D high-degree rules.
+        order = sorted(range(len(tasks)), key=lambda i: (tasks[i][1][6], os.path.getsize(tasks[i][1][5])), reverse=True)
+        ctx = multiprocessing.get_context("spawn")
+        with ProcessPoolExecutor(max_workers=jobs, mp_context=ctx) as ex:
+            for idx, res in zip(order, ex.map(_load_and_check_rule, [tasks[i][1] for i in order])):
+                results[idx] = res
+    else:
+        for idx, (_, task) in enumerate(tasks):
+            results[idx] = _load_and_check_rule(task)
+    for (fi, _), (r, r_errs) in zip(tasks, results):
+        for m in r_errs:
+            err(m)
+        if r is not None:
+            fams[fi]["rules"].append(r)
 
 
 def content_sha(text):
@@ -261,41 +339,42 @@ def content_sha(text):
     return hashlib.sha256(blob.encode("utf8")).hexdigest()[:16]
 
 
-def check_rule(fam, dom, r, fn):
+def _check_rule_data(fam_id, fam_tag, fam_quality, dom, r, fn):
+    errs = []
     where = rel(r["_path"])
     rid = r.get("id", "")
     if fn != rid + ".json":
-        err("%s: file name must be <id>.json (id is '%s')" % (where, rid))
+        errs.append("%s: file name must be <id>.json (id is '%s')" % (where, rid))
     m = ID_RE.match(rid)
     if not m:
-        err("%s: id '%s' does not match CA-<domain>-<degree 2 digits>-<points>-<quality>-<tag>[-a]" % (where, rid))
-        return
-    if r.get("family") != fam["id"]:
-        err("%s: family must be '%s'" % (where, fam["id"]))
+        errs.append("%s: id '%s' does not match CA-<domain>-<degree 2 digits>-<points>-<quality>-<tag>[-a]" % (where, rid))
+        return errs
+    if r.get("family") != fam_id:
+        errs.append("%s: family must be '%s'" % (where, fam_id))
     if r.get("domain") != dom:
-        err("%s: domain must be '%s' (directory)" % (where, dom))
+        errs.append("%s: domain must be '%s' (directory)" % (where, dom))
     d = DIM[dom]
     nodes = r.get("nodes")
     weights = r.get("weights")
     if not isinstance(nodes, list) or not isinstance(weights, list) or len(nodes) != len(weights) or not nodes:
-        err("%s: nodes and weights must be non-empty lists of equal length" % where)
-        return
+        errs.append("%s: nodes and weights must be non-empty lists of equal length" % where)
+        return errs
     if any(not isinstance(p, list) or len(p) != d for p in nodes):
-        err("%s: every node needs %d coordinates" % (where, d))
-        return
+        errs.append("%s: every node needs %d coordinates" % (where, d))
+        return errs
     X = np.array(nodes, dtype=float)
     W = np.array(weights, dtype=float)
     if not np.all(np.isfinite(X)) or not np.all(np.isfinite(W)):
-        err("%s: non-finite numbers" % where)
-        return
+        errs.append("%s: non-finite numbers" % where)
+        return errs
     n = r.get("degree")
     if not isinstance(n, int) or n < 1:
-        err("%s: degree must be a positive integer" % where)
-        return
+        errs.append("%s: degree must be a positive integer" % where)
+        return errs
     if r.get("points") != len(W):
-        err("%s: points=%s but %d nodes stored" % (where, r.get("points"), len(W)))
-    if m.group(1) != SYM[dom] or int(m.group(2)) != n or int(m.group(3)) != len(W) or m.group(5) != fam.get("tag"):
-        err("%s: id does not agree with domain/degree/points/family tag" % where)
+        errs.append("%s: points=%s but %d nodes stored" % (where, r.get("points"), len(W)))
+    if m.group(1) != SYM[dom] or int(m.group(2)) != n or int(m.group(3)) != len(W) or m.group(5) != fam_tag:
+        errs.append("%s: id does not agree with domain/degree/points/family tag" % where)
     res = moment_residual(dom, n, X, W)
     marg = margin(dom, X)
     minw = float(W.min())
@@ -305,18 +384,23 @@ def check_rule(fam, dom, r, fn):
     r["_minw"] = minw
     r["_q"] = q
     if res > RES_TOL:
-        err("%s: moment residual %.2e exceeds %.0e (rule is not exact to degree %d)" % (where, res, RES_TOL, n))
+        errs.append("%s: moment residual %.2e exceeds %.0e (rule is not exact to degree %d)" % (where, res, RES_TOL, n))
     if r.get("quality") != q:
-        err("%s: stored quality %s but the data give %s" % (where, r.get("quality"), q))
+        errs.append("%s: stored quality %s but the data give %s" % (where, r.get("quality"), q))
     if m.group(4) != q:
-        err("%s: quality in the id is %s but the data give %s" % (where, m.group(4), q))
-    fq = fam.get("quality")
-    if fq and q != fq:
-        err("%s: family %s holds %s rules, this rule is %s" % (where, fam["id"], fq, q))
+        errs.append("%s: quality in the id is %s but the data give %s" % (where, m.group(4), q))
+    if fam_quality and q != fam_quality:
+        errs.append("%s: family %s holds %s rules, this rule is %s" % (where, fam_id, fam_quality, q))
     if "certificate" in r:
-        err("%s: the floating-point check is not a proof; store it as \"numerical_check\", not \"certificate\"" % where)
+        errs.append("%s: the floating-point check is not a proof; store it as \"numerical_check\", not \"certificate\"" % where)
     if r.get("status") != "proven":
-        err("%s: status must be \"proven\" (every rule needs an interval proof, see CONTRIBUTING.md)" % where)
+        errs.append("%s: status must be \"proven\" (every rule needs an interval proof, see CONTRIBUTING.md)" % where)
+    return errs
+
+
+def check_rule(fam, dom, r, fn):
+    for msg in _check_rule_data(fam["id"], fam.get("tag"), fam.get("quality"), dom, r, fn):
+        err(msg)
 
 
 def attach_interval_proofs(fams, only=None):
@@ -655,39 +739,42 @@ def index_page(fams, lang, t):
 BYID = {}
 
 
-def write_stubs(fams, maxn=MIN_MAXN):
-    """Small redirect pages for the paths <domain>/<source>/<degree>/ (also below de/).
-    The application keeps language, domain, source and degree in such a path (tetra/npi/8/ is the numerical search PI,
-    degree 8, on the tetrahedron). A static host has no page behind these paths, so each gets a stub that sends the
-    browser to the application with the same settings in the query string; the application writes the path again."""
+def render_404(fams):
+    """Build a single 404.html router that redirects deep application paths (<dom>/<src>/<n>/ and de/<dom>/<src>/<n>/)
+    to the index page with query parameters, replacing thousands of static redirect stub files."""
     codes = {"npi": "found", "npo": "out", "lit": "lit", "gauss": "gauss"}
-    count = 0
-    for lang in ("en", "de"):
-        base = SITE if lang == "en" else os.path.join(SITE, "de")
-        for dom in DOMAINS:
-            if dom == "interval":
-                srcs = {"gauss": "gauss", "lob": "lob", "cc": "cc", "nc": "nc"}
-            else:
-                srcs = dict(codes)
-            for f in fams:
-                if f["role"] not in ("pi", "po") and any(r["domain"] == dom for r in f["rules"]):
-                    srcs[f["id"]] = "f:" + f["id"]
-            pages = [([dom], "dom=%s" % dom)]
-            for code, key in srcs.items():
-                pages.append(([dom, code], "dom=%s&src=%s" % (dom, urllib.parse.quote(key))))
-                for n in range(1, maxn + 1):
-                    pages.append(([dom, code, str(n)], "dom=%s&src=%s&n=%d" % (dom, urllib.parse.quote(key), n)))
-            for parts, query in pages:
-                up = "../" * len(parts)
-                target = "%s?%s" % (up, query)
-                d = os.path.join(base, *parts)
-                os.makedirs(d, exist_ok=True)
-                with open(os.path.join(d, "index.html"), "w", encoding="utf8") as fh:
-                    fh.write('<!doctype html><meta charset=utf8><meta name=robots content=noindex><title>Cubature Atlas</title>'
-                             "<script>location.replace('%s'+(location.search?'&'+location.search.slice(1):''))</script>"
-                             '<noscript><a href="%s">Cubature Atlas</a></noscript>\n' % (target, target))
-                count += 1
-    return count
+    srcs = {}
+    for dom in DOMAINS:
+        m = {"gauss": "gauss", "lob": "lob", "cc": "cc", "nc": "nc"} if dom == "interval" else dict(codes)
+        for f in fams:
+            if f["role"] not in ("pi", "po") and any(r["domain"] == dom for r in f["rules"]):
+                m[f["id"]] = "f:" + f["id"]
+        srcs[dom] = m
+    src_js = json.dumps(srcs, separators=(",", ":"), sort_keys=True)
+    return (
+        '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<title>Cubature Atlas</title><style>%s</style><script>\n'
+        '(function(){\n'
+        'var SRC=%s;\n'
+        'var m=location.pathname.match(/^(\\/(?:[^\\/]+\\/)?(?:pr-preview\\/pr-\\d+\\/)?)(de\\/)?(interval|triangle|square|tetra|cube)(?:\\/([^\\/]+)(?:\\/(\\d+))?)?\\/?$/);\n'
+        'if(!m)return;\n'
+        'var base=m[1]+(m[2]||""),dom=m[3],sc=m[4],n=m[5];\n'
+        'var q=["dom="+dom];\n'
+        'if(sc){var sm=SRC[dom];if(!sm||!Object.prototype.hasOwnProperty.call(sm,sc))return;q.push("src="+encodeURIComponent(sm[sc]));}\n'
+        'if(n){if(parseInt(n,10)<1)return;q.push("n="+n);}\n'
+        'var extra=location.search?location.search.slice(1):"";\n'
+        'location.replace(base+"?"+q.join("&")+(extra?"&"+extra:"")+location.hash);\n'
+        '})();\n'
+        '</script></head><body><h1>404 – Page not found</h1>'
+        '<p><a href="%s">Cubature Atlas (EN)</a> · <a href="%sde/">Cubature Atlas (DE)</a></p>'
+        '</body></html>\n'
+    ) % (RULE_CSS, src_js, BASE_URL, BASE_URL)
+
+
+def write_404(fams):
+    with open(os.path.join(SITE, "404.html"), "w", encoding="utf8") as fh:
+        fh.write(render_404(fams))
 
 
 def build_site(fams, en, de, doc_en, doc_de, stale_doc):
@@ -762,7 +849,7 @@ def build_site(fams, en, de, doc_en, doc_de, stale_doc):
         fh.write("User-agent: *\nAllow: /\nSitemap: %ssitemap.xml\n" % BASE_URL)
     with open(os.path.join(SITE, ".nojekyll"), "w") as fh:
         fh.write("")
-    write_stubs(fams, maxn)
+    write_404(fams)
     return len(urls)
 
 
@@ -776,6 +863,8 @@ def main():
     ap.add_argument("--changed", action="store_true",
                     help="with --base: check only the rule files this change adds or modifies (before a commit); implies --check")
     ap.add_argument("--sync-hashes", action="store_true", help="record the current English texts as source of the German ones")
+    ap.add_argument("-j", "--jobs", type=int, default=0,
+                    help="number of single-threaded worker processes for rule verification (0 = auto, 1 = sequential)")
     args = ap.parse_args()
     if args.sync_hashes:
         sync_hashes()
@@ -787,8 +876,7 @@ def main():
         only = changed_rule_paths(args.base)
         args.check = True
     fams = load_families()
-    for f in fams:
-        load_rules(f, only)
+    load_all_rules(fams, only, jobs=args.jobs)
     check_unique(fams)
     attach_interval_proofs(fams, only)
     check_references()

@@ -59,6 +59,41 @@ class BuildAtlasTests(unittest.TestCase):
         self.assertEqual(r_full["pts"], [[0.0, 0.0, 4.0]])
         self.assertNotIn("ptsBase", full["links"])
 
+    def test_blas_threads_forced_to_one(self):
+        for var in build_atlas.BLAS_THREAD_VARS:
+            self.assertEqual(os.environ.get(var), "1", f"{var} should be forced to 1")
+
+    def test_parallel_and_sequential_rule_checking_agree(self):
+        fams1 = build_atlas.load_families()
+        fams2 = build_atlas.load_families()
+        # Check a small deterministic subset (6 real rules across domains) sequentially vs in parallel
+        only = set()
+        for f in fams1:
+            fdir = os.path.join(build_atlas.RULES, f["id"])
+            for dom in sorted(os.listdir(fdir)):
+                ddir = os.path.join(fdir, dom)
+                if not os.path.isdir(ddir):
+                    continue
+                for fn in sorted(os.listdir(ddir)):
+                    if fn.endswith(".json"):
+                        only.add(os.path.abspath(os.path.join(ddir, fn)))
+                        break
+                if len(only) >= 6:
+                    break
+            if len(only) >= 6:
+                break
+        build_atlas.errors.clear()
+        build_atlas.load_all_rules(fams1, only=only, jobs=1)
+        errs1 = list(build_atlas.errors)
+        build_atlas.errors.clear()
+        build_atlas.load_all_rules(fams2, only=only, jobs=2)
+        errs2 = list(build_atlas.errors)
+        self.assertEqual(errs1, [])
+        self.assertEqual(errs2, [])
+        ids1 = [(r["id"], r.get("_res"), r.get("_q")) for f in fams1 for r in f["rules"]]
+        ids2 = [(r["id"], r.get("_res"), r.get("_q")) for f in fams2 for r in f["rules"]]
+        self.assertEqual(ids1, ids2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -11,6 +11,8 @@ on:
       - "tools/build_atlas.py"
       - "tools/state_table.py"
       - "tools/sort_references.py"
+      - "site_template/**"
+      - "i18n/**"
       - "tests/**"
       - ".github/workflows/unit-tests.yml"
   pull_request:
@@ -22,6 +24,8 @@ on:
       - "tools/build_atlas.py"
       - "tools/state_table.py"
       - "tools/sort_references.py"
+      - "site_template/**"
+      - "i18n/**"
       - "tests/**"
       - ".github/workflows/unit-tests.yml"
 
@@ -36,6 +40,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Install numerical dependencies
         run: pip install numpy scipy
       - name: Run unit tests
