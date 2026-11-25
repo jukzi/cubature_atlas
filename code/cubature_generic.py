@@ -11,13 +11,15 @@ special cases:
 - Exact analytic 1st derivatives and exact directional 2nd derivatives via
   2nd-order Taylor-jet arithmetic (O(num_basis * num_points) cost, zero
   finite-difference loss).
-- Generic finite symmetry engine (Reynolds projection + SVD invariant basis +
-  stabilizer fixed-subspace orbit parameterization) supporting none, central,
-  chiral, demi, and full symmetry groups in arbitrary dimension d.
-- Deterministic equilibrium starts (rotated D_d* lattice in Chebyshev angle
-  space for cubes; concentric geodesic S^d_+ shells / Riesz-S^d_+ crystals for
-  simplices) with exact Pareto-pruned min-rank DP orbit selection for exact
-  target point count N.
+- Generic finite symmetry engine (exact combinatorial Reynolds projection for
+  cubes, degree-block Reynolds+SVD for simplices, sparse invariant projection,
+  and stabilizer fixed-subspace orbit parameterization) supporting none,
+  central, mirror, chiral, demi, and full symmetry groups in arbitrary
+  dimension d.
+- Deterministic equilibrium starts (rotated D_d* lattice / G-equivariant Riesz
+  crystals in Chebyshev angle space for cubes; concentric geodesic S^d_+
+  shells / G-equivariant Riesz-S^d_+ crystals for simplices) with exact
+  Pareto-pruned min-rank DP orbit selection for exact target point count N.
 - Fold-free (x, sqrt(w)^2) geodesic-accelerated Cholesky Levenberg-Marquardt
   (Transtrum & Sethna 2012) with a PI-preferred / PO-fallback pipeline:
   Stage A smooth sliding-wall solve -> Stage B free solve -> exact face-normal
@@ -39,7 +41,13 @@ import shlex
 import sys
 import time
 
+# Small-to-medium dense Cholesky solves (M_G <= 500) run >2x faster and more
+# reproducibly without BLAS thread-pool spin-up overhead.
+for _blas_env_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_blas_env_var, "1")
+
 import numpy as np
+from scipy import sparse
 from scipy.linalg import cho_factor, cho_solve
 from scipy.special import betaincinv
 
@@ -210,37 +218,48 @@ class CubeBasis:
         scale = self.legendre_norms_1d[:, None]
         return values * scale, first_deriv * scale, second_deriv * scale
 
-    def evaluate_values(self, points):
-        """Evaluate all basis polynomials at points, returning (num_basis, num_points)."""
+    def evaluate_values(self, points, active_indices=None):
+        """Evaluate all (or active) basis polynomials at points, returning (num_sel, num_points)."""
         num_points = len(points)
+        idx_arr = (
+            self.multi_index_array
+            if active_indices is None
+            else self.multi_index_array[active_indices]
+        )
         tables_by_axis = [
             self._legendre_1d_values(points[:, axis])
             for axis in range(self.dimension)
         ]
-        values = np.ones((self.num_basis, num_points), dtype=float)
+        values = np.ones((len(idx_arr), num_points), dtype=float)
         for axis in range(self.dimension):
-            values *= tables_by_axis[axis][self.multi_index_array[:, axis]]
+            values *= tables_by_axis[axis][idx_arr[:, axis]]
         return values
 
-    def evaluate_values_and_gradients(self, points):
+    def evaluate_values_and_gradients(self, points, active_indices=None):
         """Evaluate basis values and coordinate gradients at points."""
         num_points = len(points)
+        idx_arr = (
+            self.multi_index_array
+            if active_indices is None
+            else self.multi_index_array[active_indices]
+        )
+        num_selected = len(idx_arr)
         factors_by_axis = []
         derivs_by_axis = []
         for axis in range(self.dimension):
             axis_vals, axis_derivs = self._legendre_1d_values_and_derivatives(
                 points[:, axis]
             )
-            exponents = self.multi_index_array[:, axis]
+            exponents = idx_arr[:, axis]
             factors_by_axis.append(axis_vals[exponents])
             derivs_by_axis.append(axis_derivs[exponents])
 
-        values = np.ones((self.num_basis, num_points), dtype=float)
+        values = np.ones((num_selected, num_points), dtype=float)
         for axis in range(self.dimension):
             values *= factors_by_axis[axis]
 
         gradients = np.empty(
-            (self.dimension, self.num_basis, num_points), dtype=float
+            (self.dimension, num_selected, num_points), dtype=float
         )
         for axis in range(self.dimension):
             axis_grad = derivs_by_axis[axis].copy()
@@ -250,17 +269,23 @@ class CubeBasis:
             gradients[axis] = axis_grad
         return values, gradients
 
-    def evaluate_second_order_jet(self, points, directions):
+    def evaluate_second_order_jet(self, points, directions, active_indices=None):
         """Evaluate (value, 1st directional deriv, 2nd directional deriv) along directions."""
         num_points = len(points)
-        prod_val = np.ones((self.num_basis, num_points), dtype=float)
-        prod_first = np.zeros((self.num_basis, num_points), dtype=float)
-        prod_second = np.zeros((self.num_basis, num_points), dtype=float)
+        idx_arr = (
+            self.multi_index_array
+            if active_indices is None
+            else self.multi_index_array[active_indices]
+        )
+        num_selected = len(idx_arr)
+        prod_val = np.ones((num_selected, num_points), dtype=float)
+        prod_first = np.zeros((num_selected, num_points), dtype=float)
+        prod_second = np.zeros((num_selected, num_points), dtype=float)
         for axis in range(self.dimension):
             axis_val, axis_first, axis_second = self._legendre_1d_second_order_jet(
                 points[:, axis], directions[:, axis]
             )
-            exponents = self.multi_index_array[:, axis]
+            exponents = idx_arr[:, axis]
             factor_val = axis_val[exponents]
             factor_first = axis_first[exponents]
             factor_second = axis_second[exponents]
@@ -701,6 +726,19 @@ def build_symmetry_group(domain, dimension, symmetry_name):
                 AffineTransform(identity, zero_shift),
                 AffineTransform(-identity, zero_shift),
             ]
+        if symmetry_name == "mirror":
+            if dimension < 2:
+                return None
+            # Hyperplane reflection swapping axes 0 <-> 1 (codim-1 fixed plane x_0 = x_1)
+            swap = identity.copy()
+            swap[0, 0] = 0.0
+            swap[1, 1] = 0.0
+            swap[0, 1] = 1.0
+            swap[1, 0] = 1.0
+            return [
+                AffineTransform(identity, zero_shift),
+                AffineTransform(swap, zero_shift),
+            ]
         if symmetry_name == "chiral":
             if dimension == 1:
                 return [
@@ -768,6 +806,17 @@ def build_symmetry_group(domain, dimension, symmetry_name):
             linear[:, axis] = vertices[perm[axis + 1]] - translation
         return AffineTransform(linear, translation)
 
+    if symmetry_name == "mirror":
+        if dimension < 2:
+            return None
+        # Hyperplane reflection swapping vertices v_1 <-> v_2 (x_0 <-> x_1)
+        identity_perm = tuple(range(dimension + 1))
+        swap_perm = (0, 2, 1) + tuple(range(3, dimension + 1))
+        return [
+            vertex_perm_to_transform(identity_perm),
+            vertex_perm_to_transform(swap_perm),
+        ]
+
     if symmetry_name == "central":
         # Order-2 vertex reversal (0, ..., d) -> (d, ..., 0):
         # 1D interval reflection, 2D altitude mirror, 3D 180-deg C2 rotation, ...
@@ -813,7 +862,15 @@ def build_symmetry_group(domain, dimension, symmetry_name):
 
 
 class SymmetricBasis:
-    """Symmetry-reduced orthonormal polynomial basis via Reynolds projection + SVD."""
+    """Symmetry-reduced orthonormal polynomial basis via Reynolds projection.
+
+    For cubes, every group element is a signed coordinate permutation so the
+    Reynolds projection acts combinatorially on multi-indices in O(|G| * M)
+    with zero SVD overhead and ultra-sparse rows.
+    For simplices, isometric symmetries preserve each total-degree orthogonal
+    block P_k \\cap P_{k-1}^perp, so Reynolds + SVD runs block-by-block per
+    total degree and stores a sparse block-diagonal projection matrix.
+    """
 
     def __init__(self, base_basis, symmetry_name, group_transforms):
         self.base_basis = base_basis
@@ -823,6 +880,9 @@ class SymmetricBasis:
         self.symmetry_name = symmetry_name
         self.group_transforms = group_transforms
         self.group_order = len(group_transforms)
+        self._active_indices = None
+        self._use_sparse = False
+        self._sparse_proj = None
 
         if self.group_order == 1:
             self.projection_matrix = np.eye(base_basis.num_basis, dtype=float)
@@ -830,21 +890,97 @@ class SymmetricBasis:
             self.exact_moments = base_basis.exact_moments.copy()
             return
 
-        # Deterministic probe points strictly inside the domain
-        num_probes = max(2 * base_basis.num_basis + 16, 40)
-        halton = generate_halton_points(num_probes, base_basis.dimension)
         if base_basis.domain == "cube":
-            probe_points = 1.9 * halton - 0.95
+            self._init_cube_combinatorial(base_basis, group_transforms)
         else:
-            # Map (0, 1)^d smoothly into interior of Delta^d via stick-breaking
-            probe_points = np.zeros_like(halton)
-            remaining = np.ones(num_probes, dtype=float)
-            for axis in range(base_basis.dimension):
-                fraction = 0.05 + 0.85 * halton[:, axis]
-                probe_points[:, axis] = (
-                    remaining * fraction / float(base_basis.dimension - axis + 1)
-                )
-                remaining -= probe_points[:, axis]
+            self._init_simplex_degree_blocks(base_basis, group_transforms)
+
+    def _init_cube_combinatorial(self, base_basis, group_transforms):
+        """Build exact sparse invariant basis on [-1, 1]^d from signed permutations."""
+        dimension = base_basis.dimension
+        index_lookup = {mi: idx for idx, mi in enumerate(base_basis.multi_indices)}
+
+        # Extract (col_perm, row_signs) for each transform: (g x)_i = signs[i] * x_{perm[i]}
+        signed_perms = []
+        for transform in group_transforms:
+            mat = transform.linear
+            perm = []
+            signs = []
+            for row in range(dimension):
+                col = int(np.argmax(np.abs(mat[row])))
+                perm.append(col)
+                signs.append(1 if mat[row, col] > 0.0 else -1)
+            signed_perms.append((tuple(perm), tuple(signs)))
+
+        visited = set()
+        rows = []
+        cols = []
+        vals = []
+        row_count = 0
+
+        for mi in base_basis.multi_indices:
+            if mi in visited:
+                continue
+            orbit_coeffs = {}
+            for perm, signs in signed_perms:
+                beta = [0] * dimension
+                sign_prod = 1
+                for axis in range(dimension):
+                    exp = mi[axis]
+                    beta[perm[axis]] = exp
+                    if (exp & 1) and signs[axis] < 0:
+                        sign_prod = -sign_prod
+                beta_tuple = tuple(beta)
+                orbit_coeffs[beta_tuple] = orbit_coeffs.get(beta_tuple, 0) + sign_prod
+
+            for beta_tuple in orbit_coeffs:
+                visited.add(beta_tuple)
+
+            nonzero = [(b, c) for b, c in orbit_coeffs.items() if c != 0]
+            if not nonzero:
+                continue
+            norm = math.sqrt(sum(c * c for _, c in nonzero))
+            for beta_tuple, coeff in nonzero:
+                rows.append(row_count)
+                cols.append(index_lookup[beta_tuple])
+                vals.append(coeff / norm)
+            row_count += 1
+
+        full_sparse = sparse.csr_matrix(
+            (vals, (rows, cols)),
+            shape=(row_count, base_basis.num_basis),
+            dtype=float,
+        )
+        self.num_basis = row_count
+        self.projection_matrix = full_sparse.toarray()
+        self.exact_moments = full_sparse @ base_basis.exact_moments
+
+        active_cols = np.flatnonzero(np.diff(full_sparse.tocsc().indptr) > 0)
+        if len(active_cols) < base_basis.num_basis:
+            self._active_indices = active_cols
+            self._sparse_proj = full_sparse[:, active_cols].tocsr()
+        else:
+            self._sparse_proj = full_sparse
+        self._use_sparse = True
+
+    def _init_simplex_degree_blocks(self, base_basis, group_transforms):
+        """Build degree-block orthonormal invariant basis on Delta^d via Reynolds + SVD."""
+        blocks = [[] for _ in range(base_basis.degree + 1)]
+        for idx, mi in enumerate(base_basis.multi_indices):
+            blocks[sum(mi)].append(idx)
+        max_block = max(len(block) for block in blocks)
+
+        num_probes = max(2 * max_block + 16, 40)
+        halton = generate_halton_points(num_probes, base_basis.dimension)
+        # Map (0, 1)^d smoothly into interior of Delta^d via stick-breaking
+        probe_points = np.zeros_like(halton)
+        remaining = np.ones(num_probes, dtype=float)
+        for axis in range(base_basis.dimension):
+            fraction = 0.05 + 0.85 * halton[:, axis]
+            probe_points[:, axis] = (
+                remaining * fraction / float(base_basis.dimension - axis + 1)
+            )
+            remaining -= probe_points[:, axis]
 
         reynolds_avg = np.zeros((base_basis.num_basis, num_probes), dtype=float)
         for transform in group_transforms:
@@ -852,38 +988,94 @@ class SymmetricBasis:
             reynolds_avg += base_basis.evaluate_values(transformed)
         reynolds_avg /= float(self.group_order)
 
-        left_singular, singular_values, _ = np.linalg.svd(
-            reynolds_avg, full_matrices=False
+        row_indices = []
+        col_indices = []
+        data_values = []
+        row_cursor = 0
+        for block_cols in blocks:
+            if not block_cols:
+                continue
+            sub_avg = reynolds_avg[block_cols, :]
+            left_singular, singular_values, _ = np.linalg.svd(
+                sub_avg, full_matrices=False
+            )
+            if len(singular_values) == 0 or singular_values[0] <= 1e-12:
+                continue
+            rank_tol = 1e-10 * float(singular_values[0])
+            block_rank = int(np.sum(singular_values > rank_tol))
+            block_basis = left_singular[:, :block_rank].T
+            for local_row in range(block_rank):
+                vec = block_basis[local_row]
+                for local_col, val in enumerate(vec):
+                    if abs(val) > 1e-13:
+                        row_indices.append(row_cursor)
+                        col_indices.append(block_cols[local_col])
+                        data_values.append(float(val))
+                row_cursor += 1
+
+        full_sparse = sparse.csr_matrix(
+            (data_values, (row_indices, col_indices)),
+            shape=(row_cursor, base_basis.num_basis),
+            dtype=float,
         )
-        rank_tol = (
-            1e-10 * float(singular_values[0])
-            if len(singular_values) > 0
-            else 1e-10
-        )
-        invariant_rank = int(np.sum(singular_values > rank_tol))
-        self.projection_matrix = left_singular[:, :invariant_rank].T.copy()
-        self.num_basis = invariant_rank
-        self.exact_moments = self.projection_matrix @ base_basis.exact_moments
+        self.num_basis = row_cursor
+        self.projection_matrix = full_sparse.toarray()
+        self.exact_moments = full_sparse @ base_basis.exact_moments
+        density = full_sparse.nnz / float(max(1, row_cursor * base_basis.num_basis))
+        if density < 0.35:
+            self._sparse_proj = full_sparse
+            self._use_sparse = True
+
+    def _project(self, matrix):
+        if self._use_sparse:
+            return self._sparse_proj @ matrix
+        return self.projection_matrix @ matrix
 
     def evaluate_values(self, points):
-        return self.projection_matrix @ self.base_basis.evaluate_values(points)
+        if self.group_order == 1:
+            return self.base_basis.evaluate_values(points)
+        if self._active_indices is not None:
+            return self._project(
+                self.base_basis.evaluate_values(
+                    points, active_indices=self._active_indices
+                )
+            )
+        return self._project(self.base_basis.evaluate_values(points))
 
     def evaluate_values_and_gradients(self, points):
-        base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(points)
-        values = self.projection_matrix @ base_vals
+        if self.group_order == 1:
+            return self.base_basis.evaluate_values_and_gradients(points)
+        if self._active_indices is not None:
+            base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(
+                points, active_indices=self._active_indices
+            )
+        else:
+            base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(
+                points
+            )
+        values = self._project(base_vals)
         gradients = np.empty((self.dimension, self.num_basis, len(points)), dtype=float)
         for axis in range(self.dimension):
-            gradients[axis] = self.projection_matrix @ base_grads[axis]
+            gradients[axis] = self._project(base_grads[axis])
         return values, gradients
 
     def evaluate_second_order_jet(self, points, directions):
-        base_val, base_first, base_second = (
-            self.base_basis.evaluate_second_order_jet(points, directions)
-        )
+        if self.group_order == 1:
+            return self.base_basis.evaluate_second_order_jet(points, directions)
+        if self._active_indices is not None:
+            base_val, base_first, base_second = (
+                self.base_basis.evaluate_second_order_jet(
+                    points, directions, active_indices=self._active_indices
+                )
+            )
+        else:
+            base_val, base_first, base_second = (
+                self.base_basis.evaluate_second_order_jet(points, directions)
+            )
         return (
-            self.projection_matrix @ base_val,
-            self.projection_matrix @ base_first,
-            self.projection_matrix @ base_second,
+            self._project(base_val),
+            self._project(base_first),
+            self._project(base_second),
         )
 
 
@@ -1184,6 +1376,225 @@ def _initialize_simplex_orbits_from_points(points, group_transforms):
     return initialized_orbits
 
 
+def _relax_orbits_riesz_cube(
+    orbits,
+    group_transforms,
+    margin_eps,
+    num_steps=60,
+    riesz_excess=2.0,
+    wall_strength=1.0,
+):
+    """Relax a G-symmetric orbit set into a Chebyshev-angle Riesz crystal on [-pi/2, pi/2]^d."""
+    num_orbits = len(orbits)
+    total_points = sum(orb.size for orb in orbits)
+    if num_orbits == 0 or total_points <= 1 or num_steps <= 0 or total_points > 2000:
+        return orbits
+
+    dimension = len(orbits[0].subspace_origin)
+    reps = np.vstack([orb.representative_point() for orb in orbits])
+    angles = np.arcsin(np.clip(reps, -0.9999, 0.9999))
+    half_pi = 0.5 * math.pi
+    max_angle = half_pi * (1.0 - max(0.005, min(0.25, margin_eps)))
+
+    # Precompute each orbit's stabilizer matrices and distinct image matrices
+    stab_mats = []
+    image_mats = []
+    free_mask = np.array([orb.spatial_dof > 0 for orb in orbits], dtype=bool)
+    for idx, orb in enumerate(orbits):
+        rep = reps[idx]
+        stab = []
+        distinct_pts = []
+        distinct_mats = []
+        for transform in group_transforms:
+            img = transform.linear @ rep + transform.translation
+            if float(np.linalg.norm(img - rep)) < 1e-5:
+                stab.append(transform.linear)
+            if not any(float(np.linalg.norm(img - prev)) < 1e-5 for prev in distinct_pts):
+                distinct_pts.append(img)
+                distinct_mats.append(transform.linear)
+        if len(distinct_mats) != orb.size:
+            return orbits
+        stab_mats.append(stab)
+        image_mats.append(np.stack(distinct_mats, axis=0))
+
+    spacing = math.pi / (float(total_points) ** (1.0 / float(dimension)))
+    step_size = 0.10 * spacing
+    softening_sq = (0.06 * spacing) ** 2
+    riesz_power = -0.5 * float(dimension + riesz_excess)
+
+    for _ in range(num_steps):
+        all_chunks = [
+            np.einsum("gij,j->gi", image_mats[idx], angles[idx])
+            for idx in range(num_orbits)
+        ]
+        all_angles = np.vstack(all_chunks)
+
+        diff = angles[:, None, :] - all_angles[None, :, :]
+        raw_d2 = np.sum(diff * diff, axis=2)
+        dist_sq = np.where(raw_d2 < 1e-12, 1e30, raw_d2 + softening_sq)
+        force = np.sum(diff * (dist_sq ** riesz_power)[:, :, None], axis=1)
+
+        # Mirror-image repulsion from all 2d boundary walls theta_j = +/- pi/2
+        dist_pos = np.maximum(half_pi - angles, 0.5 * (half_pi - max_angle))
+        dist_neg = np.maximum(half_pi + angles, 0.5 * (half_pi - max_angle))
+        force -= (
+            wall_strength
+            * (2.0 * dist_pos)
+            * (((2.0 * dist_pos) ** 2 + softening_sq) ** riesz_power)
+        )
+        force += (
+            wall_strength
+            * (2.0 * dist_neg)
+            * (((2.0 * dist_neg) ** 2 + softening_sq) ** riesz_power)
+        )
+
+        # Average force over each orbit's stabilizer so every subspace stays exact
+        projected_force = np.zeros_like(force)
+        for idx in range(num_orbits):
+            if not free_mask[idx]:
+                continue
+            avg_f = np.zeros(dimension, dtype=float)
+            for mat in stab_mats[idx]:
+                avg_f += mat @ force[idx]
+            projected_force[idx] = avg_f / float(len(stab_mats[idx]))
+
+        force_norm = np.linalg.norm(projected_force, axis=1, keepdims=True)
+        step_scale = np.minimum(1.0, step_size / np.maximum(force_norm, 1e-12))
+        trial_angles = np.clip(
+            angles + projected_force * step_scale, -max_angle, max_angle
+        )
+
+        # Guard against collapsing an orbit onto a higher-symmetry fixed subspace
+        for idx in range(num_orbits):
+            if not free_mask[idx] or orbits[idx].size <= 1:
+                continue
+            imgs = np.einsum("gij,j->gi", image_mats[idx], trial_angles[idx])
+            d2 = np.sum((imgs[:, None, :] - imgs[None, :, :]) ** 2, axis=2)
+            np.fill_diagonal(d2, 1e30)
+            if float(np.min(d2)) < 1e-6:
+                trial_angles[idx] = angles[idx]
+        angles = trial_angles
+        step_size *= 0.96
+
+    relaxed_points = np.sin(angles)
+    return _initialize_cube_orbits_from_points(relaxed_points, group_transforms)
+
+
+def _relax_orbits_riesz_simplex(
+    orbits,
+    group_transforms,
+    margin_eps,
+    num_steps=60,
+    riesz_excess=2.0,
+    wall_strength=1.0,
+):
+    """Relax a G-symmetric orbit set into a geodesic Riesz crystal on S^d_+."""
+    num_orbits = len(orbits)
+    total_points = sum(orb.size for orb in orbits)
+    if num_orbits == 0 or total_points <= 1 or num_steps <= 0 or total_points > 2000:
+        return orbits
+
+    dimension = len(orbits[0].subspace_origin)
+    num_bary = dimension + 1
+
+    # Extract barycentric index permutation inv_perm for each group element:
+    # b(g(x))[m] = b(x)[inv_perm[m]]
+    vertices = np.zeros((num_bary, dimension), dtype=float)
+    for axis in range(dimension):
+        vertices[axis + 1, axis] = 1.0
+    inv_perms = []
+    for transform in group_transforms:
+        mapped_v = vertices @ transform.linear.T + transform.translation[None, :]
+        mapped_bary = np.hstack(
+            [1.0 - np.sum(mapped_v, axis=1, keepdims=True), mapped_v]
+        )
+        target = [int(np.argmax(mapped_bary[k])) for k in range(num_bary)]
+        inv_perm = [0] * num_bary
+        for k, dst in enumerate(target):
+            inv_perm[dst] = k
+        inv_perms.append(np.asarray(inv_perm, dtype=np.int32))
+
+    reps = np.vstack([orb.representative_point() for orb in orbits])
+    bary = np.hstack([1.0 - np.sum(reps, axis=1, keepdims=True), reps])
+    sphere = np.sqrt(np.maximum(bary, 1e-8))
+    sphere /= np.linalg.norm(sphere, axis=1, keepdims=True)
+
+    stab_perms = []
+    image_perms = []
+    free_mask = np.array([orb.spatial_dof > 0 for orb in orbits], dtype=bool)
+    for idx, orb in enumerate(orbits):
+        s_vec = sphere[idx]
+        stab = []
+        distinct_s = []
+        distinct_p = []
+        for perm in inv_perms:
+            img = s_vec[perm]
+            if float(np.linalg.norm(img - s_vec)) < 1e-5:
+                stab.append(perm)
+            if not any(float(np.linalg.norm(img - prev)) < 1e-5 for prev in distinct_s):
+                distinct_s.append(img)
+                distinct_p.append(perm)
+        if len(distinct_p) != orb.size:
+            return orbits
+        stab_perms.append(stab)
+        image_perms.append(np.stack(distinct_p, axis=0))
+
+    min_coord = math.sqrt(max(1e-4, 0.25 * margin_eps))
+    spacing = (1.0 / float(max(total_points, 1))) ** (1.0 / float(dimension))
+    step_size = 0.09 * spacing
+    softening_sq = (0.05 * spacing) ** 2
+    riesz_power = -0.5 * float(dimension + riesz_excess)
+
+    for _ in range(num_steps):
+        all_chunks = [sphere[idx][image_perms[idx]] for idx in range(num_orbits)]
+        all_sphere = np.vstack(all_chunks)
+
+        diff = sphere[:, None, :] - all_sphere[None, :, :]
+        raw_d2 = np.sum(diff * diff, axis=2)
+        dist_sq = np.where(raw_d2 < 1e-12, 1e30, raw_d2 + softening_sq)
+        force = np.sum(diff * (dist_sq ** riesz_power)[:, :, None], axis=1)
+
+        # Mirror-image repulsion across each boundary wall s_m = 0
+        wall_dist_sq = (2.0 * np.maximum(sphere, 0.5 * min_coord)) ** 2 + softening_sq
+        force += wall_strength * (2.0 * sphere) * (wall_dist_sq ** riesz_power)
+
+        # Average force over each orbit's stabilizer permutations
+        projected_force = np.zeros_like(force)
+        for idx in range(num_orbits):
+            if not free_mask[idx]:
+                continue
+            avg_f = np.zeros(num_bary, dtype=float)
+            for perm in stab_perms[idx]:
+                avg_f += force[idx][perm]
+            projected_force[idx] = avg_f / float(len(stab_perms[idx]))
+
+        # Project tangent to unit sphere S^d_+
+        projected_force -= (
+            np.sum(projected_force * sphere, axis=1, keepdims=True) * sphere
+        )
+        force_norm = np.linalg.norm(projected_force, axis=1, keepdims=True)
+        step_scale = np.minimum(1.0, step_size / np.maximum(force_norm, 1e-12))
+        trial_sphere = np.maximum(sphere + projected_force * step_scale, min_coord)
+        trial_sphere /= np.linalg.norm(trial_sphere, axis=1, keepdims=True)
+
+        # Guard against collapsing an orbit onto a higher-symmetry fixed subspace
+        for idx in range(num_orbits):
+            if not free_mask[idx] or orbits[idx].size <= 1:
+                continue
+            imgs = trial_sphere[idx][image_perms[idx]]
+            d2 = np.sum((imgs[:, None, :] - imgs[None, :, :]) ** 2, axis=2)
+            np.fill_diagonal(d2, 1e30)
+            if float(np.min(d2)) < 1e-6:
+                trial_sphere[idx] = sphere[idx]
+        sphere = trial_sphere
+        step_size *= 0.96
+
+    relaxed_bary = sphere * sphere
+    return _initialize_simplex_orbits_from_points(
+        relaxed_bary[:, 1:], group_transforms
+    )
+
+
 def build_cube_equilibrium_start(
     dimension,
     degree,
@@ -1195,12 +1606,22 @@ def build_cube_equilibrium_start(
     norm_order=12.0,
     min_unknowns=1,
     halton_skip=0,
+    riesz_steps=0,
+    riesz_excess=2.0,
+    wall_strength=1.0,
+    extra_fixed_pairs=0,
+    use_lattice_for_central=False,
+    halton_generic=False,
 ):
-    """Deterministic equilibrium start on [-1, 1]^d (Halton-Chebyshev or rotated D_d*)."""
-    # For mirror-free none / central symmetry in d >= 2, use exact arcsine-mapped
-    # Halton equilibrium clouds to avoid accidental grid symmetries and rank drops.
-    if dimension >= 2 and symmetry_name in ("none", "central"):
-        eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+    """Deterministic equilibrium start on [-1, 1]^d (Halton/Riesz crystal or rotated D_d*)."""
+    eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+
+    # For none / mirror (and central unless rotated D_d* lattice is requested) in d >= 2,
+    # use exact arcsine-mapped Halton equilibrium clouds (optionally Riesz-relaxed).
+    if dimension >= 2 and (
+        symmetry_name in ("none", "mirror")
+        or (symmetry_name == "central" and not use_lattice_for_central)
+    ):
         if symmetry_name == "none":
             if target_points * (dimension + 1) < min_unknowns:
                 return None
@@ -1209,30 +1630,82 @@ def build_cube_equilibrium_start(
             )
             angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
             coords_list = -np.cos(angles)
-            return _initialize_cube_orbits_from_points(coords_list, group_transforms)
+            orbits = _initialize_cube_orbits_from_points(coords_list, group_transforms)
+        elif symmetry_name == "central":
+            # central symmetry {+I, -I}: draw pairs in half-space x_0 > 0 (+ origin if odd N)
+            num_pairs = target_points // 2
+            has_origin = (target_points % 2) == 1
+            total_unk = num_pairs * (dimension + 1) + (1 if has_origin else 0)
+            if total_unk < min_unknowns:
+                return None
+            coords_list = []
+            if has_origin:
+                coords_list.append(np.zeros(dimension, dtype=float))
+            if num_pairs > 0:
+                halton = generate_halton_points(
+                    num_pairs, dimension, skip=halton_skip
+                )
+                angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
+                # Restrict first coordinate to (0, 1) so each antipodal pair is distinct
+                angles[:, 0] = math.pi * (
+                    0.5 + 0.5 * eps + (0.5 - 1.5 * eps) * halton[:, 0]
+                )
+                for row in -np.cos(angles):
+                    coords_list.append(row)
+            orbits = _initialize_cube_orbits_from_points(coords_list, group_transforms)
+        else:
+            # mirror symmetry x_0 <-> x_1: fixed plane has dim (d - 1) => d unknowns/pt
+            num_fixed = None
+            for cand_fixed in range(target_points % 2, target_points + 1, 2):
+                cand_pairs = (target_points - cand_fixed) // 2
+                cand_unk = cand_pairs * (dimension + 1) + cand_fixed * dimension
+                if cand_unk >= min_unknowns:
+                    num_fixed = cand_fixed
+                    break
+            if num_fixed is None:
+                return None
+            if extra_fixed_pairs > 0 and num_fixed + 2 * extra_fixed_pairs <= target_points:
+                cand_fixed = num_fixed + 2 * extra_fixed_pairs
+                cand_pairs = (target_points - cand_fixed) // 2
+                if cand_pairs * (dimension + 1) + cand_fixed * dimension >= min_unknowns:
+                    num_fixed = cand_fixed
+            num_pairs = (target_points - num_fixed) // 2
+            coords_list = []
+            if num_fixed > 0:
+                halton_fix = generate_halton_points(
+                    num_fixed, dimension - 1, skip=halton_skip
+                )
+                ang_fix = math.pi * (eps + (1.0 - 2.0 * eps) * halton_fix)
+                pts_fix = -np.cos(ang_fix)
+                for row in pts_fix:
+                    coords_list.append(np.concatenate([[row[0], row[0]], row[1:]]))
+            if num_pairs > 0:
+                halton_pair = generate_halton_points(
+                    num_pairs, dimension, skip=halton_skip + num_fixed + 7
+                )
+                ang_pair = math.pi * (eps + (1.0 - 2.0 * eps) * halton_pair)
+                pts_pair = -np.cos(ang_pair)
+                for row in pts_pair:
+                    if row[0] < row[1]:
+                        row = row.copy()
+                        row[0], row[1] = row[1], row[0]
+                    if abs(row[0] - row[1]) < 0.03:
+                        row = row.copy()
+                        row[0] = min(0.96, row[0] + 0.03)
+                        row[1] = max(-0.96, row[1] - 0.03)
+                    coords_list.append(row)
+            orbits = _initialize_cube_orbits_from_points(coords_list, group_transforms)
 
-        # central symmetry {+I, -I}: draw pairs in half-space x_0 > 0 (+ origin if odd N)
-        num_pairs = target_points // 2
-        has_origin = (target_points % 2) == 1
-        total_unk = num_pairs * (dimension + 1) + (1 if has_origin else 0)
-        if total_unk < min_unknowns:
-            return None
-        coords_list = []
-        if has_origin:
-            coords_list.append(np.zeros(dimension, dtype=float))
-        if num_pairs > 0:
-            halton = generate_halton_points(
-                num_pairs, dimension, skip=halton_skip
+        if riesz_steps > 0:
+            orbits = _relax_orbits_riesz_cube(
+                orbits,
+                group_transforms,
+                eps,
+                num_steps=riesz_steps,
+                riesz_excess=riesz_excess,
+                wall_strength=wall_strength,
             )
-            angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
-            # Restrict first coordinate to (0, 1) so each antipodal pair is distinct
-            angles[:, 0] = math.pi * (
-                0.5 + 0.5 * eps + (0.5 - 1.5 * eps) * halton[:, 0]
-            )
-            pair_reps = -np.cos(angles)
-            for row in pair_reps:
-                coords_list.append(row)
-        return _initialize_cube_orbits_from_points(coords_list, group_transforms)
+        return orbits
 
     # Parity shift: odd N includes origin (0-shift); even N uses (1/4)-shift
     lattice_shift = 0.0 if (target_points % 2 == 1) else 0.25
@@ -1260,7 +1733,7 @@ def build_cube_equilibrium_start(
         raw_points = integer_grid + (0.0 if target_points % 2 == 1 else 0.5)
 
     # Apply chiral rotation for mirror-free groups while preserving G-symmetry
-    if symmetry_name == "chiral" and dimension >= 2:
+    if symmetry_name in ("chiral", "central") and dimension >= 2:
         rot_matrix = rotation_around_main_diagonal(dimension, rotation_degrees)
         raw_points = raw_points @ rot_matrix.T
 
@@ -1318,7 +1791,40 @@ def build_cube_equilibrium_start(
     )
     angle_scale = (target_angle / max_angle) if max_angle > 1e-12 else 0.0
     mapped_points = [np.sin(orb.initial_point * angle_scale) for orb in selected]
-    return _initialize_cube_orbits_from_points(mapped_points, group_transforms)
+    orbits = _initialize_cube_orbits_from_points(mapped_points, group_transforms)
+
+    if halton_generic and dimension >= 2:
+        # Break artificial lattice mirror symmetries by seeding full-dim orbits
+        # from arcsine-mapped Halton points before G-equivariant Riesz relaxation.
+        num_gen = sum(1 for orb in orbits if orb.spatial_dof == dimension)
+        if num_gen > 0:
+            halton = generate_halton_points(num_gen, dimension, skip=halton_skip)
+            angles = math.pi * (eps + (1.0 - 2.0 * eps) * halton)
+            halton_pts = -np.cos(angles)
+            mixed_pts = []
+            gen_idx = 0
+            for orb in orbits:
+                if orb.spatial_dof == dimension:
+                    mixed_pts.append(halton_pts[gen_idx])
+                    gen_idx += 1
+                else:
+                    mixed_pts.append(orb.representative_point())
+            trial_orbits = _initialize_cube_orbits_from_points(
+                mixed_pts, group_transforms
+            )
+            if sum(orb.size for orb in trial_orbits) == target_points:
+                orbits = trial_orbits
+
+    if riesz_steps > 0 and dimension >= 2:
+        orbits = _relax_orbits_riesz_cube(
+            orbits,
+            group_transforms,
+            eps,
+            num_steps=riesz_steps,
+            riesz_excess=riesz_excess,
+            wall_strength=wall_strength,
+        )
+    return orbits
 
 
 def generate_simplex_barycentric_lattice(dimension, level):
@@ -1353,11 +1859,13 @@ def _sample_dirichlet_half_halton(num_points, dimension, margin_eps, skip=0):
     return bary
 
 
-def _riesz_relax_on_positive_sphere(bary_points, margin_eps, num_steps=50):
+def _riesz_relax_on_positive_sphere(
+    bary_points, margin_eps, num_steps=50, riesz_excess=2.0, wall_strength=1.0
+):
     """Relax barycentric points into a well-separated crystal on S^d_+ via Riesz repulsion."""
     num_points, num_bary = bary_points.shape
     dimension = num_bary - 1
-    if num_points <= 1 or num_steps <= 0 or num_points > 400:
+    if num_points <= 1 or num_steps <= 0 or num_points > 2000:
         return bary_points
 
     sphere = np.sqrt(np.maximum(bary_points, 1e-8))
@@ -1366,7 +1874,7 @@ def _riesz_relax_on_positive_sphere(bary_points, margin_eps, num_steps=50):
     spacing = (1.0 / float(max(num_points, 1))) ** (1.0 / float(dimension))
     step_size = 0.08 * spacing
     softening_sq = (0.05 * spacing) ** 2
-    riesz_power = -0.5 * float(dimension + 2)
+    riesz_power = -0.5 * float(dimension + riesz_excess)
 
     for _ in range(num_steps):
         diff = sphere[:, None, :] - sphere[None, :, :]
@@ -1375,7 +1883,7 @@ def _riesz_relax_on_positive_sphere(bary_points, margin_eps, num_steps=50):
         force = np.sum(diff * (dist_sq ** riesz_power)[:, :, None], axis=1)
         # Mirror-image repulsion across each boundary wall s_m = 0
         wall_dist_sq = (2.0 * np.maximum(sphere, 0.5 * min_coord)) ** 2 + softening_sq
-        force += (2.0 * sphere) * (wall_dist_sq ** riesz_power)
+        force += wall_strength * (2.0 * sphere) * (wall_dist_sq ** riesz_power)
         # Project force onto tangent space of unit sphere S^d_+
         force -= np.sum(force * sphere, axis=1, keepdims=True) * sphere
         force_norm = np.linalg.norm(force, axis=1, keepdims=True)
@@ -1398,42 +1906,107 @@ def build_simplex_equilibrium_start(
     min_unknowns=1,
     halton_skip=0,
     riesz_steps=0,
+    riesz_excess=2.0,
+    wall_strength=1.0,
+    extra_fixed_pairs=0,
+    halton_generic=False,
 ):
     """Deterministic equilibrium start on Delta^d (Riesz-S^d_+/Halton or S^d_+ shells)."""
+    eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+
     if dimension >= 2 and symmetry_name == "none":
         if target_points * (dimension + 1) < min_unknowns:
             return None
-        eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
         bary = _sample_dirichlet_half_halton(
             target_points, dimension, eps, skip=halton_skip
         )
         if riesz_steps > 0:
-            bary = _riesz_relax_on_positive_sphere(bary, eps, num_steps=riesz_steps)
+            bary = _riesz_relax_on_positive_sphere(
+                bary,
+                eps,
+                num_steps=riesz_steps,
+                riesz_excess=riesz_excess,
+                wall_strength=wall_strength,
+            )
         return _initialize_simplex_orbits_from_points(bary[:, 1:], group_transforms)
 
-    if dimension >= 2 and symmetry_name == "central":
-        # Order-2 vertex reversal (u_0, ..., u_d) -> (u_d, ..., u_0):
-        # Fixed subspace has dimension floor(d / 2) (1D line in 3D).
-        fixed_dof = dimension // 2
-        num_fixed = 1 if (target_points % 2 == 1) else 0
-        num_pairs = (target_points - num_fixed) // 2
-        total_unk = num_pairs * (dimension + 1) + num_fixed * (fixed_dof + 1)
-        if total_unk < min_unknowns:
+    if dimension >= 2 and symmetry_name in ("central", "mirror"):
+        # Order-2 vertex permutation:
+        #   central: (u_0, ..., u_d) -> (u_d, ..., u_0), fixed_dof = floor(d / 2)
+        #   mirror:  u_1 <-> u_2 (x_0 <-> x_1), fixed_dof = d - 1
+        fixed_dof = (dimension // 2) if symmetry_name == "central" else (dimension - 1)
+        num_fixed = None
+        for cand_fixed in range(target_points % 2, target_points + 1, 2):
+            cand_pairs = (target_points - cand_fixed) // 2
+            cand_unk = cand_pairs * (dimension + 1) + cand_fixed * (fixed_dof + 1)
+            if cand_unk >= min_unknowns:
+                num_fixed = cand_fixed
+                break
+        if num_fixed is None:
             return None
-        eps = max(0.02, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+        if extra_fixed_pairs > 0 and num_fixed + 2 * extra_fixed_pairs <= target_points:
+            cand_fixed = num_fixed + 2 * extra_fixed_pairs
+            cand_pairs = (target_points - cand_fixed) // 2
+            if cand_pairs * (dimension + 1) + cand_fixed * (fixed_dof + 1) >= min_unknowns:
+                num_fixed = cand_fixed
+
+        num_pairs = (target_points - num_fixed) // 2
         coords_list = []
         if num_fixed > 0:
-            centroid = np.full(dimension, 1.0 / float(dimension + 1), dtype=float)
-            coords_list.append(centroid)
+            # Sample fixed points directly in the fixed barycentric simplex of dim fixed_dof
+            fixed_bary_sub = _sample_dirichlet_half_halton(
+                num_fixed, fixed_dof, eps, skip=halton_skip
+            )
+            for row in fixed_bary_sub:
+                full_bary = np.zeros(dimension + 1, dtype=float)
+                if symmetry_name == "mirror":
+                    # u_1 == u_2; remaining d - 1 entries are u_0, u_3, ..., u_d
+                    full_bary[0] = row[0]
+                    full_bary[1] = 0.5 * row[1]
+                    full_bary[2] = 0.5 * row[1]
+                    if dimension > 2:
+                        full_bary[3:] = row[2:]
+                else:
+                    # Palindromic barycentric coordinates u_k == u_{d - k}
+                    num_sym_pairs = (dimension + 1) // 2
+                    for k in range(num_sym_pairs):
+                        full_bary[k] = 0.5 * row[k]
+                        full_bary[dimension - k] = 0.5 * row[k]
+                    if (dimension + 1) % 2 == 1:
+                        full_bary[num_sym_pairs] = row[num_sym_pairs]
+                coords_list.append(full_bary[1:])
         if num_pairs > 0:
             bary = _sample_dirichlet_half_halton(
-                num_pairs, dimension, eps, skip=halton_skip
+                num_pairs, dimension, eps, skip=halton_skip + num_fixed + 7
             )
             for row in bary:
-                if row[0] < row[dimension]:
-                    row = row[::-1]
+                row = row.copy()
+                if symmetry_name == "mirror":
+                    if row[1] < row[2]:
+                        row[1], row[2] = row[2], row[1]
+                    if abs(row[1] - row[2]) < 0.015:
+                        delta = min(0.015, 0.4 * row[2])
+                        row[1] += delta
+                        row[2] -= delta
+                else:
+                    if row[0] < row[dimension]:
+                        row = row[::-1]
+                    if abs(row[0] - row[dimension]) < 0.015:
+                        delta = min(0.015, 0.4 * row[dimension])
+                        row[0] += delta
+                        row[dimension] -= delta
                 coords_list.append(row[1:])
-        return _initialize_simplex_orbits_from_points(coords_list, group_transforms)
+        orbits = _initialize_simplex_orbits_from_points(coords_list, group_transforms)
+        if riesz_steps > 0:
+            orbits = _relax_orbits_riesz_simplex(
+                orbits,
+                group_transforms,
+                eps,
+                num_steps=riesz_steps,
+                riesz_excess=riesz_excess,
+                wall_strength=wall_strength,
+            )
+        return orbits
 
     # Choose primary barycentric level L whose simplex lattice first covers target_points
     primary_level = 1
@@ -1532,7 +2105,41 @@ def build_simplex_equilibrium_start(
     if selected is None:
         return None
     mapped_points = [orb.initial_point for orb in selected]
-    return _initialize_simplex_orbits_from_points(mapped_points, group_transforms)
+    orbits = _initialize_simplex_orbits_from_points(mapped_points, group_transforms)
+
+    if halton_generic and dimension >= 2:
+        # Break artificial mirror symmetry of the barycentric lattice by seeding
+        # generic (full-dim) orbit representatives from Dirichlet(1/2) Halton
+        # while keeping lower-dimensional stabilizer orbits intact.
+        num_gen = sum(1 for orb in orbits if orb.spatial_dof == dimension)
+        if num_gen > 0:
+            halton_bary = _sample_dirichlet_half_halton(
+                num_gen, dimension, eps, skip=halton_skip
+            )
+            mixed_pts = []
+            gen_idx = 0
+            for orb in orbits:
+                if orb.spatial_dof == dimension:
+                    mixed_pts.append(halton_bary[gen_idx, 1:])
+                    gen_idx += 1
+                else:
+                    mixed_pts.append(orb.representative_point())
+            trial_orbits = _initialize_simplex_orbits_from_points(
+                mixed_pts, group_transforms
+            )
+            if sum(orb.size for orb in trial_orbits) == target_points:
+                orbits = trial_orbits
+
+    if riesz_steps > 0 and dimension >= 2:
+        orbits = _relax_orbits_riesz_simplex(
+            orbits,
+            group_transforms,
+            eps,
+            num_steps=riesz_steps,
+            riesz_excess=riesz_excess,
+            wall_strength=wall_strength,
+        )
+    return orbits
 
 
 # ---------------------------------------------------------------------------
@@ -2353,35 +2960,103 @@ def solve_for_symmetry(
     )
 
     # Deterministic generic mini-ladder (no per-configuration special cases).
-    # For low-order Halton/Riesz starts (none/central in d >= 2), allow up to 16
-    # deterministic slices; easy cases return immediately on step 0.
+    # Easy cases converge on step 0-1 (pure lattice starts); harder cases engage
+    # Halton-seeded G-equivariant Riesz crystals and alternative orbit DOF counts.
     if base_basis.domain == "cube":
-        base_ladder = [
-            (0.30, 6.0, 12.0),
-            (0.45, 8.0, 12.0),
-            (0.25, 4.0, 0.0),
-            (0.55, 11.0, 8.0),
+        # (inset, rot_deg, norm_order, riesz_steps, riesz_excess, wall_strength, extra_dof, halton_gen)
+        lattice_ladder = [
+            (0.30, 6.0, 12.0, 0, 2.0, 1.0, 0, False),
+            (0.45, 8.0, 12.0, 0, 2.0, 1.0, 0, False),
+            (0.25, 4.0, 0.0, 80, 2.0, 1.0, 0, False),
+            (0.55, 11.0, 8.0, 100, 2.0, 1.2, 0, True),
+            (0.25, 4.0, 0.0, 0, 2.0, 1.0, 2, False),
+            (0.40, 11.0, 8.0, 100, 3.0, 0.8, 0, True),
+            (0.35, 7.0, 12.0, 80, 1.5, 1.5, 1, False),
+            (0.45, 5.0, 10.0, 100, 2.0, 1.4, 2, True),
+            (0.30, 13.0, 0.0, 100, 2.5, 1.0, 2, False),
+            (0.50, 10.0, 12.0, 100, 2.0, 1.8, 0, True),
         ]
     else:
-        base_ladder = [
-            (0.50, 0.06, 0.0),
-            (1.10, 0.12, 0.0),
-            (1.80, 0.04, 0.0),
-            (0.30, 0.18, 0.0),
+        # (inset, chiral_twist, unused, riesz_steps, riesz_excess, wall_strength, extra_dof, halton_gen)
+        lattice_ladder = [
+            (0.50, 0.06, 0.0, 0, 2.0, 1.0, 0, False),
+            (1.10, 0.12, 0.0, 0, 2.0, 1.0, 0, False),
+            (0.60, 0.08, 0.0, 60, 2.0, 1.0, 0, False),
+            (0.50, 0.05, 0.0, 80, 3.0, 1.3, 0, False),
+            (0.60, 0.08, 0.0, 100, 2.0, 1.0, 0, True),
+            (0.80, 0.14, 0.0, 100, 3.0, 0.7, 0, True),
+            (0.50, 0.05, 0.0, 100, 1.5, 1.4, 0, True),
+            (1.80, 0.04, 0.0, 0, 2.0, 1.0, 0, False),
+            (0.70, 0.10, 0.0, 100, 2.0, 1.0, 0, True),
+            (0.90, 0.16, 0.0, 100, 2.5, 1.4, 0, True),
+            (0.40, 0.20, 0.0, 100, 3.0, 0.7, 1, True),
+            (0.60, 0.18, 0.0, 100, 2.0, 1.6, 2, True),
         ]
 
-    if base_basis.dimension >= 2 and symmetry_name == "central" and base_basis.domain == "simplex":
-        num_ladder_steps = 8
-    elif base_basis.dimension >= 2 and symmetry_name in ("none", "central"):
+    is_low_order_cloud = base_basis.dimension >= 2 and symmetry_name in (
+        "none",
+        "central",
+        "mirror",
+    )
+    if is_low_order_cloud:
         num_ladder_steps = 16
+    elif base_basis.dimension == 1:
+        num_ladder_steps = 4
     else:
-        num_ladder_steps = len(base_ladder)
+        num_ladder_steps = len(lattice_ladder)
 
     best_po_solution = None
     first_valid_orbits = None
+    halton_step_counter = 0
     for step_idx in range(num_ladder_steps):
-        inset, twist_or_angle, norm_order = base_ladder[step_idx % len(base_ladder)]
-        halton_skip = step_idx * max(num_points, 17)
+        (
+            inset,
+            twist_or_angle,
+            norm_order,
+            riesz_steps,
+            riesz_excess,
+            wall_strength,
+            extra_dof,
+            halton_gen,
+        ) = lattice_ladder[step_idx % len(lattice_ladder)]
+        use_lattice_central = False
+        if is_low_order_cloud:
+            # Alternate G-equivariant Riesz crystals (even steps) and raw Halton
+            # clouds (odd steps); both sweep consecutive skips 0, 1, 2, ...
+            riesz_idx = step_idx // 2
+            halton_skip = riesz_idx * max(num_points, 19)
+            riesz_excess = (2.0, 3.0, 1.5, 2.5)[riesz_idx % 4]
+            wall_strength = (1.0, 1.4, 0.7, 1.8)[riesz_idx % 4]
+            if step_idx % 2 == 0:
+                riesz_steps = 100
+                if riesz_idx < 4:
+                    inset = 0.80
+                    extra_fixed_pairs = 0
+                else:
+                    extra_fixed_pairs = (riesz_idx - 4) // 2 + 1
+            else:
+                inset = (0.30, 0.45, 0.25, 0.55)[riesz_idx % 4]
+                riesz_steps = 0
+                extra_fixed_pairs = riesz_idx // 4
+            min_unk_target = sym_basis.num_basis
+            halton_gen = False
+            if (
+                base_basis.domain == "cube"
+                and symmetry_name == "central"
+                and base_basis.dimension >= 3
+                and step_idx in (0, 2, 4, 6)
+            ):
+                use_lattice_central = True
+                riesz_steps = 60 if step_idx >= 4 else 0
+        else:
+            extra_fixed_pairs = 0
+            min_unk_target = sym_basis.num_basis + extra_dof
+            if halton_gen:
+                halton_skip = halton_step_counter * max(num_points, 19)
+                halton_step_counter += 1
+            else:
+                halton_skip = 0
+
         if base_basis.domain == "cube":
             orbits = build_cube_equilibrium_start(
                 base_basis.dimension,
@@ -2392,12 +3067,16 @@ def solve_for_symmetry(
                 boundary_inset=inset,
                 rotation_degrees=twist_or_angle,
                 norm_order=norm_order,
-                min_unknowns=sym_basis.num_basis,
+                min_unknowns=min_unk_target,
                 halton_skip=halton_skip,
+                riesz_steps=riesz_steps,
+                riesz_excess=riesz_excess,
+                wall_strength=wall_strength,
+                extra_fixed_pairs=extra_fixed_pairs,
+                use_lattice_for_central=use_lattice_central,
+                halton_generic=halton_gen,
             )
         else:
-            # Alternate Riesz-S^d_+ crystal and raw Dirichlet(1/2) Halton starts for none
-            riesz_steps = 50 if (symmetry_name == "none" and step_idx % 2 == 0) else 0
             orbits = build_simplex_equilibrium_start(
                 base_basis.dimension,
                 base_basis.degree,
@@ -2406,9 +3085,13 @@ def solve_for_symmetry(
                 group_transforms,
                 boundary_inset=inset,
                 chiral_twist=twist_or_angle,
-                min_unknowns=sym_basis.num_basis,
+                min_unknowns=min_unk_target,
                 halton_skip=halton_skip,
                 riesz_steps=riesz_steps,
+                riesz_excess=riesz_excess,
+                wall_strength=wall_strength,
+                extra_fixed_pairs=extra_fixed_pairs,
+                halton_generic=halton_gen,
             )
 
         if orbits is None:
@@ -2498,9 +3181,12 @@ def get_symmetry_schedule(domain, dimension, degree):
         return ["full", "none"]
     if domain == "cube":
         if degree % 2 == 1:
-            return ["chiral", "central", "full", "none"]
-        return ["demi", "chiral", "central", "full", "none"]
-    return ["chiral", "full", "central", "none"]
+            return ["chiral", "central", "mirror", "full", "none"]
+        return ["demi", "chiral", "mirror", "central", "full", "none"]
+    if dimension == 2:
+        # In 2D simplex, central (v_0 <-> v_2) is already a reflection symmetry
+        return ["chiral", "full", "central", "none"]
+    return ["chiral", "full", "mirror", "central", "none"]
 
 
 def save_atlas_rule_json(
@@ -2596,7 +3282,7 @@ def main():
     )
     parser.add_argument(
         "--symmetry",
-        choices=("auto", "none", "central", "chiral", "demi", "full"),
+        choices=("auto", "none", "central", "mirror", "chiral", "demi", "full"),
         default="auto",
         help="symmetry group (default: auto = try all applicable symmetries)",
     )

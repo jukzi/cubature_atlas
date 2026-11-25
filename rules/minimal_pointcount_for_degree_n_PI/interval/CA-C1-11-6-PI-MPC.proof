@@ -1,33 +1,33 @@
 {
  "id": "CA-C1-11-6-PI-MPC",
- "file": "rules/minimal_pointcount_for_degree_n_PI/interval/CA-C1-11-6-PI-MPC.json",
+ "file": "../tmpu4pei5qd/CA-C1-11-6-PI-MPC.json",
  "domain": "interval",
  "degree": 11,
  "points": 6,
  "quality": "PI",
- "status": "proven",
- "sha": "db8db29ee451d672",
+ "status": "numerical",
+ "sha": "f8fe000a2e51aaed",
  "stored": {
-  "res_bound": 1.1483869410966475e-15,
+  "res_bound": 1.332267629550189e-15,
   "res_ok": true,
-  "margin_exact": 0.0675304857968481,
-  "minw_exact": 0.17132449237917027,
+  "margin_exact": 0.067530485796848,
+  "minw_exact": 0.17132449237917052,
   "quality_exact": "PI"
  },
  "exist": {
   "proved": true,
-  "r": 2.66329615641677e-16,
-  "kratio": 0.6666666666669302,
+  "r": 6.673729174587068e-17,
+  "kratio": 0.6666666666667395,
   "mode": "sym2",
   "equations": 6,
   "unknowns": 6,
-  "dist": 5.326592312833541e-16,
+  "dist": 3.0000820371896857e-16,
   "pos": true,
   "inside": true,
   "outside": false,
   "quality_proved": "PI"
  },
- "seconds": 0.01,
+ "seconds": 0.06,
  "ok_stored": true,
  "ok_exist": true
 }

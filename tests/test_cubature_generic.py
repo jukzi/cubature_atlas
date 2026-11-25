@@ -265,6 +265,70 @@ class GenericCubatureTests(unittest.TestCase):
             1e-13,
         )
 
+    def test_sparse_symmetric_basis_invariance_and_orthonormality(self):
+        rng = np.random.default_rng(77)
+        for domain, dim, deg, syms in (
+            ("cube", 2, 6, ("central", "mirror", "chiral", "demi", "full")),
+            ("cube", 3, 5, ("central", "mirror", "chiral", "demi", "full")),
+            ("simplex", 2, 6, ("central", "mirror", "chiral", "full")),
+            ("simplex", 3, 5, ("central", "mirror", "chiral", "full")),
+        ):
+            base = (
+                cubature_generic.CubeBasis(dim, deg)
+                if domain == "cube"
+                else cubature_generic.SimplexBasis(dim, deg)
+            )
+            pts = (
+                rng.uniform(-0.8, 0.8, (5, dim))
+                if domain == "cube"
+                else rng.uniform(0.05, 0.2, (5, dim))
+            )
+            for sym in syms:
+                group = cubature_generic.build_symmetry_group(domain, dim, sym)
+                sb = cubature_generic.SymmetricBasis(base, sym, group)
+                gram = sb.projection_matrix @ sb.projection_matrix.T
+                self.assertLess(
+                    float(np.abs(gram - np.eye(sb.num_basis)).max()), 1e-12
+                )
+                vals_0 = sb.evaluate_values(pts)
+                for transform in group:
+                    t_pts = pts @ transform.linear.T + transform.translation[None, :]
+                    vals_g = sb.evaluate_values(t_pts)
+                    self.assertLess(float(np.abs(vals_g - vals_0).max()), 1e-12)
+
+    def test_mirror_symmetry_and_riesz_crystals(self):
+        # 2D square degree 8 with 16 nodes via hyperplane mirror symmetry x_0 <-> x_1
+        sq_basis = cubature_generic.CubeBasis(2, 8)
+        sq_out = cubature_generic.solve_for_symmetry(
+            sq_basis, "mirror", 16, seed=None, verbose=False
+        )
+        self.assertIsNotNone(sq_out)
+        sq_sol, _, _ = sq_out
+        self.assertEqual(sq_sol.quality, "PI")
+        self.assertEqual(len(sq_sol.weights), 16)
+        self.assertLess(
+            cubature_generic.compute_monomial_residual(
+                "cube", 2, 8, sq_sol.nodes, sq_sol.weights * sq_basis.volume
+            ),
+            1e-13,
+        )
+
+        # 2D triangle degree 13 with 35 nodes via central/mirror + G-equivariant Riesz
+        tri_basis = cubature_generic.SimplexBasis(2, 13)
+        tri_out = cubature_generic.solve_for_symmetry(
+            tri_basis, "central", 35, seed=None, verbose=False
+        )
+        self.assertIsNotNone(tri_out)
+        tri_sol, _, _ = tri_out
+        self.assertEqual(tri_sol.quality, "PI")
+        self.assertEqual(len(tri_sol.weights), 35)
+        self.assertLess(
+            cubature_generic.compute_monomial_residual(
+                "simplex", 2, 13, tri_sol.nodes, tri_sol.weights * tri_basis.volume
+            ),
+            1e-13,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
