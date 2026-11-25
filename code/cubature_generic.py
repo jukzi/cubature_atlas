@@ -49,6 +49,7 @@ for _blas_env_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREAD
 import numpy as np
 from scipy import sparse
 from scipy.linalg import cho_factor, cho_solve
+from scipy.spatial import cKDTree
 from scipy.special import betaincinv
 
 # Same acceptance thresholds as tools/build_atlas.py: a node counts as inside if
@@ -1182,6 +1183,9 @@ def expand_orbits_to_nodes(orbits, group_transforms):
 def cluster_points_into_orbits(points, group_transforms, tol=1e-6):
     """Cluster a symmetric point cloud into distinct G-orbits with fixed subspaces."""
     num_points = len(points)
+    if num_points == 0:
+        return []
+    tree = cKDTree(points)
     visited = np.zeros(num_points, dtype=bool)
     orbits = []
     for idx in range(num_points):
@@ -1192,8 +1196,8 @@ def cluster_points_into_orbits(points, group_transforms, tol=1e-6):
             point, group_transforms, tol=tol
         )
         for image in images:
-            distances = np.linalg.norm(points - image[None, :], axis=1)
-            visited[distances < tol] = True
+            for neighbor in tree.query_ball_point(image, tol):
+                visited[neighbor] = True
         subspace_coords = (
             basis.T @ (point - origin)
             if basis.shape[1] > 0
@@ -1219,7 +1223,21 @@ def select_orbits_for_point_count(candidate_orbits, target_points, min_unknowns)
     sum(num_unknowns) >= min_unknowns that minimizes the sum of candidate rank
     indices (selecting the innermost natural equilibrium lattice shells).
     """
-    candidate_pool = candidate_orbits[: max(target_points + 64, 160)]
+    # Keep innermost orbits covering ~1.5x target_points plus a reserve of each
+    # distinct (size, num_unknowns) orbit type so parity/DOF combinations stay
+    # feasible without running DP over thousands of redundant outer orbits.
+    point_budget = max(int(target_points * 1.5) + 64, 160)
+    candidate_pool = []
+    cum_points = 0
+    type_counts = {}
+    for orbit in candidate_orbits:
+        key = (orbit.size, orbit.num_unknowns)
+        if cum_points < point_budget or type_counts.get(key, 0) < 12:
+            candidate_pool.append(orbit)
+            cum_points += orbit.size
+            type_counts[key] = type_counts.get(key, 0) + 1
+        elif len(candidate_pool) >= max(target_points + 64, 160):
+            break
     # State: pareto_by_count[point_count] = {capped_unknowns: min_rank_cost}
     pareto_by_count = {0: {0: 0.0}}
     parent_pointers = []
@@ -1227,7 +1245,10 @@ def select_orbits_for_point_count(candidate_orbits, target_points, min_unknowns)
     for orbit_idx, orbit in enumerate(candidate_pool):
         orbit_size = orbit.size
         orbit_unknowns = orbit.num_unknowns
-        rank_cost = float(orbit_idx)
+        # Weight by orbit_size so every point in the selected N-point cloud pays
+        # its own radial rank (preventing the DP from dropping 3 inner size-2
+        # orbits in favor of 1 outer size-6 orbit solely to have fewer terms).
+        rank_cost = float(orbit_size) * float(orbit_idx)
         next_by_count = {
             cnt: dict(unk_map) for cnt, unk_map in pareto_by_count.items()
         }
@@ -2060,6 +2081,10 @@ def build_simplex_equilibrium_start(
                 cloud @ transform.linear.T + transform.translation[None, :]
             )
         full_cloud = np.vstack(closed_clouds)
+        _, unique_indices = np.unique(
+            np.round(full_cloud, decimals=5), axis=0, return_index=True
+        )
+        full_cloud = full_cloud[unique_indices]
         orbs = cluster_points_into_orbits(full_cloud, group_transforms, tol=1e-4)
         orbs.sort(key=lambda orb: centroid_distance(orb.initial_point))
         return orbs
@@ -2077,27 +2102,29 @@ def build_simplex_equilibrium_start(
     aux_raw = aux_raw[np.argsort(aux_dists)][: max(target_points * 5, 300)]
     auxiliary_orbits = collect_orbits_for_cloud(aux_raw)
 
-    # Combine primary orbits first, then non-duplicate auxiliary orbits
+    # Combine primary orbits first, then non-duplicate auxiliary orbits using a
+    # spatial index over all G-images of primary orbits so high-N 3D simplices
+    # stay O(K log K) instead of O(K^2 |G|).
     candidate_orbits = list(primary_orbits)
-    for aux_orb in auxiliary_orbits:
-        is_duplicate = False
-        for existing in candidate_orbits:
-            if existing.size != aux_orb.size:
-                continue
-            min_dist = min(
-                float(
-                    np.linalg.norm(
-                        existing.initial_point
-                        - (transform.linear @ aux_orb.initial_point + transform.translation)
-                    )
+    if primary_orbits:
+        primary_images = np.vstack(
+            [
+                np.vstack(
+                    [
+                        transform.linear @ orb.initial_point + transform.translation
+                        for transform in group_transforms
+                    ]
                 )
-                for transform in group_transforms
-            )
-            if min_dist < 1e-3:
-                is_duplicate = True
-                break
-        if not is_duplicate:
-            candidate_orbits.append(aux_orb)
+                for orb in primary_orbits
+            ]
+        )
+        primary_tree = cKDTree(primary_images)
+        for aux_orb in auxiliary_orbits:
+            nearest_dist, _ = primary_tree.query(aux_orb.initial_point, k=1)
+            if float(nearest_dist) >= 1e-3:
+                candidate_orbits.append(aux_orb)
+    else:
+        candidate_orbits.extend(auxiliary_orbits)
 
     selected = select_orbits_for_point_count(
         candidate_orbits, target_points, min_unknowns
@@ -2610,9 +2637,9 @@ def solve_geodesic_levenberg_marquardt(
         if moment_norm < 1e-13 and (penalty_weight <= 0.0 or boundary_dist > 0.0):
             break
         if stagnation_window > 0 and len(residual_history) >= stagnation_window:
-            if (
-                residual_history[-1] > 0.99 * residual_history[-stagnation_window]
-                and damping > 1e-2
+            prev_res = residual_history[-stagnation_window]
+            if (residual_history[-1] > 0.99 * prev_res and damping > 1e-2) or (
+                residual_history[-1] > 0.998 * prev_res and residual_history[-1] > 1e-10
             ):
                 break
 
@@ -2646,7 +2673,8 @@ def _build_solution_if_positive(
 
 def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verbose):
     """Pull a near-solution inside with exact face-normal hinge, then polish penalty-free."""
-    target_margin = 5e-4 if sym_basis.degree >= 12 else 2e-3
+    # Outer quadrature shell scales as O(1/(degree + 1)^2) from the boundary.
+    target_margin = min(2e-3, 0.25 / float((sym_basis.degree + 1) ** 2))
     pulled_params = start_params
     pulled_bdist = start_bdist
     if pulled_bdist <= 1e-5:
@@ -2746,7 +2774,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
             # Boundary-grazing PI (valid per Atlas convention); still try to pull
             # deeper inside for easier rigorous certification, keeping this as fallback.
             boundary_pi_fallback = solution
-    if wall_res < 1e-2:
+    if wall_res < 1e-4:
         pulled_solution = _pull_and_polish_interior(
             sym_basis, orbits, wall_params, wall_bdist, verbose
         )
@@ -2792,7 +2820,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
                 po_fallback = solution
 
     # Stage B / Phase 2 & 3: exact face-normal hinge pull + pure interior polish
-    if free_res < 1e-2:
+    if free_res < 1e-4:
         pulled_solution = _pull_and_polish_interior(
             sym_basis, orbits, free_params, free_bdist, verbose
         )

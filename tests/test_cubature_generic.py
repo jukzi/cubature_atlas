@@ -329,6 +329,47 @@ class GenericCubatureTests(unittest.TestCase):
             1e-13,
         )
 
+    def test_select_orbits_weights_rank_by_orbit_size(self):
+        # 3 inner size-2 orbits (indices 0, 1, 2 -> total cost 2*(0+1+2)=6) must
+        # beat 1 outer size-6 orbit (index 5 -> cost 6*5=30) for target_points=6.
+        def make_orbit(size, dof):
+            return cubature_generic.SymmetryOrbit(
+                size=size,
+                subspace_origin=np.zeros(3),
+                subspace_basis=np.eye(3)[:, :dof],
+                subspace_coords=np.zeros(dof),
+                weight_sqrt=1.0,
+            )
+
+        candidates = [
+            make_orbit(2, 1),
+            make_orbit(2, 1),
+            make_orbit(2, 1),
+            make_orbit(4, 2),
+            make_orbit(4, 2),
+            make_orbit(6, 3),
+        ]
+        selected = cubature_generic.select_orbits_for_point_count(
+            candidates, target_points=6, min_unknowns=4
+        )
+        self.assertIsNotNone(selected)
+        self.assertEqual([orb.size for orb in selected], [2, 2, 2])
+
+    def test_3d_simplex_chiral_start_exact_count_and_distinct_orbits(self):
+        group = cubature_generic.build_symmetry_group("simplex", 3, "chiral")
+        orbits = cubature_generic.build_simplex_equilibrium_start(
+            dimension=3,
+            degree=14,
+            target_points=196,
+            symmetry_name="chiral",
+            group_transforms=group,
+            min_unknowns=60,
+        )
+        self.assertIsNotNone(orbits)
+        self.assertEqual(sum(orb.size for orb in orbits), 196)
+        nodes, _ = cubature_generic.expand_orbits_to_nodes(orbits, group)
+        self.assertEqual(len(nodes), 196)
+
 
 if __name__ == "__main__":
     unittest.main()
