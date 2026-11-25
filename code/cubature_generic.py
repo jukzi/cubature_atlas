@@ -13,16 +13,20 @@ special cases:
   finite-difference loss).
 - Generic finite symmetry engine (Reynolds projection + SVD invariant basis +
   stabilizer fixed-subspace orbit parameterization) supporting none, central,
-  chiral, and full symmetry groups in arbitrary dimension d.
+  chiral, demi, and full symmetry groups in arbitrary dimension d.
 - Deterministic equilibrium starts (rotated D_d* lattice in Chebyshev angle
-  space for cubes; concentric geodesic S^d_+ shells for simplices) with
-  dynamic-programming orbit selection for exact target point count N.
+  space for cubes; concentric geodesic S^d_+ shells / Riesz-S^d_+ crystals for
+  simplices) with exact Pareto-pruned min-rank DP orbit selection for exact
+  target point count N.
 - Fold-free (x, sqrt(w)^2) geodesic-accelerated Cholesky Levenberg-Marquardt
   (Transtrum & Sethna 2012) with a PI-preferred / PO-fallback pipeline:
-  Stage A strictly interior solve -> Stage B free solve -> smooth diagonal
+  Stage A smooth sliding-wall solve -> Stage B free solve -> exact face-normal
   boundary hinge pull -> interior pure-moment polish + automatic minimum-norm
   Gauss-Newton end-stage. Logging and stopping criteria strictly report the
   pure moment residual (excluding the boundary penalty).
+- Quality and exactness follow tools/build_atlas.py (PI: positive weights and
+  no node more than 1e-12 outside; a rule is written only if its monomial
+  residual is at most 1e-11).
 """
 
 import argparse
@@ -38,6 +42,17 @@ import time
 import numpy as np
 from scipy.linalg import cho_factor, cho_solve
 from scipy.special import betaincinv
+
+# Same acceptance thresholds as tools/build_atlas.py: a node counts as inside if
+# it lies at most INSIDE_TOL outside the domain (the boundary counts as inside),
+# and a rule is exact if its max monomial error / volume is at most RES_TOL.
+INSIDE_TOL = 1e-12
+RES_TOL = 1e-11
+
+
+def is_inside(boundary_distance):
+    """Atlas inside test: True if no node is more than INSIDE_TOL outside the domain."""
+    return boundary_distance >= -INSIDE_TOL
 
 
 # ---------------------------------------------------------------------------
@@ -2002,9 +2017,14 @@ def solve_geodesic_levenberg_marquardt(
 def _build_solution_if_positive(
     sym_basis, orbits, params, moment_residual, boundary_distance, quality
 ):
-    """Unpack orbits and construct a CubatureSolution if all weights are positive."""
+    """Unpack orbits and construct a CubatureSolution if valid and positive."""
     solved_orbits = unpack_orbit_parameters(orbits, params)
     nodes, weights = expand_orbits_to_nodes(solved_orbits, sym_basis.group_transforms)
+    # A representative that drifted onto a point with a larger stabilizer has
+    # fewer distinct images than its orbit size; the moment equations counted
+    # the full size, so the expanded rule would not be exact.
+    if len(weights) != sum(orbit.size for orbit in solved_orbits):
+        return None
     if float(weights.min()) <= 0.0:
         return None
     return CubatureSolution(
@@ -2064,7 +2084,7 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
         )
         polish_reps, _, _, _ = decode_orbit_representatives(orbits, polish_params)
         polish_bdist = sym_basis.base_basis.boundary_distance(polish_reps)
-    if polish_res < 1e-12 and polish_bdist > 0.0:
+    if polish_res < 1e-12 and is_inside(polish_bdist):
         return _build_solution_if_positive(
             sym_basis, orbits, polish_params, polish_res, polish_bdist, "PI"
         )
@@ -2082,6 +2102,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
     hinge pull and penalty-free interior polish + minimum-norm Gauss-Newton.
     """
     initial_params = pack_orbit_parameters(orbits)
+    boundary_pi_fallback = None
 
     # Stage A: smooth sliding-wall geodesic LM (zero penalty inside, rank-1 face wall outside)
     wall_res, wall_bdist, _, wall_params = solve_geodesic_levenberg_marquardt(
@@ -2098,24 +2119,34 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         phase_label="PI",
         verbose=verbose,
     )
-    if wall_res < 1e-9 and wall_bdist > 0.0:
+    if wall_res < 1e-9 and is_inside(wall_bdist):
         wall_res, wall_params = polish_minimum_norm_gauss_newton(
-            sym_basis, orbits, wall_params, max_steps=5, require_interior=True
+            sym_basis,
+            orbits,
+            wall_params,
+            max_steps=5,
+            require_interior=(wall_bdist > 1e-6),
         )
         wall_reps, _, _, _ = decode_orbit_representatives(orbits, wall_params)
         wall_bdist = sym_basis.base_basis.boundary_distance(wall_reps)
-    if wall_res < 1e-12 and wall_bdist > 1e-6:
+    if wall_res < 1e-12 and is_inside(wall_bdist):
         solution = _build_solution_if_positive(
             sym_basis, orbits, wall_params, wall_res, wall_bdist, "PI"
         )
         if solution is not None:
-            return solution
+            if wall_bdist > 1e-6:
+                return solution
+            # Boundary-grazing PI (valid per Atlas convention); still try to pull
+            # deeper inside for easier rigorous certification, keeping this as fallback.
+            boundary_pi_fallback = solution
     if wall_res < 1e-2:
         pulled_solution = _pull_and_polish_interior(
             sym_basis, orbits, wall_params, wall_bdist, verbose
         )
         if pulled_solution is not None:
             return pulled_solution
+    if boundary_pi_fallback is not None:
+        return boundary_pi_fallback
 
     # Stage B / Phase 1: free fold-free geodesic LM (allowed to step outside)
     free_res, free_bdist, _, free_params = solve_geodesic_levenberg_marquardt(
@@ -2141,14 +2172,17 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
 
     po_fallback = None
     if free_res < 1e-12:
-        quality = "PI" if free_bdist > 1e-6 else "PO"
+        quality = "PI" if is_inside(free_bdist) else "PO"
         solution = _build_solution_if_positive(
             sym_basis, orbits, free_params, free_res, free_bdist, quality
         )
         if solution is not None:
             if quality == "PI":
-                return solution
-            po_fallback = solution
+                if free_bdist > 1e-6:
+                    return solution
+                boundary_pi_fallback = solution
+            else:
+                po_fallback = solution
 
     # Stage B / Phase 2 & 3: exact face-normal hinge pull + pure interior polish
     if free_res < 1e-2:
@@ -2158,7 +2192,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         if pulled_solution is not None:
             return pulled_solution
 
-    return po_fallback
+    return boundary_pi_fallback if boundary_pi_fallback is not None else po_fallback
 
 
 # ---------------------------------------------------------------------------
@@ -2470,9 +2504,22 @@ def get_symmetry_schedule(domain, dimension, degree):
 
 
 def save_atlas_rule_json(
-    output_path, domain, dimension, degree, solution, symmetry_name, reproduce_command
+    output_path,
+    domain,
+    dimension,
+    degree,
+    solution,
+    symmetry_name,
+    reproduce_command,
+    seed=None,
 ):
-    """Write a converged cubature rule in Atlas-standard JSON format."""
+    """Write a converged cubature rule in Atlas-standard JSON format.
+
+    output_path may be None (write <rule id>.json in the current directory),
+    an existing directory (write <rule id>.json there) or a file path.
+    Returns (output_path, rule_id, monomial_err); output_path is None and
+    nothing is written if the monomial residual exceeds RES_TOL.
+    """
     atlas_domain, prefix = get_atlas_domain_info(domain, dimension)
     volume = (
         float(2.0 ** dimension)
@@ -2487,6 +2534,8 @@ def save_atlas_rule_json(
     monomial_err = compute_monomial_residual(
         domain, dimension, degree, nodes, scaled_weights
     )
+    if not monomial_err <= RES_TOL:
+        return None, rule_id, monomial_err
     family = (
         "minimal_pointcount_for_degree_n_PI"
         if quality == "PI"
@@ -2510,6 +2559,7 @@ def save_atlas_rule_json(
         "author": "Antigravity (AI-assisted)",
         "reproduce": {
             "script": "code/cubature_generic.py",
+            "seed": seed,
             "command": reproduce_command,
         },
         "status": "numerical",
@@ -2519,6 +2569,8 @@ def save_atlas_rule_json(
     }
     if output_path is None:
         output_path = f"{rule_id}.json"
+    elif os.path.isdir(output_path):
+        output_path = os.path.join(output_path, f"{rule_id}.json")
     parent_dir = os.path.dirname(os.path.abspath(output_path))
     if parent_dir:
         os.makedirs(parent_dir, exist_ok=True)
@@ -2559,6 +2611,11 @@ def main():
         type=int,
         default=None,
         help="optional RNG seed for jittered fallback starts after deterministic mini-ladder",
+    )
+    parser.add_argument(
+        "--out",
+        default=None,
+        help="output JSON file or existing directory (default: <rule id>.json in the current directory)",
     )
     args = parser.parse_args()
     if args.dim < 1:
@@ -2641,14 +2698,21 @@ def main():
     reproduce_command = "python code/cubature_generic.py " + shlex.join(command_args)
 
     output_path, rule_id, monomial_err = save_atlas_rule_json(
-        None,
+        args.out,
         args.domain,
         args.dim,
         args.degree,
         best_solution,
         best_symmetry,
         reproduce_command,
+        seed=args.seed,
     )
+    if output_path is None:
+        log_message(
+            f"REJECTED {rule_id}: monomial residual {monomial_err:.2e} exceeds "
+            f"{RES_TOL:.0e} ({elapsed:.2f}s)"
+        )
+        sys.exit(1)
     log_message(
         f"FOUND {rule_id} ({best_solution.quality}, sym={best_symmetry}) "
         f"N={len(best_solution.weights)} mom_res={best_solution.moment_residual:.2e} "
