@@ -6,22 +6,39 @@
   "degree": 3,
   "points": 4,
   "quality": "PI",
+  "symmetry": "chiral",
   "origin": "found",
-  "method": "numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
-  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=2, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 2 --degree 3 --domain cube --symmetry chiral --points 4"
+  },
   "status": "proven",
-  "residual_reported": 2.220446049250313e-16,
-  "numerical_check": {"N": 4, "M": 4, "p": 6, "res": 2.220446049250313e-16, "sigma": 1.4142135623730956, "h": 1.5008961955637085e-15, "rad": 3.1716029868766796e-16, "cert": true, "inside": true},
+  "residual_reported": 5.551115123125783e-17,
   "nodes": [
-    [-0.8148443593322979, 0.051916632508320584],
-    [-0.051916632508320584, -0.8148443593322979],
-    [0.8148443593322979, -0.051916632508320584],
-    [0.051916632508320584, 0.8148443593322979]
+    [
+      -0.5003877869773516,
+      -0.6451966594074826
+    ],
+    [
+      0.6451966594074826,
+      -0.5003877869773516
+    ],
+    [
+      0.5003877869773516,
+      0.6451966594074826
+    ],
+    [
+      -0.6451966594074826,
+      0.5003877869773516
+    ]
   ],
   "weights": [
-    0.9999999999999993,
-    0.9999999999999993,
-    0.9999999999999993,
-    0.9999999999999993
+    1.0,
+    1.0,
+    1.0,
+    1.0
   ]
 }

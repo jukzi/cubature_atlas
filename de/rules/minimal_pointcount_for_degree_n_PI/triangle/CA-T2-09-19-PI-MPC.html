@@ -16,35 +16,35 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Grad</th><td>9</td></tr>
 <tr><th>Knotenzahl</th><td>19</td></tr>
 <tr><th>Qualität</th><td>PI</td></tr>
-<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>6.66e-16</td></tr>
-<tr><th>Kleinstes Gewicht</th><td>1.124240e-02</td></tr>
-<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>1.444e-02</td></tr>
-<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>h = 1.40e-12, radius = 3.86e-16, ja</td></tr>
-<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 2.2e-14 von den gespeicherten Zahlen entfernt (Gleichungen in allen Unbekannten)</td></tr>
-<tr><th>Herkunft</th><td>numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>2.22e-16</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>1.278884e-02</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>2.063e-02</td></tr>
+<tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>–</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 7.8e-15 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 6)</td></tr>
+<tr><th>Herkunft</th><td>Generic deterministic equilibrium-start solver (domain=simplex, dim=2, symmetry=full) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage</td></tr>
 </table>
 <p><a href="../../../../rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.json">JSON herunterladen</a></p>
 <h2>Zitieren als</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T2-09-19-PI-MPC (Minimal point count for degree n (PI), triangle, degree 9, 19 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-09-19-PI-MPC.html</pre>
 <h2>Knoten und Gewichte</h2>
 <pre>  #                       x                       y                       w
-   1  2.048652893501764e-01   1.327076190670598e-01   3.931453999505442e-02
-   2  7.689637086912219e-01   2.146419510097143e-01   1.137680774827209e-02
-   3  7.333395419399108e-01   2.958425751836206e-02   1.784082658494873e-02
-   4  1.619919371502400e-01   6.270935908364242e-01   3.922507339914553e-02
-   5  3.132290049188564e-02   7.665788457801527e-01   1.735382350583671e-02
-   6  1.865946850486285e-01   3.653771410696608e-01   5.052267155329041e-02
-   7  4.040543425421400e-02   2.376303432279736e-01   2.484496975921375e-02
-   8  4.215006593668883e-02   4.874293332782254e-02   1.310432539890216e-02
-   9  9.080804608384589e-01   4.380964437522975e-02   1.340259229182763e-02
-  10  4.866153003604643e-01   4.789032158391873e-01   2.436301220724750e-02
-  11  4.629352490616839e-01   4.007856756298681e-02   2.769971709981923e-02
-  12  4.286591398189434e-01   2.004288139582785e-01   4.946229669380907e-02
-  13  3.854555291619451e-01   4.271013432933864e-01   4.880257494506631e-02
-  14  4.628305317543015e-02   9.132521531087751e-01   1.195054098445157e-02
-  15  3.571865165180424e-02   5.082792157078315e-01   2.527353197474425e-02
-  16  2.111037067766880e-01   1.444254381123017e-02   1.124239908181450e-02
-  17  2.244899405743482e-01   7.326211254129965e-01   2.494735449422920e-02
-  18  6.677200937153288e-01   1.292252523428052e-01   2.092901365951947e-02
-  19  6.573657277452915e-01   2.311007053332198e-01   2.834392862280774e-02</pre>
+   1  4.370895914929375e-01   4.370895914929375e-01   3.891377050238724e-02
+   2  1.258208170141251e-01   4.370895914929375e-01   3.891377050238724e-02
+   3  4.370895914929375e-01   1.258208170141251e-01   3.891377050238724e-02
+   4  2.219629891607656e-01   7.411985987844981e-01   2.164176968864470e-02
+   5  7.411985987844981e-01   2.219629891607656e-01   2.164176968864470e-02
+   6  3.683841205473626e-02   7.411985987844981e-01   2.164176968864470e-02
+   7  3.683841205473626e-02   2.219629891607656e-01   2.164176968864470e-02
+   8  7.411985987844981e-01   3.683841205473626e-02   2.164176968864470e-02
+   9  2.219629891607656e-01   3.683841205473626e-02   2.164176968864470e-02
+  10  4.472951339445275e-02   9.105409732110944e-01   1.278883782934901e-02
+  11  9.105409732110944e-01   4.472951339445275e-02   1.278883782934901e-02
+  12  4.472951339445286e-02   4.472951339445275e-02   1.278883782934901e-02
+  13  4.896825191987380e-01   2.063496160252398e-02   1.566735011356913e-02
+  14  2.063496160252398e-02   4.896825191987380e-01   1.566735011356913e-02
+  15  4.896825191987381e-01   4.896825191987380e-01   1.566735011356913e-02
+  16  3.333333333333333e-01   3.333333333333333e-01   4.856789814139999e-02
+  17  1.882035356190329e-01   6.235929287619342e-01   3.982386946360521e-02
+  18  6.235929287619342e-01   1.882035356190329e-01   3.982386946360521e-02
+  19  1.882035356190329e-01   1.882035356190329e-01   3.982386946360521e-02</pre>
 </body></html>

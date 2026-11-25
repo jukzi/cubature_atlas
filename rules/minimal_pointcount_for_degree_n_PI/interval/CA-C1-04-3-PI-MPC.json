@@ -6,22 +6,31 @@
   "degree": 4,
   "points": 3,
   "quality": "PI",
-  "origin": "gauss_legendre",
-  "method": "Gauss-Legendre rule, closed formula (numpy.polynomial.legendre.leggauss)",
-  "author": "closed formula",
+  "symmetry": "full",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=1, symmetry=full) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 1 --degree 4 --domain cube --symmetry full --points 3"
+  },
   "status": "proven",
-  "residual_reported": 0.0,
-  "numerical_check": {"N": 3, "M": 3, "p": 3, "res": 5.01799799882679e-15, "sigma": 1.2144197169857558, "h": 8.581138706538102e-14, "rad": 2.2236347074016477e-15, "cert": true, "inside": true},
-  "exact_degree": 5,
-  "optimal": true,
+  "residual_reported": 1.1102230246251565e-16,
   "nodes": [
-    [-0.7745966692414834],
-    [0.0],
-    [0.7745966692414834]
+    [
+      0.0
+    ],
+    [
+      0.7745966692414834
+    ],
+    [
+      -0.7745966692414834
+    ]
   ],
   "weights": [
-    0.5555555555555557,
-    0.8888888888888888,
-    0.5555555555555557
+    0.8888888888888891,
+    0.5555555555555554,
+    0.5555555555555554
   ]
 }

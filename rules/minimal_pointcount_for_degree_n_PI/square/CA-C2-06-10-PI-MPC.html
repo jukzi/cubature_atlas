@@ -16,26 +16,26 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Degree</th><td>6</td></tr>
 <tr><th>Number of nodes</th><td>10</td></tr>
 <tr><th>Quality</th><td>PI</td></tr>
-<tr><th>Max. moment residual (build check)</th><td>1.11e-15</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>8.88e-16</td></tr>
 <tr><th>Smallest weight</th><td>1.956630e-01</td></tr>
 <tr><th>Distance to domain boundary (negative = outside)</th><td>7.884e-02</td></tr>
-<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>h = 3.14e-14, radius = 9.17e-16, yes</td></tr>
-<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 9.6e-16 of the stored numbers (symmetry-reduced equations, group of order 2)</td></tr>
-<tr><th>Origin</th><td>numerical search of this atlas (moment equations, least squares), checked numerically; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>–</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 7.9e-16 of the stored numbers (symmetry-reduced equations, group of order 2)</td></tr>
+<tr><th>Origin</th><td>Generic deterministic equilibrium-start solver (domain=cube, dim=2, symmetry=none) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
 </table>
 <p><a href="../../../rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-06-10-PI-MPC.json">Download JSON</a></p>
 <h2>Cite as</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-C2-06-10-PI-MPC (Minimal point count for degree n (PI), square, degree 6, 10 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-06-10-PI-MPC.html</pre>
 <h2>Nodes and weights</h2>
 <pre>  #                       x                       y                       w
-   1  5.032259272865396e-01   9.211562006682203e-01   2.601651961634033e-01
-   2 -7.178340067863750e-01   8.794255452615278e-01   2.436858748086232e-01
-   3  8.794255452615278e-01  -7.178340067863750e-01   2.436858748086232e-01
-   4  5.080410218763690e-01  -1.233712110075417e-01   7.286566442644542e-01
-   5 -1.233712110075417e-01   5.080410218763690e-01   7.286566442644542e-01
-   6 -4.159285767743150e-01  -4.159285767743150e-01   6.727268519816900e-01
-   7 -8.994159552331348e-01   1.622752404960238e-01   3.332973642474392e-01
-   8 -8.420144559738475e-01  -8.420144559738475e-01   1.956629890504658e-01
-   9  9.211562006682203e-01   5.032259272865396e-01   2.601651961634033e-01
-  10  1.622752404960238e-01  -8.994159552331348e-01   3.332973642474392e-01</pre>
+   1  5.080410218763689e-01  -1.233712110075417e-01   7.286566442644544e-01
+   2 -1.233712110075417e-01   5.080410218763689e-01   7.286566442644544e-01
+   3  8.794255452615277e-01  -7.178340067863749e-01   2.436858748086233e-01
+   4 -8.994159552331348e-01   1.622752404960238e-01   3.332973642474393e-01
+   5  5.032259272865396e-01   9.211562006682203e-01   2.601651961634033e-01
+   6 -8.420144559738475e-01  -8.420144559738475e-01   1.956629890504658e-01
+   7  9.211562006682203e-01   5.032259272865396e-01   2.601651961634033e-01
+   8 -7.178340067863749e-01   8.794255452615277e-01   2.436858748086233e-01
+   9  1.622752404960238e-01  -8.994159552331348e-01   3.332973642474393e-01
+  10 -4.159285767743151e-01  -4.159285767743151e-01   6.727268519816902e-01</pre>
 </body></html>
