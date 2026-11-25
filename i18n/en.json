@@ -269,5 +269,8 @@
   "tipOut": "outside",
   "tipPin": "pinned",
   "loadingPts": "Loading nodes…",
-  "loadPtsErr": "Could not load node data — click to retry."
+  "loadPtsErr": "Could not load node data — click to retry.",
+  "dlList": "Download",
+  "themeDark": "Switch to dark theme",
+  "themeLight": "Switch to light theme"
 }

@@ -247,7 +247,10 @@
     "tipOut": "f78ea72183ac831b",
     "tipPin": "36e0b7062f77d8cf",
     "loadingPts": "9ac17dc33c9d4a31",
-    "loadPtsErr": "3bd8c120732ed80e"
+    "loadPtsErr": "3bd8c120732ed80e",
+    "dlList": "41533734a5a7b89d",
+    "themeDark": "8bc3a33a834ca344",
+    "themeLight": "90df188797227db1"
   },
   "eyebrow": "Numerische Integration · Kubaturformeln",
   "aiNote": "KI-generiert: Diese Seite wurde von Claude (Anthropic) erstellt.",
@@ -519,5 +522,8 @@
   "tipOut": "außerhalb",
   "tipPin": "fixiert",
   "loadingPts": "Lade Knoten…",
-  "loadPtsErr": "Knotendaten konnten nicht geladen werden – zum Wiederholen klicken."
+  "loadPtsErr": "Knotendaten konnten nicht geladen werden – zum Wiederholen klicken.",
+  "dlList": "Herunterladen",
+  "themeDark": "Zum dunklen Design wechseln",
+  "themeLight": "Zum hellen Design wechseln"
 }
