@@ -12,6 +12,7 @@
   "author": "Antigravity (AI-assisted)",
   "reproduce": {
     "script": "code/cubature_generic.py",
+    "seed": null,
     "command": "python code/cubature_generic.py --dim 2 --degree 2 --domain simplex --symmetry chiral --points 3"
   },
   "status": "proven",

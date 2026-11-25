@@ -12,6 +12,7 @@
   "author": "Antigravity (AI-assisted)",
   "reproduce": {
     "script": "code/cubature_generic.py",
+    "seed": null,
     "command": "python code/cubature_generic.py --dim 2 --degree 6 --domain cube --symmetry none --points 10"
   },
   "status": "proven",

@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import re
 import subprocess
@@ -116,6 +117,91 @@ class GenericCubatureTests(unittest.TestCase):
             self.assertEqual(record["points"], 12)
             self.assertEqual(record["quality"], "PI")
             self.assertLess(record["residual_reported"], 1e-13)
+            self.assertIn("seed", record["reproduce"])
+            self.assertIsNone(record["reproduce"]["seed"])
+
+    def test_cli_out_directory(self):
+        script_path = os.path.join(
+            os.path.dirname(__file__), "..", "code", "cubature_generic.py"
+        )
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            out_dir = os.path.join(tmp_dir, "out")
+            os.makedirs(out_dir)
+            subprocess.run(
+                [
+                    sys.executable,
+                    script_path,
+                    "--domain",
+                    "cube",
+                    "--degree",
+                    "5",
+                    "--out",
+                    out_dir,
+                ],
+                cwd=tmp_dir,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            written = os.listdir(out_dir)
+            self.assertEqual(len(written), 1)
+            self.assertRegex(written[0], r"^CA-C2-05-\d+-PI-MPC\.json$")
+            self.assertEqual(os.listdir(tmp_dir), ["out"])
+
+    def test_inside_tolerance_matches_atlas(self):
+        # Boundary counts as inside (build_atlas.py uses 1e-12 slack).
+        self.assertTrue(cubature_generic.is_inside(0.0))
+        self.assertTrue(cubature_generic.is_inside(-5e-13))
+        self.assertFalse(cubature_generic.is_inside(-1e-9))
+
+    def test_collapsed_orbit_is_rejected(self):
+        # A size-3 C3 orbit whose representative drifted to the centroid (1/3, 1/3)
+        # expands to 1 node instead of 3 and must be rejected.
+        base_basis = cubature_generic.SimplexBasis(2, 2)
+        sym_basis = cubature_generic.SymmetricBasis(
+            base_basis,
+            "chiral",
+            cubature_generic.build_symmetry_group("simplex", 2, "chiral"),
+        )
+        centroid = np.array([1.0 / 3.0, 1.0 / 3.0])
+        collapsed_orbit = cubature_generic.SymmetryOrbit(
+            size=3,
+            subspace_origin=np.zeros(2),
+            subspace_basis=np.eye(2),
+            subspace_coords=centroid,
+            weight_sqrt=math.sqrt(1.0 / 3.0),
+        )
+        params = cubature_generic.pack_orbit_parameters([collapsed_orbit])
+        self.assertIsNone(
+            cubature_generic._build_solution_if_positive(
+                sym_basis, [collapsed_orbit], params, 0.0, 1.0 / 3.0, "PI"
+            )
+        )
+
+    def test_save_rejects_high_residual(self):
+        bad_solution = cubature_generic.CubatureSolution(
+            quality="PI",
+            moment_residual=1e-3,
+            boundary_distance=0.2,
+            nodes=np.array([[0.2, 0.2]]),
+            weights=np.array([1.0]),
+            orbits=[],
+        )
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_path, rule_id, monomial_err = cubature_generic.save_atlas_rule_json(
+                tmp_dir,
+                "simplex",
+                2,
+                3,
+                bad_solution,
+                "none",
+                "python code/cubature_generic.py",
+                seed=None,
+            )
+            self.assertIsNone(output_path)
+            self.assertEqual(rule_id, "CA-T2-03-1-PI-MPC")
+            self.assertGreater(monomial_err, cubature_generic.RES_TOL)
+            self.assertEqual(os.listdir(tmp_dir), [])
 
     def test_4d_cube_and_simplex_pi(self):
         for domain, degree, symmetry in (
