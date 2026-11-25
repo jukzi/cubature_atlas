@@ -5,29 +5,29 @@
  "degree": 27,
  "points": 1079,
  "quality": "PI",
- "status": "verified",
- "sha": "b186f62dfe6c1298",
+ "status": "proven",
+ "sha": "b16623d4bca10338",
  "stored": {
-  "res_bound": 5.588561903784698e-15,
+  "res_bound": 6.951010154352335e-15,
   "res_ok": true,
-  "margin_exact": 0.001286318680544365,
-  "minw_exact": 3.6329037787395063e-06,
+  "margin_exact": 0.00128632964001458,
+  "minw_exact": 3.632904065689961e-06,
   "quality_exact": "PI"
  },
  "exist": {
   "proved": true,
-  "r": 3.8456068717184323e-13,
-  "kratio": 0.6666909161002622,
+  "r": 4.016620903958514e-13,
+  "kratio": 0.6666919893648479,
   "mode": "sym24",
   "equations": 301,
   "unknowns": 312,
-  "dist": 3.8511579923926735e-13,
+  "dist": 4.1087695071509135e-13,
   "pos": true,
   "inside": true,
   "outside": false,
   "quality_proved": "PI"
  },
- "seconds": 10.23,
+ "seconds": 45.62,
  "ok_stored": true,
  "ok_exist": true
 }
