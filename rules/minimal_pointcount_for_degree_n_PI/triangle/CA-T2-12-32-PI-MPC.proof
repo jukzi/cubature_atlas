@@ -1,33 +1,34 @@
 {
  "id": "CA-T2-12-32-PI-MPC",
- "file": "rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-12-32-PI-MPC.json",
+ "file": "../tmpkk1mp9w_/CA-T2-12-32-PI-MPC.json",
  "domain": "triangle",
  "degree": 12,
  "points": 32,
  "quality": "PI",
- "status": "proven",
- "sha": "e2f2f5f1e2a78825",
+ "status": "numerical",
+ "sha": "61a1edf53e21c9f0",
  "stored": {
-  "res_bound": 1.665334536937736e-15,
+  "res_bound": 2.1556378643899944e-15,
   "res_ok": true,
-  "margin_exact": 0.0020954797092412212,
-  "minw_exact": 0.0009953193311556408,
-  "quality_exact": "PI"
+  "margin_exact": -1e-17,
+  "minw_exact": 0.0019783094046992144,
+  "quality_exact": "PO"
  },
  "exist": {
   "proved": true,
-  "r": 5.453974468824987e-15,
-  "kratio": 0.6666666668887995,
+  "r": 2.6257585899160055e-14,
+  "kratio": 0.6666666725719854,
   "mode": "sym2",
   "equations": 67,
-  "unknowns": 68,
-  "dist": 5.738469403379834e-15,
+  "unknowns": 67,
+  "dist": 2.6757186315752533e-14,
   "pos": true,
   "inside": true,
   "outside": false,
-  "quality_proved": "PI"
+  "quality_proved": "PI",
+  "snapped": 4.440892098500627e-16
  },
- "seconds": 0.11,
+ "seconds": 1.15,
  "ok_stored": true,
  "ok_exist": true
 }

@@ -1,34 +1,33 @@
 {
  "id": "CA-T3-12-116-PI-MPC",
- "file": "rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-12-116-PI-MPC.json",
+ "file": "../tmpdt6hv203/CA-T3-12-116-PI-MPC.json",
  "domain": "tetra",
  "degree": 12,
  "points": 116,
  "quality": "PI",
- "status": "proven",
- "sha": "eabd4086f0d339b0",
+ "status": "numerical",
+ "sha": "1b8662cd62768097",
  "stored": {
-  "res_bound": 2.997602166487925e-15,
+  "res_bound": 1.6653345369377362e-15,
   "res_ok": true,
-  "margin_exact": -8e-17,
-  "minw_exact": 0.00010754224133462852,
-  "quality_exact": "PO"
+  "margin_exact": 0.0004999999999867132,
+  "minw_exact": 3.354651757958231e-05,
+  "quality_exact": "PI"
  },
  "exist": {
   "proved": true,
-  "r": 9.650956292305156e-13,
-  "kratio": 0.666686079978807,
+  "r": 1.5179535569576772e-13,
+  "kratio": 0.6666674825519647,
   "mode": "full",
   "equations": 455,
-  "unknowns": 457,
-  "dist": 1.6092926322762966e-11,
+  "unknowns": 464,
+  "dist": 1.216250226595384e-12,
   "pos": true,
   "inside": true,
   "outside": false,
-  "quality_proved": "PI",
-  "snapped": 4.440892098500627e-16
+  "quality_proved": "PI"
  },
- "seconds": 1.77,
+ "seconds": 3.39,
  "ok_stored": true,
  "ok_exist": true
 }
