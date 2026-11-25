@@ -971,7 +971,7 @@ class SymmetricBasis:
             blocks[sum(mi)].append(idx)
         max_block = max(len(block) for block in blocks)
 
-        num_probes = max(2 * max_block + 16, 40)
+        num_probes = max(max_block + 16, 40)
         halton = generate_halton_points(num_probes, base_basis.dimension)
         # Map (0, 1)^d smoothly into interior of Delta^d via stick-breaking
         probe_points = np.zeros_like(halton)
@@ -2094,12 +2094,18 @@ def build_simplex_equilibrium_start(
     auxiliary_clouds = [
         np.full((1, dimension), centroid_coord, dtype=float)
     ]
-    for level in range(1, max_level + 1):
-        if level != primary_level:
-            auxiliary_clouds.append(map_level_to_equilibrium(level))
+    aux_levels = sorted(
+        {
+            lvl
+            for lvl in (1, 2, 3, 4, primary_level - 1, primary_level + 1, max_level)
+            if 1 <= lvl <= max_level and lvl != primary_level
+        }
+    )
+    for level in aux_levels:
+        auxiliary_clouds.append(map_level_to_equilibrium(level))
     aux_raw = np.vstack(auxiliary_clouds)
     aux_dists = np.array([centroid_distance(pt) for pt in aux_raw], dtype=float)
-    aux_raw = aux_raw[np.argsort(aux_dists)][: max(target_points * 5, 300)]
+    aux_raw = aux_raw[np.argsort(aux_dists)][: max(target_points * 3, 300)]
     auxiliary_orbits = collect_orbits_for_cloud(aux_raw)
 
     # Combine primary orbits first, then non-duplicate auxiliary orbits using a
@@ -2678,7 +2684,7 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
     pulled_params = start_params
     pulled_bdist = start_bdist
     if pulled_bdist <= 1e-5:
-        for pull_weight in (10.0, 100.0):
+        for pull_weight in (1.0, 10.0, 100.0):
             _, pulled_bdist, _, pulled_params = solve_geodesic_levenberg_marquardt(
                 sym_basis,
                 orbits,
