@@ -146,6 +146,9 @@ class CubeBasis:
         )
         self.exact_moments = np.zeros(self.num_basis, dtype=float)
         self.exact_moments[0] = 1.0
+        self._val_workspace = None
+        self._vg_workspace = None
+        self._jet_workspace = None
 
     def _legendre_1d_values(self, coords):
         """Evaluate orthonormal 1D Legendre polynomials P_0..P_degree at coords."""
@@ -219,25 +222,8 @@ class CubeBasis:
         scale = self.legendre_norms_1d[:, None]
         return values * scale, first_deriv * scale, second_deriv * scale
 
-    def evaluate_values(self, points, active_indices=None):
-        """Evaluate all (or active) basis polynomials at points, returning (num_sel, num_points)."""
-        num_points = len(points)
-        idx_arr = (
-            self.multi_index_array
-            if active_indices is None
-            else self.multi_index_array[active_indices]
-        )
-        tables_by_axis = [
-            self._legendre_1d_values(points[:, axis])
-            for axis in range(self.dimension)
-        ]
-        values = np.ones((len(idx_arr), num_points), dtype=float)
-        for axis in range(self.dimension):
-            values *= tables_by_axis[axis][idx_arr[:, axis]]
-        return values
-
-    def evaluate_values_and_gradients(self, points, active_indices=None):
-        """Evaluate basis values and coordinate gradients at points."""
+    def _evaluate_values_buffered(self, points, active_indices=None):
+        """Cache-friendly chunked evaluation reusing output buffers (caller must not retain alias)."""
         num_points = len(points)
         idx_arr = (
             self.multi_index_array
@@ -245,30 +231,108 @@ class CubeBasis:
             else self.multi_index_array[active_indices]
         )
         num_selected = len(idx_arr)
-        factors_by_axis = []
-        derivs_by_axis = []
+        tables_by_axis = [
+            self._legendre_1d_values(points[:, axis])
+            for axis in range(self.dimension)
+        ]
+        chunk = min(256, max(1, num_selected))
+        ws = self._val_workspace
+        if ws is None or ws[0] != (num_selected, num_points, chunk):
+            vals_out = np.empty((num_selected, num_points), dtype=float)
+            f_buf = np.empty((chunk, num_points), dtype=float)
+            ws = ((num_selected, num_points, chunk), vals_out, f_buf)
+            self._val_workspace = ws
+        else:
+            _, vals_out, f_buf = ws
+
+        for start in range(0, num_selected, chunk):
+            end = min(start + chunk, num_selected)
+            size = end - start
+            np.take(
+                tables_by_axis[0],
+                idx_arr[start:end, 0],
+                axis=0,
+                out=vals_out[start:end],
+            )
+            for axis in range(1, self.dimension):
+                np.take(
+                    tables_by_axis[axis],
+                    idx_arr[start:end, axis],
+                    axis=0,
+                    out=f_buf[:size],
+                )
+                vals_out[start:end] *= f_buf[:size]
+        return vals_out
+
+    def evaluate_values(self, points, active_indices=None):
+        """Evaluate all (or active) basis polynomials at points, returning (num_sel, num_points)."""
+        return self._evaluate_values_buffered(points, active_indices).copy()
+
+    def _evaluate_values_and_gradients_buffered(self, points, active_indices=None):
+        """Cache-friendly chunked value+gradient evaluation reusing output buffers."""
+        num_points = len(points)
+        idx_arr = (
+            self.multi_index_array
+            if active_indices is None
+            else self.multi_index_array[active_indices]
+        )
+        num_selected = len(idx_arr)
+        axis_vals = []
+        axis_derivs = []
         for axis in range(self.dimension):
-            axis_vals, axis_derivs = self._legendre_1d_values_and_derivatives(
+            vals_1d, derivs_1d = self._legendre_1d_values_and_derivatives(
                 points[:, axis]
             )
-            exponents = idx_arr[:, axis]
-            factors_by_axis.append(axis_vals[exponents])
-            derivs_by_axis.append(axis_derivs[exponents])
+            axis_vals.append(vals_1d)
+            axis_derivs.append(derivs_1d)
 
-        values = np.ones((num_selected, num_points), dtype=float)
-        for axis in range(self.dimension):
-            values *= factors_by_axis[axis]
+        chunk = min(256, max(1, num_selected))
+        ws = self._vg_workspace
+        if ws is None or ws[0] != (num_selected, num_points, chunk):
+            vals_out = np.empty((num_selected, num_points), dtype=float)
+            grads_out = np.empty(
+                (self.dimension, num_selected, num_points), dtype=float
+            )
+            f_bufs = [
+                np.empty((chunk, num_points), dtype=float)
+                for _ in range(self.dimension)
+            ]
+            d_bufs = [
+                np.empty((chunk, num_points), dtype=float)
+                for _ in range(self.dimension)
+            ]
+            ws = ((num_selected, num_points, chunk), vals_out, grads_out, f_bufs, d_bufs)
+            self._vg_workspace = ws
+        else:
+            _, vals_out, grads_out, f_bufs, d_bufs = ws
 
-        gradients = np.empty(
-            (self.dimension, num_selected, num_points), dtype=float
+        dim = self.dimension
+        for start in range(0, num_selected, chunk):
+            end = min(start + chunk, num_selected)
+            size = end - start
+            for axis in range(dim):
+                exponents = idx_arr[start:end, axis]
+                np.take(axis_vals[axis], exponents, axis=0, out=f_bufs[axis][:size])
+                np.take(axis_derivs[axis], exponents, axis=0, out=d_bufs[axis][:size])
+
+            np.copyto(vals_out[start:end], f_bufs[0][:size])
+            for axis in range(1, dim):
+                vals_out[start:end] *= f_bufs[axis][:size]
+
+            for axis in range(dim):
+                dest = grads_out[axis, start:end]
+                np.copyto(dest, d_bufs[axis][:size])
+                for other_axis in range(dim):
+                    if other_axis != axis:
+                        dest *= f_bufs[other_axis][:size]
+        return vals_out, grads_out
+
+    def evaluate_values_and_gradients(self, points, active_indices=None):
+        """Evaluate basis values and coordinate gradients at points."""
+        vals, grads = self._evaluate_values_and_gradients_buffered(
+            points, active_indices
         )
-        for axis in range(self.dimension):
-            axis_grad = derivs_by_axis[axis].copy()
-            for other_axis in range(self.dimension):
-                if other_axis != axis:
-                    axis_grad *= factors_by_axis[other_axis]
-            gradients[axis] = axis_grad
-        return values, gradients
+        return vals.copy(), grads.copy()
 
     def evaluate_second_order_jet(self, points, directions, active_indices=None):
         """Evaluate (value, 1st directional deriv, 2nd directional deriv) along directions."""
@@ -302,6 +366,73 @@ class CubeBasis:
             prod_first = next_first
             prod_second = next_second
         return prod_val, prod_first, prod_second
+
+    def evaluate_weighted_second_order_jet(
+        self,
+        points,
+        directions,
+        weight_val,
+        weight_first,
+        weight_second,
+        active_indices=None,
+    ):
+        """Chunked weighted contraction jet_second @ w0 + 2 * jet_first @ w1 + jet_val @ w2."""
+        num_points = len(points)
+        idx_arr = (
+            self.multi_index_array
+            if active_indices is None
+            else self.multi_index_array[active_indices]
+        )
+        num_selected = len(idx_arr)
+        axis_jets = [
+            self._legendre_1d_second_order_jet(points[:, axis], directions[:, axis])
+            for axis in range(self.dimension)
+        ]
+
+        chunk = min(256, max(1, num_selected))
+        ws = self._jet_workspace
+        if ws is None or ws[0] != (num_points, chunk):
+            pv = np.empty((chunk, num_points), dtype=float)
+            pf = np.empty((chunk, num_points), dtype=float)
+            ps = np.empty((chunk, num_points), dtype=float)
+            fv = np.empty((chunk, num_points), dtype=float)
+            ff = np.empty((chunk, num_points), dtype=float)
+            fs = np.empty((chunk, num_points), dtype=float)
+            tmp = np.empty((chunk, num_points), dtype=float)
+            ws = ((num_points, chunk), pv, pf, ps, fv, ff, fs, tmp)
+            self._jet_workspace = ws
+        else:
+            _, pv, pf, ps, fv, ff, fs, tmp = ws
+
+        result = np.empty(num_selected, dtype=float)
+        dim = self.dimension
+        for start in range(0, num_selected, chunk):
+            end = min(start + chunk, num_selected)
+            size = end - start
+            ex0 = idx_arr[start:end, 0]
+            np.take(axis_jets[0][0], ex0, axis=0, out=pv[:size])
+            np.take(axis_jets[0][1], ex0, axis=0, out=pf[:size])
+            np.take(axis_jets[0][2], ex0, axis=0, out=ps[:size])
+            for axis in range(1, dim):
+                ex = idx_arr[start:end, axis]
+                np.take(axis_jets[axis][0], ex, axis=0, out=fv[:size])
+                np.take(axis_jets[axis][1], ex, axis=0, out=ff[:size])
+                np.take(axis_jets[axis][2], ex, axis=0, out=fs[:size])
+                ps[:size] *= fv[:size]
+                np.multiply(pf[:size], ff[:size], out=tmp[:size])
+                ps[:size] += 2.0 * tmp[:size]
+                np.multiply(pv[:size], fs[:size], out=tmp[:size])
+                ps[:size] += tmp[:size]
+                pf[:size] *= fv[:size]
+                np.multiply(pv[:size], ff[:size], out=tmp[:size])
+                pf[:size] += tmp[:size]
+                pv[:size] *= fv[:size]
+            result[start:end] = (
+                ps[:size] @ weight_val
+                + 2.0 * (pf[:size] @ weight_first)
+                + pv[:size] @ weight_second
+            )
+        return result
 
     def boundary_distance(self, points):
         """Minimum distance to boundary (> 0 strictly interior, <= 0 on/outside)."""
@@ -1035,25 +1166,25 @@ class SymmetricBasis:
     def evaluate_values(self, points):
         if self.group_order == 1:
             return self.base_basis.evaluate_values(points)
+        eval_fn = getattr(
+            self.base_basis, "_evaluate_values_buffered", self.base_basis.evaluate_values
+        )
         if self._active_indices is not None:
-            return self._project(
-                self.base_basis.evaluate_values(
-                    points, active_indices=self._active_indices
-                )
-            )
-        return self._project(self.base_basis.evaluate_values(points))
+            return self._project(eval_fn(points, active_indices=self._active_indices))
+        return self._project(eval_fn(points))
 
     def evaluate_values_and_gradients(self, points):
         if self.group_order == 1:
             return self.base_basis.evaluate_values_and_gradients(points)
+        eval_fn = getattr(
+            self.base_basis,
+            "_evaluate_values_and_gradients_buffered",
+            self.base_basis.evaluate_values_and_gradients,
+        )
         if self._active_indices is not None:
-            base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(
-                points, active_indices=self._active_indices
-            )
+            base_vals, base_grads = eval_fn(points, active_indices=self._active_indices)
         else:
-            base_vals, base_grads = self.base_basis.evaluate_values_and_gradients(
-                points
-            )
+            base_vals, base_grads = eval_fn(points)
         values = self._project(base_vals)
         gradients = np.empty((self.dimension, self.num_basis, len(points)), dtype=float)
         for axis in range(self.dimension):
@@ -1077,6 +1208,35 @@ class SymmetricBasis:
             self._project(base_val),
             self._project(base_first),
             self._project(base_second),
+        )
+
+    def evaluate_weighted_second_order_jet(
+        self, points, directions, weight_val, weight_first, weight_second
+    ):
+        """Contract 2nd-order Taylor jet with orbit weights before symmetry projection."""
+        weighted_fn = getattr(self.base_basis, "evaluate_weighted_second_order_jet", None)
+        if weighted_fn is not None:
+            if self._active_indices is not None:
+                vec = weighted_fn(
+                    points,
+                    directions,
+                    weight_val,
+                    weight_first,
+                    weight_second,
+                    active_indices=self._active_indices,
+                )
+            else:
+                vec = weighted_fn(
+                    points, directions, weight_val, weight_first, weight_second
+                )
+            return vec if self.group_order == 1 else self._project(vec)
+        jet_val, jet_first, jet_second = self.evaluate_second_order_jet(
+            points, directions
+        )
+        return (
+            jet_second @ weight_val
+            + 2.0 * (jet_first @ weight_first)
+            + jet_val @ weight_second
         )
 
 
@@ -1743,13 +1903,28 @@ def build_cube_equilibrium_start(
     integer_grid = np.stack([coord_grid.ravel() for coord_grid in mesh], axis=1)
 
     if dimension >= 2:
-        if symmetry_name in ("demi", "full"):
+        if symmetry_name in ("demi", "full") or (target_points % 2 == 1):
             # Standard D_d* lattice Z^d U (Z + 1/2)^d covers every stabilizer orbit type
             raw_points = np.vstack([integer_grid, integer_grid + 0.5])
         else:
-            shifted_a = integer_grid + lattice_shift
-            shifted_b = integer_grid + (lattice_shift + 0.5)
-            raw_points = np.vstack([shifted_a, shifted_b])
+            # Origin-free shifted lattice for even N: use (1/4)-shift when preserved
+            # mod D_d* by G (e.g. S_6 in 3D), otherwise the B_d-invariant edge-midpoint
+            # union U_k (Z^d + e_k / 2) so closing under G never doubles lattice density.
+            quarter = np.full(dimension, 0.25, dtype=float)
+            quarter_preserved = all(
+                np.allclose((g.linear @ quarter + g.translation) % 1.0, 0.25)
+                or np.allclose((g.linear @ quarter + g.translation) % 1.0, 0.75)
+                for g in group_transforms
+            )
+            if quarter_preserved:
+                raw_points = np.vstack([integer_grid + 0.25, integer_grid + 0.75])
+            else:
+                edge_layers = []
+                for axis in range(dimension):
+                    shift = np.zeros(dimension, dtype=float)
+                    shift[axis] = 0.5
+                    edge_layers.append(integer_grid + shift)
+                raw_points = np.vstack(edge_layers)
     else:
         raw_points = integer_grid + (0.0 if target_points % 2 == 1 else 0.5)
 
@@ -1795,7 +1970,10 @@ def build_cube_equilibrium_start(
         )
     else:
         candidate_orbits.sort(
-            key=lambda orb: float(np.max(np.abs(orb.initial_point)))
+            key=lambda orb: (
+                round(float(np.max(np.abs(orb.initial_point))), 9),
+                float(np.linalg.norm(orb.initial_point)),
+            )
         )
 
     selected = select_orbits_for_point_count(
@@ -2316,13 +2494,12 @@ def evaluate_directional_second_derivative(sym_basis, orbits, param_vector, dire
             2.0 * weight_sqrt_dir * weight_sqrt_dir
         )
 
-    jet_val, jet_first, jet_second = sym_basis.evaluate_second_order_jet(
-        representatives, rep_directions
-    )
-    return (
-        jet_second @ weight_val
-        + 2.0 * (jet_first @ weight_first_deriv)
-        + jet_val @ weight_second_deriv
+    return sym_basis.evaluate_weighted_second_order_jet(
+        representatives,
+        rep_directions,
+        weight_val,
+        weight_first_deriv,
+        weight_second_deriv,
     )
 
 
@@ -2495,9 +2672,44 @@ def solve_geodesic_levenberg_marquardt(
     residual_history = []
     steps_taken = 0
     prev_step = None
+    allow_bold_uphill = True
+    snapped_back = False
     geodesic_active = (
         (moment_norm < geodesic_threshold) if geodesic_threshold > 0.0 else True
     )
+
+    def _eval_trial_step(candidate_step):
+        cand_step = candidate_step
+        cand_params = params + cand_step
+        cand_reps, _, _, _ = decode_orbit_representatives(orbits, cand_params)
+        if not np.all(np.isfinite(cand_reps)):
+            return None
+        cand_bdist = sym_basis.base_basis.boundary_distance(cand_reps)
+        if require_interior and cand_bdist <= 1e-7:
+            backtracked = False
+            for _ in range(3):
+                cand_step = 0.5 * cand_step
+                cand_params = params + cand_step
+                cand_reps, _, _, _ = decode_orbit_representatives(orbits, cand_params)
+                if np.all(np.isfinite(cand_reps)):
+                    cand_bdist = sym_basis.base_basis.boundary_distance(cand_reps)
+                    if cand_bdist > 1e-7:
+                        backtracked = True
+                        break
+            if not backtracked:
+                return None
+        # Escape cap prevents runaway far outside the domain
+        if cand_bdist < -0.35:
+            return None
+        cand_res = evaluate_moment_residual(sym_basis, orbits, cand_params)
+        cand_mom = float(np.linalg.norm(cand_res))
+        if not math.isfinite(cand_mom):
+            return None
+        cand_pen, _, _ = evaluate_boundary_penalty(
+            sym_basis, orbits, cand_params, penalty_margin, penalty_weight
+        )
+        cand_cost = 0.5 * (cand_mom * cand_mom) + cand_pen
+        return cand_cost, cand_mom, cand_bdist, cand_params, cand_step
 
     for iteration in range(1, max_steps + 1):
         steps_taken = iteration
@@ -2513,7 +2725,9 @@ def solve_geodesic_levenberg_marquardt(
                 normal_matrix[
                     blk_off : blk_off + blk_dof, blk_off : blk_off + blk_dof
                 ] += hess_block
-        diag_scale = np.maximum(np.diag(normal_matrix), 1e-12)
+        raw_diag = np.diag(normal_matrix)
+        diag_max = float(np.max(raw_diag)) + 1e-300
+        diag_scale = np.maximum(raw_diag, 0.0) + 1e-12 * diag_max
 
         step_accepted = False
         for _ in range(12):
@@ -2531,6 +2745,7 @@ def solve_geodesic_levenberg_marquardt(
                 continue
 
             trial_step = velocity_step
+            used_geodesic = False
             if geodesic_active:
                 directional_d2 = evaluate_directional_second_derivative(
                     sym_basis, orbits, params, velocity_step
@@ -2538,63 +2753,48 @@ def solve_geodesic_levenberg_marquardt(
                 acceleration_step = cho_solve(
                     cholesky_factor, -(jacobian.T @ directional_d2), check_finite=False
                 )
-                velocity_norm = float(np.linalg.norm(velocity_step))
-                accel_norm = float(np.linalg.norm(acceleration_step))
+                velocity_norm = math.sqrt(
+                    float(np.dot(diag_scale, velocity_step * velocity_step))
+                )
+                accel_norm = math.sqrt(
+                    float(np.dot(diag_scale, acceleration_step * acceleration_step))
+                )
                 if velocity_norm > 0.0 and accel_norm <= 0.75 * velocity_norm:
                     trial_step = velocity_step + 0.5 * acceleration_step
+                    used_geodesic = True
 
-            trial_params = params + trial_step
-            trial_reps, _, _, _ = decode_orbit_representatives(orbits, trial_params)
-            if not np.all(np.isfinite(trial_reps)):
+            candidate = _eval_trial_step(trial_step)
+            if used_geodesic:
+                vel_candidate = _eval_trial_step(velocity_step)
+                if candidate is None or (
+                    vel_candidate is not None and vel_candidate[0] < candidate[0]
+                ):
+                    candidate = vel_candidate
+            if candidate is None:
                 damping = min(damping * 5.0, 1e10)
                 continue
 
-            trial_boundary_dist = sym_basis.base_basis.boundary_distance(trial_reps)
-            if require_interior and trial_boundary_dist <= 1e-7:
-                # Gently backtrack along the same step before escalating damping
-                backtracked = False
-                for _ in range(3):
-                    trial_step = 0.5 * trial_step
-                    trial_params = params + trial_step
-                    trial_reps, _, _, _ = decode_orbit_representatives(
-                        orbits, trial_params
-                    )
-                    if np.all(np.isfinite(trial_reps)):
-                        trial_boundary_dist = sym_basis.base_basis.boundary_distance(
-                            trial_reps
-                        )
-                        if trial_boundary_dist > 1e-7:
-                            backtracked = True
-                            break
-                if not backtracked:
-                    damping = min(damping * 5.0, 1e10)
-                    continue
-            # Escape cap prevents runaway far outside the domain
-            if trial_boundary_dist < -0.35:
-                damping = min(damping * 5.0, 1e10)
-                continue
-
-            trial_residual = evaluate_moment_residual(sym_basis, orbits, trial_params)
-            trial_moment_norm = float(np.linalg.norm(trial_residual))
-            if not math.isfinite(trial_moment_norm):
-                damping = min(damping * 5.0, 1e10)
-                continue
-
-            trial_penalty_cost, _, _ = evaluate_boundary_penalty(
-                sym_basis, orbits, trial_params, penalty_margin, penalty_weight
-            )
-            trial_total_cost = (
-                0.5 * (trial_moment_norm * trial_moment_norm) + trial_penalty_cost
-            )
-
+            trial_total_cost, _, _, trial_params, trial_step = candidate
             is_downhill = trial_total_cost < total_cost
             is_bold_uphill_ok = False
-            if (not is_downhill) and geodesic_active and prev_step is not None:
-                step_norm = float(np.linalg.norm(trial_step))
-                prev_norm = float(np.linalg.norm(prev_step))
+            if (
+                (not is_downhill)
+                and geodesic_active
+                and allow_bold_uphill
+                and prev_step is not None
+            ):
+                step_norm = math.sqrt(
+                    float(np.dot(diag_scale, trial_step * trial_step))
+                )
+                prev_norm = math.sqrt(float(np.dot(diag_scale, prev_step * prev_step)))
                 if step_norm > 0.0 and prev_norm > 0.0:
-                    cos_angle = float(np.dot(trial_step, prev_step)) / (
-                        step_norm * prev_norm
+                    cos_angle = max(
+                        -1.0,
+                        min(
+                            1.0,
+                            float(np.dot(diag_scale, trial_step * prev_step))
+                            / (step_norm * prev_norm),
+                        ),
                     )
                     if (
                         cos_angle > 0.0
@@ -2631,9 +2831,6 @@ def solve_geodesic_levenberg_marquardt(
 
             damping = min(damping * 5.0, 1e10)
 
-        if not step_accepted:
-            break
-
         residual_history.append(best_moment_norm)
         if verbose and (iteration <= 5 or iteration % 10 == 0 or moment_norm < 1e-13):
             log_message(
@@ -2642,12 +2839,45 @@ def solve_geodesic_levenberg_marquardt(
             )
         if moment_norm < 1e-13 and (penalty_weight <= 0.0 or boundary_dist > 0.0):
             break
-        if stagnation_window > 0 and len(residual_history) >= stagnation_window:
+
+        stagnated = not step_accepted
+        if (
+            not stagnated
+            and stagnation_window > 0
+            and len(residual_history) >= stagnation_window
+        ):
             prev_res = residual_history[-stagnation_window]
             if (residual_history[-1] > 0.99 * prev_res and damping > 1e-2) or (
                 residual_history[-1] > 0.998 * prev_res and residual_history[-1] > 1e-10
             ):
-                break
+                stagnated = True
+
+        if stagnated:
+            if (
+                geodesic_active
+                and (not snapped_back)
+                and total_cost > 1.01 * best_total_cost
+            ):
+                # Snap back once to best_params and finish with monotone descent
+                snapped_back = True
+                allow_bold_uphill = False
+                params = best_params.copy()
+                residual, jacobian, representatives = evaluate_residual_and_jacobian(
+                    sym_basis, orbits, params
+                )
+                moment_norm = float(np.linalg.norm(residual))
+                boundary_dist = sym_basis.base_basis.boundary_distance(representatives)
+                penalty_cost, penalty_grad, penalty_hessian_blocks = (
+                    evaluate_boundary_penalty(
+                        sym_basis, orbits, params, penalty_margin, penalty_weight
+                    )
+                )
+                total_cost = 0.5 * (moment_norm * moment_norm) + penalty_cost
+                damping = min(damping, 1e-4)
+                prev_step = None
+                residual_history.clear()
+                continue
+            break
 
     best_reps, _, _, _ = decode_orbit_representatives(orbits, best_params)
     best_boundary_dist = sym_basis.base_basis.boundary_distance(best_reps)
@@ -2967,9 +3197,19 @@ def get_atlas_domain_info(domain, dimension):
 
 
 def solve_for_symmetry(
-    base_basis, symmetry_name, target_points, seed=None, verbose=False
+    base_basis,
+    symmetry_name,
+    target_points,
+    seed=None,
+    verbose=False,
+    max_points=None,
 ):
-    """Run deterministic mini-ladder (plus optional seeded jitter) for one symmetry group."""
+    """Run deterministic mini-ladder (plus optional seeded jitter) for one symmetry group.
+
+    If ``max_points`` is given, the stage is skipped (returns None) when its
+    point count is not strictly smaller, i.e. it could not improve on an
+    already-found PI rule with ``max_points`` nodes.
+    """
     group_transforms = build_symmetry_group(
         base_basis.domain, base_basis.dimension, symmetry_name
     )
@@ -2988,6 +3228,12 @@ def solve_for_symmetry(
             sym_basis,
         )
     )
+    if max_points is not None and num_points >= max_points:
+        log_message(
+            f"Skipping symmetry={symmetry_name} (N={num_points} >= "
+            f"N={max_points} of PI rule already found)"
+        )
+        return None
     log_message(
         f"Trying symmetry={symmetry_name} "
         f"(|G|={sym_basis.group_order}, M_G={sym_basis.num_basis}, N={num_points})"
@@ -3001,6 +3247,8 @@ def solve_for_symmetry(
         lattice_ladder = [
             (0.30, 6.0, 12.0, 0, 2.0, 1.0, 0, False),
             (0.45, 8.0, 12.0, 0, 2.0, 1.0, 0, False),
+            (1.00, 5.0, 0.0, 0, 2.0, 1.0, 0, False),
+            (1.20, 7.5, 0.0, 0, 2.0, 1.0, 0, False),
             (0.25, 4.0, 0.0, 80, 2.0, 1.0, 0, False),
             (0.55, 11.0, 8.0, 100, 2.0, 1.2, 0, True),
             (0.25, 4.0, 0.0, 0, 2.0, 1.0, 2, False),
@@ -3373,8 +3621,22 @@ def main():
             and len(best_solution.weights) <= dof_target_z
         ):
             continue
+        # In auto mode a later symmetry stage is only worth trying if it can
+        # yield a PI rule with strictly fewer nodes than the best one so far.
+        point_bound = (
+            len(best_solution.weights)
+            if args.points == 0
+            and best_solution is not None
+            and best_solution.quality == "PI"
+            else None
+        )
         outcome = solve_for_symmetry(
-            base_basis, symmetry_name, args.points, seed=args.seed, verbose=False
+            base_basis,
+            symmetry_name,
+            args.points,
+            seed=args.seed,
+            verbose=False,
+            max_points=point_bound,
         )
         if outcome is None:
             continue
