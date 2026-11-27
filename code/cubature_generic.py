@@ -83,6 +83,44 @@ def is_inside(boundary_distance):
 # ---------------------------------------------------------------------------
 
 
+# Every start tried by solve_for_symmetry is appended here when it is a
+# list (main sets it), so that starts can later be compared with the rules.
+STARTS_RECORD = None
+
+
+def _record_start(sym_basis, symmetry_name, num_points, step_idx, orbits):
+    """Append one tried start (nodes and weights scaled to the volume) to STARTS_RECORD."""
+    if STARTS_RECORD is None:
+        return None
+    volume = sym_basis.base_basis.volume
+    nodes, weights = expand_orbits_to_nodes(orbits, sym_basis.group_transforms)
+    entry = {
+        "symmetry": symmetry_name,
+        "points": int(num_points),
+        "ladder_step": int(step_idx),
+        "orbits": [[int(orb.size), int(orb.num_unknowns)] for orb in orbits],
+        "start_nodes": [[float(c) for c in row] for row in nodes],
+        "start_weights": [float(w * volume) for w in weights],
+        "result": None,
+    }
+    STARTS_RECORD.append(entry)
+    return entry
+
+
+def _record_result(entry, sym_basis, solution):
+    """Store the rule a recorded start converged to (or leave None)."""
+    if entry is None or solution is None:
+        return
+    volume = sym_basis.base_basis.volume
+    entry["result"] = {
+        "quality": solution.quality,
+        "moment_residual": float(solution.moment_residual),
+        "boundary_distance": float(solution.boundary_distance),
+        "nodes": [[float(c) for c in row] for row in solution.nodes],
+        "weights": [float(w * volume) for w in solution.weights],
+    }
+
+
 def log_message(message):
     """Print a timestamped log line with second-level resolution."""
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -2125,7 +2163,7 @@ def build_simplex_equilibrium_start(
     halton_generic=False,
 ):
     """Deterministic equilibrium start on Delta^d (Riesz-S^d_+/Halton or S^d_+ shells)."""
-    eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
+    eps = max(1.0 / float(max(degree, 2)) ** 2, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
 
     if dimension >= 2 and symmetry_name == "none":
         if target_points * (dimension + 1) < min_unknowns:
@@ -2235,7 +2273,7 @@ def build_simplex_equilibrium_start(
             break
         max_level += 1
 
-    inset_eps = max(0.03, min(0.60, boundary_inset / float(max(degree, 2))))
+    inset_eps = max(2.0 / float(max(degree, 2)) ** 2, min(0.60, boundary_inset / float(max(degree, 2))))
 
     def map_level_to_equilibrium(level):
         bary_grid = generate_simplex_barycentric_lattice(dimension, level)
@@ -3181,7 +3219,14 @@ def counting_value(domain, dimension, degree):
 
 
 def start_is_feasible(sym_basis, num_points):
-    """True if the default start builder finds orbits with N nodes and >= M_G unknowns."""
+    """True if the default start has N nodes, >= M_G unknowns and passes the stratum test.
+
+    The test only needs the orbit types, so it runs on the unrelaxed default
+    start (milliseconds) before any start of the ladder is relaxed or solved.
+    Later ladder steps move nodes, put more of them on strata, or ask for up
+    to 2 more unknowns; the last case is tested as well before (G, N) is
+    skipped.
+    """
     base_basis = sym_basis.base_basis
     builder = (
         build_cube_equilibrium_start
@@ -3196,7 +3241,27 @@ def start_is_feasible(sym_basis, num_points):
         sym_basis.group_transforms,
         min_unknowns=sym_basis.num_basis,
     )
-    return orbits is not None
+    if orbits is None:
+        return False
+    if not stratum_unknowns_suffice(sym_basis, orbits):
+        # Ladder steps with extra_dof ask for up to 2 more unknowns, which
+        # can move nodes off a stratum; skip only if that start fails too.
+        wider = builder(
+            base_basis.dimension,
+            base_basis.degree,
+            num_points,
+            sym_basis.symmetry_name,
+            sym_basis.group_transforms,
+            min_unknowns=sym_basis.num_basis + 2,
+        )
+        if wider is not None and stratum_unknowns_suffice(sym_basis, wider):
+            return True
+        log_message(
+            f"symmetry={sym_basis.symmetry_name} N={num_points}: skipped "
+            f"(too few unknowns outside a symmetry stratum)"
+        )
+        return False
+    return True
 
 
 def _point_in_affine_subspace(point, origin, basis, tol=1e-7):
@@ -3277,6 +3342,7 @@ def solve_for_symmetry(
     max_points=None,
     prepared=None,
     rounds=(1, 1),
+    max_starts=None,
 ):
     """Run deterministic mini-ladder (plus optional seeded jitter) for one symmetry group.
 
@@ -3356,6 +3422,8 @@ def solve_for_symmetry(
     if base_basis.dimension >= 2:
         first_step = num_ladder_steps * (rounds[0] - 1)
         num_ladder_steps *= rounds[1]
+    if max_starts is not None:
+        num_ladder_steps = min(num_ladder_steps, first_step + max_starts)
 
     best_po_solution = None
     first_valid_orbits = None
@@ -3470,7 +3538,11 @@ def solve_for_symmetry(
             f"unk={total_unknowns}/{sym_basis.num_basis} (orbits={len(orbits)})"
         )
 
+        record_entry = _record_start(
+            sym_basis, symmetry_name, num_points, step_idx, orbits
+        )
         solution = solve_from_single_start(sym_basis, orbits, verbose=verbose)
+        _record_result(record_entry, sym_basis, solution)
         if solution is not None:
             log_message(
                 f"symmetry={symmetry_name} ladder[{step_idx}] -> {solution.quality} "
@@ -3741,7 +3813,92 @@ def solve_point_count_ladder(
     return best_solution, best_symmetry, best_po[0], best_po[1]
 
 
+def expected_point_count(sym_basis):
+    """Node count suggested by counting: |G| * M_G / (d + 1), rounded up.
+
+    A generic orbit has |G| nodes and d + 1 unknowns, and the rule must meet
+    the M_G invariant moment equations. Without symmetry this is Z. For a
+    centrally symmetric domain (cube) and odd degree the odd moments vanish
+    for every point-symmetric rule, so M_G and the estimate are well below Z.
+    """
+    dimension = sym_basis.base_basis.dimension
+    return int(math.ceil(sym_basis.group_order * sym_basis.num_basis / float(dimension + 1)))
+
+
+def solve_single_start(base_basis, symmetries, max_extra_points):
+    """One targeted start per symmetry group, no ladder of starts.
+
+    Every applicable group G gets the node count N_G = the smallest N >= max(
+    lower bound, |G| M_G / (d + 1)) whose default orbit start exists and passes
+    the stratum test. The groups are tried by increasing N_G (larger group
+    first on ties), one start each (ladder step 0); the first PI rule ends the
+    search. PO rules are kept as a fallback.
+    """
+    dimension = base_basis.dimension
+    dof_target_z = counting_value(base_basis.domain, dimension, base_basis.degree)
+    lower_bound = point_count_lower_bound(base_basis.domain, dimension, base_basis.degree)
+    if max_extra_points is None:
+        max_extra_points = max(8, dof_target_z // 4)
+    plan = []
+    for symmetry_name in symmetries:
+        prepared = prepare_symmetry(base_basis, symmetry_name)
+        if prepared is None:
+            continue
+        sym_basis = prepared[1]
+        start_n = max(lower_bound, expected_point_count(sym_basis))
+        num_points = None
+        for candidate in range(start_n, start_n + max_extra_points + 1):
+            if start_is_feasible(sym_basis, candidate):
+                num_points = candidate
+                break
+        if num_points is None:
+            log_message(
+                f"symmetry={symmetry_name}: no feasible N in "
+                f"{start_n}..{start_n + max_extra_points}"
+            )
+            continue
+        plan.append((num_points, -sym_basis.group_order, symmetry_name, prepared))
+    plan.sort(key=lambda item: (item[0], item[1]))
+    log_message(
+        "Single-start plan: "
+        + ", ".join(f"{name} N={n}" for n, _, name, _ in plan)
+    )
+    best_po = None
+    best_po_symmetry = None
+    for num_points, _, symmetry_name, prepared in plan:
+        outcome = solve_for_symmetry(
+            base_basis,
+            symmetry_name,
+            num_points,
+            seed=None,
+            verbose=False,
+            prepared=prepared,
+            max_starts=1,
+        )
+        if outcome is None:
+            continue
+        solution = outcome[0]
+        if solution.quality == "PI":
+            return solution, symmetry_name, best_po, best_po_symmetry
+        if _better_po(solution, best_po):
+            best_po = solution
+            best_po_symmetry = symmetry_name
+    return None, None, best_po, best_po_symmetry
+
+
+def default_starts_path(out, domain, dimension, degree):
+    """File for the tried starts: next to the rule output, named by the cell."""
+    _, prefix = get_atlas_domain_info(domain, dimension)
+    name = f"starts-{prefix}-{degree:02d}.json"
+    if out is None:
+        return name
+    if os.path.isdir(out):
+        return os.path.join(out, name)
+    return os.path.join(os.path.dirname(os.path.abspath(out)), name)
+
+
 def main():
+    global STARTS_RECORD
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--dim", type=int, default=2, help="spatial dimension d >= 1 (default: 2)"
@@ -3790,6 +3947,18 @@ def main():
         "ceil(2 E / (d + 1)) (default: max(8, Z/4))",
     )
     parser.add_argument(
+        "--single-start",
+        action="store_true",
+        help="automatic N only: no ladder; one targeted start per symmetry at the "
+        "smallest feasible N >= Z",
+    )
+    parser.add_argument(
+        "--starts-out",
+        default=None,
+        help="JSON file for every tried start and its result (default: "
+        "starts-<prefix>-<degree>.json next to --out)",
+    )
+    parser.add_argument(
         "--out",
         default=None,
         help="output JSON file or existing directory (default: <rule id>.json in the current directory)",
@@ -3818,9 +3987,14 @@ def main():
         if args.symmetry == "auto"
         else [args.symmetry]
     )
+    STARTS_RECORD = []
     if args.points > 0:
         best_solution, best_symmetry, best_po_solution, best_po_symmetry = (
             solve_fixed_point_count(base_basis, symmetries, args.points, args.seed)
+        )
+    elif args.single_start:
+        best_solution, best_symmetry, best_po_solution, best_po_symmetry = (
+            solve_single_start(base_basis, symmetries, args.max_extra_points)
         )
     else:
         best_solution, best_symmetry, best_po_solution, best_po_symmetry = (
@@ -3837,6 +4011,7 @@ def main():
         best_symmetry = best_po_symmetry
         best_po_solution = None
 
+    write_starts_file(args, base_basis, dof_target_z)
     elapsed = time.time() - start_time
     if best_solution is None:
         log_message(f"No solution found in {elapsed:.2f}s")
@@ -3849,6 +4024,28 @@ def main():
         write_rule_and_log(
             args, base_basis, best_po_solution, best_po_symmetry, elapsed
         )
+
+
+def write_starts_file(args, base_basis, dof_target_z):
+    """Write every tried start with its result, for a later comparison with the rules."""
+    path = args.starts_out or default_starts_path(
+        args.out, args.domain, args.dim, args.degree
+    )
+    parent_dir = os.path.dirname(os.path.abspath(path))
+    os.makedirs(parent_dir, exist_ok=True)
+    record = {
+        "domain": args.domain,
+        "dimension": args.dim,
+        "degree": args.degree,
+        "moments": int(base_basis.num_basis),
+        "Z": dof_target_z,
+        "command": "python code/cubature_generic.py " + shlex.join(sys.argv[1:]),
+        "starts": STARTS_RECORD,
+    }
+    with open(path, "w", encoding="utf-8") as file_handle:
+        json.dump(record, file_handle)
+        file_handle.write("\n")
+    log_message(f"wrote {len(STARTS_RECORD)} tried starts to {path}")
 
 
 def write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed):
@@ -3873,6 +4070,8 @@ def write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed):
             command_args.extend(["--start-rounds", str(args.start_rounds)])
         if args.max_extra_points is not None:
             command_args.extend(["--max-extra-points", str(args.max_extra_points)])
+        if args.single_start:
+            command_args.append("--single-start")
     if args.seed is not None:
         command_args.extend(["--seed", str(args.seed)])
     reproduce_command = "python code/cubature_generic.py " + shlex.join(command_args)
