@@ -3172,6 +3172,75 @@ def start_is_feasible(sym_basis, num_points):
     return orbits is not None
 
 
+def _point_in_affine_subspace(point, origin, basis, tol=1e-7):
+    """True if point lies in the affine subspace origin + span(basis)."""
+    offset = point - origin
+    if basis.shape[1] > 0:
+        offset = offset - basis @ (basis.T @ offset)
+    return float(np.linalg.norm(offset)) < tol
+
+
+def _orbit_lies_in_stratum(orbit, stratum, group_transforms):
+    """True if some group image of the orbit's fixed subspace lies in the stratum."""
+    origin, basis = stratum
+    probe_points = [orbit.representative_point()]
+    if orbit.spatial_dof > 0:
+        direction = np.linspace(0.3, 0.7, orbit.spatial_dof)
+        probe_points.append(probe_points[0] + 0.01 * (orbit.subspace_basis @ direction))
+    for transform in group_transforms:
+        if all(
+            _point_in_affine_subspace(
+                transform.linear @ point + transform.translation, origin, basis
+            )
+            for point in probe_points
+        ):
+            return True
+    return False
+
+
+def stratum_unknowns_suffice(sym_basis, orbits):
+    """Necessary orbit-count condition for every symmetry stratum.
+
+    A stratum S is the fixed subspace of a lower-dimensional orbit (an axis,
+    a mirror plane, the centre). Invariant polynomials that vanish on S see
+    only the orbits outside G.S, so these orbits must carry at least
+    M_G - r_S unknowns, where r_S is the rank of the invariant basis restricted
+    to S (bounded by dim P_n(S)). Starts that put too many nodes on S cannot
+    give a regular solution,
+    however long the solver runs; this is the same counting argument as
+    unknowns >= M_G, applied to every stratum.
+    """
+    base_basis = sym_basis.base_basis
+    dimension = base_basis.dimension
+    degree = base_basis.degree
+    num_basis = sym_basis.num_basis
+    group_transforms = sym_basis.group_transforms
+    strata = []
+    for orbit in orbits:
+        if orbit.spatial_dof >= dimension:
+            continue
+        if any(_orbit_lies_in_stratum(orbit, stratum, group_transforms)
+               and orbit.spatial_dof == stratum[1].shape[1]
+               for stratum, _ in strata):
+            continue
+        strata.append(((orbit.subspace_origin, orbit.subspace_basis), orbit))
+    for (origin, basis), orbit in strata:
+        # r_S <= dim P_n(S): the invariant basis restricted to a k-dimensional
+        # stratum spans at most the polynomials of degree n in k variables.
+        # The bound is exact for mirror axes and only weakens the test
+        # elsewhere, so no start that could converge is rejected.
+        stratum_dim = basis.shape[1]
+        restricted_rank = min(math.comb(degree + stratum_dim, stratum_dim), num_basis)
+        outside_unknowns = sum(
+            other.num_unknowns
+            for other in orbits
+            if not _orbit_lies_in_stratum(other, (origin, basis), group_transforms)
+        )
+        if outside_unknowns < num_basis - restricted_rank:
+            return False
+    return True
+
+
 def solve_for_symmetry(
     base_basis,
     symmetry_name,
@@ -3264,6 +3333,7 @@ def solve_for_symmetry(
     best_po_solution = None
     first_valid_orbits = None
     halton_step_counter = 0
+    num_rejected_starts = 0
     for step_idx in range(first_step, num_ladder_steps):
         (
             inset,
@@ -3362,6 +3432,9 @@ def solve_for_symmetry(
                 return None
             continue
 
+        if not stratum_unknowns_suffice(sym_basis, orbits):
+            num_rejected_starts += 1
+            continue
         if first_valid_orbits is None:
             first_valid_orbits = orbits
         total_unknowns = sum(orb.num_unknowns for orb in orbits)
@@ -3384,6 +3457,12 @@ def solve_for_symmetry(
                 or solution.boundary_distance > best_po_solution.boundary_distance
             ):
                 best_po_solution = solution
+
+    if num_rejected_starts > 0:
+        log_message(
+            f"symmetry={symmetry_name} N={num_points}: {num_rejected_starts} starts "
+            f"skipped (too few unknowns outside a symmetry stratum)"
+        )
 
     # Optional seeded perturbation stage when --seed is supplied
     if seed is not None and first_valid_orbits is not None and rounds[0] == 1:

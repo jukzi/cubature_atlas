@@ -14,6 +14,28 @@ import cubature_generic
 
 
 class GenericCubatureTests(unittest.TestCase):
+
+    def test_stratum_test_rejects_starts_on_the_mirror_axis(self):
+        # Triangle degree 35 with the mirror group: at N = 200 the start needs
+        # many nodes on the axis to reach M_G unknowns, which cannot work.
+        base_basis = cubature_generic.SimplexBasis(2, 35)
+        group_transforms, sym_basis = cubature_generic.prepare_symmetry(
+            base_basis, "central"
+        )
+        for num_points, expected in ((200, False), (228, True)):
+            orbits = cubature_generic.build_simplex_equilibrium_start(
+                2,
+                35,
+                num_points,
+                "central",
+                group_transforms,
+                min_unknowns=sym_basis.num_basis,
+            )
+            self.assertIsNotNone(orbits)
+            self.assertEqual(
+                cubature_generic.stratum_unknowns_suffice(sym_basis, orbits),
+                expected,
+            )
     def test_basis_derivatives_and_jets_1d_to_4d(self):
         rng = np.random.default_rng(123)
         for domain in ("cube", "simplex"):
