@@ -332,7 +332,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-31-171-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-32-187-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-33-193-PI-MPC.html</loc></url>
-  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-34-211-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-34-210-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-35-222-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-36-235-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-37-241-PI-MPC.html</loc></url>
@@ -572,6 +572,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-50-444-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-06-21-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-12-114-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-14-168-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-16-243-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-17-263-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-19-358-PO-MPC.html</loc></url>
@@ -626,6 +627,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-20-77-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-22-92-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-23-100-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-31-176-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-35-222-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/omelyan_solovyan_2006/square/CA-C2-15-44-PI-OS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/rules/omelyan_solovyan_2006/square/CA-C2-17-56-PI-OS.html</loc></url>
@@ -1151,7 +1153,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-31-171-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-32-187-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-33-193-PI-MPC.html</loc></url>
-  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-34-211-PI-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-34-210-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-35-222-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-36-235-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-37-241-PI-MPC.html</loc></url>
@@ -1391,6 +1393,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/triangle/CA-T2-50-444-PI-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-06-21-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-12-114-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-14-168-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-16-243-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-17-263-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/cube/CA-C3-19-358-PO-MPC.html</loc></url>
@@ -1445,6 +1448,7 @@
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-20-77-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-22-92-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-23-100-PO-MPC.html</loc></url>
+  <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-31-176-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PO/triangle/CA-T2-35-222-PO-MPC.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/omelyan_solovyan_2006/square/CA-C2-15-44-PI-OS.html</loc></url>
   <url><loc>https://jukzi.github.io/cubature_atlas/de/rules/omelyan_solovyan_2006/square/CA-C2-17-56-PI-OS.html</loc></url>
