@@ -165,9 +165,11 @@ class GenericCubatureTests(unittest.TestCase):
                 text=True,
                 check=True,
             )
-            written = os.listdir(out_dir)
-            self.assertEqual(len(written), 1)
+            written = sorted(os.listdir(out_dir))
+            # the rule and the file with the tried starts (starts-<prefix>-<degree>.json)
+            self.assertEqual(len(written), 2)
             self.assertRegex(written[0], r"^CA-C2-05-\d+-PI-MPC\.json$")
+            self.assertEqual(written[1], "starts-C2-05.json")
             self.assertEqual(os.listdir(tmp_dir), ["out"])
 
     def test_inside_tolerance_matches_atlas(self):
