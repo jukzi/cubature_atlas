@@ -26,10 +26,21 @@ def moment_count(dim, degree):
     return count
 
 
-def counting_value(dim, degree):
-    # Z = ceil(M / (dim + 1)).
+def counting_value(domain, degree):
+    # Z = ceil(M / (dim + 1)), as on the website.
+    # On square and cube Z is the smaller of this value and the count of a
+    # centrally symmetric rule, ceil(2 E / (dim + 1)), E = number of moments
+    # of even degree (odd moments vanish by symmetry).
+    dim = DIM[domain]
     m = moment_count(dim, degree)
-    return -(-m // (dim + 1))
+    z = -(-m // (dim + 1))
+    if domain in ("square", "cube"):
+        even = 0
+        for j in range(0, degree + 1, 2):
+            # Monomials of exact degree j in dim variables.
+            even = even + moment_count(dim - 1, j)
+        z = min(z, -(-2 * even // (dim + 1)))
+    return z
 
 
 def load_rules(root):
@@ -69,7 +80,7 @@ def state_rows(best, domain_filter=None, min_degree=1):
         if domain_filter and domain != domain_filter:
             continue
         for degree in range(max(1, min_degree), max_degree[domain] + 1):
-            z = counting_value(DIM[domain], degree)
+            z = counting_value(domain, degree)
             pi = best.get((domain, degree, "PI"), (None, ""))[0]
             po = best.get((domain, degree, "PO"), (None, ""))[0]
             gap_pi = "-" if pi is None else pi - z

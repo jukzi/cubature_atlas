@@ -57,6 +57,6 @@ The programs that produced the rules and checked them numerically, as published 
 
 - Rules may depend on the domain (cube, simplex), on the dimension, and on the degree modulo a small number (for example odd and even degree). They must not depend on individual degrees or node counts: no tables of special cases per degree, no hand-picked starting points for one configuration.
 - The start must converge directly. No node removal or node elimination, no continuation from a rule with more nodes, no long trial-and-error over many starts.
-- Main goal: in the most common configurations, find a rule with at most Z = ceil(M / (d + 1)) nodes quickly (M the number of moments). The minimal node count is not required for every configuration.
+- Main goal: in the most common configurations, find a rule with at most Z nodes quickly. Z = ceil(M / (d + 1)) with M the number of moments; on square and cube Z is the smaller of this and ceil(2 E / (d + 1)), E the number of moments of even degree (the count of a centrally symmetric rule), as on the website. The minimal node count is not required for every configuration.
 
 The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.
