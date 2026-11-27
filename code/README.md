@@ -51,4 +51,12 @@ The programs that produced the rules and checked them numerically, as published 
 
 `cubature_search.py` (version 3) produced the cube rules CA-C3-21-486 … CA-C3-30-1324. It searches in a chosen subgroup of the cube group (Oh, Td, Th, O, T, …): orbit elimination, large-neighbourhood search with simulated annealing, a rank-ILP target structure, and warm starts from stored rules (`--refine T --sources dir`). Run `python3 cubature_search.py --help` for the options; the module docstring describes the method and lists the literature.
 
+## Design rules for `cubature_generic.py`
+
+`cubature_generic.py` is a generic solver. Changes to it follow these rules (set by the maintainer):
+
+- Rules may depend on the domain (cube, simplex), on the dimension, and on the degree modulo a small number (for example odd and even degree). They must not depend on individual degrees or node counts: no tables of special cases per degree, no hand-picked starting points for one configuration.
+- The start must converge directly. No node removal or node elimination, no continuation from a rule with more nodes, no long trial-and-error over many starts.
+- Main goal: in the most common configurations, find a rule with at most Z = ceil(M / (d + 1)) nodes quickly (M the number of moments). The minimal node count is not required for every configuration.
+
 The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.
