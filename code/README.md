@@ -59,4 +59,14 @@ The programs that produced the rules and checked them numerically, as published 
 - The start must converge directly. No node removal or node elimination, no continuation from a rule with more nodes, no long trial-and-error over many starts.
 - Main goal: in the most common configurations, find a rule with at most Z nodes quickly. Z = ceil(M / (d + 1)) with M the number of moments; on square and cube Z is the smaller of this and ceil(2 E / (d + 1)), E the number of moments of even degree (the count of a centrally symmetric rule), as on the website. The minimal node count is not required for every configuration.
 
+### Start on the square: angle lattice
+
+For C4, C2 and no symmetry on the square the start is a lattice in the angle coordinates theta = arccos(-x) (spectrum |k|_1 <= n of a cosine polynomial, hence a 45 degree checkerboard lattice):
+
+- spacing h = pi / sqrt(2 N), lattice points h (a, b) with a + b even (centre point, N odd) or odd (hole, N even);
+- rotation by alpha = 2 delta / pi, delta the boundary distance of the unrotated lattice; the rotation runs along concentric squares (every point slides along its L_inf shell by alpha / (2 pi) of the perimeter), so rows near a side move parallel to it and keep their boundary distance; C4 and C2 stay exact;
+- without symmetry the lattice is also shifted by a quarter point spacing in x, scaled per coordinate by the distance to the boundary (full at the centre, zero at the boundary);
+- surplus orbits are removed nearest to the corners (the centre first if the surplus is odd); missing orbits go greedily into the largest gaps, the boundary counting as a mirror (the centre first if the deficit is odd);
+- these three groups start at N = Z.
+
 The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.
