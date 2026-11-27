@@ -6,85 +6,85 @@
   "degree": 4,
   "points": 11,
   "quality": "PI",
-  "symmetry": "central",
+  "symmetry": "mirror",
   "origin": "found",
-  "method": "Generic deterministic equilibrium-start solver (domain=simplex, dim=3, symmetry=central) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)",
-  "author": "Antigravity (AI-assisted)",
+  "method": "Generic deterministic equilibrium-start solver with point-count ladder (domain=simplex, dim=3, symmetry=mirror) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py); weights L2-minimised with tools/minimize_l2.py",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "reproduce": {
     "script": "code/cubature_generic.py",
     "seed": null,
-    "command": "python code/cubature_generic.py --dim 3 --degree 4 --domain simplex --symmetry central --points 11"
+    "command": "python code/cubature_generic.py --dim 3 --degree 4 --domain simplex"
   },
   "status": "proven",
-  "residual_reported": 1.9839729956231108e-14,
+  "residual_reported": 2.4868693313087872e-14,
   "nodes": [
     [
-      0.03458336423437397,
-      0.03458336423437397,
-      0.46541663576562603
+      0.310990894888069,
+      0.310990894888069,
+      0.0670273153357931
     ],
     [
-      0.6961539541454702,
-      0.06926457224529484,
-      0.0884101418390444
+      0.4155056444674967,
+      0.4155056444674967,
+      0.1094457036898762
     ],
     [
-      0.06926457224529484,
-      0.6961539541454702,
-      0.1461713317701906
+      0.09426553192090242,
+      0.09426553192090241,
+      0.4162205961634666
     ],
     [
-      0.11309593505661755,
-      0.0020322856819395925,
-      0.03761659398686622
+      0.06806400779951848,
+      0.06806400779951848,
+      0.7958079766014446
     ],
     [
-      0.0020322856819395925,
-      0.11309593505661755,
-      0.8472551852745767
+      0.08363728468277237,
+      0.08363728468277237,
+      0.0776946609243393
     ],
     [
-      0.28608844975846504,
-      0.14434807083409357,
-      0.1394913778782756
+      0.4155056444674967,
+      0.05954300737513041,
+      0.10944570368987622
     ],
     [
-      0.14434807083409357,
-      0.28608844975846504,
-      0.4300721015291658
+      0.05954300737513041,
+      0.4155056444674967,
+      0.10944570368987622
     ],
     [
-      0.29298835429773584,
-      0.5160664064644354,
-      0.001995338303566228
+      0.3952483399947286,
+      0.09426553192090241,
+      0.4162205961634666
     ],
     [
-      0.5160664064644354,
-      0.29298835429773584,
-      0.18894990093426256
+      0.09426553192090242,
+      0.3952483399947286,
+      0.4162205961634667
     ],
     [
-      0.002082608539280252,
-      0.3435177548336852,
-      0.10914726508662598
+      0.7550307697101161,
+      0.08363728468277236,
+      0.0776946609243393
     ],
     [
-      0.3435177548336852,
-      0.002082608539280252,
-      0.5452523715404085
+      0.08363728468277236,
+      0.7550307697101158,
+      0.0776946609243393
     ]
   ],
   "weights": [
-    0.00940625249551219,
-    0.014061454138623987,
-    0.014061454138623987,
-    0.003913760672901669,
-    0.003913760672901669,
-    0.03549424682714053,
-    0.03549424682714053,
-    0.013279196750151656,
-    0.013279196750151656,
-    0.01188154869675945,
-    0.01188154869675945
+    0.016976599784481627,
+    0.01594850817353007,
+    0.02208444787735404,
+    0.006894498751642049,
+    0.009565566659296929,
+    0.01594850817353007,
+    0.01594850817353007,
+    0.022084447877354047,
+    0.022084447877354047,
+    0.009565566659296929,
+    0.009565566659296929
   ]
 }

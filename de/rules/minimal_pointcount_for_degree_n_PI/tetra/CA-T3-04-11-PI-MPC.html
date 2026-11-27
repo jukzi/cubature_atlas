@@ -16,27 +16,27 @@ h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED
 <tr><th>Grad</th><td>4</td></tr>
 <tr><th>Knotenzahl</th><td>11</td></tr>
 <tr><th>Qualität</th><td>PI</td></tr>
-<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>1.62e-15</td></tr>
-<tr><th>Kleinstes Gewicht</th><td>3.913761e-03</td></tr>
-<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>1.995e-03</td></tr>
+<tr><th>Max. Momentenfehler (Build-Prüfung)</th><td>2.12e-15</td></tr>
+<tr><th>Kleinstes Gewicht</th><td>6.894499e-03</td></tr>
+<tr><th>Abstand zum Gebietsrand (negativ = außen)</th><td>5.954e-02</td></tr>
 <tr><th>Numerische Newton-Kantorovich-Prüfung (Gleitkomma, kein Beweis)</th><td>–</td></tr>
-<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 1.0e-14 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 2)</td></tr>
-<tr><th>Herkunft</th><td>Generic deterministic equilibrium-start solver (domain=simplex, dim=3, symmetry=central) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py)</td></tr>
+<tr><th>Intervall-Beweis</th><td>bewiesen: eine exakte Regel der Qualität PI liegt höchstens 1.0e-14 von den gespeicherten Zahlen entfernt (symmetriereduzierte Gleichungen, Gruppe der Ordnung 6)</td></tr>
+<tr><th>Herkunft</th><td>Generic deterministic equilibrium-start solver with point-count ladder (domain=simplex, dim=3, symmetry=mirror) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py); weights L2-minimised with tools/minimize_l2.py</td></tr>
 </table>
 <p><a href="../../../../rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-04-11-PI-MPC.json">JSON herunterladen</a></p>
 <h2>Zitieren als</h2>
 <pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-T3-04-11-PI-MPC (Minimal point count for degree n (PI), tetra, degree 4, 11 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/tetra/CA-T3-04-11-PI-MPC.html</pre>
 <h2>Knoten und Gewichte</h2>
 <pre>  #                       x                       y                       z                       w
-   1  3.458336423437397e-02   3.458336423437397e-02   4.654166357656260e-01   9.406252495512191e-03
-   2  6.961539541454702e-01   6.926457224529484e-02   8.841014183904440e-02   1.406145413862399e-02
-   3  6.926457224529484e-02   6.961539541454702e-01   1.461713317701906e-01   1.406145413862399e-02
-   4  1.130959350566176e-01   2.032285681939592e-03   3.761659398686622e-02   3.913760672901669e-03
-   5  2.032285681939592e-03   1.130959350566176e-01   8.472551852745767e-01   3.913760672901669e-03
-   6  2.860884497584650e-01   1.443480708340936e-01   1.394913778782756e-01   3.549424682714053e-02
-   7  1.443480708340936e-01   2.860884497584650e-01   4.300721015291658e-01   3.549424682714053e-02
-   8  2.929883542977358e-01   5.160664064644354e-01   1.995338303566228e-03   1.327919675015166e-02
-   9  5.160664064644354e-01   2.929883542977358e-01   1.889499009342626e-01   1.327919675015166e-02
-  10  2.082608539280252e-03   3.435177548336852e-01   1.091472650866260e-01   1.188154869675945e-02
-  11  3.435177548336852e-01   2.082608539280252e-03   5.452523715404085e-01   1.188154869675945e-02</pre>
+   1  3.109908948880690e-01   3.109908948880690e-01   6.702731533579311e-02   1.697659978448163e-02
+   2  4.155056444674967e-01   4.155056444674967e-01   1.094457036898762e-01   1.594850817353007e-02
+   3  9.426553192090242e-02   9.426553192090241e-02   4.162205961634666e-01   2.208444787735404e-02
+   4  6.806400779951848e-02   6.806400779951848e-02   7.958079766014446e-01   6.894498751642049e-03
+   5  8.363728468277237e-02   8.363728468277237e-02   7.769466092433930e-02   9.565566659296929e-03
+   6  4.155056444674967e-01   5.954300737513041e-02   1.094457036898762e-01   1.594850817353007e-02
+   7  5.954300737513041e-02   4.155056444674967e-01   1.094457036898762e-01   1.594850817353007e-02
+   8  3.952483399947286e-01   9.426553192090241e-02   4.162205961634666e-01   2.208444787735405e-02
+   9  9.426553192090242e-02   3.952483399947286e-01   4.162205961634667e-01   2.208444787735405e-02
+  10  7.550307697101161e-01   8.363728468277236e-02   7.769466092433930e-02   9.565566659296929e-03
+  11  8.363728468277236e-02   7.550307697101158e-01   7.769466092433930e-02   9.565566659296929e-03</pre>
 </body></html>
