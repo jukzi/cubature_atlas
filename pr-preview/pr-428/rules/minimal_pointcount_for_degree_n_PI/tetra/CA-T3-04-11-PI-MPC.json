@@ -1,0 +1,90 @@
+{
+  "id": "CA-T3-04-11-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "tetra",
+  "dimension": 3,
+  "degree": 4,
+  "points": 11,
+  "quality": "PI",
+  "symmetry": "mirror",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver with point-count ladder (domain=simplex, dim=3, symmetry=mirror) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py); weights L2-minimised with tools/minimize_l2.py",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 3 --degree 4 --domain simplex"
+  },
+  "status": "proven",
+  "residual_reported": 2.4868693313087872e-14,
+  "nodes": [
+    [
+      0.310990894888069,
+      0.310990894888069,
+      0.0670273153357931
+    ],
+    [
+      0.4155056444674967,
+      0.4155056444674967,
+      0.1094457036898762
+    ],
+    [
+      0.09426553192090242,
+      0.09426553192090241,
+      0.4162205961634666
+    ],
+    [
+      0.06806400779951848,
+      0.06806400779951848,
+      0.7958079766014446
+    ],
+    [
+      0.08363728468277237,
+      0.08363728468277237,
+      0.0776946609243393
+    ],
+    [
+      0.4155056444674967,
+      0.05954300737513041,
+      0.10944570368987622
+    ],
+    [
+      0.05954300737513041,
+      0.4155056444674967,
+      0.10944570368987622
+    ],
+    [
+      0.3952483399947286,
+      0.09426553192090241,
+      0.4162205961634666
+    ],
+    [
+      0.09426553192090242,
+      0.3952483399947286,
+      0.4162205961634667
+    ],
+    [
+      0.7550307697101161,
+      0.08363728468277236,
+      0.0776946609243393
+    ],
+    [
+      0.08363728468277236,
+      0.7550307697101158,
+      0.0776946609243393
+    ]
+  ],
+  "weights": [
+    0.016976599784481627,
+    0.01594850817353007,
+    0.02208444787735404,
+    0.006894498751642049,
+    0.009565566659296929,
+    0.01594850817353007,
+    0.01594850817353007,
+    0.022084447877354047,
+    0.022084447877354047,
+    0.009565566659296929,
+    0.009565566659296929
+  ]
+}
