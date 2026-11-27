@@ -1936,7 +1936,9 @@ def build_square_angle_lattice_start(target_points, group_transforms, min_unknow
     keep = ((a_index + b_index) % 2) == parity
     lattice = spacing * np.stack([a_index[keep], b_index[keep]], axis=1).astype(float)
 
-    # without symmetry the lattice is also shifted by a quarter point spacing
+    # without symmetry the lattice is also shifted by a quarter point spacing at the
+    # centre; the shift of each coordinate shrinks in proportion to its distance from
+    # the boundary (full at pi / 2, zero at 0 and pi), so outer points barely move
     shift = np.array([0.25 * math.sqrt(2.0) * spacing, 0.0]) if orbit_size == 1 else np.zeros(2)
 
     def points_inside(angle, with_shift=True):
@@ -1944,10 +1946,12 @@ def build_square_angle_lattice_start(target_points, group_transforms, min_unknow
         # slides along its shell by the fraction angle / (2 pi) of the shell perimeter, so
         # points near a side move parallel to that side and keep their boundary distance
         theta = _square_shell_rotation(lattice, angle) + 0.5 * math.pi
-        if with_shift:
-            theta = theta + shift
         inside = np.all((theta > 1e-12) & (theta < math.pi - 1e-12), axis=1)
-        return theta[inside]
+        theta = theta[inside]
+        if with_shift:
+            boundary_fraction = np.minimum(theta, math.pi - theta) / (0.5 * math.pi)
+            theta = theta + boundary_fraction * shift
+        return theta
 
     unrotated = points_inside(0.0, with_shift=False)
     delta = float(np.min(np.minimum(unrotated, math.pi - unrotated)))
