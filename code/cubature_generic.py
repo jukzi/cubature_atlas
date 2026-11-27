@@ -26,6 +26,12 @@ special cases:
   boundary hinge pull -> interior pure-moment polish + automatic minimum-norm
   Gauss-Newton end-stage. Logging and stopping criteria strictly report the
   pure moment residual (excluding the boundary penalty).
+- Automatic point count: a generic N ladder from the classical lower bound
+  dim P_{floor(n/2)} upward; at every N all applicable symmetry groups whose
+  orbits admit N nodes with at least M_G unknowns are tried (largest group
+  first) and the first PI rule ends the ladder. Then N - 1, N - 2, ... are
+  retried with further rounds of fresh Halton starts while they succeed.
+  A PO rule with fewer nodes than the PI rule is written as well.
 - Quality and exactness follow tools/build_atlas.py (PI: positive weights and
   no node more than 1e-12 outside; a rule is written only if its monomial
   residual is at most 1e-11).
@@ -3117,76 +3123,6 @@ def compute_monomial_residual(domain, dimension, degree, nodes, scaled_weights):
     return max_error
 
 
-def infer_default_point_count(domain, dimension, degree, symmetry_name, sym_basis):
-    """Find smallest natural target N near Z respecting Stroud bound and full-dim span."""
-    num_full_moments = math.comb(degree + dimension, dimension)
-    degree_of_freedom_target = int(
-        math.ceil(num_full_moments / float(dimension + 1))
-    )
-    # Classical Stroud lower bound: N >= comb(floor(degree / 2) + dim, dim)
-    stroud_lower_bound = math.comb(degree // 2 + dimension, dimension)
-    if domain == "cube" and degree >= 3:
-        stroud_lower_bound = max(stroud_lower_bound, 2 * dimension)
-
-    if symmetry_name == "none":
-        return max(degree_of_freedom_target, stroud_lower_bound)
-
-    if (
-        domain == "cube"
-        and degree % 2 == 1
-        and symmetry_name in ("central", "chiral")
-    ):
-        search_start = max(
-            stroud_lower_bound,
-            int(
-                math.ceil(
-                    sym_basis.num_basis
-                    * (sym_basis.group_order / float(dimension + 1))
-                )
-            )
-            - dimension * 2,
-        )
-    else:
-        simplex_chiral_offset = (
-            dimension
-            if (domain == "simplex" and degree % 2 == 1 and symmetry_name == "chiral")
-            else 0
-        )
-        search_start = max(
-            stroud_lower_bound, degree_of_freedom_target - simplex_chiral_offset
-        )
-
-    require_full_dim_orbit = degree >= 2 and dimension >= 2
-    search_end = max(degree_of_freedom_target, stroud_lower_bound) + max(
-        32, 3 * sym_basis.group_order
-    )
-    for candidate_n in range(search_start, search_end + 1):
-        if domain == "cube":
-            orbits = build_cube_equilibrium_start(
-                dimension,
-                degree,
-                candidate_n,
-                symmetry_name,
-                sym_basis.group_transforms,
-                min_unknowns=sym_basis.num_basis,
-            )
-        else:
-            orbits = build_simplex_equilibrium_start(
-                dimension,
-                degree,
-                candidate_n,
-                symmetry_name,
-                sym_basis.group_transforms,
-                min_unknowns=sym_basis.num_basis,
-            )
-        if orbits is not None:
-            if (not require_full_dim_orbit) or any(
-                orb.spatial_dof == dimension for orb in orbits
-            ):
-                return candidate_n
-    return max(degree_of_freedom_target, stroud_lower_bound)
-
-
 def get_atlas_domain_info(domain, dimension):
     """Return (atlas_domain_name, filename_prefix) for a domain and dimension."""
     if domain == "cube":
@@ -3196,6 +3132,46 @@ def get_atlas_domain_info(domain, dimension):
     return simplex_names.get(dimension, f"simplex{dimension}"), f"T{dimension}"
 
 
+def prepare_symmetry(base_basis, symmetry_name):
+    """Return (group_transforms, sym_basis) for a symmetry, or None if it does not apply."""
+    group_transforms = build_symmetry_group(
+        base_basis.domain, base_basis.dimension, symmetry_name
+    )
+    if group_transforms is None:
+        return None
+    sym_basis = SymmetricBasis(base_basis, symmetry_name, group_transforms)
+    return group_transforms, sym_basis
+
+
+def point_count_lower_bound(domain, dimension, degree):
+    """Classical lower bound for the node count of a degree-n rule (any symmetry).
+
+    Stroud: N >= dim P_{floor(n/2)}; for the centrally symmetric cube and odd n
+    the Moeller-type bound 2 dim P_{(n-1)/2} - 1 (or the even-part count) would
+    be sharper, but the plain bound is valid for every symmetry.
+    """
+    return math.comb(degree // 2 + dimension, dimension)
+
+
+def start_is_feasible(sym_basis, num_points):
+    """True if the default start builder finds orbits with N nodes and >= M_G unknowns."""
+    base_basis = sym_basis.base_basis
+    builder = (
+        build_cube_equilibrium_start
+        if base_basis.domain == "cube"
+        else build_simplex_equilibrium_start
+    )
+    orbits = builder(
+        base_basis.dimension,
+        base_basis.degree,
+        num_points,
+        sym_basis.symmetry_name,
+        sym_basis.group_transforms,
+        min_unknowns=sym_basis.num_basis,
+    )
+    return orbits is not None
+
+
 def solve_for_symmetry(
     base_basis,
     symmetry_name,
@@ -3203,31 +3179,25 @@ def solve_for_symmetry(
     seed=None,
     verbose=False,
     max_points=None,
+    prepared=None,
+    rounds=(1, 1),
 ):
     """Run deterministic mini-ladder (plus optional seeded jitter) for one symmetry group.
 
     If ``max_points`` is given, the stage is skipped (returns None) when its
     point count is not strictly smaller, i.e. it could not improve on an
     already-found PI rule with ``max_points`` nodes.
+    ``prepared`` is an optional (group_transforms, sym_basis) pair from
+    prepare_symmetry, so repeated calls for several N reuse the basis.
+    ``rounds`` = (first, last) selects the passes over the start ladder; every
+    pass after the first uses fresh Halton starts.
     """
-    group_transforms = build_symmetry_group(
-        base_basis.domain, base_basis.dimension, symmetry_name
-    )
-    if group_transforms is None:
+    if prepared is None:
+        prepared = prepare_symmetry(base_basis, symmetry_name)
+    if prepared is None:
         return None
-
-    sym_basis = SymmetricBasis(base_basis, symmetry_name, group_transforms)
-    num_points = (
-        target_points
-        if target_points > 0
-        else infer_default_point_count(
-            base_basis.domain,
-            base_basis.dimension,
-            base_basis.degree,
-            symmetry_name,
-            sym_basis,
-        )
-    )
+    group_transforms, sym_basis = prepared
+    num_points = target_points
     if max_points is not None and num_points >= max_points:
         log_message(
             f"Skipping symmetry={symmetry_name} (N={num_points} >= "
@@ -3286,11 +3256,15 @@ def solve_for_symmetry(
         num_ladder_steps = 4
     else:
         num_ladder_steps = len(lattice_ladder)
+    first_step = 0
+    if base_basis.dimension >= 2:
+        first_step = num_ladder_steps * (rounds[0] - 1)
+        num_ladder_steps *= rounds[1]
 
     best_po_solution = None
     first_valid_orbits = None
     halton_step_counter = 0
-    for step_idx in range(num_ladder_steps):
+    for step_idx in range(first_step, num_ladder_steps):
         (
             inset,
             twist_or_angle,
@@ -3302,6 +3276,9 @@ def solve_for_symmetry(
             halton_gen,
         ) = lattice_ladder[step_idx % len(lattice_ladder)]
         use_lattice_central = False
+        if step_idx >= len(lattice_ladder):
+            # Later rounds repeat the table with fresh Halton generic orbits.
+            halton_gen = True
         if is_low_order_cloud:
             # Alternate G-equivariant Riesz crystals (even steps) and raw Halton
             # clouds (odd steps); both sweep consecutive skips 0, 1, 2, ...
@@ -3315,11 +3292,11 @@ def solve_for_symmetry(
                     inset = 0.80
                     extra_fixed_pairs = 0
                 else:
-                    extra_fixed_pairs = (riesz_idx - 4) // 2 + 1
+                    extra_fixed_pairs = ((riesz_idx - 4) // 2) % 4 + 1
             else:
                 inset = (0.30, 0.45, 0.25, 0.55)[riesz_idx % 4]
                 riesz_steps = 0
-                extra_fixed_pairs = riesz_idx // 4
+                extra_fixed_pairs = (riesz_idx // 4) % 4
             min_unk_target = sym_basis.num_basis
             halton_gen = False
             if (
@@ -3409,7 +3386,7 @@ def solve_for_symmetry(
                 best_po_solution = solution
 
     # Optional seeded perturbation stage when --seed is supplied
-    if seed is not None and first_valid_orbits is not None:
+    if seed is not None and first_valid_orbits is not None and rounds[0] == 1:
         rng = np.random.default_rng(seed)
         for trial in range(8):
             jitter_scale = 0.03 if trial < 4 else 0.08
@@ -3458,13 +3435,11 @@ def solve_for_symmetry(
 
 
 def get_symmetry_schedule(domain, dimension, degree):
-    """Generic symmetry trial order when --symmetry is omitted."""
+    """Symmetries tried when --symmetry is omitted (the N ladder orders them by |G|)."""
     if dimension == 1:
         return ["full", "none"]
     if domain == "cube":
-        if degree % 2 == 1:
-            return ["chiral", "central", "mirror", "full", "none"]
-        return ["demi", "chiral", "mirror", "central", "full", "none"]
+        return ["full", "demi", "chiral", "mirror", "central", "none"]
     if dimension == 2:
         # In 2D simplex, central (v_0 <-> v_2) is already a reflection symmetry
         return ["chiral", "full", "central", "none"]
@@ -3548,6 +3523,118 @@ def save_atlas_rule_json(
     return output_path, rule_id, monomial_err
 
 
+def _better_po(candidate, current):
+    """True if PO rule candidate beats current (fewer nodes, then less outside)."""
+    if current is None:
+        return True
+    if len(candidate.weights) != len(current.weights):
+        return len(candidate.weights) < len(current.weights)
+    return candidate.boundary_distance > current.boundary_distance
+
+
+def solve_fixed_point_count(base_basis, symmetries, num_points, seed):
+    """Try the symmetries in order at a fixed N; stop at the first PI rule."""
+    best_po = None
+    best_po_symmetry = None
+    for symmetry_name in symmetries:
+        outcome = solve_for_symmetry(
+            base_basis, symmetry_name, num_points, seed=seed, verbose=False
+        )
+        if outcome is None:
+            continue
+        solution = outcome[0]
+        if solution.quality == "PI":
+            return solution, symmetry_name, best_po, best_po_symmetry
+        if _better_po(solution, best_po):
+            best_po = solution
+            best_po_symmetry = symmetry_name
+    return None, None, best_po, best_po_symmetry
+
+
+def solve_point_count_ladder(
+    base_basis, symmetries, seed, max_extra_points, start_rounds=1
+):
+    """Generic point-count ladder: N = lower bound, lower bound + 1, ...
+
+    For every N all symmetries whose orbit structure admits N nodes with at
+    least M_G unknowns are tried, larger groups first (fewer unknowns, faster).
+    The first PI rule ends the first pass. With start_rounds > 1 a second
+    pass tries N - 1, N - 2, ... with further rounds of starts until one fails.
+    PO rules met on the way are kept if they have fewer nodes.
+    """
+    domain = base_basis.domain
+    dimension = base_basis.dimension
+    degree = base_basis.degree
+    prepared_list = []
+    for symmetry_name in symmetries:
+        prepared = prepare_symmetry(base_basis, symmetry_name)
+        if prepared is not None:
+            prepared_list.append((symmetry_name, prepared))
+    prepared_list.sort(key=lambda item: -item[1][1].group_order)
+    lower_bound = point_count_lower_bound(domain, dimension, degree)
+    # Symmetric rules can have fewer than Z = ceil(M / (d + 1)) nodes, since
+    # small orbits (centre, axes) carry more unknowns per node than generic
+    # ones. The ladder therefore starts at the classical lower bound and lets
+    # the orbit feasibility test (unknowns >= M_G) skip impossible (G, N).
+    start_n = lower_bound
+    dof_target_z = int(math.ceil(base_basis.num_basis / float(dimension + 1)))
+    if max_extra_points is None:
+        max_extra_points = max(8, dof_target_z // 4)
+    end_n = max(start_n, dof_target_z) + max_extra_points
+    log_message(
+        f"Point-count ladder N={start_n}..{end_n} "
+        f"(lower bound {lower_bound}, symmetries "
+        f"{', '.join(name for name, _ in prepared_list)})"
+    )
+    best_po = [None, None]
+
+    def try_point_count(num_points, rounds):
+        """Try all feasible symmetries at N; return (solution, symmetry) of a PI rule."""
+        for symmetry_name, prepared in prepared_list:
+            sym_basis = prepared[1]
+            if not start_is_feasible(sym_basis, num_points):
+                continue
+            outcome = solve_for_symmetry(
+                base_basis,
+                symmetry_name,
+                num_points,
+                seed=seed,
+                verbose=False,
+                prepared=prepared,
+                rounds=rounds,
+            )
+            if outcome is None:
+                continue
+            solution = outcome[0]
+            if solution.quality == "PI":
+                return solution, symmetry_name
+            if _better_po(solution, best_po[0]):
+                best_po[0] = solution
+                best_po[1] = symmetry_name
+        return None, None
+
+    # Pass 1: one round of starts per N, N ascending, up to the first PI rule.
+    best_solution = None
+    best_symmetry = None
+    for num_points in range(start_n, end_n + 1):
+        best_solution, best_symmetry = try_point_count(num_points, (1, 1))
+        if best_solution is not None:
+            break
+    # Pass 2: with more start rounds, go down from the PI count found while
+    # smaller N still give PI rules (cheap N first, expensive N only if needed).
+    if best_solution is not None and start_rounds > 1:
+        num_points = len(best_solution.weights) - 1
+        while num_points >= start_n:
+            log_message(f"Refining N={num_points} with start rounds 2..{start_rounds}")
+            solution, symmetry_name = try_point_count(num_points, (2, start_rounds))
+            if solution is None:
+                break
+            best_solution = solution
+            best_symmetry = symmetry_name
+            num_points -= 1
+    return best_solution, best_symmetry, best_po[0], best_po[1]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -3581,6 +3668,21 @@ def main():
         help="optional RNG seed for jittered fallback starts after deterministic mini-ladder",
     )
     parser.add_argument(
+        "--start-rounds",
+        type=int,
+        default=4,
+        help="automatic N only: after the first PI rule at N, retry N - 1, "
+        "N - 2, ... with start ladder passes 2..R (fresh Halton starts) "
+        "while they succeed (default: 4)",
+    )
+    parser.add_argument(
+        "--max-extra-points",
+        type=int,
+        default=None,
+        help="automatic N only: try N up to Z + this many, "
+        "Z = ceil(M / (d + 1)) (default: max(8, Z/4))",
+    )
+    parser.add_argument(
         "--out",
         default=None,
         help="output JSON file or existing directory (default: <rule id>.json in the current directory)",
@@ -3609,60 +3711,41 @@ def main():
         if args.symmetry == "auto"
         else [args.symmetry]
     )
-    best_solution = None
-    best_symmetry = None
-
-    for symmetry_name in symmetries:
-        if (
-            args.points == 0
-            and symmetry_name == "none"
-            and best_solution is not None
-            and best_solution.quality == "PI"
-            and len(best_solution.weights) <= dof_target_z
-        ):
-            continue
-        # In auto mode a later symmetry stage is only worth trying if it can
-        # yield a PI rule with strictly fewer nodes than the best one so far.
-        point_bound = (
-            len(best_solution.weights)
-            if args.points == 0
-            and best_solution is not None
-            and best_solution.quality == "PI"
-            else None
+    if args.points > 0:
+        best_solution, best_symmetry, best_po_solution, best_po_symmetry = (
+            solve_fixed_point_count(base_basis, symmetries, args.points, args.seed)
         )
-        outcome = solve_for_symmetry(
-            base_basis,
-            symmetry_name,
-            args.points,
-            seed=args.seed,
-            verbose=False,
-            max_points=point_bound,
+    else:
+        best_solution, best_symmetry, best_po_solution, best_po_symmetry = (
+            solve_point_count_ladder(
+                base_basis,
+                symmetries,
+                args.seed,
+                args.max_extra_points,
+                start_rounds=max(1, args.start_rounds),
+            )
         )
-        if outcome is None:
-            continue
-        solution, _, _ = outcome
-        if solution.quality == "PI":
-            if (
-                best_solution is None
-                or best_solution.quality != "PI"
-                or len(solution.weights) < len(best_solution.weights)
-            ):
-                best_solution = solution
-                best_symmetry = symmetry_name
-            if args.points > 0:
-                break
-        elif best_solution is None or (
-            best_solution.quality != "PI"
-            and solution.boundary_distance > best_solution.boundary_distance
-        ):
-            best_solution = solution
-            best_symmetry = symmetry_name
+    if best_solution is None and best_po_solution is not None:
+        best_solution = best_po_solution
+        best_symmetry = best_po_symmetry
+        best_po_solution = None
 
     elapsed = time.time() - start_time
     if best_solution is None:
         log_message(f"No solution found in {elapsed:.2f}s")
         sys.exit(1)
 
+    write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed)
+    if best_po_solution is not None and len(best_po_solution.weights) < len(
+        best_solution.weights
+    ):
+        write_rule_and_log(
+            args, base_basis, best_po_solution, best_po_symmetry, elapsed
+        )
+
+
+def write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed):
+    """Write one rule in atlas format and log the result line."""
     command_args = [
         "--dim",
         str(args.dim),
@@ -3694,7 +3777,7 @@ def main():
             f"REJECTED {rule_id}: monomial residual {monomial_err:.2e} exceeds "
             f"{RES_TOL:.0e} ({elapsed:.2f}s)"
         )
-        sys.exit(1)
+        return
     log_message(
         f"FOUND {rule_id} ({best_solution.quality}, sym={best_symmetry}) "
         f"N={len(best_solution.weights)} mom_res={best_solution.moment_residual:.2e} "

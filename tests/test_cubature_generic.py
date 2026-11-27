@@ -213,11 +213,13 @@ class GenericCubatureTests(unittest.TestCase):
                 if domain == "cube"
                 else cubature_generic.SimplexBasis(4, degree)
             )
-            outcome = cubature_generic.solve_for_symmetry(
-                base_basis, symmetry, 0, seed=None, verbose=False
+            solution, found_symmetry, _, _ = (
+                cubature_generic.solve_point_count_ladder(
+                    base_basis, [symmetry], None, None, start_rounds=1
+                )
             )
-            self.assertIsNotNone(outcome)
-            solution, _, _ = outcome
+            self.assertIsNotNone(solution)
+            self.assertEqual(found_symmetry, symmetry)
             self.assertEqual(solution.quality, "PI")
             monomial_err = cubature_generic.compute_monomial_residual(
                 domain,
