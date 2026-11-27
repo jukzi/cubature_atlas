@@ -3753,11 +3753,19 @@ def write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed):
         str(args.degree),
         "--domain",
         args.domain,
-        "--symmetry",
-        best_symmetry,
-        "--points",
-        str(len(best_solution.weights)),
     ]
+    if args.points > 0:
+        command_args.extend(
+            ["--symmetry", best_symmetry, "--points", str(len(best_solution.weights))]
+        )
+    else:
+        # The ladder (and its refinement rounds) found the rule: repeat the same run.
+        if args.symmetry != "auto":
+            command_args.extend(["--symmetry", args.symmetry])
+        if args.start_rounds != 4:
+            command_args.extend(["--start-rounds", str(args.start_rounds)])
+        if args.max_extra_points is not None:
+            command_args.extend(["--max-extra-points", str(args.max_extra_points)])
     if args.seed is not None:
         command_args.extend(["--seed", str(args.seed)])
     reproduce_command = "python code/cubature_generic.py " + shlex.join(command_args)
