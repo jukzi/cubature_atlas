@@ -6,34 +6,34 @@
   "degree": 2,
   "points": 3,
   "quality": "PI",
-  "symmetry": "chiral",
+  "symmetry": "full",
   "origin": "found",
-  "method": "Generic deterministic equilibrium-start solver (domain=simplex, dim=2, symmetry=chiral) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
-  "author": "Antigravity (AI-assisted)",
+  "method": "Generic deterministic equilibrium-start solver with point-count ladder (domain=simplex, dim=2, symmetry=full) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; weights L2-minimised with tools/minimize_l2.py",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
   "reproduce": {
     "script": "code/cubature_generic.py",
     "seed": null,
-    "command": "python code/cubature_generic.py --dim 2 --degree 2 --domain simplex --symmetry chiral --points 3"
+    "command": "python code/cubature_generic.py --dim 2 --degree 2 --domain simplex"
   },
   "status": "proven",
-  "residual_reported": 8.881784197001252e-16,
+  "residual_reported": 2.220446049250313e-16,
   "nodes": [
     [
-      0.009872837111337488,
-      0.5648010453442932
+      0.16666666666666663,
+      0.16666666666666666
     ],
     [
-      0.42532611754436933,
-      0.009872837111337488
+      0.6666666666666667,
+      0.16666666666666666
     ],
     [
-      0.5648010453442932,
-      0.42532611754436933
+      0.16666666666666666,
+      0.6666666666666667
     ]
   ],
   "weights": [
-    0.16666666666666652,
-    0.16666666666666652,
-    0.16666666666666652
+    0.1666666666666667,
+    0.1666666666666667,
+    0.1666666666666667
   ]
 }
