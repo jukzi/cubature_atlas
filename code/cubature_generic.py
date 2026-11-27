@@ -1828,6 +1828,165 @@ def _relax_orbits_riesz_simplex(
     )
 
 
+def _fill_square_gaps(theta, deficit, orbit_size, grid=161):
+    """Add deficit points in angle coordinates as whole orbits into the largest gaps.
+
+    The centre is added first if the deficit is odd and the centre is free.
+    Each further orbit goes to the grid point farthest from all points, where
+    the boundary counts as a mirror (distance 2 * boundary distance).
+    """
+    points = [tuple(row) for row in theta]
+    centre = (0.5 * math.pi, 0.5 * math.pi)
+    has_centre = any(abs(p[0] - centre[0]) < 1e-9 and abs(p[1] - centre[1]) < 1e-9 for p in points)
+    if orbit_size > 1 and deficit % orbit_size == 1:
+        if has_centre:
+            return None
+        points.append(centre)
+        deficit -= 1
+    if deficit % orbit_size != 0:
+        return None
+    axis = np.linspace(0.0, math.pi, grid)[1:-1]
+    grid_x, grid_y = np.meshgrid(axis, axis, indexing="ij")
+    candidates = np.stack([grid_x.ravel(), grid_y.ravel()], axis=1)
+    off_centre = np.hypot(candidates[:, 0] - centre[0], candidates[:, 1] - centre[1]) > 1e-9
+    candidates = candidates[off_centre]
+    wall = 2.0 * np.min(np.minimum(candidates, math.pi - candidates), axis=1)
+    for _ in range(deficit // orbit_size):
+        current = np.array(points)
+        distance = np.sqrt(((candidates[:, None, :] - current[None, :, :]) ** 2).sum(axis=2)).min(axis=1)
+        distance = np.minimum(distance, wall)
+        best = candidates[int(np.argmax(distance))]
+        dx = best[0] - centre[0]
+        dy = best[1] - centre[1]
+        if orbit_size == 4:
+            images = ((dx, dy), (-dy, dx), (-dx, -dy), (dy, -dx))
+        elif orbit_size == 2:
+            images = ((dx, dy), (-dx, -dy))
+        else:
+            images = ((dx, dy),)
+        for image_x, image_y in images:
+            points.append((centre[0] + image_x, centre[1] + image_y))
+    return np.array(points)
+
+
+def _square_shell_rotation(points, angle):
+    """Rotate 2D points about the origin along their concentric square (L_inf shell).
+
+    A point with r = max(|x|, |y|) moves along the square of half side r by the arc
+    length angle / (2 pi) * 8 r. For small angles near the middle of a side this equals
+    a rigid rotation, but every point keeps its L_inf radius, so a row parallel to a side
+    stays at the same distance from that side. The map commutes with the rotation by 90
+    degrees and with the point reflection, so C4 and C2 symmetry are kept.
+    """
+    x = points[:, 0]
+    y = points[:, 1]
+    r = np.maximum(np.abs(x), np.abs(y))
+    safe_r = np.where(r > 0.0, r, 1.0)
+    # perimeter coordinate p in [0, 8): right side, top, left side, bottom (counterclockwise)
+    u = x / safe_r
+    v = y / safe_r
+    on_right = (u >= 1.0 - 1e-12) & (v > -1.0 + 1e-12)
+    on_top = (~on_right) & (v >= 1.0 - 1e-12)
+    on_left = (~on_right) & (~on_top) & (u <= -1.0 + 1e-12)
+    p = np.where(on_right, v + 1.0,
+                 np.where(on_top, 3.0 - u,
+                          np.where(on_left, 5.0 - v, 7.0 + u)))
+    p = np.mod(p + 4.0 * angle / math.pi, 8.0)
+    side = np.floor(p / 2.0)
+    t = p - 2.0 * side - 1.0
+    new_u = np.select([side == 0, side == 1, side == 2], [np.ones_like(t), -t, -np.ones_like(t)], t)
+    new_v = np.select([side == 0, side == 1, side == 2], [t, np.ones_like(t), -t], -np.ones_like(t))
+    out = np.stack([new_u * r, new_v * r], axis=1)
+    out[r == 0.0] = 0.0
+    return out
+
+
+def build_square_angle_lattice_start(target_points, group_transforms, min_unknowns, orbit_size=4):
+    """C4, C2 or unsymmetric start on the square from a rotated lattice in angle coordinates theta = arccos(-x).
+
+    A polynomial of degree n becomes a cosine polynomial in theta with spectrum
+    |k_1| + |k_2| <= n; the 45-degree rotated square (checkerboard) lattice
+    h * (a, b), a + b even, is the matching lattice. It is used with
+    h = pi / sqrt(2 N), centred on the square (a point at the centre if N is
+    odd), and rotated by alpha = 2 delta / pi, where delta is the boundary
+    distance of the unrotated lattice (the rotation moves one end of every
+    outer row by about delta towards the boundary). Surplus points are removed
+    as whole orbits (orbit_size = 4 for C4, 2 for C2, 1 without symmetry,
+    where the lattice is also shifted by a quarter point spacing) nearest to the corners
+    (the centre first if the surplus is odd); missing points are put as whole
+    orbits into the largest gaps (the centre first if the deficit is odd).
+    Returns None if the counts do not fit.
+    """
+    if orbit_size > 1 and target_points % orbit_size not in (0, 1):
+        return None
+    if orbit_size == 1:
+        unknowns = 3 * target_points
+    else:
+        unknowns = 3 * (target_points // orbit_size) + (target_points % orbit_size)
+    if unknowns < min_unknowns:
+        return None
+    spacing = math.pi / math.sqrt(2.0 * target_points)
+    centre_point = (target_points % 2) == 1
+    reach = int(math.ceil(math.pi / spacing)) + 3
+    grid = np.arange(-reach, reach + 1)
+    a_index, b_index = np.meshgrid(grid, grid, indexing="ij")
+    a_index = a_index.ravel()
+    b_index = b_index.ravel()
+    parity = 0 if centre_point else 1
+    keep = ((a_index + b_index) % 2) == parity
+    lattice = spacing * np.stack([a_index[keep], b_index[keep]], axis=1).astype(float)
+
+    # without symmetry the lattice is also shifted by a quarter point spacing
+    shift = np.array([0.25 * math.sqrt(2.0) * spacing, 0.0]) if orbit_size == 1 else np.zeros(2)
+
+    def points_inside(angle, with_shift=True):
+        # rotation along concentric squares (L_inf shells) about the centre: every point
+        # slides along its shell by the fraction angle / (2 pi) of the shell perimeter, so
+        # points near a side move parallel to that side and keep their boundary distance
+        theta = _square_shell_rotation(lattice, angle) + 0.5 * math.pi
+        if with_shift:
+            theta = theta + shift
+        inside = np.all((theta > 1e-12) & (theta < math.pi - 1e-12), axis=1)
+        return theta[inside]
+
+    unrotated = points_inside(0.0, with_shift=False)
+    delta = float(np.min(np.minimum(unrotated, math.pi - unrotated)))
+    alpha = 2.0 * delta / math.pi
+    theta = points_inside(alpha)
+    surplus = len(theta) - target_points
+    if surplus < 0:
+        theta = _fill_square_gaps(theta, -surplus, orbit_size)
+        if theta is None:
+            return None
+        surplus = 0
+    centre_offset = theta - 0.5 * math.pi
+    is_centre = np.hypot(centre_offset[:, 0], centre_offset[:, 1]) < 1e-9
+    if orbit_size > 1 and surplus % orbit_size == 1 and np.any(is_centre):
+        theta = theta[~is_centre]
+        surplus -= 1
+    if surplus % orbit_size != 0:
+        return None
+    corner_distance = np.min(
+        [
+            np.hypot(theta[:, 0] - corner_x, theta[:, 1] - corner_y)
+            for corner_x in (0.0, math.pi)
+            for corner_y in (0.0, math.pi)
+        ],
+        axis=0,
+    )
+    order = np.argsort(corner_distance, kind="stable")
+    keep_points = np.ones(len(theta), dtype=bool)
+    keep_points[order[:surplus]] = False
+    theta = theta[keep_points]
+    coords = -np.cos(theta)
+    clustered = cluster_points_into_orbits(coords, group_transforms, tol=1e-6)
+    if sum(orbit.size for orbit in clustered) != target_points:
+        return None
+    return _initialize_cube_orbits_from_points(
+        [orbit.initial_point for orbit in clustered], group_transforms
+    )
+
+
 def build_cube_equilibrium_start(
     dimension,
     degree,
@@ -1845,8 +2004,18 @@ def build_cube_equilibrium_start(
     extra_fixed_pairs=0,
     use_lattice_for_central=False,
     halton_generic=False,
+    angle_lattice=True,
 ):
     """Deterministic equilibrium start on [-1, 1]^d (Halton/Riesz crystal or rotated D_d*)."""
+    if angle_lattice and dimension == 2 and symmetry_name in ("chiral", "central", "none"):
+        orbits = build_square_angle_lattice_start(
+            target_points,
+            group_transforms,
+            min_unknowns,
+            orbit_size={"chiral": 4, "central": 2, "none": 1}[symmetry_name],
+        )
+        if orbits is not None:
+            return orbits
     eps = max(0.015, min(0.18, 0.5 * boundary_inset / float(max(degree, 2))))
 
     # For none / mirror (and central unless rotated D_d* lattice is requested) in d >= 2,
@@ -3499,6 +3668,7 @@ def solve_for_symmetry(
                 extra_fixed_pairs=extra_fixed_pairs,
                 use_lattice_for_central=use_lattice_central,
                 halton_generic=halton_gen,
+                angle_lattice=(step_idx == 0),
             )
         else:
             orbits = build_simplex_equilibrium_start(
@@ -3829,7 +3999,8 @@ def solve_single_start(base_basis, symmetries, max_extra_points):
     """One targeted start per symmetry group, no ladder of starts.
 
     Every applicable group G gets the node count N_G = the smallest N >= max(
-    lower bound, |G| M_G / (d + 1)) whose default orbit start exists and passes
+    lower bound, |G| M_G / (d + 1)) (C4 and C2 on the square: min(that, Z)) whose default
+    orbit start exists and passes
     the stratum test. The groups are tried by increasing N_G (larger group
     first on ties), one start each (ladder step 0); the first PI rule ends the
     search. PO rules are kept as a fallback.
@@ -3846,6 +4017,14 @@ def solve_single_start(base_basis, symmetries, max_extra_points):
             continue
         sym_basis = prepared[1]
         start_n = max(lower_bound, expected_point_count(sym_basis))
+        if (
+            base_basis.domain == "cube"
+            and dimension == 2
+            and symmetry_name in ("chiral", "central", "none")
+        ):
+            # The angle lattice start of C4 and C2 on the square reaches the
+            # counting value Z for many degrees, so these groups start at Z.
+            start_n = max(lower_bound, min(start_n, dof_target_z))
         num_points = None
         for candidate in range(start_n, start_n + max_extra_points + 1):
             if start_is_feasible(sym_basis, candidate):
