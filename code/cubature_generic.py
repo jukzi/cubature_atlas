@@ -32,6 +32,11 @@ special cases:
   first) and the first PI rule ends the ladder. Then N - 1, N - 2, ... are
   retried with further rounds of fresh Halton starts while they succeed.
   A PO rule with fewer nodes than the PI rule is written as well.
+- Design rules (see code/README.md): rules may depend on domain, dimension
+  and degree modulo a small number, never on individual degrees or node
+  counts; starts must converge directly (no node removal, no continuation
+  from larger rules, no long trial-and-error); the main goal is a rule with
+  at most Z = ceil(M / (d + 1)) nodes in the common configurations, fast.
 - Quality and exactness follow tools/build_atlas.py (PI: positive weights and
   no node more than 1e-12 outside; a rule is written only if its monomial
   residual is at most 1e-11).
