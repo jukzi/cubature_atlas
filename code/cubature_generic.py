@@ -36,7 +36,10 @@ special cases:
   and degree modulo a small number, never on individual degrees or node
   counts; starts must converge directly (no node removal, no continuation
   from larger rules, no long trial-and-error); the main goal is a rule with
-  at most Z = ceil(M / (d + 1)) nodes in the common configurations, fast.
+  at most Z nodes in the common configurations, fast. Z = ceil(M / (d + 1));
+  on the cube it is the smaller of this and ceil(2 E / (d + 1)), E the
+  number of moments of even degree (the count of a centrally symmetric rule),
+  see counting_value.
 - Quality and exactness follow tools/build_atlas.py (PI: positive weights and
   no node more than 1e-12 outside; a rule is written only if its monomial
   residual is at most 1e-11).
@@ -3158,6 +3161,25 @@ def point_count_lower_bound(domain, dimension, degree):
     return math.comb(degree // 2 + dimension, dimension)
 
 
+def counting_value(domain, dimension, degree):
+    """Counting value Z of the atlas (as on the website).
+
+    Z = ceil(M / (d + 1)) with M = C(n + d, d) moments and d + 1 unknowns per
+    node. The cube is point-symmetric: a centrally symmetric rule meets the
+    odd moments by symmetry and only the E = sum_{j even <= n} C(j + d - 1,
+    d - 1) moments of even degree with node pairs, so there Z is the smaller
+    of the two counts, min(ceil(M / (d + 1)), ceil(2 E / (d + 1))).
+    """
+    moments = math.comb(degree + dimension, dimension)
+    z = -(-moments // (dimension + 1))
+    if domain == "cube":
+        even = 0
+        for j in range(0, degree + 1, 2):
+            even = even + math.comb(j + dimension - 1, dimension - 1)
+        z = min(z, -(-2 * even // (dimension + 1)))
+    return z
+
+
 def start_is_feasible(sym_basis, num_points):
     """True if the default start builder finds orbits with N nodes and >= M_G unknowns."""
     base_basis = sym_basis.base_basis
@@ -3656,12 +3678,12 @@ def solve_point_count_ladder(
             prepared_list.append((symmetry_name, prepared))
     prepared_list.sort(key=lambda item: -item[1][1].group_order)
     lower_bound = point_count_lower_bound(domain, dimension, degree)
-    # Symmetric rules can have fewer than Z = ceil(M / (d + 1)) nodes, since
+    # Symmetric rules can have fewer than Z nodes (see counting_value), since
     # small orbits (centre, axes) carry more unknowns per node than generic
     # ones. The ladder therefore starts at the classical lower bound and lets
     # the orbit feasibility test (unknowns >= M_G) skip impossible (G, N).
     start_n = lower_bound
-    dof_target_z = int(math.ceil(base_basis.num_basis / float(dimension + 1)))
+    dof_target_z = counting_value(domain, dimension, degree)
     if max_extra_points is None:
         max_extra_points = max(8, dof_target_z // 4)
     end_n = max(start_n, dof_target_z) + max_extra_points
@@ -3764,7 +3786,8 @@ def main():
         type=int,
         default=None,
         help="automatic N only: try N up to Z + this many, "
-        "Z = ceil(M / (d + 1)) (default: max(8, Z/4))",
+        "Z = counting value, ceil(M / (d + 1)), on the cube at most "
+        "ceil(2 E / (d + 1)) (default: max(8, Z/4))",
     )
     parser.add_argument(
         "--out",
@@ -3783,7 +3806,7 @@ def main():
         if args.domain == "cube"
         else SimplexBasis(args.dim, args.degree)
     )
-    dof_target_z = int(math.ceil(base_basis.num_basis / float(args.dim + 1)))
+    dof_target_z = counting_value(args.domain, args.dim, args.degree)
     log_message(
         f"Start generic solver: domain={args.domain} dim={args.dim} "
         f"degree={args.degree} M={base_basis.num_basis} Z={dof_target_z} "

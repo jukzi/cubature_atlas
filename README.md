@@ -44,7 +44,7 @@ In one dimension the answer has been known since Gauss. On triangles, squares, t
 
 ### How close to the limit?
 
-A natural yardstick is the **counting value Z**: the number of equations divided by the unknowns per node. A rule with fewer than Z nodes is only possible thanks to special structure such as symmetry. From degree 8 on, the atlas stays within about 10 % of Z, mostly within 1–2 %, and on the cube it even goes *below* Z in ten cells. The published rules (orange) are typically 5–30 % above it; the proven lower bound (dashed) shows how much room theory still leaves.
+A natural yardstick is the **counting value Z**: the number of equations divided by the unknowns per node (on square and cube the smaller of this and the count of a centrally symmetric rule, which only has to meet the moments of even degree). A rule with fewer than Z nodes is only possible thanks to special structure such as symmetry. From degree 8 on, the atlas stays within about 10 % of Z, mostly within 1–2 %, and it even goes *below* Z in twelve cells of the cube and four of the tetrahedron. The published rules (orange) are typically 5–30 % above it; the proven lower bound (dashed) shows how much room theory still leaves.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme_efficiency_dark.png">
