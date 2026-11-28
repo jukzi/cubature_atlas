@@ -47,3 +47,5 @@ square	49	418		central	3785	417		python ./code/cubature_generic.py --domain cube
 square	48	410		none	7495	413	yes	python ./code/cubature_generic.py --domain cube --dim 2 --degree 48 --out results/ladder-square/square-48
 square	51	452		chiral	2430	452		python ./code/cubature_generic.py --domain cube --dim 2 --degree 51 --out results/ladder-square/square-51
 square	46	377		none	11070	380	yes	python ./code/cubature_generic.py --domain cube --dim 2 --degree 46 --out results/ladder-square/square-46
+square	53	488		central	3800	488		python ./code/cubature_generic.py --domain cube --dim 2 --degree 53 --out results/ladder-square/square-53
+square	55	525		chiral	5405	524		python ./code/cubature_generic.py --domain cube --dim 2 --degree 55 --out results/ladder-square/square-55
