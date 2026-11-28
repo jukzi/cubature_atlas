@@ -1,0 +1,12 @@
+2026-11-28 01:21:41 | Start generic solver: domain=simplex dim=2 degree=5 M=21 Z=7 symmetry=auto points=0 seed=None
+2026-11-28 01:21:41 | Point-count ladder N=6..15 (lower bound 6, symmetries full, chiral, central, none)
+2026-11-28 01:21:41 | symmetry=central N=6: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:21:41 | Trying symmetry=full (|G|=6, M_G=5, N=7)
+2026-11-28 01:21:41 | symmetry=full ladder[0] unk=5/5 (orbits=3)
+2026-11-28 01:21:41 |   A: res=8.23e-14 bdist=+5.97e-02
+2026-11-28 01:21:41 |   result: PI from A
+2026-11-28 01:21:41 | symmetry=full ladder[0] -> PI mom_res=5.05e-16 bdist=+5.972e-02
+2026-11-28 01:21:41 | Refining N=6 with start rounds 2..4
+2026-11-28 01:21:41 | symmetry=central N=6: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:21:41 | wrote 1 tried starts to results/ladder-triangle/triangle-5/starts-T2-05.json
+2026-11-28 01:21:41 | FOUND CA-T2-05-7-PI-MPC (PI, sym=full) N=7 mom_res=5.05e-16 monom=5.55e-17 min_w=6.297e-02 bdist=+5.972e-02 wrote=results/ladder-triangle/triangle-5/CA-T2-05-7-PI-MPC.json (0.05s)

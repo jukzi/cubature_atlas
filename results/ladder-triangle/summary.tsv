@@ -1,0 +1,40 @@
+label	degree	N_PI	N_PO	symmetry_PI	seconds	atlas_PI	better	command
+triangle	3	4		central	5	4		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 3 --out results/ladder-triangle/triangle-3
+triangle	4	6		full	5	6		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 4 --out results/ladder-triangle/triangle-4
+triangle	5	7		full	5	7		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 5 --out results/ladder-triangle/triangle-5
+triangle	7	12		chiral	5	12		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 7 --out results/ladder-triangle/triangle-7
+triangle	9	19		chiral	5	19		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 9 --out results/ladder-triangle/triangle-9
+triangle	6	11	10	central	20	11		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 6 --out results/ladder-triangle/triangle-6
+triangle	8	16		full	15	16		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 8 --out results/ladder-triangle/triangle-8
+triangle	13	35		central	5	35		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 13 --out results/ladder-triangle/triangle-13
+triangle	11	27	26	chiral	30	27		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 11 --out results/ladder-triangle/triangle-11
+triangle	15	46		chiral	5	46		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 15 --out results/ladder-triangle/triangle-15
+triangle	10	24	23	chiral	40	24		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 10 --out results/ladder-triangle/triangle-10
+triangle	17	57		chiral	5	57		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 17 --out results/ladder-triangle/triangle-17
+triangle	14	41	40	central	55	41		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 14 --out results/ladder-triangle/triangle-14
+triangle	12	32	31	central	65	32		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 12 --out results/ladder-triangle/triangle-12
+triangle	18	64		none	40	64		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 18 --out results/ladder-triangle/triangle-18
+triangle	21	85		chiral	5	85		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 21 --out results/ladder-triangle/triangle-21
+triangle	16	52	51	chiral	75	52		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 16 --out results/ladder-triangle/triangle-16
+triangle	23	100		chiral	15	100		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 23 --out results/ladder-triangle/triangle-23
+triangle	19	70		chiral	60	70		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 19 --out results/ladder-triangle/triangle-19
+triangle	20	78	77	chiral	145	78		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 20 --out results/ladder-triangle/triangle-20
+triangle	25	117		chiral	165	117		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 25 --out results/ladder-triangle/triangle-25
+triangle	22	93	92	chiral	235	93		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 22 --out results/ladder-triangle/triangle-22
+triangle	24	109		chiral	205	109		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 24 --out results/ladder-triangle/triangle-24
+triangle	28	145		chiral	25	145		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 28 --out results/ladder-triangle/triangle-28
+triangle	27	136		none	95	136		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 27 --out results/ladder-triangle/triangle-27
+triangle	26	127	126	chiral	510	126		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 26 --out results/ladder-triangle/triangle-26
+triangle	30	166		chiral	480	166		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 30 --out results/ladder-triangle/triangle-30
+triangle	33	199		chiral	45	199		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 33 --out results/ladder-triangle/triangle-33
+triangle	34	210		chiral	30	210		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 34 --out results/ladder-triangle/triangle-34
+triangle	35	222		chiral	65	222		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 35 --out results/ladder-triangle/triangle-35
+triangle	29	156	155	chiral	790	155		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 29 --out results/ladder-triangle/triangle-29
+triangle	31	177	176	chiral	1035	177		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 31 --out results/ladder-triangle/triangle-31
+triangle	36	235		chiral	1050	235		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 36 --out results/ladder-triangle/triangle-36
+triangle	37	247		chiral	1090	247		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 37 --out results/ladder-triangle/triangle-37
+triangle	32	188	187	none	2435	187		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 32 --out results/ladder-triangle/triangle-32
+triangle	38	261	260	chiral	2570	261		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 38 --out results/ladder-triangle/triangle-38
+triangle	39	275	274	none	4075	274		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 39 --out results/ladder-triangle/triangle-39
+triangle	40	288	287	chiral	4845	287		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 40 --out results/ladder-triangle/triangle-40
+triangle	44	345		chiral	160	345		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 44 --out results/ladder-triangle/triangle-44

@@ -1,0 +1,74 @@
+{
+  "id": "CA-T2-06-10-PO-MPC",
+  "family": "minimal_pointcount_for_degree_n_PO",
+  "domain": "triangle",
+  "dimension": 2,
+  "degree": 6,
+  "points": 10,
+  "quality": "PO",
+  "symmetry": "none",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver (domain=simplex, dim=2, symmetry=none) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 2 --degree 6 --domain simplex"
+  },
+  "status": "numerical",
+  "residual_reported": 5.551115123125783e-17,
+  "nodes": [
+    [
+      0.7737546773958378,
+      0.06673018424461459
+    ],
+    [
+      0.0582251013808252,
+      0.82705812895679
+    ],
+    [
+      0.08313530707731277,
+      0.095505174550371
+    ],
+    [
+      0.6246789664859906,
+      0.3087352846532292
+    ],
+    [
+      0.07145341324960512,
+      0.4420117017428214
+    ],
+    [
+      0.296003917163947,
+      0.5545432400269175
+    ],
+    [
+      0.4245641472711517,
+      -0.0795741494394598
+    ],
+    [
+      0.2685106978235639,
+      0.8981419109909038
+    ],
+    [
+      0.374094434283374,
+      0.16984881572428528
+    ],
+    [
+      1.0966617394912488,
+      0.04139963573849089
+    ]
+  ],
+  "weights": [
+    0.054884181511718595,
+    0.0413638463892112,
+    0.04940579099877872,
+    0.05476331601341077,
+    0.07367675272688524,
+    0.0954144157475095,
+    0.008111529687702611,
+    0.002370302959614574,
+    0.1186374405718119,
+    0.0013724233933568883
+  ]
+}

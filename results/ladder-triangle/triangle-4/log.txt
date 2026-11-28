@@ -1,0 +1,9 @@
+2026-11-28 01:21:41 | Start generic solver: domain=simplex dim=2 degree=4 M=15 Z=5 symmetry=auto points=0 seed=None
+2026-11-28 01:21:41 | Point-count ladder N=6..14 (lower bound 6, symmetries full, chiral, central, none)
+2026-11-28 01:21:41 | Trying symmetry=full (|G|=6, M_G=4, N=6)
+2026-11-28 01:21:41 | symmetry=full ladder[0] unk=4/4 (orbits=2)
+2026-11-28 01:21:41 |   A: res=5.23e-14 bdist=+9.16e-02
+2026-11-28 01:21:41 |   result: PI from A
+2026-11-28 01:21:41 | symmetry=full ladder[0] -> PI mom_res=3.01e-16 bdist=+9.158e-02
+2026-11-28 01:21:41 | wrote 1 tried starts to results/ladder-triangle/triangle-4/starts-T2-04.json
+2026-11-28 01:21:41 | FOUND CA-T2-04-6-PI-MPC (PI, sym=full) N=6 mom_res=3.01e-16 monom=5.55e-17 min_w=5.498e-02 bdist=+9.158e-02 wrote=results/ladder-triangle/triangle-4/CA-T2-04-6-PI-MPC.json (0.04s)

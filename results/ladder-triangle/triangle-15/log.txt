@@ -1,0 +1,76 @@
+2026-11-28 01:22:21 | Start generic solver: domain=simplex dim=2 degree=15 M=136 Z=46 symmetry=auto points=0 seed=None
+2026-11-28 01:22:21 | Point-count ladder N=36..57 (lower bound 36, symmetries full, chiral, central, none)
+2026-11-28 01:22:21 | symmetry=central N=36: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=37: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=38: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=39: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=full N=40: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=40: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=41: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=full N=42: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=42: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=full N=43: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=43: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=44: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=full N=45: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | symmetry=central N=45: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:21 | Trying symmetry=full (|G|=6, M_G=27, N=46)
+2026-11-28 01:22:21 | symmetry=full ladder[0] unk=27/27 (orbits=12)
+2026-11-28 01:22:21 |   A: res=2.71e-01 bdist=+5.04e-03
+2026-11-28 01:22:21 |   B: res=1.78e-01 bdist=+1.29e-02
+2026-11-28 01:22:21 |   result: none
+2026-11-28 01:22:21 | symmetry=full ladder[1] unk=27/27 (orbits=12)
+2026-11-28 01:22:21 |   A: res=3.96e-01 bdist=-9.10e-04
+2026-11-28 01:22:21 |   B: res=3.94e-01 bdist=-5.87e-03
+2026-11-28 01:22:21 |   result: none
+2026-11-28 01:22:21 | symmetry=full ladder[2] unk=27/27 (orbits=12)
+2026-11-28 01:22:21 |   A: res=1.75e-01 bdist=-1.65e-03
+2026-11-28 01:22:21 |   B: res=1.69e-01 bdist=-2.09e-02
+2026-11-28 01:22:21 |   result: none
+2026-11-28 01:22:21 | symmetry=full ladder[3] unk=27/27 (orbits=12)
+2026-11-28 01:22:21 |   A: res=1.75e-01 bdist=-1.65e-03
+2026-11-28 01:22:21 |   B: res=4.90e-02 bdist=-3.50e-01
+2026-11-28 01:22:21 |   result: none
+2026-11-28 01:22:21 | symmetry=full ladder[4] unk=27/27 (orbits=12)
+2026-11-28 01:22:22 |   A: res=1.75e-01 bdist=-1.65e-03
+2026-11-28 01:22:22 |   B: res=4.90e-02 bdist=-3.50e-01
+2026-11-28 01:22:22 |   result: none
+2026-11-28 01:22:22 | symmetry=full ladder[5] unk=27/27 (orbits=12)
+2026-11-28 01:22:22 |   A: res=5.47e-01 bdist=+9.52e-03
+2026-11-28 01:22:22 |   B: res=5.47e-01 bdist=+9.52e-03
+2026-11-28 01:22:22 |   result: none
+2026-11-28 01:22:22 | symmetry=full ladder[6] unk=27/27 (orbits=12)
+2026-11-28 01:22:22 |   A: res=1.75e-01 bdist=-1.65e-03
+2026-11-28 01:22:22 |   B: res=4.90e-02 bdist=-3.50e-01
+2026-11-28 01:22:22 |   result: none
+2026-11-28 01:22:22 | symmetry=full ladder[7] unk=27/27 (orbits=12)
+2026-11-28 01:22:22 |   A: res=1.78e-01 bdist=+1.29e-02
+2026-11-28 01:22:23 |   B: res=1.78e-01 bdist=+1.29e-02
+2026-11-28 01:22:23 |   result: none
+2026-11-28 01:22:23 | symmetry=full ladder[8] unk=27/27 (orbits=12)
+2026-11-28 01:22:23 |   A: res=1.78e-01 bdist=+1.29e-02
+2026-11-28 01:22:23 |   B: res=1.78e-01 bdist=+1.29e-02
+2026-11-28 01:22:23 |   result: none
+2026-11-28 01:22:23 | symmetry=full ladder[9] unk=27/27 (orbits=12)
+2026-11-28 01:22:23 |   A: res=1.75e-01 bdist=-1.65e-03
+2026-11-28 01:22:23 |   B: res=4.84e-02 bdist=-3.50e-01
+2026-11-28 01:22:23 |   result: none
+2026-11-28 01:22:23 | symmetry=full N=46: 2 starts skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:23 | Trying symmetry=chiral (|G|=3, M_G=46, N=46)
+2026-11-28 01:22:23 | symmetry=chiral ladder[0] unk=46/46 (orbits=16)
+2026-11-28 01:22:23 |   A: res=7.49e-02 bdist=+5.37e-03
+2026-11-28 01:22:23 |   B: res=7.49e-02 bdist=+5.37e-03
+2026-11-28 01:22:23 |   result: none
+2026-11-28 01:22:23 | symmetry=chiral ladder[1] unk=46/46 (orbits=16)
+2026-11-28 01:22:23 |   A: res=1.00e-01 bdist=+3.85e-03
+2026-11-28 01:22:23 |   B: res=1.00e-01 bdist=+3.85e-03
+2026-11-28 01:22:23 |   result: none
+2026-11-28 01:22:23 | symmetry=chiral ladder[2] unk=46/46 (orbits=16)
+2026-11-28 01:22:24 |   A: res=5.86e-14 bdist=+6.82e-03
+2026-11-28 01:22:24 |   result: PI from A
+2026-11-28 01:22:24 | symmetry=chiral ladder[2] -> PI mom_res=1.98e-15 bdist=+6.822e-03
+2026-11-28 01:22:24 | Refining N=45 with start rounds 2..4
+2026-11-28 01:22:24 | symmetry=full N=45: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:24 | symmetry=central N=45: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:24 | wrote 13 tried starts to results/ladder-triangle/triangle-15/starts-T2-15.json
+2026-11-28 01:22:24 | FOUND CA-T2-15-46-PI-MPC (PI, sym=chiral) N=46 mom_res=1.98e-15 monom=2.22e-16 min_w=2.513e-03 bdist=+6.822e-03 wrote=results/ladder-triangle/triangle-15/CA-T2-15-46-PI-MPC.json (3.02s)

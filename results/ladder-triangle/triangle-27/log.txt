@@ -1,0 +1,230 @@
+2026-11-28 01:26:46 | Start generic solver: domain=simplex dim=2 degree=27 M=406 Z=136 symmetry=auto points=0 seed=None
+2026-11-28 01:26:46 | Point-count ladder N=105..170 (lower bound 105, symmetries full, chiral, central, none)
+2026-11-28 01:26:46 | symmetry=central N=105: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=106: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=107: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=108: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=109: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=110: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=111: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=112: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=113: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=114: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=115: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=116: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=117: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=118: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=119: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=120: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=121: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=122: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=123: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=124: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=125: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=126: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=127: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=128: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:46 | symmetry=central N=129: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=130: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=131: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=132: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=full N=133: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=133: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=134: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=full N=135: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | symmetry=central N=135: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:47 | Trying symmetry=full (|G|=6, M_G=75, N=136)
+2026-11-28 01:26:47 | symmetry=full ladder[0] unk=75/75 (orbits=30)
+2026-11-28 01:26:47 |   A: res=1.75e-01 bdist=-1.16e-04
+2026-11-28 01:26:47 |   B: res=1.72e-01 bdist=-7.41e-02
+2026-11-28 01:26:47 |   result: none
+2026-11-28 01:26:47 | symmetry=full ladder[1] unk=75/75 (orbits=30)
+2026-11-28 01:26:47 |   A: res=1.77e-01 bdist=+3.29e-03
+2026-11-28 01:26:47 |   B: res=1.54e-01 bdist=-1.17e-02
+2026-11-28 01:26:47 |   result: none
+2026-11-28 01:26:48 | symmetry=full ladder[2] unk=75/75 (orbits=30)
+2026-11-28 01:26:48 |   A: res=1.10e-01 bdist=-9.80e-04
+2026-11-28 01:26:48 |   B: res=9.56e-02 bdist=-2.19e-02
+2026-11-28 01:26:48 |   result: none
+2026-11-28 01:26:48 | symmetry=full ladder[3] unk=75/75 (orbits=30)
+2026-11-28 01:26:48 |   A: res=5.15e-02 bdist=-1.08e-03
+2026-11-28 01:26:49 |   B: res=1.84e-03 bdist=-1.84e-02
+2026-11-28 01:26:49 |   result: none
+2026-11-28 01:26:49 | symmetry=full ladder[4] unk=75/75 (orbits=30)
+2026-11-28 01:26:49 |   A: res=5.15e-02 bdist=-1.08e-03
+2026-11-28 01:26:50 |   B: res=1.83e-03 bdist=-1.85e-02
+2026-11-28 01:26:50 |   result: none
+2026-11-28 01:26:50 | symmetry=full ladder[5] unk=75/75 (orbits=30)
+2026-11-28 01:26:50 |   A: res=1.32e-01 bdist=-9.32e-04
+2026-11-28 01:26:50 |   B: res=1.27e-01 bdist=-7.72e-03
+2026-11-28 01:26:50 |   result: none
+2026-11-28 01:26:50 | symmetry=full ladder[6] unk=75/75 (orbits=30)
+2026-11-28 01:26:50 |   A: res=3.71e-01 bdist=+5.56e-03
+2026-11-28 01:26:51 |   B: res=3.71e-01 bdist=+5.52e-03
+2026-11-28 01:26:51 |   result: none
+2026-11-28 01:26:51 | symmetry=full ladder[7] unk=75/75 (orbits=30)
+2026-11-28 01:26:51 |   A: res=1.56e-01 bdist=+2.14e-03
+2026-11-28 01:26:51 |   B: res=1.56e-01 bdist=+2.14e-03
+2026-11-28 01:26:51 |   result: none
+2026-11-28 01:26:51 | symmetry=full ladder[8] unk=75/75 (orbits=30)
+2026-11-28 01:26:51 |   A: res=2.79e-01 bdist=+5.53e-03
+2026-11-28 01:26:52 |   B: res=2.39e-01 bdist=+5.73e-03
+2026-11-28 01:26:52 |   result: none
+2026-11-28 01:26:52 | symmetry=full ladder[9] unk=75/75 (orbits=30)
+2026-11-28 01:26:52 |   A: res=3.46e-01 bdist=-8.28e-05
+2026-11-28 01:26:52 |   B: res=3.46e-01 bdist=-3.21e-03
+2026-11-28 01:26:52 |   result: none
+2026-11-28 01:26:52 | symmetry=full N=136: 2 starts skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:26:52 | Trying symmetry=chiral (|G|=3, M_G=136, N=136)
+2026-11-28 01:26:52 | symmetry=chiral ladder[0] unk=136/136 (orbits=46)
+2026-11-28 01:26:53 |   A: res=6.95e-02 bdist=+3.11e-03
+2026-11-28 01:26:54 |   B: res=3.71e-02 bdist=-2.23e-03
+2026-11-28 01:26:54 |   result: none
+2026-11-28 01:26:54 | symmetry=chiral ladder[1] unk=136/136 (orbits=46)
+2026-11-28 01:26:55 |   A: res=1.12e-02 bdist=-2.11e-05
+2026-11-28 01:26:55 |   B: res=1.05e-01 bdist=+3.69e-03
+2026-11-28 01:26:55 |   result: none
+2026-11-28 01:26:56 | symmetry=chiral ladder[2] unk=136/136 (orbits=46)
+2026-11-28 01:26:57 |   A: res=2.85e-02 bdist=-4.02e-04
+2026-11-28 01:26:59 |   B: res=5.55e-03 bdist=-2.04e-01
+2026-11-28 01:26:59 |   result: none
+2026-11-28 01:26:59 | symmetry=chiral ladder[3] unk=136/136 (orbits=46)
+2026-11-28 01:26:59 |   A: res=7.60e-02 bdist=-8.38e-04
+2026-11-28 01:27:00 |   B: res=3.17e-03 bdist=-3.50e-01
+2026-11-28 01:27:00 |   result: none
+2026-11-28 01:27:00 | symmetry=chiral ladder[4] unk=136/136 (orbits=46)
+2026-11-28 01:27:00 |   A: res=2.90e-02 bdist=-2.07e-04
+2026-11-28 01:27:02 |   B: res=6.30e-03 bdist=-2.63e-01
+2026-11-28 01:27:02 |   result: none
+2026-11-28 01:27:02 | symmetry=chiral ladder[5] unk=136/136 (orbits=46)
+2026-11-28 01:27:04 |   A: res=1.02e-04 bdist=-9.31e-08
+2026-11-28 01:27:05 |   B: res=5.75e-15 bdist=-2.96e-04
+2026-11-28 01:27:05 |   P2 pull inside: start bdist=-2.96e-04, margin=3.19e-04
+2026-11-28 01:27:05 |   P2 weight 1: bdist=+3.19e-04
+2026-11-28 01:27:06 |   P3 polish inside: res=6.27e-06 bdist=+1.00e-07
+2026-11-28 01:27:06 |   result: PO from B
+2026-11-28 01:27:06 | symmetry=chiral ladder[5] -> PO mom_res=5.75e-15 bdist=-2.956e-04
+2026-11-28 01:27:06 | symmetry=chiral ladder[6] unk=136/136 (orbits=46)
+2026-11-28 01:27:06 |   A: res=8.39e-02 bdist=-5.57e-04
+2026-11-28 01:27:07 |   B: res=1.13e-02 bdist=-7.23e-02
+2026-11-28 01:27:07 |   result: none
+2026-11-28 01:27:07 | symmetry=chiral ladder[7] unk=136/136 (orbits=46)
+2026-11-28 01:27:07 |   A: res=8.54e-02 bdist=-3.11e-04
+2026-11-28 01:27:08 |   B: res=6.75e-02 bdist=-9.08e-02
+2026-11-28 01:27:08 |   result: none
+2026-11-28 01:27:08 | symmetry=chiral ladder[8] unk=136/136 (orbits=46)
+2026-11-28 01:27:08 |   A: res=8.35e-02 bdist=-8.49e-04
+2026-11-28 01:27:09 |   B: res=5.91e-14 bdist=-3.33e-01
+2026-11-28 01:27:09 |   P2 pull inside: start bdist=-3.33e-01, margin=3.19e-04
+2026-11-28 01:27:09 |   P2 weight 1: bdist=-3.02e-01
+2026-11-28 01:27:09 |   P2 weight 10: bdist=-2.70e-01
+2026-11-28 01:27:09 |   P2 weight 100: bdist=-2.38e-01
+2026-11-28 01:27:09 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 01:27:09 |   result: PO from B
+2026-11-28 01:27:09 | symmetry=chiral ladder[8] -> PO mom_res=5.91e-14 bdist=-3.334e-01
+2026-11-28 01:27:09 | symmetry=chiral ladder[9] unk=136/136 (orbits=46)
+2026-11-28 01:27:11 |   A: res=5.62e-04 bdist=-5.41e-06
+2026-11-28 01:27:11 |   B: res=1.87e-05 bdist=-2.11e-02
+2026-11-28 01:27:11 |   P2 pull inside: start bdist=-2.11e-02, margin=3.19e-04
+2026-11-28 01:27:11 |   P2 weight 1: bdist=+2.12e-04
+2026-11-28 01:27:12 |   P3 polish inside: res=6.97e-04 bdist=+1.00e-07
+2026-11-28 01:27:12 |   result: none
+2026-11-28 01:27:12 | Trying symmetry=central (|G|=2, M_G=210, N=136)
+2026-11-28 01:27:12 | symmetry=central ladder[0] unk=210/210 (orbits=74)
+2026-11-28 01:27:13 |   A: res=3.38e-02 bdist=-1.11e-03
+2026-11-28 01:27:14 |   B: res=4.36e-03 bdist=-5.89e-02
+2026-11-28 01:27:14 |   result: none
+2026-11-28 01:27:14 | symmetry=central ladder[1] unk=210/210 (orbits=74)
+2026-11-28 01:27:15 |   A: res=8.07e-02 bdist=-3.40e-04
+2026-11-28 01:27:16 |   B: res=4.99e-02 bdist=-6.59e-03
+2026-11-28 01:27:16 |   result: none
+2026-11-28 01:27:16 | symmetry=central ladder[2] unk=210/210 (orbits=74)
+2026-11-28 01:27:18 |   A: res=5.20e-03 bdist=-2.41e-06
+2026-11-28 01:27:19 |   B: res=3.44e-02 bdist=-1.21e-01
+2026-11-28 01:27:19 |   result: none
+2026-11-28 01:27:19 | symmetry=central ladder[3] unk=210/210 (orbits=74)
+2026-11-28 01:27:21 |   A: res=5.81e-02 bdist=-4.65e-04
+2026-11-28 01:27:21 |   B: res=2.91e-02 bdist=-2.25e-02
+2026-11-28 01:27:21 |   result: none
+2026-11-28 01:27:22 | symmetry=central ladder[4] unk=210/210 (orbits=74)
+2026-11-28 01:27:23 |   A: res=4.86e-02 bdist=-8.83e-04
+2026-11-28 01:27:26 |   B: res=7.85e-03 bdist=-1.49e-01
+2026-11-28 01:27:26 |   result: none
+2026-11-28 01:27:26 | symmetry=central ladder[5] unk=210/210 (orbits=74)
+2026-11-28 01:27:26 |   A: res=8.80e-02 bdist=-7.40e-04
+2026-11-28 01:27:27 |   B: res=7.39e-02 bdist=-4.97e-02
+2026-11-28 01:27:27 |   result: none
+2026-11-28 01:27:27 | symmetry=central ladder[6] unk=210/210 (orbits=74)
+2026-11-28 01:27:28 |   A: res=8.24e-02 bdist=-1.49e-03
+2026-11-28 01:27:29 |   B: res=6.11e-02 bdist=-1.54e-02
+2026-11-28 01:27:29 |   result: none
+2026-11-28 01:27:29 | symmetry=central ladder[7] unk=210/210 (orbits=74)
+2026-11-28 01:27:30 |   A: res=1.16e-01 bdist=-7.30e-04
+2026-11-28 01:27:32 |   B: res=3.83e-03 bdist=-7.09e-02
+2026-11-28 01:27:32 |   result: none
+2026-11-28 01:27:32 | symmetry=central ladder[8] unk=211/210 (orbits=75)
+2026-11-28 01:27:33 |   A: res=6.09e-02 bdist=-1.10e-03
+2026-11-28 01:27:34 |   B: res=8.18e-02 bdist=-4.27e-02
+2026-11-28 01:27:34 |   result: none
+2026-11-28 01:27:34 | symmetry=central ladder[9] unk=211/210 (orbits=75)
+2026-11-28 01:27:36 |   A: res=8.03e-02 bdist=-1.19e-03
+2026-11-28 01:27:37 |   B: res=4.62e-02 bdist=-1.44e-01
+2026-11-28 01:27:37 |   result: none
+2026-11-28 01:27:38 | symmetry=central ladder[10] unk=211/210 (orbits=75)
+2026-11-28 01:27:38 |   A: res=4.35e-02 bdist=-1.16e-03
+2026-11-28 01:27:39 |   B: res=1.18e-03 bdist=-9.26e-03
+2026-11-28 01:27:39 |   result: none
+2026-11-28 01:27:39 | symmetry=central ladder[11] unk=211/210 (orbits=75)
+2026-11-28 01:27:40 |   A: res=1.04e-01 bdist=+3.37e-03
+2026-11-28 01:27:41 |   B: res=1.04e-01 bdist=+3.50e-03
+2026-11-28 01:27:41 |   result: none
+2026-11-28 01:27:41 | symmetry=central ladder[13] unk=211/210 (orbits=75)
+2026-11-28 01:27:42 |   A: res=5.72e-02 bdist=-1.28e-03
+2026-11-28 01:27:44 |   B: res=2.92e-02 bdist=-6.36e-02
+2026-11-28 01:27:44 |   result: none
+2026-11-28 01:27:45 | symmetry=central ladder[15] unk=211/210 (orbits=75)
+2026-11-28 01:27:45 |   A: res=5.09e-02 bdist=-9.69e-04
+2026-11-28 01:27:47 |   B: res=1.32e-02 bdist=-6.50e-02
+2026-11-28 01:27:47 |   result: none
+2026-11-28 01:27:47 | symmetry=central N=136: 2 starts skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:27:47 | Trying symmetry=none (|G|=1, M_G=406, N=136)
+2026-11-28 01:27:48 | symmetry=none ladder[0] unk=408/406 (orbits=136)
+2026-11-28 01:27:50 |   A: res=6.68e-03 bdist=-2.91e-04
+2026-11-28 01:27:55 |   B: res=4.69e-03 bdist=-3.50e-01
+2026-11-28 01:27:55 |   result: none
+2026-11-28 01:27:55 | symmetry=none ladder[1] unk=408/406 (orbits=136)
+2026-11-28 01:27:59 |   A: res=3.28e-03 bdist=-7.91e-05
+2026-11-28 01:28:02 |   B: res=5.95e-14 bdist=-1.35e-01
+2026-11-28 01:28:02 |   P2 pull inside: start bdist=-1.35e-01, margin=3.19e-04
+2026-11-28 01:28:02 |   P2 weight 1: bdist=-1.03e-01
+2026-11-28 01:28:03 |   P2 weight 10: bdist=-7.14e-02
+2026-11-28 01:28:03 |   P2 weight 100: bdist=-3.70e-02
+2026-11-28 01:28:03 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 01:28:03 |   result: PO from B
+2026-11-28 01:28:03 | symmetry=none ladder[1] -> PO mom_res=5.95e-14 bdist=-1.351e-01
+2026-11-28 01:28:03 | symmetry=none ladder[2] unk=408/406 (orbits=136)
+2026-11-28 01:28:06 |   A: res=1.17e-05 bdist=-2.00e-08
+2026-11-28 01:28:06 |   P2 pull inside: start bdist=-2.00e-08, margin=3.19e-04
+2026-11-28 01:28:08 |   P2 weight 1: bdist=+3.18e-04
+2026-11-28 01:28:09 |   P3 polish inside: res=1.18e-05 bdist=+1.00e-07
+2026-11-28 01:28:12 |   B: res=6.32e-15 bdist=-3.72e-02
+2026-11-28 01:28:12 |   P2 pull inside: start bdist=-3.72e-02, margin=3.19e-04
+2026-11-28 01:28:12 |   P2 weight 1: bdist=-5.39e-03
+2026-11-28 01:28:13 |   P2 weight 10: bdist=+3.11e-04
+2026-11-28 01:28:14 |   P3 polish inside: res=5.22e-05 bdist=+1.00e-07
+2026-11-28 01:28:14 |   result: PO from B
+2026-11-28 01:28:14 | symmetry=none ladder[2] -> PO mom_res=6.32e-15 bdist=-3.723e-02
+2026-11-28 01:28:14 | symmetry=none ladder[3] unk=408/406 (orbits=136)
+2026-11-28 01:28:19 |   A: res=7.85e-14 bdist=+5.52e-08
+2026-11-28 01:28:19 |   P2 pull inside: start bdist=+5.52e-08, margin=3.19e-04
+2026-11-28 01:28:19 |   P2 weight 1: bdist=+5.52e-08
+2026-11-28 01:28:19 |   P2 weight 10: bdist=+5.52e-08
+2026-11-28 01:28:19 |   P2 weight 100: bdist=+5.52e-08
+2026-11-28 01:28:19 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 01:28:19 |   result: PI from A with nodes on the boundary (P2/P3 did not move them inside)
+2026-11-28 01:28:19 | symmetry=none ladder[3] -> PI mom_res=6.49e-15 bdist=+5.517e-08
+2026-11-28 01:28:19 | Refining N=135 with start rounds 2..4
+2026-11-28 01:28:19 | symmetry=full N=135: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:28:19 | symmetry=central N=135: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:28:19 | wrote 38 tried starts to results/ladder-triangle/triangle-27/starts-T2-27.json
+2026-11-28 01:28:19 | FOUND CA-T2-27-136-PI-MPC (PI, sym=none) N=136 mom_res=6.49e-15 monom=5.55e-17 min_w=2.228e-04 bdist=+5.517e-08 wrote=results/ladder-triangle/triangle-27/CA-T2-27-136-PI-MPC.json (93.75s)

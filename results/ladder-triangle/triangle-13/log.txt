@@ -1,0 +1,21 @@
+2026-11-28 01:22:01 | Start generic solver: domain=simplex dim=2 degree=13 M=105 Z=35 symmetry=auto points=0 seed=None
+2026-11-28 01:22:01 | Point-count ladder N=28..43 (lower bound 28, symmetries full, chiral, central, none)
+2026-11-28 01:22:01 | symmetry=central N=28: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=29: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=30: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=31: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=32: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=full N=33: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=33: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=full N=34: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=34: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | Trying symmetry=central (|G|=2, M_G=56, N=35)
+2026-11-28 01:22:01 | symmetry=central ladder[0] unk=56/56 (orbits=21)
+2026-11-28 01:22:01 |   A: res=9.67e-14 bdist=+3.38e-03
+2026-11-28 01:22:01 |   result: PI from A
+2026-11-28 01:22:01 | symmetry=central ladder[0] -> PI mom_res=1.80e-15 bdist=+3.375e-03
+2026-11-28 01:22:01 | Refining N=34 with start rounds 2..4
+2026-11-28 01:22:01 | symmetry=full N=34: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | symmetry=central N=34: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:22:01 | wrote 1 tried starts to results/ladder-triangle/triangle-13/starts-T2-13.json
+2026-11-28 01:22:01 | FOUND CA-T2-13-35-PI-MPC (PI, sym=central) N=35 mom_res=1.80e-15 monom=2.22e-16 min_w=3.258e-03 bdist=+3.375e-03 wrote=results/ladder-triangle/triangle-13/CA-T2-13-35-PI-MPC.json (0.28s)
