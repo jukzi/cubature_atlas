@@ -1,4 +1,90 @@
-Traceback (most recent call last):
-  File "/home/user/cubature_atlas/./code/cubature_generic.py", line 64, in <module>
-    from scipy import sparse
-ModuleNotFoundError: No module named 'scipy'
+2026-11-28 01:43:40 | Start generic solver: domain=cube dim=3 degree=4 M=35 Z=9 symmetry=auto points=0 seed=None
+2026-11-28 01:43:40 | Point-count ladder N=10..18 (lower bound 10, symmetries full, demi, chiral, mirror, central, none)
+2026-11-28 01:43:41 | Trying symmetry=chiral (|G|=6, M_G=8, N=10)
+2026-11-28 01:43:41 | symmetry=chiral ladder[0] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[1] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[2] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[3] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[4] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[5] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:41 | symmetry=chiral ladder[7] unk=8/8 (orbits=3)
+2026-11-28 01:43:41 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:41 |   result: none
+2026-11-28 01:43:42 | symmetry=chiral ladder[11] unk=8/8 (orbits=3)
+2026-11-28 01:43:42 |   A: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:42 |   B: res=5.91e-01 bdist=+2.46e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=chiral N=10: 4 starts skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:42 | Trying symmetry=mirror (|G|=2, M_G=22, N=10)
+2026-11-28 01:43:42 | symmetry=mirror ladder[0] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.25e-01 bdist=-8.49e-07
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-1.11e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[1] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.26e-01 bdist=-3.84e-04
+2026-11-28 01:43:42 |   B: res=3.26e-01 bdist=-3.50e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[2] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.25e-01 bdist=-8.59e-06
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-5.66e-02
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[3] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.27e-01 bdist=-2.87e-04
+2026-11-28 01:43:42 |   B: res=3.91e-01 bdist=-3.50e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[4] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.25e-01 bdist=-7.35e-05
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-8.10e-02
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[5] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.27e-01 bdist=-2.87e-04
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-6.37e-02
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[6] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.25e-01 bdist=-8.59e-06
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-8.54e-02
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[7] unk=22/22 (orbits=6)
+2026-11-28 01:43:42 |   A: res=3.39e-01 bdist=-1.24e-03
+2026-11-28 01:43:42 |   B: res=3.25e-01 bdist=-3.04e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[8] unk=24/22 (orbits=7)
+2026-11-28 01:43:42 |   A: res=6.02e-02 bdist=-1.15e-03
+2026-11-28 01:43:42 |   B: res=8.04e-02 bdist=-3.50e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[9] unk=24/22 (orbits=7)
+2026-11-28 01:43:42 |   A: res=4.33e-01 bdist=-4.01e-04
+2026-11-28 01:43:42 |   B: res=4.29e-01 bdist=-3.50e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[10] unk=24/22 (orbits=7)
+2026-11-28 01:43:42 |   A: res=1.46e-03 bdist=-4.04e-05
+2026-11-28 01:43:42 |   B: res=8.72e-02 bdist=-3.50e-01
+2026-11-28 01:43:42 |   result: none
+2026-11-28 01:43:42 | symmetry=mirror ladder[11] unk=24/22 (orbits=7)
+2026-11-28 01:43:42 |   A: res=2.88e-16 bdist=-4.25e-10
+2026-11-28 01:43:42 |   P2 pull inside: start bdist=-4.25e-10, margin=2.00e-03
+2026-11-28 01:43:42 |   P2 weight 1: bdist=+2.00e-03
+2026-11-28 01:43:42 |   P3 polish inside: res=8.07e-16 bdist=+2.00e-03
+2026-11-28 01:43:42 |   result: PI from A after P2/P3
+2026-11-28 01:43:42 | symmetry=mirror ladder[11] -> PI mom_res=8.07e-16 bdist=+2.000e-03
+2026-11-28 01:43:42 | wrote 20 tried starts to results/ladder-cube/cube-4/starts-C3-04.json
+2026-11-28 01:43:42 | FOUND CA-C3-04-10-PI-MPC (PI, sym=mirror) N=10 mom_res=8.07e-16 monom=2.22e-16 min_w=6.206e-01 bdist=+2.000e-03 wrote=results/ladder-cube/cube-4/CA-C3-04-10-PI-MPC.json (2.18s)

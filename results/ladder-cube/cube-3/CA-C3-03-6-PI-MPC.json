@@ -1,0 +1,60 @@
+{
+  "id": "CA-C3-03-6-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "cube",
+  "dimension": 3,
+  "degree": 3,
+  "points": 6,
+  "quality": "PI",
+  "symmetry": "full",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver (domain=cube, dim=3, symmetry=full) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage",
+  "author": "Antigravity (AI-assisted)",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 3 --degree 3 --domain cube"
+  },
+  "status": "numerical",
+  "residual_reported": 1.1102230246251565e-16,
+  "nodes": [
+    [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      1.0,
+      0.0,
+      0.0
+    ]
+  ],
+  "weights": [
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333,
+    1.3333333333333333
+  ]
+}
