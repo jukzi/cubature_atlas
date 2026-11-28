@@ -100,6 +100,7 @@ td .trophy,.sbtn .trophy{font-size:.8em;margin-right:3px}
 td .smile,.sbtn .smile{font-size:.8em;margin-right:3px}
 td .iso{margin-right:3px}
 td .asym{font-size:.75em;margin-right:3px;color:var(--s-sym);cursor:help}
+td .oq.symx{font-size:.7em;margin-left:1px;color:var(--muted);vertical-align:super;line-height:1}
 td.dim{color:var(--muted)}
 .delta-ok{color:var(--good)} .delta-up{color:var(--muted)}
 .viewer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
@@ -321,14 +322,14 @@ function famRule(k,dom,n){var x=famOf(k),b=null;if(!x)return null;(x.f.rules[dom
   ATLAS.families.slice().sort(function(a,b){return ORDER[a.role]-ORDER[b.role];}).forEach(function(f){var R=f.rules||{};
     if(f.role==='pi'){Object.keys(R).forEach(function(d){for(var n=1;n<=MAXN;n++){var b=null;
       R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n||(r.n===b.n&&r.deg===n&&b.deg!==n)))b=r;});
-      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv,method:b.method};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
+      if(b){DATA[d][n]={n:b.n,err:b.err,src:b.origin==='gauss_legendre'?'found':b.origin,pts:b.pts,id:b.id,url:b.url,iv:b.iv,method:b.method,sym:b.sym};if(b.cert&&b.deg===n)CERT[d][n]=b.cert;}}});}
     else if(f.role==='po'){Object.keys(R).forEach(function(d){OUTR[d]={};for(var n=1;n<=MAXN;n++){var b=null;
-        R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n)){OUTR[d][n]={n:b.n,pts:b.pts,deg:n,id:b.id,url:b.url,po:true};if(b.cert&&b.deg===n){OUTC[d]=OUTC[d]||{};OUTC[d][n]=b.cert;}}}});
+        R[d].forEach(function(r){if(r.deg>=n&&(!b||r.n<b.n))b=r;});var pi=DATA[d]&&DATA[d][n];if(b&&(!pi||b.n<pi.n)){OUTR[d][n]={n:b.n,pts:b.pts,deg:n,id:b.id,url:b.url,po:true,sym:b.sym};if(b.cert&&b.deg===n){OUTC[d]=OUTC[d]||{};OUTC[d][n]=b.cert;}}}});
       var S=f.searched_degrees||{},doms={};Object.keys(S).concat(Object.keys(R)).forEach(function(d){doms[d]=1;});
       Object.keys(doms).forEach(function(d){OUT[d]=[];for(var n=1;n<=MAXN;n++){var v=null,o=OUTR[d]&&OUTR[d][n],pi=DATA[d]&&DATA[d][n];
         if(o)v=o.n;else if(S[d]&&n>=S[d][0]&&n<=S[d][1]&&pi)v=pi.n;OUT[d].push(v);}});}
     else if(f.role==='literature'){ATLAS_SRCN[f.tag]=f.short.en;ATLAS_SRCREF[f.tag]=f.references||[];
-      Object.keys(R).forEach(function(d){R[d].forEach(function(r){LIT[d].push({deg:r.deg,n:r.n,src:f.tag,pts:r.pts,id:r.id,url:r.url});});});}
+      Object.keys(R).forEach(function(d){R[d].forEach(function(r){LIT[d].push({deg:r.deg,n:r.n,src:f.tag,pts:r.pts,id:r.id,url:r.url,sym:r.sym});});});}
     else FAMX.push({k:'f:'+f.id,f:f});});
   ['interval','triangle','square','tetra','cube'].forEach(function(d){
     var miss=false;
@@ -394,9 +395,11 @@ Object.keys(DOM).forEach(function(k){DOM[k].cols.forEach(function(c){while(c.arr
 ['square','cube'].forEach(function(dm){var c=DOM[dm].cols.filter(function(x){return x.k==='sym';})[0];
   for(var n=21;n<=MAXN;n++){var b=null;LIT[dm].forEach(function(r){if(r.deg>=n&&(b==null||r.n<b))b=r.n;});c.arr[n-1]=b;}});
 Object.keys(DOM).forEach(function(k){var m=0;for(var n=1;n<=MAXN;n++){var r=DATA[k][n];if(r&&r.src!=='gauss')m=n;else if(r){delete DATA[k][n];}}DOM[k].maxn=m;});
+/* full symmetry group and central symmetry of each domain, named as tools/build_atlas.py (group_name) names them */
+var FULLSYM={triangle:['S3',6],square:['D4',8],tetra:['S4',24],cube:['Oh',48]},CENTSYM={square:['C2',2],cube:['Ci',2]};
 var SRCREF=ATLAS_SRCREF,EXTRA=['st','mo','ch','os','ta','cb','wk','js','du'];
 Object.keys(DOM).forEach(function(k){var cs=DOM[k].cols,xg=cs.filter(function(c){return c.k==='xg';})[0],sy=cs.filter(function(c){return c.k==='sym';})[0],pk=cs.filter(function(c){return c.k==='pk';})[0],fs=cs.filter(function(c){return c.k==='fs';})[0];
-  if(!xg&&!sy&&!pk)return;var arr=[],src=[];
+  if(!xg&&!sy&&!pk)return;var arr=[],src=[],sya=[];
   for(var n=1;n<=MAXN;n++){var xv=xg?xg.arr[n-1]:null,sv=sy?sy.arr[n-1]:null,pv=pk?pk.arr[n-1]:null,fv=fs?fs.arr[n-1]:null,v=null,rf=[];
     var more=cs.filter(function(c){return EXTRA.indexOf(c.k)>=0;});
     [xv,sv,pv,fv].concat(more.map(function(c){return c.arr[n-1];})).forEach(function(a){if(a!=null&&(v==null||a<v))v=a;});
@@ -409,8 +412,12 @@ Object.keys(DOM).forEach(function(k){var cs=DOM[k].cols,xg=cs.filter(function(c)
     var yr=function(x){var e=ATLAS.refs.filter(function(q){return q.n===x;})[0];return e?parseInt(e.y,10):9999;};
     var ym=Math.min.apply(null,rf.map(yr));
     rf=rf.filter(function(x){return yr(x)===ym;});
-    arr.push(v);src.push(rf);}
-  DOM[k].cols=cs.filter(function(c){return c.k!=='xg'&&c.k!=='sym'&&c.k!=='pk'&&c.k!=='fs'&&EXTRA.indexOf(c.k)<0;});DOM[k].cols.push({k:'lit',a:'e-lit',refs:[],arr:arr,src:src});
+    /* symmetry of the literature count: a stored rule with this count, else the source k=sym (fully symmetric) or k=pk (centrally symmetric); the largest known group wins */
+    var sg=null,lr2=litRule(k,n);if(v!=null){if(lr2&&lr2.n===v&&lr2.sym)sg=lr2.sym;
+      if(sv!=null&&sv===v&&FULLSYM[k]&&(!sg||sg[1]<FULLSYM[k][1]))sg=FULLSYM[k];
+      if(pv!=null&&pv===v&&CENTSYM[k]&&(!sg||sg[1]<CENTSYM[k][1]))sg=CENTSYM[k];}
+    arr.push(v);src.push(rf);sya.push(sg);}
+  DOM[k].cols=cs.filter(function(c){return c.k!=='xg'&&c.k!=='sym'&&c.k!=='pk'&&c.k!=='fs'&&EXTRA.indexOf(c.k)<0;});DOM[k].cols.push({k:'lit',a:'e-lit',refs:[],arr:arr,src:src,sym:sya});
   /* the table also covers the degrees for which only a published rule is known (no N_PI yet) */
   var lm=0;arr.forEach(function(v,i){if(v!=null)lm=i+1;});DOM[k].maxpi=DOM[k].maxn;if(lm>DOM[k].maxn)DOM[k].maxn=lm;});
 function MX(dom){return DOM[dom||st.dom].maxn;}
@@ -557,6 +564,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')hpopClose();
    so the number of nodes is 0 or 1 modulo 3 (triangle: C3, S3) or modulo 4 (square: C4, D4); same popup as the other symbols */
 function asymMark(dom,z){var k=null;if(z==null)return '';if(dom==='triangle'&&z%3===2)k='asymTri';else if(dom==='square'&&z%4>=2)k='asymSq';
   return k?'<sup class="oq asym" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('asymBtn'))+'" data-tip="'+escA(t(k))+'">asym</sup>':'';}
+/* Table 1, columns N_PO, N_PI and N_Lit: the symmetry group of the rule as a superscript behind the number (s = [name, order], computed by tools/build_atlas.py); same popup as the other symbols */
+function symSup(s){if(!s)return '';
+  return '<sup class="oq symx" role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+escA(t('grpBtn'))+'" data-tip="'+escA(t('grpTip').replace('{g}',s[0]).replace('{o}',s[1]))+'">'+s[0]+'</sup>';}
+function poSym(dom,n){var o=OUTR[dom]&&OUTR[dom][n],p=DATA[dom]&&DATA[dom][n];return o?o.sym:(p?p.sym:null);}
 function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.dom==='interval',FK=FAMX.filter(function(x){return famHas(x.k,st.dom);}).map(function(x){return x.k;}),FH=FK.map(function(k){return [k,k];});
   var po=d.cols.filter(function(c){return c.k==='out';})[0],lit=d.cols.filter(function(c){return c.k==='lit';})[0];
   var heads=[['colN',null]];
@@ -575,12 +586,12 @@ function table(){hpopClose();var d=DOM[st.dom],f=seriesOf(st.dom,'found'),iv=st.
     var tt0=trophyOf(i),tw=tt0.tw,tv=tt0.tv;
     /* smiley: in front of the trophy when the rule with the fewest nodes has at most the counting value Z nodes */
     var TR=function(k){return trHtml(k,i,tt0);};
-    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+asymMark(st.dom,d.abz[i])+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO')+fmt(po.arr[i])+starCell(po.arr[i],d.low[i],n))+'</td>';}
+    if(!iv){cells+='<td class="dim">'+fmt(d.low[i])+'</td><td class="dim">'+asymMark(st.dom,d.abz[i])+fmt(d.abz[i])+'</td>';if(po)cells+='<td class="dim">'+(po.arr[i]==null?'–':TR('out')+isoMark(st.dom,n,'PO')+fmt(po.arr[i])+symSup(poSym(st.dom,n))+starCell(po.arr[i],d.low[i],n))+'</td>';}
     if(iv){['gauss','lob','cc','nc'].concat(FK).forEach(function(k){var sv=seriesOf('interval',k)[i];cells+='<td class="'+(st.src===k?'selcol':'')+'">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});}
     else if(f[i]==null){cells+='<td class="found dim">–</td>';}
-    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI')+fmt(f[i])+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
+    else{var mk=optStar(f[i],d.low[i],n)+flag(st.dom,n)+oqMark(st.dom,n)+methMark(st.dom,n);cells+='<td class="found">'+TR('found')+isoMark(st.dom,n,'PI')+fmt(f[i])+symSup(DATA[st.dom][n]&&DATA[st.dom][n].sym)+(mk?'<span class="mk">'+mk+'</span>':'')+'</td>';}
     if(!iv){cells+='<td class="'+(dl==null?'dim':(dl<=0?'delta-ok':'delta-up'))+'">'+dtxt+'</td>';
-      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':TR('lit')+fmt(lit.arr[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
+      if(lit)cells+='<td class="dim litn">'+(lit.arr[i]==null?'–':TR('lit')+fmt(lit.arr[i])+symSup(lit.sym&&lit.sym[i])+'<span class="mk">'+optStar(lit.arr[i],d.low[i],n)+'<span class="ml">'+cite.apply(null,lit.src[i])+'</span></span>')+'</td>';
       FK.forEach(function(k){var sv=seriesOf(st.dom,k)[i];cells+='<td class="dim">'+(sv==null?'–':fmt(sv)+starCell(sv,d.low[i],n))+'</td>';});cells+='<td class="dim">'+fmt(d.gauss[i])+starCell(d.gauss[i],d.low[i],n)+'</td>';}
     tr.innerHTML=cells;(function(nn){tr.onclick=function(){setDeg(nn);};})(n);tb.appendChild(tr);}
   if(!iv){var ci=-1,pos=0;heads.forEach(function(h){if(h[1]===st.src)ci=pos;pos+=1;});if(ci>=0){var wd=1;Array.prototype.forEach.call(tb.rows,function(row){for(var q=0;q<wd;q++)if(row.cells[ci+q])row.cells[ci+q].classList.add('selcol');});}}
@@ -1064,7 +1075,7 @@ function ruleOrbits(r,dom){if(r._orb&&r._orb.dom===dom&&r._orb.n===r.n)return r.
   for(i=0;i<N;i++){if(oid[i]>=0)continue;var id=orbits.length,mem=[i];oid[i]=id;
     for(var hi2=0;hi2<H.length;hi2++){var j=findMatch(H[hi2](pts[i]),pts[i][dim]);if(j>=0&&oid[j]<0){oid[j]=id;mem.push(j);}}
     orbits.push(mem);}
-  return r._orb={dom:dom,n:r.n,name:groupName(dom,H),order:H.length,oid:oid,orbits:orbits};}
+  return r._orb={dom:dom,n:r.n,name:(r.sym&&r.sym[1]===H.length&&H.length>1)?r.sym[0]:groupName(dom,H),order:H.length,oid:oid,orbits:orbits};}
 var hov={i:-1,pin:false},ntip=$('#ntip'),fbA=$('#fbA');
 function clearHover(){hov.i=-1;hov.pin=false;if(ntip){ntip.style.display='none';ntip._k='';}}
 function fmtCoord(v){if(Math.abs(v)<1e-13)v=0;return dec(v,9).replace('-','−');}
