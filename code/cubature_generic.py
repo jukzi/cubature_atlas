@@ -1925,6 +1925,103 @@ def _fill_square_gaps(theta, deficit, orbit_size, grid=161):
     return np.array(points)
 
 
+def _orbit_images_about_centre(dx, dy, orbit_size):
+    """Offsets of the C4 (4), C2 (2) or trivial (1) orbit of (dx, dy) about the centre."""
+    if orbit_size == 4:
+        return ((dx, dy), (-dy, dx), (-dx, -dy), (dy, -dx))
+    if orbit_size == 2:
+        return ((dx, dy), (-dx, -dy))
+    return ((dx, dy),)
+
+
+def _fill_square_lines(theta, deficit, orbit_size, spacing, mode, samples=241):
+    """Add deficit points in angle coordinates as whole orbits on few lines.
+
+    mode "centre": the points go on the line through the centre parallel to a
+    side (with C4 its image, the perpendicular line, so a cross), between the
+    lattice points there. mode "shell": the points go on the line between the
+    outermost and the second outermost L_inf shell of the lattice, on one side
+    (C2: two opposite sides, C4: all four sides).
+    On the active lines each orbit goes to the candidate farthest from all
+    points (boundary counted as a mirror, distance 2 * boundary distance), so
+    the new points sit in the holes between the lattice points. Only when the
+    active lines are full (best distance below 0.7 spacing, about where a hole
+    between two neighbours on the line is taken) the next line is opened:
+    "centre" the parallel lines at offsets +-2, +-4, ... spacings, "shell" the
+    further sides, then the mid line one shell further in.
+    The centre is added first if the deficit is odd and the centre is free.
+    """
+    points = [tuple(row) for row in theta]
+    centre = 0.5 * math.pi
+    has_centre = any(abs(p[0] - centre) < 1e-9 and abs(p[1] - centre) < 1e-9 for p in points)
+    if orbit_size > 1 and deficit % orbit_size == 1:
+        if has_centre:
+            return None
+        points.append((centre, centre))
+        deficit -= 1
+    if deficit % orbit_size != 0:
+        return None
+    half = 0.5 * math.pi
+    offsets = np.asarray(theta, dtype=float) - centre
+    radii = np.max(np.abs(offsets), axis=1)
+    outer_radius = float(radii.max())
+    inner_radii = radii[radii < outer_radius - 0.5 * spacing]
+    second_radius = float(inner_radii.max()) if len(inner_radii) else outer_radius - spacing
+    shell_step = outer_radius - second_radius
+    line_sets = []
+    if mode == "centre":
+        level = 0
+        while 2 * level * spacing < half:
+            offs = (0.0,) if level == 0 else (2 * level * spacing, -2 * level * spacing)
+            t = np.linspace(-half, half, samples)[1:-1]
+            line_set = []
+            for off in offs:
+                line = np.stack([t, np.full_like(t, off)], axis=1)
+                line_set.append(line)
+            line_sets.append(np.vstack(line_set))
+            level += 1
+    else:
+        # sides as (unit normal); right, left, top, bottom
+        sides = ((1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0))
+        if orbit_size == 4:
+            groups = ((0,),)
+        elif orbit_size == 2:
+            groups = ((0,), (2,))
+        else:
+            groups = ((0,), (1,), (2,), (3,))
+        radius = outer_radius - 0.5 * shell_step
+        while not line_sets or radius > 0.5 * spacing:
+            for group in groups:
+                line_set = []
+                for side in group:
+                    nx, ny = sides[side]
+                    t = np.linspace(-radius, radius, samples)[1:-1]
+                    line_set.append(np.stack([nx * radius - ny * t, ny * radius + nx * t], axis=1))
+                line_sets.append(np.vstack(line_set))
+            radius -= shell_step
+    level = 0
+    active = line_sets[0]
+    for _ in range(deficit // orbit_size):
+        while True:
+            current = np.array(points) - centre
+            distance = np.sqrt(((active[:, None, :] - current[None, :, :]) ** 2).sum(axis=2)).min(axis=1)
+            # distance to the own orbit images (C4 / C2 partners of the candidate)
+            for k in range(1, orbit_size):
+                rotated = np.array([_orbit_images_about_centre(px, py, orbit_size)[k] for px, py in active])
+                distance = np.minimum(distance, np.hypot(*(rotated - active).T))
+            wall = 2.0 * np.min(half - np.abs(active), axis=1)
+            distance = np.minimum(distance, wall)
+            best_index = int(np.argmax(distance))
+            if distance[best_index] >= 0.7 * spacing or level + 1 >= len(line_sets):
+                break
+            level += 1
+            active = np.vstack([active, line_sets[level]])
+        dx, dy = active[best_index]
+        for image_x, image_y in _orbit_images_about_centre(dx, dy, orbit_size):
+            points.append((centre + image_x, centre + image_y))
+    return np.array(points)
+
+
 def _square_shell_rotation(points, angle):
     """Rotate 2D points about the origin along their concentric square (L_inf shell).
 
@@ -1969,8 +2066,10 @@ def build_square_angle_lattice_start(target_points, group_transforms, min_unknow
     outer row by about delta towards the boundary). Surplus points are removed
     as whole orbits (orbit_size = 4 for C4, 2 for C2, 1 without symmetry,
     where the lattice is also shifted by a quarter point spacing) nearest to the corners
-    (the centre first if the surplus is odd); missing points are put as whole
-    orbits into the largest gaps (the centre first if the deficit is odd).
+    (the centre first if the surplus is odd); missing points are added as whole
+    orbits (the centre first if the deficit is odd): with C4 on the line between
+    the outermost and the second outermost shell, with C2 on the line through the
+    centre, without symmetry into the largest gaps.
     Returns None if the counts do not fit.
     """
     if orbit_size > 1 and target_points % orbit_size not in (0, 1):
@@ -2015,7 +2114,14 @@ def build_square_angle_lattice_start(target_points, group_transforms, min_unknow
     theta = points_inside(alpha)
     surplus = len(theta) - target_points
     if surplus < 0:
-        theta = _fill_square_gaps(theta, -surplus, orbit_size)
+        # missing orbits: C4 on the line between the two outermost shells, C2 on
+        # the central line, without symmetry into the largest gaps
+        if orbit_size == 4:
+            theta = _fill_square_lines(theta, -surplus, orbit_size, spacing, "shell")
+        elif orbit_size == 2:
+            theta = _fill_square_lines(theta, -surplus, orbit_size, spacing, "centre")
+        else:
+            theta = _fill_square_gaps(theta, -surplus, orbit_size)
         if theta is None:
             return None
         surplus = 0
