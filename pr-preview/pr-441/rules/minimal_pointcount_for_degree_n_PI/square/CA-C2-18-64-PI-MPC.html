@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CA-C2-18-64-PI-MPC – Cubature Atlas Square, Degree 18, 64 Nodes</title><meta name="description" content="Smallest rules found by the numerical search of this atlas: positive weights, all nodes in the closed domain (PI). One rule per domain and degree; eve">
+<link rel="alternate" hreflang="en" href="https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-18-64-PI-MPC.html"><link rel="alternate" hreflang="de" href="https://jukzi.github.io/cubature_atlas/de/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-18-64-PI-MPC.html">
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style></head><body>
+<p><a href="../../../">Back to the atlas</a> · <a href="../../../rules/index.html">All rules</a></p>
+<h1>CA-C2-18-64-PI-MPC</h1>
+<p class="ai">AI-generated: this page, its code, the search and all computations were produced by an AI. Please verify the results yourself before relying on them.</p>
+<p><b>Best known rule for this domain and degree</b></p>
+<p><a href="https://creativecommons.org/licenses/by/4.0/" rel="license">License: CC BY 4.0</a></p>
+<table>
+<tr><th>Family</th><td>Minimal point count for degree n (PI)<br><small>rules/minimal_pointcount_for_degree_n_PI/</small></td></tr>
+<tr><th>Domain</th><td>Square (C2)</td></tr>
+<tr><th>Degree</th><td>18</td></tr>
+<tr><th>Number of nodes</th><td>64</td></tr>
+<tr><th>Quality</th><td>PI</td></tr>
+<tr><th>Max. moment residual (build check)</th><td>1.50e-15</td></tr>
+<tr><th>Smallest weight</th><td>4.895075e-03</td></tr>
+<tr><th>Distance to domain boundary (negative = outside)</th><td>7.627e-03</td></tr>
+<tr><th>Numerical Newton–Kantorovich check (floating point, not a proof)</th><td>–</td></tr>
+<tr><th>Interval proof</th><td>proven: an exact rule of quality PI lies within 1.2e-14 of the stored numbers (equations in all unknowns)</td></tr>
+<tr><th>Origin</th><td>Generic deterministic equilibrium-start solver with point-count ladder (domain=cube, dim=2, symmetry=none) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; the weights were then minimised in the L2 norm under all moment equations with a penalty for nodes outside the domain and the symmetry kept (tools/minimize_l2.py); weights L2-minimised with tools/minimize_l2.py</td></tr>
+</table>
+<p><a href="../../../rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-18-64-PI-MPC.json">Download JSON</a></p>
+<h2>Cite as</h2>
+<pre>Jörg Kubitz: Cubature Atlas. Zenodo. https://doi.org/10.5281/zenodo.24037245, rule CA-C2-18-64-PI-MPC (Minimal point count for degree n (PI), square, degree 18, 64 nodes), https://jukzi.github.io/cubature_atlas/rules/minimal_pointcount_for_degree_n_PI/square/CA-C2-18-64-PI-MPC.html</pre>
+<h2>Nodes and weights</h2>
+<pre>  #                       x                       y                       w
+   1  3.990184137167337e-02  -6.652869124565759e-01   1.250728161879180e-01
+   2 -7.652400136458190e-01   5.725706721252202e-01   6.030081968044743e-02
+   3  8.948253201700765e-01  -7.575021139253294e-01   4.578235175106612e-02
+   4 -7.828721626719145e-01   2.166564344034640e-02   9.402707730426903e-02
+   5  5.468160593254725e-01   8.794843962948169e-01   6.493458437890155e-02
+   6 -7.456871686429385e-01  -9.065358673635934e-01   4.316840000482161e-02
+   7  9.908957451748801e-01   1.635247403436050e-01   2.086124464618574e-02
+   8 -9.900318502409164e-01   9.017008000954119e-01   7.513001022766455e-03
+   9  4.955652054005815e-01  -9.798882506166225e-01   2.398959211180544e-02
+  10 -1.687356730827210e-01  -3.594631189716659e-01   1.268298264725276e-01
+  11  7.682298231403446e-01   7.083273829647292e-01   7.538709606088152e-02
+  12 -8.780811966524998e-01  -9.923728443520380e-01   8.755941391549511e-03
+  13  3.766293137898952e-01   1.396213381033292e-01   1.491749035593923e-01
+  14 -4.201163045722102e-01   4.835600707513191e-01   9.484925954427190e-02
+  15  7.859187905982662e-01  -4.760147937887525e-01   9.243656284624327e-02
+  16 -9.820719764965370e-01   1.041087482008198e-01   2.543361278351766e-02
+  17  2.833360028059824e-01   9.733066618091373e-01   3.232594036228615e-02
+  18 -4.822349258367524e-01  -9.729509670586305e-01   3.043362728463283e-02
+  19  6.096429174253000e-01  -1.657382914215552e-01   1.335147507073731e-01
+  20 -6.378285923674479e-01   7.237011314354822e-01   5.907827080938495e-02
+  21  5.730731136186542e-01  -7.137398261850109e-01   8.801113865999143e-02
+  22 -1.618147059509745e-01   2.038896137054982e-01   1.348172207621279e-01
+  23  9.771146306989983e-01   9.796237847847277e-01   4.895075362825132e-03
+  24 -7.949818296061051e-01  -5.219504317619653e-01   8.156085000435803e-02
+  25  3.661256919133711e-01   6.607396405996345e-01   1.091038403051061e-01
+  26 -4.307105715905025e-01   8.577727949455038e-01   6.890961920609467e-02
+  27  8.883447531586793e-01  -9.890742761856611e-01   9.618614529785052e-03
+  28 -6.050409769060306e-01  -2.828616939130610e-01   1.108277169788847e-01
+  29  6.097129970221836e-01   4.250620942922062e-01   1.150110752324275e-01
+  30  2.125095144275079e-01  -9.369775794585755e-01   9.467870763285601e-03
+  31  9.125051611523248e-01  -1.356365273372130e-01   5.265170441520514e-02
+  32 -9.078292849421739e-01   7.793194347424754e-01   3.771366253670528e-02
+  33 -2.453578971974583e-01  -8.559729613884087e-01   8.353556344102102e-02
+  34 -6.001134687616140e-01   2.777213366088903e-01   1.006058160716456e-01
+  35 -5.648745833458636e-01   9.877148825349574e-01   1.650290299603736e-02
+  36 -9.783866165194883e-01  -9.241859028669571e-01   1.095378843192497e-02
+  37  3.179053031215642e-01  -4.080538161262292e-01   1.276341817802610e-01
+  38 -1.856919935789276e-01   6.593098800982266e-01   1.077721280452856e-01
+  39  9.793440858651936e-01  -9.139741232678026e-01   1.158262217438445e-02
+  40 -9.287998676430541e-01  -2.443049847377205e-01   5.840780397593472e-02
+  41  8.097741898307079e-02   8.354272856769863e-01   8.542305221082332e-02
+  42 -3.873460978178419e-01  -5.654572287263101e-01   9.684654184349148e-02
+  43  9.229380070271553e-01   4.764472045240878e-01   5.817353921034518e-02
+  44 -9.256403142463132e-01   9.837165137866098e-01   8.498156022171225e-03
+  45  7.319456930487671e-01  -9.061831311057618e-01   4.590985168696045e-02
+  46  8.812111156094241e-02  -1.103974826321202e-01   1.499499471765500e-01
+  47  9.828461681196522e-01   7.496747152923148e-01   1.759966953993835e-02
+  48 -9.124271265320533e-01  -7.613650137532033e-01   4.217210779266715e-02
+  49  1.105054306888002e-01   4.272001476183359e-01   1.376099386408522e-01
+  50 -7.699565280876322e-01   9.213588638289094e-01   3.646024946095963e-02
+  51  4.491889934060129e-01  -5.507014276909877e-01   3.827142414157548e-02
+  52 -8.936908557223346e-01   3.525297856858217e-01   5.979920997104523e-02
+  53  7.238209096798458e-01   9.846959714627582e-01   1.710218779133749e-02
+  54 -7.365008930961999e-03  -9.739777565431489e-01   3.243214387122258e-02
+  55  9.621410689329212e-01  -3.219210727558481e-01   2.294074994113090e-02
+  56 -9.804844905839785e-01   5.741083565000066e-01   2.027449030677841e-02
+  57  2.885350213075756e-01  -8.604571111964985e-01   7.372090672924260e-02
+  58 -3.917911061419596e-01  -3.605394637218105e-02   1.244565492337269e-01
+  59  8.908178866373739e-01   9.017526017881996e-01   3.100878496726247e-02
+  60 -5.872049642653983e-01  -7.429669004163124e-01   7.747995729242829e-02
+  61  8.010177451259375e-01   1.552100522309595e-01   9.544710411795954e-02
+  62 -1.665841189196309e-01   9.624053872126860e-01   4.000841120312015e-02
+  63  9.825682741751076e-01  -5.850515086706723e-01   1.796690058822470e-02
+  64 -9.909545160014523e-01  -5.457985571811619e-01   1.699525167665778e-02</pre>
+</body></html>
