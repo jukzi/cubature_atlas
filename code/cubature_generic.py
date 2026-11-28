@@ -3383,7 +3383,7 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
     return None
 
 
-def solve_from_single_start(sym_basis, orbits, verbose=False):
+def solve_from_single_start_cartesian(sym_basis, orbits, verbose=False):
     """Run PI-preferred / PO-fallback solve on one orbit initialization.
 
     Stage A: geodesic LM from the interior start with the boundary penalty
@@ -3504,6 +3504,297 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         return po_fallback
     log_message("  result: none")
     return None
+
+
+# ---------------------------------------------------------------------------
+# Coordinates of the unknowns: cartesian, angle or barycentric
+# ---------------------------------------------------------------------------
+
+# Coordinates in which the solver moves the nodes (set by --coordinates).
+COORDINATE_MODE = "cartesian"
+
+
+def _helmert_basis(size):
+    """Orthonormal basis (size, size - 1) of the vectors with coordinate sum 0."""
+    basis = np.zeros((size, size - 1), dtype=float)
+    for col in range(size - 1):
+        count = col + 1
+        norm = math.sqrt(float(count * (count + 1)))
+        basis[:count, col] = 1.0 / norm
+        basis[count, col] = -float(count) / norm
+    return basis
+
+
+class AffineCoordinateMap:
+    """x = A t + b: barycentric coordinates (simplex) or u = (1 + x) / 2 (cube)."""
+
+    def __init__(self, linear, offset):
+        self.linear = np.asarray(linear, dtype=float)
+        self.offset = np.asarray(offset, dtype=float)
+        self.inverse_linear = np.linalg.inv(self.linear)
+
+    def forward(self, params):
+        return params @ self.linear.T + self.offset[None, :]
+
+    def jacobian(self, params):
+        return np.broadcast_to(self.linear, (len(params),) + self.linear.shape)
+
+    def second(self, params, directions):
+        return None
+
+    def inverse(self, points):
+        return (points - self.offset[None, :]) @ self.inverse_linear.T
+
+    def conjugate(self, transform):
+        """The group element in t: A^-1 (L (A t + b) + c - b)."""
+        linear = self.inverse_linear @ transform.linear @ self.linear
+        translation = self.inverse_linear @ (
+            transform.linear @ self.offset + transform.translation - self.offset
+        )
+        return AffineTransform(linear, translation)
+
+
+class CubeAngleMap:
+    """x_j = sin(t_j) = -cos(theta_j), theta_j = t_j + pi / 2 the angle coordinate.
+
+    Signed coordinate permutations commute with the odd map sin, so the group
+    acts on t exactly as on x. Every t gives a node in the closed cube.
+    """
+
+    def forward(self, params):
+        return np.sin(params)
+
+    def jacobian(self, params):
+        num_points, dimension = params.shape
+        jac = np.zeros((num_points, dimension, dimension), dtype=float)
+        axes = np.arange(dimension)
+        jac[:, axes, axes] = np.cos(params)
+        return jac
+
+    def second(self, params, directions):
+        return -np.sin(params) * directions * directions
+
+    def inverse(self, points):
+        return np.arcsin(np.clip(points, -1.0, 1.0))
+
+    def conjugate(self, transform):
+        return transform
+
+
+class SimplexAngleMap:
+    """Barycentric u_i = y_i^2 / |y|^2, y on the plane sum(y) = 1 in R^(d+1).
+
+    y = c + B t (c the centroid, B orthonormal), so the permutations of the
+    barycentric coordinates act on t as on the barycentric plane. y_i is the
+    square root of u_i up to a common factor (the cosines of the angles of the
+    point on the positive part of the unit sphere): near a face u_i grows
+    quadratically, like 1 - |x| = 1 - sin(t) on the cube. Every t gives a node
+    in the closed simplex.
+    """
+
+    def __init__(self, dimension):
+        self.dimension = dimension
+        self.plane_basis = _helmert_basis(dimension + 1)
+        self.centroid = np.full(dimension + 1, 1.0 / float(dimension + 1))
+        self.affine = AffineCoordinateMap(
+            self.plane_basis[1:], self.centroid[1:]
+        )
+
+    def _plane_point(self, params):
+        return self.centroid[None, :] + params @ self.plane_basis.T
+
+    def forward(self, params):
+        plane = self._plane_point(params)
+        squares = plane * plane
+        return squares[:, 1:] / np.sum(squares, axis=1)[:, None]
+
+    def jacobian(self, params):
+        plane = self._plane_point(params)
+        norm_sq = np.sum(plane * plane, axis=1)
+        # d u_i / d y_j = 2 y_i delta_ij / s - 2 y_i^2 y_j / s^2
+        diag_part = 2.0 * plane / norm_sq[:, None]
+        outer_part = (
+            2.0
+            * (plane * plane)[:, :, None]
+            * plane[:, None, :]
+            / (norm_sq * norm_sq)[:, None, None]
+        )
+        du_dy = -outer_part
+        axes = np.arange(self.dimension + 1)
+        du_dy[:, axes, axes] += diag_part
+        return du_dy[:, 1:, :] @ self.plane_basis
+
+    def second(self, params, directions):
+        plane = self._plane_point(params)
+        plane_dir = directions @ self.plane_basis.T
+        squares = plane * plane
+        squares_first = 2.0 * plane * plane_dir
+        squares_second = 2.0 * plane_dir * plane_dir
+        norm_sq = np.sum(squares, axis=1)[:, None]
+        norm_first = 2.0 * np.sum(plane * plane_dir, axis=1)[:, None]
+        norm_second = 2.0 * np.sum(plane_dir * plane_dir, axis=1)[:, None]
+        result = (
+            squares_second / norm_sq
+            - 2.0 * squares_first * norm_first / (norm_sq * norm_sq)
+            - squares * norm_second / (norm_sq * norm_sq)
+            + 2.0 * squares * norm_first * norm_first / (norm_sq * norm_sq * norm_sq)
+        )
+        return result[:, 1:]
+
+    def inverse(self, points):
+        bary = np.hstack([1.0 - np.sum(points, axis=1)[:, None], points])
+        roots = np.sqrt(np.clip(bary, 0.0, None))
+        plane = roots / np.sum(roots, axis=1)[:, None]
+        return (plane - self.centroid[None, :]) @ self.plane_basis
+
+    def conjugate(self, transform):
+        return self.affine.conjugate(transform)
+
+
+def build_coordinate_map(domain, dimension, mode):
+    """Coordinate map x = phi(t) of the unknowns, None for cartesian."""
+    if mode == "cartesian":
+        return None
+    if domain == "cube":
+        if mode == "angle":
+            return CubeAngleMap()
+        return AffineCoordinateMap(
+            2.0 * np.eye(dimension), -np.ones(dimension, dtype=float)
+        )
+    if mode == "angle":
+        return SimplexAngleMap(dimension)
+    plane_basis = _helmert_basis(dimension + 1)
+    centroid = np.full(dimension, 1.0 / float(dimension + 1))
+    return AffineCoordinateMap(plane_basis[1:], centroid)
+
+
+class MappedBaseBasis:
+    """Boundary distance and boundary penalty of the base basis at x = phi(t)."""
+
+    def __init__(self, base_basis, coord_map):
+        self.inner = base_basis
+        self.coord_map = coord_map
+
+    def __getattr__(self, name):
+        return getattr(self.inner, name)
+
+    def boundary_distance(self, params):
+        return self.inner.boundary_distance(self.coord_map.forward(params))
+
+    def boundary_exponential_penalty(self, params, target_margin, tau):
+        points = self.coord_map.forward(params)
+        values, gradients, hessians = self.inner.boundary_exponential_penalty(
+            points, target_margin, tau
+        )
+        jac = self.coord_map.jacobian(params)
+        param_grads = np.einsum("kb,kba->ka", gradients, jac)
+        # Gauss-Newton part J^T H J (the curvature of phi is left out)
+        param_hessians = np.einsum("kba,kbc,kcd->kad", jac, hessians, jac)
+        return values, param_grads, param_hessians
+
+
+class MappedSymmetricBasis:
+    """A SymmetricBasis seen through x = phi(t): values, gradients and jets in t."""
+
+    def __init__(self, sym_basis, coord_map):
+        self.inner = sym_basis
+        self.coord_map = coord_map
+        self.domain = sym_basis.domain
+        self.dimension = sym_basis.dimension
+        self.degree = sym_basis.degree
+        self.num_basis = sym_basis.num_basis
+        self.exact_moments = sym_basis.exact_moments
+        self.symmetry_name = sym_basis.symmetry_name
+        self.group_order = sym_basis.group_order
+        self.group_transforms = [
+            coord_map.conjugate(transform) for transform in sym_basis.group_transforms
+        ]
+        self.base_basis = MappedBaseBasis(sym_basis.base_basis, coord_map)
+
+    def evaluate_values(self, params):
+        return self.inner.evaluate_values(self.coord_map.forward(params))
+
+    def evaluate_values_and_gradients(self, params):
+        points = self.coord_map.forward(params)
+        values, point_grads = self.inner.evaluate_values_and_gradients(points)
+        jac = self.coord_map.jacobian(params)
+        param_grads = np.einsum("bmk,kba->amk", point_grads, jac)
+        return values, param_grads
+
+    def evaluate_weighted_second_order_jet(
+        self, params, directions, weight_val, weight_first, weight_second
+    ):
+        """d^2/ds^2 of sum w f(phi(t + s v)) = w (f''[x', x'] + f' x'') + ..."""
+        points = self.coord_map.forward(params)
+        jac = self.coord_map.jacobian(params)
+        point_dirs = np.einsum("kba,ka->kb", jac, directions)
+        vec = self.inner.evaluate_weighted_second_order_jet(
+            points, point_dirs, weight_val, weight_first, weight_second
+        )
+        curvature = self.coord_map.second(params, directions)
+        if curvature is not None:
+            _, point_grads = self.inner.evaluate_values_and_gradients(points)
+            vec = vec + np.einsum(
+                "bmk,kb->m", point_grads, curvature * weight_val[:, None]
+            )
+        return vec
+
+
+def _convert_orbits(orbits, to_points, group_transforms):
+    """Orbits with representatives to_points(rep) on the fixed subspaces of group_transforms."""
+    converted = []
+    for orbit in orbits:
+        rep = to_points(orbit.representative_point()[None, :])[0]
+        size, origin, basis, _ = compute_orbit_subspace(rep, group_transforms)
+        if size != orbit.size or basis.shape[1] != orbit.spatial_dof:
+            return None
+        coords = basis.T @ (rep - origin) if basis.shape[1] > 0 else np.zeros(0)
+        converted.append(
+            SymmetryOrbit(
+                size=orbit.size,
+                subspace_origin=origin,
+                subspace_basis=basis,
+                subspace_coords=coords,
+                weight_sqrt=orbit.weight_sqrt,
+            )
+        )
+    return converted
+
+
+def solve_from_single_start(sym_basis, orbits, verbose=False):
+    """Solve in the coordinates of COORDINATE_MODE, return the rule in x."""
+    coord_map = build_coordinate_map(sym_basis.domain, sym_basis.dimension, COORDINATE_MODE)
+    if coord_map is None:
+        return solve_from_single_start_cartesian(sym_basis, orbits, verbose=verbose)
+    mapped_basis = MappedSymmetricBasis(sym_basis, coord_map)
+    mapped_orbits = _convert_orbits(orbits, coord_map.inverse, mapped_basis.group_transforms)
+    if mapped_orbits is None:
+        log_message("  coordinate map changed an orbit type; cartesian solve")
+        return solve_from_single_start_cartesian(sym_basis, orbits, verbose=verbose)
+    mapped_solution = solve_from_single_start_cartesian(
+        mapped_basis, mapped_orbits, verbose=verbose
+    )
+    if mapped_solution is None:
+        return None
+    point_orbits = _convert_orbits(
+        mapped_solution.orbits, coord_map.forward, sym_basis.group_transforms
+    )
+    if point_orbits is None:
+        log_message("  solution orbit lies on a smaller stratum in x; dropped")
+        return None
+    nodes, weights = expand_orbits_to_nodes(point_orbits, sym_basis.group_transforms)
+    params = pack_orbit_parameters(point_orbits)
+    moment_residual = float(
+        np.linalg.norm(evaluate_moment_residual(sym_basis, point_orbits, params))
+    )
+    return CubatureSolution(
+        quality=mapped_solution.quality,
+        moment_residual=moment_residual,
+        boundary_distance=sym_basis.base_basis.boundary_distance(nodes),
+        nodes=nodes,
+        weights=weights,
+        orbits=point_orbits,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -4297,6 +4588,7 @@ def default_starts_path(out, domain, dimension, degree):
 
 def main():
     global STARTS_RECORD
+    global COORDINATE_MODE
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--dim", type=int, default=2, help="spatial dimension d >= 1 (default: 2)"
@@ -4361,7 +4653,16 @@ def main():
         default=None,
         help="output JSON file or existing directory (default: <rule id>.json in the current directory)",
     )
+    parser.add_argument(
+        "--coordinates",
+        choices=("cartesian", "angle", "barycentric"),
+        default="cartesian",
+        help="unknowns of the node positions in the solver: cartesian x, angle "
+        "(cube x = sin t, simplex u_i = y_i^2 / |y|^2) or barycentric "
+        "(simplex; cube u = (1 + x) / 2) (default: cartesian)",
+    )
     args = parser.parse_args()
+    COORDINATE_MODE = args.coordinates
     if args.dim < 1:
         raise ValueError("dim must be >= 1")
     if args.degree < 1:
