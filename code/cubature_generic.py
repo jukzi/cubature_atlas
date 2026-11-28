@@ -63,6 +63,7 @@ for _blas_env_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREAD
 import numpy as np
 from scipy import sparse
 from scipy.linalg import cho_factor, cho_solve
+from scipy.linalg.blas import dsyrk
 from scipy.spatial import cKDTree
 from scipy.special import betaincinv
 
@@ -2816,9 +2817,11 @@ def polish_minimum_norm_gauss_newton(
             jacobian[:, offset] = orbit_sizes[idx] * basis_values[:, idx]
             offset += 1
 
-        gram_matrix = jacobian @ jacobian.T
+        gram_matrix = lower_gram_matrix(jacobian.T)
         try:
-            cholesky_factor = cho_factor(gram_matrix, lower=True, check_finite=False)
+            cholesky_factor = cho_factor(
+                gram_matrix, lower=True, overwrite_a=True, check_finite=False
+            )
             weight_space_step = -(
                 jacobian.T @ cho_solve(cholesky_factor, residual, check_finite=False)
             )
@@ -2866,7 +2869,17 @@ def polish_minimum_norm_gauss_newton(
     return current_norm, params
 
 
-def weight_square_null_direction(orbits, params, jacobian):
+def lower_gram_matrix(matrix):
+    """Lower triangle of matrix^T matrix (upper triangle left as zero).
+
+    Uses the symmetric rank-k update of BLAS, which needs half the work of a
+    general matrix product. Only the lower triangle is filled, which is all
+    that cho_factor(..., lower=True) and np.diag read.
+    """
+    return dsyrk(1.0, np.asfortranarray(matrix.T), trans=0, lower=1)
+
+
+def weight_square_null_direction(orbits, params, jacobian, gram=None):
     """Unit descent direction of sum(w^2) in the null space of the moment Jacobian.
 
     Every node of an orbit carries the weight w = s^2 (s the stored square
@@ -2874,7 +2887,8 @@ def weight_square_null_direction(orbits, params, jacobian):
     s entries and 0 in the spatial entries. The null-space part of g is
     mu * (J^T J + mu I)^-1 g for a small ridge mu (exact as mu -> 0), computed
     with one Cholesky factorisation; a small step along it keeps the moments to
-    first order. Returns None if the projection vanishes.
+    first order. gram is the lower triangle of J^T J if the caller already
+    has it (see lower_gram_matrix). Returns None if the projection vanishes.
     """
     gradient = np.zeros(len(params), dtype=float)
     offset = 0
@@ -2886,11 +2900,13 @@ def weight_square_null_direction(orbits, params, jacobian):
     gradient_size = float(np.linalg.norm(gradient))
     if gradient_size <= 1e-300:
         return None
-    gram = jacobian.T @ jacobian
+    if gram is None:
+        gram = lower_gram_matrix(jacobian)
     ridge = 1e-8 * (float(np.max(np.diag(gram))) + 1e-300)
-    gram[np.diag_indices_from(gram)] += ridge
+    ridged = gram.copy(order="F")
+    ridged[np.diag_indices_from(ridged)] += ridge
     try:
-        factor = cho_factor(gram, lower=True, check_finite=False)
+        factor = cho_factor(ridged, lower=True, overwrite_a=True, check_finite=False)
     except np.linalg.LinAlgError:
         return None
     projected = ridge * cho_solve(factor, gradient, check_finite=False)
@@ -2988,7 +3004,12 @@ def solve_geodesic_levenberg_marquardt(
         if moment_norm < 1e-13 and (penalty_weight <= 0.0 or boundary_dist > 0.0):
             break
 
-        normal_matrix = jacobian.T @ jacobian
+        normal_matrix = lower_gram_matrix(jacobian)
+        null_direction = None
+        if weight_norm_direction:
+            null_direction = weight_square_null_direction(
+                orbits, params, jacobian, gram=normal_matrix
+            )
         gradient = jacobian.T @ residual
         if penalty_grad is not None:
             gradient = gradient + penalty_grad
@@ -2999,17 +3020,15 @@ def solve_geodesic_levenberg_marquardt(
         raw_diag = np.diag(normal_matrix)
         diag_max = float(np.max(raw_diag)) + 1e-300
         diag_scale = np.maximum(raw_diag, 0.0) + 1e-12 * diag_max
-        null_direction = None
-        if weight_norm_direction:
-            null_direction = weight_square_null_direction(orbits, params, jacobian)
 
         step_accepted = False
+        damped_matrix = np.empty_like(normal_matrix, order="F")
         for _ in range(12):
-            damped_matrix = normal_matrix.copy()
+            np.copyto(damped_matrix, normal_matrix)
             damped_matrix[diag_indices, diag_indices] += damping * diag_scale
             try:
                 cholesky_factor = cho_factor(
-                    damped_matrix, lower=True, check_finite=False
+                    damped_matrix, lower=True, overwrite_a=True, check_finite=False
                 )
                 velocity_step = cho_solve(
                     cholesky_factor, -gradient, check_finite=False
