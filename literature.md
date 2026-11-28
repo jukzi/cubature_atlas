@@ -41,6 +41,18 @@ Conical product rule used as the reference quadrature in `code/simplex_cubature.
 
 _No abstract: it is a book, and the Internet Archive record has no description._
 
+### G. H. Golub, V. Pereyra: The differentiation of pseudo-inverses and nonlinear least squares problems whose variables separate. SIAM J. Numer. Anal. 10 (1973) 413–432. <https://doi.org/10.1137/0710036>
+
+Variable projection: the weights are eliminated by a linear least squares solve. Used in code: stage V of `code/cubature_generic.py --weights varpro` (Levenberg–Marquardt on the nodes only, weights by least squares at every step), run before the joint stage; with the single deterministic start it lowers the node counts on square, cube and triangle. Tried before on random starts (2026-11-12, against plain Levenberg–Marquardt with the same batch and iteration cap, GPU and CPU): clearly worse in converged rules per second there.
+
+> For given data $(t_i ,y_i ),i = 1, \cdots ,m$, we consider the least squares fit of nonlinear models of the form \[ \eta ({\bf a},{\boldsymbol \alpha} ;t) = \sum _{j = 1}^n {a_j \varphi _j ({\boldsymbol \alpha} ;t),\qquad {\bf a} \in \mathcal{R}^n ,\qquad {\boldsymbol \alpha} \in \mathcal{R}^k .} \] For this purpose we study the minimization of the nonlinear functional \[ r({\bf a},{\boldsymbol \alpha} ) = \sum\limits_{i = 1}^m {\left( {y_i - \eta \left( {{\bf a},{\boldsymbol \alpha} ,t_i } \right)} \right)^2 } . \] It is shown that by defining the matrix $\{ {\bf \Phi} ({\boldsymbol \alpha} )\} _{i,j} = \varphi _j ({\boldsymbol \alpha} ;t_i )$, and the modified functional $r_2 ({\boldsymbol \alpha} ) = \| {\bf y} - {\bf \Phi} ({\boldsymbol \alpha} ){\bf \Phi} ^ + ({\boldsymbol \alpha} ){\bf y} \|_2^2 $, it is possible to optimize first with respect to the parameters ${\boldsymbol \alpha} $, and then to obtain, a posteriors, the optimal parameters $\bf {\hat a}$. The matrix ${\bf \Phi} ^ + ({\boldsymbol{\alpha}} )$ is the Moore–Penrose generalized inverse of ${\bf \Phi} ({\boldsymbol{\alpha}} )$. We develop formulas for the Frechet derivative of orthogonal projectors associated with ${\bf \Phi} ({\boldsymbol{\alpha}} )$ and also for ${\bf \Phi} ^ + ({\boldsymbol{\alpha}} )$, under the hypothesis that ${\bf \Phi} ({\boldsymbol{\alpha}} )$ is of constant (though not necessarily full) rank. Detailed algorithms are presented which make extensive use of well-known reliable linear least squares techniques, and numerical results and comparisons are given. These results are generalizations of those of H. D. Scolnik [20] and Guttman, Pereyra and Scolnik [9].
+
+### L. Kaufman: A variable projection method for solving separable nonlinear least squares problems. BIT 15 (1975) 49–57. <https://doi.org/10.1007/BF01932995>
+
+Used in code: stage V of `code/cubature_generic.py --weights varpro` takes Kaufman's approximation of the Jacobian of the projected residual. In the random-start benchmark of 2026-11-12 it gave no gain.
+
+Summary in our own words, the publisher's abstract is not reproduced: the paper treats separable nonlinear least squares problems, in which a linear and a nonlinear set of parameters appear. Golub and Pereyra reduced the problem to one nonlinear problem in the nonlinear parameters only. The paper proposes a new way of determining these parameters that proved computationally more efficient than the Golub-Pereyra scheme.
+
 ### H. M. Möller: Kubaturformeln mit minimaler Knotenzahl. Numer. Math. 25 (1976) 185–200. <https://doi.org/10.1007/BF01462272>
 
 Lower bounds for the number of nodes; listed in the references of the documentation (`content/references.json`).
@@ -234,18 +246,6 @@ A. Sommariva: Cubature rules on the triangle (simplex). University of Padova, on
 J. Burkardt: Quadrature rule collections (cube_arbq_rule, tetrahedron_jaskowiec_rule, triangle_wandzura_rule and more). Online collection. <https://people.math.sc.edu/Burkardt/f_src/cube_arbq_rule/cube_arbq_rule.html> Online collection used for comparison.
 
 ## 2. Tried, not worthwhile
-
-### G. H. Golub, V. Pereyra: The differentiation of pseudo-inverses and nonlinear least squares problems whose variables separate. SIAM J. Numer. Anal. 10 (1973) 413–432. <https://doi.org/10.1137/0710036>
-
-Variable projection: the weights are eliminated by a linear least squares solve. Benchmarked on 2026-11-12 against plain Levenberg–Marquardt on random starts (same batch and iteration cap, GPU and CPU); clearly worse in converged rules per second. Not used.
-
-> For given data $(t_i ,y_i ),i = 1, \cdots ,m$, we consider the least squares fit of nonlinear models of the form \[ \eta ({\bf a},{\boldsymbol \alpha} ;t) = \sum _{j = 1}^n {a_j \varphi _j ({\boldsymbol \alpha} ;t),\qquad {\bf a} \in \mathcal{R}^n ,\qquad {\boldsymbol \alpha} \in \mathcal{R}^k .} \] For this purpose we study the minimization of the nonlinear functional \[ r({\bf a},{\boldsymbol \alpha} ) = \sum\limits_{i = 1}^m {\left( {y_i - \eta \left( {{\bf a},{\boldsymbol \alpha} ,t_i } \right)} \right)^2 } . \] It is shown that by defining the matrix $\{ {\bf \Phi} ({\boldsymbol \alpha} )\} _{i,j} = \varphi _j ({\boldsymbol \alpha} ;t_i )$, and the modified functional $r_2 ({\boldsymbol \alpha} ) = \| {\bf y} - {\bf \Phi} ({\boldsymbol \alpha} ){\bf \Phi} ^ + ({\boldsymbol \alpha} ){\bf y} \|_2^2 $, it is possible to optimize first with respect to the parameters ${\boldsymbol \alpha} $, and then to obtain, a posteriors, the optimal parameters $\bf {\hat a}$. The matrix ${\bf \Phi} ^ + ({\boldsymbol{\alpha}} )$ is the Moore–Penrose generalized inverse of ${\bf \Phi} ({\boldsymbol{\alpha}} )$. We develop formulas for the Frechet derivative of orthogonal projectors associated with ${\bf \Phi} ({\boldsymbol{\alpha}} )$ and also for ${\bf \Phi} ^ + ({\boldsymbol{\alpha}} )$, under the hypothesis that ${\bf \Phi} ({\boldsymbol{\alpha}} )$ is of constant (though not necessarily full) rank. Detailed algorithms are presented which make extensive use of well-known reliable linear least squares techniques, and numerical results and comparisons are given. These results are generalizations of those of H. D. Scolnik [20] and Guttman, Pereyra and Scolnik [9].
-
-### L. Kaufman: A variable projection method for solving separable nonlinear least squares problems. BIT 15 (1975) 49–57. <https://doi.org/10.1007/BF01932995>
-
-The cheaper Jacobian of variable projection (Kaufman's approximation) was part of the same benchmark; same outcome. Not used.
-
-Summary in our own words, the publisher's abstract is not reproduced: the paper treats separable nonlinear least squares problems, in which a linear and a nonlinear set of parameters appear. Golub and Pereyra reduced the problem to one nonlinear problem in the nonlinear parameters only. The paper proposes a new way of determining these parameters that proved computationally more efficient than the Golub-Pereyra scheme.
 
 ### M. A. Taylor, B. A. Wingate, L. P. Bos: Several new quadrature formulas for polynomial integration in the triangle. arXiv:math/0501496 (2005). <https://arxiv.org/abs/math/0501496>
 
