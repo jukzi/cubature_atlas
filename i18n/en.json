@@ -81,6 +81,8 @@
   "asymBtn": "No symmetric rule with exactly Z nodes",
   "asymTri": "No rule that is symmetric under the rotation group of the triangle (C3, also S3) can have exactly Z nodes: its nodes form orbits of 3 (or 6) nodes and possibly the centre, so the number of nodes is 0 or 1 modulo 3, but Z is 2 modulo 3. A rule with Z nodes would have to be asymmetric.",
   "asymSq": "No rule that is symmetric under the rotation group of the square (C4, also D4) can have exactly Z nodes: its nodes form orbits of 4 (or 8) nodes and possibly the centre, so the number of nodes is 0 or 1 modulo 4, but Z is 2 or 3 modulo 4. A rule with Z nodes would have to be asymmetric.",
+  "grpBtn": "Symmetry group of the rule",
+  "grpTip": "Symmetry group {g} (order {o}): the maps of the domain that carry the rule onto itself (every node onto a node with the same weight), found from the stored nodes. Square and cube: Schoenflies symbols (D4, C4, D2, D1 a mirror, C2 the point reflection; Oh, Td, Th, O, T, D3d, Ci the point reflection, Cs a mirror and so on). Triangle and tetrahedron: the permutation group of the vertices (S3, C3, C2; S4, A4, D4, S3, C4, V4, C3, C2). C1: no symmetry. N_Lit without a stored rule: shown only if the source states the symmetry.",
   "trophyBtn": "Fewest nodes in this row",
   "notes": {
     "interval": "On the interval the Gauss–Legendre rule is optimal: counting value, lower bound and Gauss product coincide, so no rule needs fewer than ⌈(n+1)/2⌉ nodes.",

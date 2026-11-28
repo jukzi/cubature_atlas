@@ -14,6 +14,7 @@ from concurrent.futures import ProcessPoolExecutor
 import glob
 import hashlib
 import html
+import itertools
 import json
 import math
 import multiprocessing
@@ -556,6 +557,137 @@ def best_known(fams):
     return best
 
 
+# ---------------------------------------------------------------- symmetry group of a rule
+
+def domain_maps(dom):
+    """Symmetry maps of the domain: signed permutation matrices (box domains) or vertex permutations (simplex)."""
+    d = DIM[dom]
+    maps = []
+    if dom in BOX:
+        for p in itertools.permutations(range(d)):
+            for s in product([1.0, -1.0], repeat=d):
+                m = np.zeros((d, d))
+                for i in range(d):
+                    m[i, p[i]] = s[i]
+                maps.append(m)
+    else:
+        for p in itertools.permutations(range(d + 1)):
+            maps.append(p)
+    return maps
+
+
+def map_nodes(dom, g, x):
+    if dom in BOX:
+        return x @ g.T
+    b = np.hstack([1.0 - x.sum(axis=1, keepdims=True), x])
+    return b[:, list(g)][:, 1:]
+
+
+def sorted_rows(z):
+    """Rows of z in lexicographic order of their values rounded to 1e-6 (mapped copies of a node land on the same key)."""
+    key = np.round(z, 6) + 0.0
+    return z[np.lexsort(key.T[::-1])]
+
+
+def rot_order(m):
+    """Smallest k with m^k = identity (m is a signed permutation matrix)."""
+    q = m.copy()
+    for k in range(1, 9):
+        if np.allclose(q, np.eye(len(m))):
+            return k
+        q = q @ m
+    return 0
+
+
+def perm_order(p):
+    q = tuple(range(len(p)))
+    for k in range(1, 9):
+        q = tuple(p[i] for i in q)
+        if q == tuple(range(len(p))):
+            return k
+    return 0
+
+
+def group_name(dom, h):
+    """Name of the subgroup h of the symmetry group of the domain.
+    Square and cube: Schoenflies symbols. Triangle and tetrahedron: permutation group of the vertices."""
+    n = len(h)
+    if n <= 1:
+        return "C1"
+    if dom == "interval":
+        return "C2"
+    if dom in ("triangle", "tetra"):
+        orders = [perm_order(p) for p in h]
+        if dom == "triangle":
+            return {6: "S3", 3: "C3", 2: "C2"}.get(n, "G%d" % n)
+        if n == 4:
+            return "C4" if 4 in orders else "V4"
+        return {24: "S4", 12: "A4", 8: "D4", 6: "S3", 3: "C3", 2: "C2"}.get(n, "G%d" % n)
+    d = DIM[dom]
+    inv = any(np.allclose(m, -np.eye(d)) for m in h)
+    proper = [m for m in h if np.linalg.det(m) > 0]
+    improper = [m for m in h if np.linalg.det(m) < 0]
+    c4 = any(rot_order(m) == 4 for m in proper)
+    if dom == "square":
+        if n == 8:
+            return "D4"
+        if n == 4:
+            return "C4" if c4 else "D2"
+        if n == 2:
+            return "C2" if inv else "D1"
+        return "G%d" % n
+    s4 = any(rot_order(m) == 4 for m in improper)
+    allp = len(improper) == 0
+    if n == 48:
+        return "Oh"
+    if n == 24:
+        return "Th" if inv else ("O" if allp else "Td")
+    if n == 16:
+        return "D4h"
+    if n == 12:
+        return "D3d" if inv else "T"
+    if n == 8:
+        if inv:
+            return "C4h" if c4 else "D2h"
+        if allp:
+            return "D4"
+        return "C4v" if c4 else "D2d"
+    if n == 6:
+        if inv:
+            return "S6"
+        return "D3" if allp else "C3v"
+    if n == 4:
+        if inv:
+            return "C2h"
+        if allp:
+            return "C4" if c4 else "D2"
+        return "S4" if s4 else "C2v"
+    if n == 3:
+        return "C3"
+    if n == 2:
+        return "Ci" if inv else ("C2" if allp else "Cs")
+    return "G%d" % n
+
+
+def rule_symmetry(r):
+    """Symmetry group of the rule (all maps of the domain that carry nodes with their weights onto nodes), as [name, order].
+    Same matching tolerance as the orbit detection of Figure A: nodes within 1e-5 after weights are scaled to 1e3."""
+    if "_sym" in r:
+        return r["_sym"]
+    dom = r["domain"]
+    w = np.asarray(r["weights"], dtype=float)
+    x = np.asarray(r["nodes"], dtype=float).reshape(len(w), -1)
+    sc = 1e3 / max(float(np.abs(w).max()), 1e-300)
+    z0 = sorted_rows(np.hstack([x, w[:, None] * sc]))
+    h = []
+    for g in domain_maps(dom):
+        z = sorted_rows(np.hstack([map_nodes(dom, g, x), w[:, None] * sc]))
+        if float(np.abs(z - z0).max()) < 1e-5:
+            h.append(g)
+    r["_sym"] = [group_name(dom, h), len(h)]
+    return r["_sym"]
+
+
 # ---------------------------------------------------------------- site
 
 def rule_url(r, lang="en", ext=".html"):
@@ -596,6 +728,7 @@ def payload(fams, en, de, doc_en, doc_de, stale_doc, lang, include_pts=True, pts
                 "iv": r.get("_iv"),
                 "url": rule_url(r, lang),
                 "method": r.get("method", "") if f.get("role") == "pi" else "",
+                "sym": rule_symmetry(r),
             }
             if include_pts:
                 entry["pts"] = [list(p) + [w] for p, w in zip(r["nodes"], r["weights"])]
