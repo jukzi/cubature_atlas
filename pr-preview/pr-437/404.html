@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cubature Atlas</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:980px;margin:0 auto;padding:24px;color:#101B26;background:#EDF0F3}
+a{color:#0B6E8E}table{border-collapse:collapse;background:#fff}td,th{padding:4px 10px;border-bottom:1px solid #E4E9ED;text-align:left;vertical-align:top}
+pre{background:#F6F8FA;border:1px solid #D2D9DF;border-radius:8px;padding:12px;overflow:auto;font:12.5px/1.45 ui-monospace,Menlo,monospace}
+h1{font-weight:500}.ai{font:13px ui-monospace,Menlo,monospace;background:#E4E9ED;border-left:3px solid #0B6E8E;padding:8px 12px}</style><script>
+(function(){
+var SRC={"cube":{"diallo_worku_2026":"f:diallo_worku_2026","gauss":"gauss","lit":"lit","npi":"found","npo":"out","pinkse_2026":"f:pinkse_2026","xiao_gimbutas_2010":"f:xiao_gimbutas_2010"},"interval":{"cc":"cc","gauss":"gauss","lob":"lob","nc":"nc"},"square":{"diallo_worku_2026":"f:diallo_worku_2026","festa_sommariva_2012":"f:festa_sommariva_2012","gauss":"gauss","lit":"lit","npi":"found","npo":"out","omelyan_solovyan_2006":"f:omelyan_solovyan_2006","pinkse_2026":"f:pinkse_2026","xiao_gimbutas_2010":"f:xiao_gimbutas_2010"},"tetra":{"chuluunbaatar_2022":"f:chuluunbaatar_2022","gauss":"gauss","jaskowiec_sukumar_2020":"f:jaskowiec_sukumar_2020","jaskowiec_sukumar_2020_nonsym":"f:jaskowiec_sukumar_2020_nonsym","lit":"lit","npi":"found","npo":"out","worku_hicken_zingg_2024":"f:worku_hicken_zingg_2024","xiao_gimbutas_2010":"f:xiao_gimbutas_2010"},"triangle":{"albrecht_collatz_1958":"f:albrecht_collatz_1958","chuluunbaatar_2022":"f:chuluunbaatar_2022","gauss":"gauss","lit":"lit","npi":"found","npo":"out","wandzura_xiao_2003":"f:wandzura_xiao_2003","witherden_vincent_2015":"f:witherden_vincent_2015","worku_hicken_zingg_2024":"f:worku_hicken_zingg_2024","xiao_gimbutas_2010":"f:xiao_gimbutas_2010"}};
+var m=location.pathname.match(/^(\/(?:[^\/]+\/)?(?:pr-preview\/pr-\d+\/)?)(de\/)?(interval|triangle|square|tetra|cube)(?:\/([^\/]+)(?:\/(\d+))?)?\/?$/);
+if(!m)return;
+var base=m[1]+(m[2]||""),dom=m[3],sc=m[4],n=m[5];
+var q=["dom="+dom];
+if(sc){var sm=SRC[dom];if(!sm||!Object.prototype.hasOwnProperty.call(sm,sc))return;q.push("src="+encodeURIComponent(sm[sc]));}
+if(n){if(parseInt(n,10)<1)return;q.push("n="+n);}
+var extra=location.search?location.search.slice(1):"";
+location.replace(base+"?"+q.join("&")+(extra?"&"+extra:"")+location.hash);
+})();
+</script></head><body><h1>404 – Page not found</h1><p><a href="https://jukzi.github.io/cubature_atlas/">Cubature Atlas (EN)</a> · <a href="https://jukzi.github.io/cubature_atlas/de/">Cubature Atlas (DE)</a></p></body></html>
