@@ -11,3 +11,6 @@ tetra	11	92	89	none	1245	91		python ./code/cubature_generic.py --domain simplex 
 tetra	12	116	114	none	1265	116		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 12 --out results/ladder-tetra/tetra-12
 tetra	13	141	138	none	3235	141		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 13 --out results/ladder-tetra/tetra-13
 tetra	14	172	170	none	3945	172		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 14 --out results/ladder-tetra/tetra-14
+tetra	15	206	203	central	7085	203		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 15 --out results/ladder-tetra/tetra-15
+tetra	17	285	284	chiral	5425	284		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 17 --out results/ladder-tetra/tetra-17
+tetra	16	245	242	none	9730	245		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 16 --out results/ladder-tetra/tetra-16
