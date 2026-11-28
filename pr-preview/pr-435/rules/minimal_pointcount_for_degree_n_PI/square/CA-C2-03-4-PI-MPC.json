@@ -1,0 +1,44 @@
+{
+  "id": "CA-C2-03-4-PI-MPC",
+  "family": "minimal_pointcount_for_degree_n_PI",
+  "domain": "square",
+  "dimension": 2,
+  "degree": 3,
+  "points": 4,
+  "quality": "PI",
+  "symmetry": "full",
+  "origin": "found",
+  "method": "Generic deterministic equilibrium-start solver with point-count ladder (domain=cube, dim=2, symmetry=full) with fold-free geodesic-accelerated Cholesky LM, smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage; weights L2-minimised with tools/minimize_l2.py",
+  "author": "Claude (Anthropic), commissioned and directed by Joerg Kubitz",
+  "reproduce": {
+    "script": "code/cubature_generic.py",
+    "seed": null,
+    "command": "python code/cubature_generic.py --dim 2 --degree 3 --domain cube"
+  },
+  "status": "proven",
+  "residual_reported": 0.0,
+  "nodes": [
+    [
+      -0.5773502691896257,
+      0.5773502691896257
+    ],
+    [
+      -0.5773502691896257,
+      -0.5773502691896257
+    ],
+    [
+      0.5773502691896257,
+      0.5773502691896257
+    ],
+    [
+      0.5773502691896257,
+      -0.5773502691896257
+    ]
+  ],
+  "weights": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ]
+}
