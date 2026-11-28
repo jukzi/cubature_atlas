@@ -491,6 +491,14 @@ class CubeBasis:
         """Minimum distance to boundary (> 0 strictly interior, <= 0 on/outside)."""
         return float(1.0 - np.abs(points).max())
 
+    def boundary_penalty_vanishes(self, points, target_margin):
+        """True if no node is beyond a face moved inward by target_margin.
+
+        Then every outside distance in boundary_exponential_penalty is 0 and
+        all its values are exactly 0.
+        """
+        return bool(float(np.max(np.abs(points) - (1.0 - target_margin))) <= 0.0)
+
     def boundary_exponential_penalty(self, points, target_margin, tau):
         """Return (values, gradients, exact_hessians) of sum over faces exp(a / tau) - 1 - a / tau, a = |x_j| - (1 - margin) > 0."""
         outside = np.maximum(0.0, np.abs(points) - (1.0 - target_margin))
@@ -584,6 +592,48 @@ class SimplexBasis:
                 (alpha_vec, coeff_shifted, coeff_tail, coeff_prev)
             )
 
+        # All per-axis recurrence tables stacked into one: slot s of the
+        # stacked table belongs to axis stacked_axis[s] and has the Jacobi
+        # parameter stacked_alpha[s]. One recurrence then runs for all axes
+        # (every number is computed by the same operations as with one table
+        # per axis, only with fewer, larger array operations).
+        self.stacked_offsets = []
+        offset = 0
+        for axis in range(dimension):
+            self.stacked_offsets.append(offset)
+            offset += len(self.unique_alphas_by_axis[axis])
+        num_stacked = offset
+        self.num_stacked = num_stacked
+        self.stacked_axis = np.concatenate(
+            [
+                np.full(len(self.unique_alphas_by_axis[axis]), axis, dtype=np.intp)
+                for axis in range(dimension)
+            ]
+        )
+        self.stacked_alpha = np.concatenate(
+            [table[0] for table in self.jacobi_tables_by_axis]
+        )
+        # coefficient rows of the degrees 2..n, shape (n - 1, slots, 1)
+        self.stacked_shift = np.concatenate(
+            [table[1] for table in self.jacobi_tables_by_axis], axis=1
+        )[2:, :, None]
+        self.stacked_tail = np.concatenate(
+            [table[2] for table in self.jacobi_tables_by_axis], axis=1
+        )[2:, :, None]
+        self.stacked_prev = np.concatenate(
+            [table[3] for table in self.jacobi_tables_by_axis], axis=1
+        )[2:, :, None]
+        self.stacked_dlinear_dcoord = 2.0 * self.stacked_shift
+        self.stacked_dlinear_dtail = self.stacked_tail - self.stacked_shift
+        # Row of basis function i in the flattened stacked table
+        # (degree, slot, point) -> (degree * num_stacked + slot, point)
+        self.jacobi_rows_by_axis = [
+            self.multi_index_array[:, axis].astype(np.intp) * num_stacked
+            + self.stacked_offsets[axis]
+            + self.alpha_slot_by_axis[axis]
+            for axis in range(dimension)
+        ]
+
         self.exact_moments = np.zeros(self.num_basis, dtype=float)
         self.exact_moments[0] = 1.0
 
@@ -601,156 +651,188 @@ class SimplexBasis:
             tail_sums[axis] = barycentric[axis] + tail_sums[axis + 1]
         return barycentric, tail_sums
 
-    def _axis_jacobi_values(self, axis, coord, tail_sum):
-        """Vectorized evaluation of homogeneous Jacobi polynomials for all alphas on axis."""
-        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
-            self.jacobi_tables_by_axis[axis]
-        )
+    def _stacked_linear_factors(self, coord, tail_sum):
+        """Per-degree factors of the stacked recurrence, all degrees at once.
+
+        coord and tail_sum hold one row per stacked slot. Returns
+        linear_factor[k] = c_shift * (2 coord - tail) + c_tail * tail and
+        prev_tail[k] = c_prev * tail^2 for the degrees k + 2, and tail^2.
+        """
+        shifted_coord = 2.0 * coord - tail_sum
+        tail_squared = tail_sum * tail_sum
+        linear_factor = self.stacked_shift * shifted_coord[None, :, :]
+        linear_factor += self.stacked_tail * tail_sum[None, :, :]
+        prev_tail = self.stacked_prev * tail_squared[None, :, :]
+        return linear_factor, prev_tail, tail_squared
+
+    def _stacked_jacobi_values(self, barycentric, tail_sums):
+        """Homogeneous Jacobi values of all axes and alphas: (n + 1, slots, points).
+
+        values[k] = linear_factor * values[k - 1] - (c_prev * tail^2) * values[k - 2]
+        """
+        coord = barycentric.take(self.stacked_axis, axis=0)
+        tail_sum = tail_sums.take(self.stacked_axis, axis=0)
         max_deg = self.degree
-        num_alphas = len(alpha_vec)
-        num_points = len(coord)
-        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        values = np.empty((max_deg + 1,) + coord.shape, dtype=float)
         values[0] = 1.0
         if max_deg >= 1:
-            values[1] = (alpha_vec[:, None] + 2.0) * coord[None, :] - tail_sum[None, :]
-
-        tail_squared = (tail_sum * tail_sum)[None, :]
-        shifted_coord = (2.0 * coord - tail_sum)[None, :]
-        tail_row = tail_sum[None, :]
+            values[1] = (self.stacked_alpha[:, None] + 2.0) * coord - tail_sum
+        if max_deg < 2:
+            return values
+        linear_factor, prev_tail, _ = self._stacked_linear_factors(coord, tail_sum)
+        scratch = np.empty(coord.shape, dtype=float)
         for deg in range(2, max_deg + 1):
-            linear_factor = (
-                coeff_shifted[deg][:, None] * shifted_coord
-                + coeff_tail[deg][:, None] * tail_row
-            )
-            values[deg] = (
-                linear_factor * values[deg - 1]
-                - coeff_prev[deg][:, None] * tail_squared * values[deg - 2]
-            )
+            out = values[deg]
+            np.multiply(linear_factor[deg - 2], values[deg - 1], out=out)
+            np.multiply(prev_tail[deg - 2], values[deg - 2], out=scratch)
+            out -= scratch
         return values
 
-    def _axis_jacobi_values_and_partials(self, axis, coord, tail_sum):
-        """Single-pass evaluation of (value, d/dcoord, d/dtail_sum) for all alphas on axis."""
-        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
-            self.jacobi_tables_by_axis[axis]
-        )
-        max_deg = self.degree
-        num_alphas = len(alpha_vec)
-        num_points = len(coord)
-        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
-        dcoord = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
-        dtail = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+    def _stacked_jacobi_values_and_partials(self, barycentric, tail_sums):
+        """Stacked (value, d/dcoord, d/dtail_sum) tables, each (n + 1, slots, points).
 
+        dcoord[k] = (dlin_dcoord * v[k-1] + lin * dcoord[k-1]) - (c_prev * tail^2) * dcoord[k-2]
+        dtail[k] = (dlin_dtail * v[k-1] + lin * dtail[k-1])
+                   - c_prev * ((2 tail) * v[k-2] + tail^2 * dtail[k-2])
+        """
+        coord = barycentric.take(self.stacked_axis, axis=0)
+        tail_sum = tail_sums.take(self.stacked_axis, axis=0)
+        max_deg = self.degree
+        shape = (max_deg + 1,) + coord.shape
+        values = np.empty(shape, dtype=float)
+        dcoord = np.empty(shape, dtype=float)
+        dtail = np.empty(shape, dtype=float)
         values[0] = 1.0
         dcoord[0] = 0.0
         dtail[0] = 0.0
         if max_deg >= 1:
-            values[1] = (alpha_vec[:, None] + 2.0) * coord[None, :] - tail_sum[None, :]
-            dcoord[1] = alpha_vec[:, None] + 2.0
+            alpha_col = self.stacked_alpha[:, None] + 2.0
+            values[1] = alpha_col * coord - tail_sum
+            dcoord[1] = alpha_col
             dtail[1] = -1.0
-
-        tail_squared = (tail_sum * tail_sum)[None, :]
-        two_tail = (2.0 * tail_sum)[None, :]
-        shifted_coord = (2.0 * coord - tail_sum)[None, :]
-        tail_row = tail_sum[None, :]
+        if max_deg < 2:
+            return values, dcoord, dtail
+        linear_factor, prev_tail, tail_squared = self._stacked_linear_factors(
+            coord, tail_sum
+        )
+        two_tail = 2.0 * tail_sum
+        scratch = np.empty(coord.shape, dtype=float)
+        inner = np.empty(coord.shape, dtype=float)
         for deg in range(2, max_deg + 1):
-            c_shift = coeff_shifted[deg][:, None]
-            c_tail = coeff_tail[deg][:, None]
-            c_prev = coeff_prev[deg][:, None]
-            linear_factor = c_shift * shifted_coord + c_tail * tail_row
-            dlinear_dcoord = 2.0 * c_shift
-            dlinear_dtail = c_tail - c_shift
+            k = deg - 2
+            lin = linear_factor[k]
             prev_val = values[deg - 1]
-            prev2_val = values[deg - 2]
-            values[deg] = linear_factor * prev_val - c_prev * tail_squared * prev2_val
-            dcoord[deg] = (
-                dlinear_dcoord * prev_val
-                + linear_factor * dcoord[deg - 1]
-                - c_prev * tail_squared * dcoord[deg - 2]
-            )
-            dtail[deg] = (
-                dlinear_dtail * prev_val
-                + linear_factor * dtail[deg - 1]
-                - c_prev * (two_tail * prev2_val + tail_squared * dtail[deg - 2])
-            )
+            out = values[deg]
+            np.multiply(lin, prev_val, out=out)
+            np.multiply(prev_tail[k], values[deg - 2], out=scratch)
+            out -= scratch
+            out = dcoord[deg]
+            np.multiply(self.stacked_dlinear_dcoord[k], prev_val, out=out)
+            np.multiply(lin, dcoord[deg - 1], out=scratch)
+            out += scratch
+            np.multiply(prev_tail[k], dcoord[deg - 2], out=scratch)
+            out -= scratch
+            out = dtail[deg]
+            np.multiply(self.stacked_dlinear_dtail[k], prev_val, out=out)
+            np.multiply(lin, dtail[deg - 1], out=scratch)
+            out += scratch
+            np.multiply(two_tail, values[deg - 2], out=inner)
+            np.multiply(tail_squared, dtail[deg - 2], out=scratch)
+            inner += scratch
+            np.multiply(self.stacked_prev[k], inner, out=scratch)
+            out -= scratch
         return values, dcoord, dtail
 
-    def _axis_jacobi_second_order_jet(
-        self, axis, coord, coord_dir, tail_sum, tail_sum_dir
+    def _stacked_jacobi_second_order_jet(
+        self, barycentric, barycentric_dir, tail_sums, tail_sums_dir
     ):
-        """Vectorized 2nd-order Taylor jet (f, f', f'') for all alphas on axis."""
-        alpha_vec, coeff_shifted, coeff_tail, coeff_prev = (
-            self.jacobi_tables_by_axis[axis]
-        )
-        max_deg = self.degree
-        num_alphas = len(alpha_vec)
-        num_points = len(coord)
-        values = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
-        first_deriv = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
-        second_deriv = np.empty((max_deg + 1, num_alphas, num_points), dtype=float)
+        """Stacked 2nd-order Taylor jet (f, f', f'') tables along a direction.
 
+        first[k] = (lin' * v[k-1] + lin * f[k-1])
+                   - c_prev * ((tail^2)' * v[k-2] + tail^2 * f[k-2])
+        second[k] = ((2 lin') * f[k-1] + lin * s[k-1])
+                    - c_prev * (((tail^2)'' * v[k-2] + (2 (tail^2)') * f[k-2])
+                                + tail^2 * s[k-2])
+        with (tail^2)' = (2 tail) * tail', (tail^2)'' = (2 tail') * tail'.
+        """
+        coord = barycentric.take(self.stacked_axis, axis=0)
+        coord_dir = barycentric_dir.take(self.stacked_axis, axis=0)
+        tail_sum = tail_sums.take(self.stacked_axis, axis=0)
+        tail_sum_dir = tail_sums_dir.take(self.stacked_axis, axis=0)
+        max_deg = self.degree
+        shape = (max_deg + 1,) + coord.shape
+        values = np.empty(shape, dtype=float)
+        first_deriv = np.empty(shape, dtype=float)
+        second_deriv = np.empty(shape, dtype=float)
         values[0] = 1.0
         first_deriv[0] = 0.0
         second_deriv[0] = 0.0
         if max_deg >= 1:
-            alpha_col = alpha_vec[:, None] + 2.0
-            values[1] = alpha_col * coord[None, :] - tail_sum[None, :]
-            first_deriv[1] = alpha_col * coord_dir[None, :] - tail_sum_dir[None, :]
+            alpha_col = self.stacked_alpha[:, None] + 2.0
+            values[1] = alpha_col * coord - tail_sum
+            first_deriv[1] = alpha_col * coord_dir - tail_sum_dir
             second_deriv[1] = 0.0
-
-        tail_squared = (tail_sum * tail_sum)[None, :]
-        tail_squared_first_deriv = (2.0 * tail_sum * tail_sum_dir)[None, :]
-        tail_squared_second_deriv = (2.0 * tail_sum_dir * tail_sum_dir)[None, :]
-        shifted_coord = (2.0 * coord - tail_sum)[None, :]
-        shifted_coord_dir = (2.0 * coord_dir - tail_sum_dir)[None, :]
-        tail_row = tail_sum[None, :]
-        tail_dir_row = tail_sum_dir[None, :]
-
+        if max_deg < 2:
+            return values, first_deriv, second_deriv
+        linear_factor, prev_tail, tail_squared = self._stacked_linear_factors(
+            coord, tail_sum
+        )
+        shifted_coord_dir = 2.0 * coord_dir - tail_sum_dir
+        linear_factor_dir = self.stacked_shift * shifted_coord_dir[None, :, :]
+        linear_factor_dir += self.stacked_tail * tail_sum_dir[None, :, :]
+        two_linear_factor_dir = 2.0 * linear_factor_dir
+        tail_squared_first_deriv = 2.0 * tail_sum * tail_sum_dir
+        two_tail_squared_first_deriv = 2.0 * tail_squared_first_deriv
+        tail_squared_second_deriv = 2.0 * tail_sum_dir * tail_sum_dir
+        scratch = np.empty(coord.shape, dtype=float)
+        inner = np.empty(coord.shape, dtype=float)
         for deg in range(2, max_deg + 1):
-            c_shift = coeff_shifted[deg][:, None]
-            c_tail = coeff_tail[deg][:, None]
-            c_prev = coeff_prev[deg][:, None]
-            linear_factor = c_shift * shifted_coord + c_tail * tail_row
-            linear_factor_dir = c_shift * shifted_coord_dir + c_tail * tail_dir_row
+            k = deg - 2
+            lin = linear_factor[k]
+            prev_val = values[deg - 1]
+            prev2_val = values[deg - 2]
+            prev_first = first_deriv[deg - 1]
+            prev2_first = first_deriv[deg - 2]
+            c_prev = self.stacked_prev[k]
 
-            values[deg] = (
-                linear_factor * values[deg - 1]
-                - c_prev * tail_squared * values[deg - 2]
-            )
-            first_deriv[deg] = (
-                linear_factor_dir * values[deg - 1]
-                + linear_factor * first_deriv[deg - 1]
-                - c_prev
-                * (
-                    tail_squared_first_deriv * values[deg - 2]
-                    + tail_squared * first_deriv[deg - 2]
-                )
-            )
-            second_deriv[deg] = (
-                2.0 * linear_factor_dir * first_deriv[deg - 1]
-                + linear_factor * second_deriv[deg - 1]
-                - c_prev
-                * (
-                    tail_squared_second_deriv * values[deg - 2]
-                    + 2.0 * tail_squared_first_deriv * first_deriv[deg - 2]
-                    + tail_squared * second_deriv[deg - 2]
-                )
-            )
+            out = values[deg]
+            np.multiply(lin, prev_val, out=out)
+            np.multiply(prev_tail[k], prev2_val, out=scratch)
+            out -= scratch
+
+            out = first_deriv[deg]
+            np.multiply(linear_factor_dir[k], prev_val, out=out)
+            np.multiply(lin, prev_first, out=scratch)
+            out += scratch
+            np.multiply(tail_squared_first_deriv, prev2_val, out=inner)
+            np.multiply(tail_squared, prev2_first, out=scratch)
+            inner += scratch
+            np.multiply(c_prev, inner, out=scratch)
+            out -= scratch
+
+            out = second_deriv[deg]
+            np.multiply(two_linear_factor_dir[k], prev_first, out=out)
+            np.multiply(lin, second_deriv[deg - 1], out=scratch)
+            out += scratch
+            np.multiply(tail_squared_second_deriv, prev2_val, out=inner)
+            np.multiply(two_tail_squared_first_deriv, prev2_first, out=scratch)
+            inner += scratch
+            np.multiply(tail_squared, second_deriv[deg - 2], out=scratch)
+            inner += scratch
+            np.multiply(c_prev, inner, out=scratch)
+            out -= scratch
         return values, first_deriv, second_deriv
 
     def evaluate_values(self, points):
         """Evaluate all Dubiner basis polynomials at points."""
         num_points = len(points)
         barycentric, tail_sums = self._barycentric_and_tail_sums(points)
+        table = self._stacked_jacobi_values(barycentric, tail_sums).reshape(-1, num_points)
         values = np.repeat(
             self.normalization_factors[:, None], num_points, axis=1
         )
         for axis in range(self.dimension):
-            table = self._axis_jacobi_values(
-                axis, barycentric[axis], tail_sums[axis]
-            )
-            values *= table[
-                self.multi_index_array[:, axis], self.alpha_slot_by_axis[axis]
-            ]
+            values *= table.take(self.jacobi_rows_by_axis[axis], axis=0)
         return values
 
     def evaluate_values_and_gradients(self, points):
@@ -763,15 +845,17 @@ class SimplexBasis:
         factor_values_by_axis = []
         factor_dcoord_by_axis = []
         factor_dtail_by_axis = []
+        val_tab, dcoord_tab, dtail_tab = self._stacked_jacobi_values_and_partials(
+            barycentric, tail_sums
+        )
+        val_tab = val_tab.reshape(-1, num_points)
+        dcoord_tab = dcoord_tab.reshape(-1, num_points)
+        dtail_tab = dtail_tab.reshape(-1, num_points)
         for axis in range(self.dimension):
-            slots = self.alpha_slot_by_axis[axis]
-            exponents = self.multi_index_array[:, axis]
-            val_tab, dcoord_tab, dtail_tab = self._axis_jacobi_values_and_partials(
-                axis, barycentric[axis], tail_sums[axis]
-            )
-            factor_values_by_axis.append(val_tab[exponents, slots])
-            factor_dcoord_by_axis.append(dcoord_tab[exponents, slots])
-            factor_dtail_by_axis.append(dtail_tab[exponents, slots])
+            rows = self.jacobi_rows_by_axis[axis]
+            factor_values_by_axis.append(val_tab.take(rows, axis=0))
+            factor_dcoord_by_axis.append(dcoord_tab.take(rows, axis=0))
+            factor_dtail_by_axis.append(dtail_tab.take(rows, axis=0))
 
         values = np.repeat(
             self.normalization_factors[:, None], num_points, axis=1
@@ -851,42 +935,65 @@ class SimplexBasis:
                 barycentric_dir[axis] + tail_sums_dir[axis + 1]
             )
 
-        prod_val = np.repeat(
-            self.normalization_factors[:, None], num_points, axis=1
+        # Product rule over the axes, starting from val = normalization and
+        # first = second = 0:
+        #   val <- val * f
+        #   first <- val * f' + first * f
+        #   second <- (val * f'' + (2 * first) * f') + second * f
+        # The buffers are updated in place in exactly this order, so every
+        # number rounds as in the plain expressions. The zero terms of the
+        # first axis are left out (same values; only the sign of an exact
+        # zero can differ).
+        norm_col = self.normalization_factors[:, None]
+        prod_val = None
+        prod_first = None
+        prod_second = None
+        scratch = None
+        val_tab, first_tab, second_tab = self._stacked_jacobi_second_order_jet(
+            barycentric, barycentric_dir, tail_sums, tail_sums_dir
         )
-        prod_first = np.zeros((self.num_basis, num_points), dtype=float)
-        prod_second = np.zeros((self.num_basis, num_points), dtype=float)
-
+        val_tab = val_tab.reshape(-1, num_points)
+        first_tab = first_tab.reshape(-1, num_points)
+        second_tab = second_tab.reshape(-1, num_points)
         for axis in range(self.dimension):
-            slots = self.alpha_slot_by_axis[axis]
-            exponents = self.multi_index_array[:, axis]
-            val_tab, first_tab, second_tab = self._axis_jacobi_second_order_jet(
-                axis,
-                barycentric[axis],
-                barycentric_dir[axis],
-                tail_sums[axis],
-                tail_sums_dir[axis],
-            )
-            factor_val = val_tab[exponents, slots]
-            factor_first = first_tab[exponents, slots]
-            factor_second = second_tab[exponents, slots]
-
-            next_val = prod_val * factor_val
-            next_first = prod_val * factor_first + prod_first * factor_val
-            next_second = (
-                prod_val * factor_second
-                + 2.0 * prod_first * factor_first
-                + prod_second * factor_val
-            )
-            prod_val = next_val
-            prod_first = next_first
-            prod_second = next_second
+            rows = self.jacobi_rows_by_axis[axis]
+            factor_val = val_tab.take(rows, axis=0)
+            factor_first = first_tab.take(rows, axis=0)
+            factor_second = second_tab.take(rows, axis=0)
+            if prod_val is None:
+                prod_val = norm_col * factor_val
+                prod_first = norm_col * factor_first
+                prod_second = norm_col * factor_second
+                scratch = np.empty_like(prod_val)
+                continue
+            factor_second *= prod_val
+            np.multiply(2.0, prod_first, out=scratch)
+            scratch *= factor_first
+            factor_second += scratch
+            np.multiply(prod_second, factor_val, out=scratch)
+            factor_second += scratch
+            factor_first *= prod_val
+            np.multiply(prod_first, factor_val, out=scratch)
+            factor_first += scratch
+            prod_val *= factor_val
+            prod_first = factor_first
+            prod_second = factor_second
         return prod_val, prod_first, prod_second
 
     def boundary_distance(self, points):
         """Minimum barycentric coordinate (> 0 strictly interior, <= 0 on/outside)."""
         first_bary = 1.0 - np.sum(points, axis=1)
         return float(min(float(first_bary.min()), float(points.min())))
+
+    def boundary_penalty_vanishes(self, points, target_margin):
+        """True if no barycentric coordinate is below target_margin.
+
+        Then every outside distance in boundary_exponential_penalty is 0 and
+        all its values are exactly 0.
+        """
+        if float(np.max(np.sum(points, axis=1) - (1.0 - target_margin))) > 0.0:
+            return False
+        return bool(float(np.max(target_margin - points)) <= 0.0)
 
     def boundary_exponential_penalty(self, points, target_margin, tau):
         """Return (values, gradients, exact_hessians) of sum over faces exp(a / tau) - 1 - a / tau, a = margin - u_j > 0 for the barycentric coordinates u_j."""
@@ -1094,6 +1201,11 @@ class SymmetricBasis:
         self._active_indices = None
         self._use_sparse = False
         self._sparse_proj = None
+        # Projected basis values of the last few point sets (key: the bytes of
+        # the points). The LM solver evaluates the values at a trial point and,
+        # if the step is accepted, values and gradients at the same point, then
+        # the second-order jet there; the projection of the values is done once.
+        self._value_cache = []
 
         if self.group_order == 1:
             self.projection_matrix = np.eye(base_basis.num_basis, dtype=float)
@@ -1249,8 +1361,27 @@ class SymmetricBasis:
             self.base_basis, "_evaluate_values_buffered", self.base_basis.evaluate_values
         )
         if self._active_indices is not None:
-            return self._project(eval_fn(points, active_indices=self._active_indices))
-        return self._project(eval_fn(points))
+            values = self._project(eval_fn(points, active_indices=self._active_indices))
+        else:
+            values = self._project(eval_fn(points))
+        self._store_values(points, values)
+        return values
+
+    def _cached_values(self, points):
+        """Projected values at exactly these points if still cached, else None.
+
+        A deterministic function of the points, so a cached array equals a
+        fresh evaluation bit for bit. Callers must not modify it.
+        """
+        key = points.tobytes()
+        for cached_shape, cached_key, cached_values in self._value_cache:
+            if cached_shape == points.shape and cached_key == key:
+                return cached_values
+        return None
+
+    def _store_values(self, points, values):
+        self._value_cache.insert(0, (points.shape, points.tobytes(), values))
+        del self._value_cache[4:]
 
     def evaluate_values_and_gradients(self, points):
         if self.group_order == 1:
@@ -1264,7 +1395,10 @@ class SymmetricBasis:
             base_vals, base_grads = eval_fn(points, active_indices=self._active_indices)
         else:
             base_vals, base_grads = eval_fn(points)
-        values = self._project(base_vals)
+        values = self._cached_values(points)
+        if values is None:
+            values = self._project(base_vals)
+            self._store_values(points, values)
         gradients = np.empty((self.dimension, self.num_basis, len(points)), dtype=float)
         for axis in range(self.dimension):
             gradients[axis] = self._project(base_grads[axis])
@@ -1283,8 +1417,15 @@ class SymmetricBasis:
             base_val, base_first, base_second = (
                 self.base_basis.evaluate_second_order_jet(points, directions)
             )
+        # On the simplex the value part of the jet is computed exactly like
+        # the basis values (same recurrence and product order), so a cached
+        # projection of the values can stand in for it. (The Legendre jet of
+        # the cube rounds its values differently.)
+        values = self._cached_values(points) if self.domain == "simplex" else None
+        if values is None:
+            values = self._project(base_val)
         return (
-            self._project(base_val),
+            values,
             self._project(base_first),
             self._project(base_second),
         )
@@ -1368,6 +1509,24 @@ def _group_images(point, group_transforms):
 
 
 _STACKED_TRANSFORMS = []
+
+
+def unique_row_indices(rows):
+    """First index of every distinct row, in lexicographic order of the rows.
+
+    The same indices as np.unique(rows, axis=0, return_index=True)[1] (a
+    stable sort of the rows compared column by column, then the first row of
+    every run of equal rows), but with np.lexsort instead of a sort of
+    structured records, which is much faster.
+    """
+    if len(rows) == 0:
+        return np.zeros(0, dtype=np.intp)
+    order = np.lexsort(rows.T[::-1])
+    sorted_rows = rows[order]
+    first = np.empty(len(rows), dtype=bool)
+    first[0] = True
+    np.any(sorted_rows[1:] != sorted_rows[:-1], axis=1, out=first[1:])
+    return order[first]
 
 
 def _stacked_transforms(group_transforms):
@@ -1907,10 +2066,19 @@ def _fill_square_gaps(theta, deficit, orbit_size, grid=161):
     off_centre = np.hypot(candidates[:, 0] - centre[0], candidates[:, 1] - centre[1]) > 1e-9
     candidates = candidates[off_centre]
     wall = 2.0 * np.min(np.minimum(candidates, math.pi - candidates), axis=1)
+    # Distance of every candidate to the nearest point so far, updated with
+    # the points of each new orbit only (the minimum is exact, so the result
+    # is the same as recomputing it from all points).
+    nearest = np.full(len(candidates), np.inf)
+    num_seen = 0
     for _ in range(deficit // orbit_size):
-        current = np.array(points)
-        distance = np.sqrt(((candidates[:, None, :] - current[None, :, :]) ** 2).sum(axis=2)).min(axis=1)
-        distance = np.minimum(distance, wall)
+        added = np.array(points[num_seen:])
+        num_seen = len(points)
+        nearest = np.minimum(
+            nearest,
+            np.sqrt(((candidates[:, None, :] - added[None, :, :]) ** 2).sum(axis=2)).min(axis=1),
+        )
+        distance = np.minimum(nearest, wall)
         best = candidates[int(np.argmax(distance))]
         dx = best[0] - centre[0]
         dy = best[1] - centre[1]
@@ -2226,9 +2394,7 @@ def build_cube_equilibrium_start(
             raw_points @ transform.linear.T + transform.translation[None, :]
         )
     raw_points = np.vstack(closed_clouds)
-    _, unique_indices = np.unique(
-        np.round(raw_points, decimals=6), axis=0, return_index=True
-    )
+    unique_indices = unique_row_indices(np.round(raw_points, decimals=6))
     raw_points = raw_points[unique_indices]
 
     if norm_order > 0.0:
@@ -2540,9 +2706,7 @@ def build_simplex_equilibrium_start(
                 cloud @ transform.linear.T + transform.translation[None, :]
             )
         full_cloud = np.vstack(closed_clouds)
-        _, unique_indices = np.unique(
-            np.round(full_cloud, decimals=5), axis=0, return_index=True
-        )
+        unique_indices = unique_row_indices(np.round(full_cloud, decimals=5))
         full_cloud = full_cloud[unique_indices]
         orbs = cluster_points_into_orbits(full_cloud, group_transforms, tol=1e-4)
         orbs.sort(key=lambda orb: centroid_distance(orb.initial_point))
@@ -2734,9 +2898,23 @@ def orbit_layout(orbits):
     return layout
 
 
+_DECODE_CACHE = []
+
+
 def decode_orbit_representatives(orbits, param_vector):
-    """Decode flat parameter vector into (representatives, weights, weight_sqrts, sizes)."""
+    """Decode flat parameter vector into (representatives, weights, weight_sqrts, sizes).
+
+    The LM solver decodes the same trial vector several times (boundary
+    distance, moment residual, boundary penalty); the last few results are
+    kept (key: the orbit layout and the bytes of the vector). The decoding is
+    a deterministic function of these, so a cached result equals a fresh one
+    bit for bit. Callers must not modify the returned arrays.
+    """
     layout = orbit_layout(orbits)
+    key = param_vector.tobytes()
+    for cached_layout, cached_key, cached_result in _DECODE_CACHE:
+        if cached_layout is layout and cached_key == key:
+            return cached_result
     representatives = layout.origins.copy()
     for dof, indices, bases, columns in layout.groups:
         coords = param_vector[columns]
@@ -2745,7 +2923,10 @@ def decode_orbit_representatives(orbits, param_vector):
         representatives[indices] += shift
     weight_sqrts = param_vector[layout.weight_columns].astype(float)
     orbit_weights = weight_sqrts * weight_sqrts
-    return representatives, orbit_weights, weight_sqrts, layout.sizes.copy()
+    result = (representatives, orbit_weights, weight_sqrts, layout.sizes.copy())
+    _DECODE_CACHE.insert(0, (layout, key, result))
+    del _DECODE_CACHE[4:]
+    return result
 
 
 def assemble_orbit_jacobian(orbits, basis_values, basis_grads, spatial_scale, weight_scale):
@@ -2772,8 +2953,8 @@ def assemble_orbit_jacobian(orbits, basis_values, basis_grads, spatial_scale, we
         grads = np.ascontiguousarray(basis_grads[:, :, indices].transpose(2, 1, 0))
         block = np.matmul(grads, bases)
         block *= spatial_scale[indices][:, None, None]
-        for col in range(dof):
-            jacobian[:, columns[:, col]] = block[:, :, col].T
+        # one scatter of all (orbit, col) columns: jacobian[:, columns[i, c]] = block[i, :, c]
+        jacobian[:, columns] = block.transpose(1, 0, 2)
     jacobian[:, layout.weight_columns] = basis_values * weight_scale[None, :]
     return jacobian
 
@@ -2868,6 +3049,10 @@ def evaluate_boundary_penalty(
     representatives, _, _, orbit_sizes = decode_orbit_representatives(
         orbits, param_vector
     )
+    if sym_basis.base_basis.boundary_penalty_vanishes(representatives, target_margin):
+        # every node is inside by the margin: all penalty values are exactly 0
+        zeros = np.zeros(len(param_vector), dtype=float)
+        return 0.0, zeros, []
     tau = 1.0 / float((sym_basis.degree + 1) ** 2)
     values, rep_grads, rep_hessians = (
         sym_basis.base_basis.boundary_exponential_penalty(representatives, target_margin, tau)
