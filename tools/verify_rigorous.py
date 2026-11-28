@@ -1114,11 +1114,38 @@ def choose_equations(G, d, n, dim, seed=1):
         nr = np.linalg.norm(R, axis=0)
         j = int(np.argmax(nr))
         if nr[j] < 1e-8:
-            return None
+            return choose_equations_pivoted(cols, idx, dim)
         chosen.append(j)
         qv = R[:, j] / nr[j]
         R = R - np.outer(qv, qv @ R)
         R[:, j] = 0
+    return [idx[j] for j in sorted(chosen)]
+
+
+def choose_equations_pivoted(cols, idx, dim):
+    """Fallback of choose_equations for high degrees, where the greedy Gram-Schmidt above loses
+    orthogonality and stops early: the same greedy choice (largest remaining column), but every
+    remaining column is orthogonalised twice against all chosen directions. The threshold is
+    relative to the largest column. As above, soundness does not depend on this choice."""
+    chosen = []
+    Q = np.zeros((cols.shape[0], 0))
+    R = cols.copy()
+    first = None
+    for _ in range(dim):
+        nr = np.linalg.norm(R, axis=0)
+        j = int(np.argmax(nr))
+        if first is None:
+            first = nr[j]
+        if nr[j] < 1e-13 * first:
+            return None
+        chosen.append(j)
+        qv = R[:, j] / nr[j]
+        qv = qv - Q @ (Q.T @ qv)
+        qv = qv / np.linalg.norm(qv)
+        Q = np.column_stack([Q, qv])
+        R = R - np.outer(qv, qv @ R)
+        R = R - Q @ (Q.T @ R)
+        R[:, chosen] = 0
     return [idx[j] for j in sorted(chosen)]
 
 
