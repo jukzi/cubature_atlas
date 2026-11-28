@@ -22,8 +22,8 @@ special cases:
   Pareto-pruned min-rank DP orbit selection for exact target point count N.
 - Fold-free (x, sqrt(w)^2) geodesic-accelerated Cholesky Levenberg-Marquardt
   (Transtrum & Sethna 2012) with a PI-preferred / PO-fallback pipeline:
-  Stage A smooth sliding-wall solve -> Stage B free solve -> exact face-normal
-  boundary hinge pull -> interior pure-moment polish + automatic minimum-norm
+  Stage A sliding-wall solve (exponential boundary penalty) -> Stage B free solve ->
+  exponential-penalty pull inside -> interior pure-moment polish + automatic minimum-norm
   Gauss-Newton end-stage. Logging and stopping criteria strictly report the
   pure moment residual (excluding the boundary penalty).
 - Automatic point count: a generic N ladder from the classical lower bound
@@ -490,17 +490,19 @@ class CubeBasis:
         """Minimum distance to boundary (> 0 strictly interior, <= 0 on/outside)."""
         return float(1.0 - np.abs(points).max())
 
-    def boundary_hinge_penalty(self, points, target_margin):
-        """Return (violations, gradients, exact_hessians) for |x_j| > 1 - target_margin."""
-        inner_limit = 1.0 - target_margin
-        abs_coords = np.abs(points)
-        active = abs_coords > inner_limit
-        violations = np.maximum(0.0, abs_coords - inner_limit)
-        gradients = np.where(active, np.sign(points) * violations, 0.0)
+    def boundary_exponential_penalty(self, points, target_margin, tau):
+        """Return (values, gradients, exact_hessians) of sum over faces exp(a / tau) - 1 - a / tau, a = |x_j| - (1 - margin) > 0."""
+        outside = np.maximum(0.0, np.abs(points) - (1.0 - target_margin))
+        scaled = np.minimum(outside / tau, 600.0)
+        growth = np.exp(scaled)
+        values = np.sum(growth - 1.0 - scaled, axis=1)
+        slopes = np.where(outside > 0.0, (growth - 1.0) / tau, 0.0)
+        gradients = np.sign(points) * slopes
+        curvature = np.where(outside > 0.0, growth / (tau * tau), 0.0)
         hessians = np.zeros((len(points), self.dimension, self.dimension), dtype=float)
         diag_axes = np.arange(self.dimension)
-        hessians[:, diag_axes, diag_axes] = active.astype(float)
-        return violations, gradients, hessians
+        hessians[:, diag_axes, diag_axes] = curvature
+        return values, gradients, hessians
 
 
 class SimplexBasis:
@@ -862,25 +864,26 @@ class SimplexBasis:
         first_bary = 1.0 - np.sum(points, axis=1)
         return float(min(float(first_bary.min()), float(points.min())))
 
-    def boundary_hinge_penalty(self, points, target_margin):
-        """Return (violations, gradients, exact_hessians) for u_j < target_margin."""
-        first_bary = 1.0 - np.sum(points, axis=1)
-        first_violation = np.maximum(0.0, target_margin - first_bary)
-        coord_violations = np.maximum(0.0, target_margin - points)
-        # Penalty = 0.5 * (sum v0^2 + sum vx^2) -> d/dX_j = +v0 - vx_j
-        gradients = first_violation[:, None] - coord_violations
-        violations = np.concatenate(
-            [first_violation[:, None], coord_violations], axis=1
-        )
+    def boundary_exponential_penalty(self, points, target_margin, tau):
+        """Return (values, gradients, exact_hessians) of sum over faces exp(a / tau) - 1 - a / tau, a = margin - u_j > 0 for the barycentric coordinates u_j."""
+        first_outside = np.maximum(0.0, np.sum(points, axis=1) - (1.0 - target_margin))
+        coord_outside = np.maximum(0.0, target_margin - points)
+        first_scaled = np.minimum(first_outside / tau, 600.0)
+        coord_scaled = np.minimum(coord_outside / tau, 600.0)
+        first_growth = np.exp(first_scaled)
+        coord_growth = np.exp(coord_scaled)
+        values = (first_growth - 1.0 - first_scaled) + np.sum(coord_growth - 1.0 - coord_scaled, axis=1)
+        first_slope = np.where(first_outside > 0.0, (first_growth - 1.0) / tau, 0.0)
+        coord_slope = np.where(coord_outside > 0.0, (coord_growth - 1.0) / tau, 0.0)
+        # outward normals: (1, ..., 1) for u_0 and -e_j for u_{j+1} = x_j
+        gradients = first_slope[:, None] - coord_slope
+        first_curv = np.where(first_outside > 0.0, first_growth / (tau * tau), 0.0)
+        coord_curv = np.where(coord_outside > 0.0, coord_growth / (tau * tau), 0.0)
         hessians = np.zeros((len(points), self.dimension, self.dimension), dtype=float)
-        # Active u_0 face has outward normal (1, ..., 1), so Hessian += 1 1^T
-        first_active = first_violation > 0.0
-        if np.any(first_active):
-            hessians[first_active] += 1.0
-        # Active u_{j+1} = x_j face has outward normal -e_j, so Hessian[j, j] += 1
+        hessians += first_curv[:, None, None]
         diag_axes = np.arange(self.dimension)
-        hessians[:, diag_axes, diag_axes] += (coord_violations > 0.0).astype(float)
-        return violations, gradients, hessians
+        hessians[:, diag_axes, diag_axes] += coord_curv
+        return values, gradients, hessians
 
 
 # ---------------------------------------------------------------------------
@@ -2731,35 +2734,40 @@ def evaluate_directional_second_derivative(sym_basis, orbits, param_vector, dire
 def evaluate_boundary_penalty(
     sym_basis, orbits, param_vector, target_margin, penalty_weight
 ):
-    """Compute smooth boundary hinge cost, gradient, and exact face-normal Hessian blocks."""
+    """Boundary penalty cost, gradient and exact Hessian blocks.
+
+    Every node pays weight * tau^2 * (exp(a / tau) - 1 - a / tau) per face, a its
+    distance beyond the face moved inward by target_margin, tau = 1 / (n + 1)^2
+    (the scale of the outer node shell). Value and slope are 0 at the face, nodes
+    inside cost nothing, near the face it equals weight * a^2 / 2, and further out
+    it grows exponentially.
+    """
     if penalty_weight <= 0.0 or target_margin is None:
         return 0.0, None, None
     representatives, _, _, orbit_sizes = decode_orbit_representatives(
         orbits, param_vector
     )
-    violations, rep_grads, rep_hessians = (
-        sym_basis.base_basis.boundary_hinge_penalty(representatives, target_margin)
+    tau = 1.0 / float((sym_basis.degree + 1) ** 2)
+    values, rep_grads, rep_hessians = (
+        sym_basis.base_basis.boundary_exponential_penalty(representatives, target_margin, tau)
     )
-    if float(violations.max()) <= 0.0:
+    if float(values.max()) <= 0.0:
         zeros = np.zeros(len(param_vector), dtype=float)
         return 0.0, zeros, []
 
     # Weight each orbit's boundary penalty by orbit size so every node weighs equally
-    penalty_cost = (
-        0.5
-        * penalty_weight
-        * float(np.sum((orbit_sizes[:, None] * violations) * violations))
-    )
+    scale = penalty_weight * tau * tau
+    penalty_cost = scale * float(np.sum(orbit_sizes * values))
     penalty_grad = np.zeros(len(param_vector), dtype=float)
     penalty_hessian_blocks = []
-    has_violation = np.any(violations > 0.0, axis=1)
+    has_violation = values > 0.0
 
     offset = 0
     for idx, orbit in enumerate(orbits):
         dof = orbit.spatial_dof
         if dof > 0 and has_violation[idx]:
             # Chain rule onto fixed subspace U: grad = U^T g_x, hess = U^T H_x U
-            orbit_scale = penalty_weight * orbit_sizes[idx]
+            orbit_scale = scale * orbit_sizes[idx]
             basis = orbit.subspace_basis
             penalty_grad[offset : offset + dof] = orbit_scale * (
                 basis.T @ rep_grads[idx]
@@ -2858,6 +2866,40 @@ def polish_minimum_norm_gauss_newton(
     return current_norm, params
 
 
+def weight_square_null_direction(orbits, params, jacobian):
+    """Unit descent direction of sum(w^2) in the null space of the moment Jacobian.
+
+    Every node of an orbit carries the weight w = s^2 (s the stored square
+    root), so sum(w^2) = sum(size * s^4) with gradient g = 4 * size * s^3 in the
+    s entries and 0 in the spatial entries. The null-space part of g is
+    mu * (J^T J + mu I)^-1 g for a small ridge mu (exact as mu -> 0), computed
+    with one Cholesky factorisation; a small step along it keeps the moments to
+    first order. Returns None if the projection vanishes.
+    """
+    gradient = np.zeros(len(params), dtype=float)
+    offset = 0
+    for orbit in orbits:
+        offset += orbit.spatial_dof
+        weight_sqrt = params[offset]
+        gradient[offset] = 4.0 * orbit.size * weight_sqrt * weight_sqrt * weight_sqrt
+        offset += 1
+    gradient_size = float(np.linalg.norm(gradient))
+    if gradient_size <= 1e-300:
+        return None
+    gram = jacobian.T @ jacobian
+    ridge = 1e-8 * (float(np.max(np.diag(gram))) + 1e-300)
+    gram[np.diag_indices_from(gram)] += ridge
+    try:
+        factor = cho_factor(gram, lower=True, check_finite=False)
+    except np.linalg.LinAlgError:
+        return None
+    projected = ridge * cho_solve(factor, gradient, check_finite=False)
+    size = float(np.linalg.norm(projected))
+    if not math.isfinite(size) or size <= 1e-8 * gradient_size:
+        return None
+    return -projected / size
+
+
 def solve_geodesic_levenberg_marquardt(
     sym_basis,
     orbits,
@@ -2871,11 +2913,15 @@ def solve_geodesic_levenberg_marquardt(
     require_interior=False,
     phase_label="P1",
     verbose=False,
+    weight_norm_direction=False,
 ):
     """Analytic geodesic-accelerated Cholesky LM with delayed gratification and bold uphill.
 
     Stopping criteria and logged residuals strictly use the pure moment residual
-    (never including the boundary hinge penalty).
+    (never including the boundary penalty). With weight_norm_direction each step
+    first tries an added descent direction of sum(w^2) projected onto the null
+    space of the moment Jacobian: it does not change the moments to first order
+    and does not enter the cost or the reported residual.
     """
     params = initial_params.copy()
     residual, jacobian, representatives = evaluate_residual_and_jacobian(
@@ -2953,6 +2999,9 @@ def solve_geodesic_levenberg_marquardt(
         raw_diag = np.diag(normal_matrix)
         diag_max = float(np.max(raw_diag)) + 1e-300
         diag_scale = np.maximum(raw_diag, 0.0) + 1e-12 * diag_max
+        null_direction = None
+        if weight_norm_direction:
+            null_direction = weight_square_null_direction(orbits, params, jacobian)
 
         step_accepted = False
         for _ in range(12):
@@ -2988,8 +3037,19 @@ def solve_geodesic_levenberg_marquardt(
                     trial_step = velocity_step + 0.5 * acceleration_step
                     used_geodesic = True
 
-            candidate = _eval_trial_step(trial_step)
-            if used_geodesic:
+            candidate = None
+            took_null_step = False
+            if null_direction is not None:
+                velocity_size = float(np.linalg.norm(velocity_step))
+                combined = _eval_trial_step(
+                    trial_step + (0.5 * velocity_size) * null_direction
+                )
+                if combined is not None and combined[0] < total_cost:
+                    candidate = combined
+                    took_null_step = True
+            if candidate is None:
+                candidate = _eval_trial_step(trial_step)
+            if used_geodesic and not took_null_step:
                 vel_candidate = _eval_trial_step(velocity_step)
                 if candidate is None or (
                     vel_candidate is not None and vel_candidate[0] < candidate[0]
@@ -3139,6 +3199,7 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
     pulled_params = start_params
     pulled_bdist = start_bdist
     if pulled_bdist <= 1e-5:
+        log_message(f"  P2 pull inside: start bdist={pulled_bdist:+.2e}, margin={target_margin:.2e}")
         for pull_weight in (1.0, 10.0, 100.0):
             _, pulled_bdist, _, pulled_params = solve_geodesic_levenberg_marquardt(
                 sym_basis,
@@ -3154,10 +3215,14 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
                 phase_label="P2",
                 verbose=verbose,
             )
+            log_message(f"  P2 weight {pull_weight:g}: bdist={pulled_bdist:+.2e}")
             if pulled_bdist > 1e-5:
                 break
+    else:
+        log_message(f"  P2 skipped: bdist={pulled_bdist:+.2e} already inside")
 
     if pulled_bdist <= 1e-6:
+        log_message("  P2 failed: nodes stay on or outside the boundary")
         return None
 
     polish_res, polish_bdist, _, polish_params = solve_geodesic_levenberg_marquardt(
@@ -3180,6 +3245,7 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
         )
         polish_reps, _, _, _ = decode_orbit_representatives(orbits, polish_params)
         polish_bdist = sym_basis.base_basis.boundary_distance(polish_reps)
+    log_message(f"  P3 polish inside: res={polish_res:.2e} bdist={polish_bdist:+.2e}")
     if polish_res < 1e-12 and is_inside(polish_bdist):
         return _build_solution_if_positive(
             sym_basis, orbits, polish_params, polish_res, polish_bdist, "PI"
@@ -3190,12 +3256,15 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
 def solve_from_single_start(sym_basis, orbits, verbose=False):
     """Run PI-preferred / PO-fallback solve on one orbit initialization.
 
-    Stage A: smooth sliding-wall geodesic LM from the interior start (zero cost
-    strictly inside; exact rank-1 face-normal wall outside so nodes glide along
-    faces without slamming into a hard wall or escaping into a deep PO basin).
-    Stage B (if Stage A did not reach PI): free fold-free geodesic LM (records
-    any converged PO rule as fallback) followed by exact face-normal boundary
-    hinge pull and penalty-free interior polish + minimum-norm Gauss-Newton.
+    Stage A: geodesic LM from the interior start with the boundary penalty
+    (zero cost inside, exponential growth outside, see evaluate_boundary_penalty),
+    so nodes glide along faces instead of slamming into a hard wall or escaping
+    into a deep PO basin. If A ends near a rule with nodes on or just beyond the
+    boundary: pull inside with the same penalty at a small margin, then
+    penalty-free interior polish and minimum-norm Gauss-Newton.
+    Stage B (if A did not reach PI): free geodesic LM from the same start
+    without penalty (a converged PO rule is kept as fallback), then the same
+    pull and polish.
     """
     initial_params = pack_orbit_parameters(orbits)
     boundary_pi_fallback = None
@@ -3214,7 +3283,9 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         require_interior=False,
         phase_label="PI",
         verbose=verbose,
+        weight_norm_direction=True,
     )
+    log_message(f"  A: res={wall_res:.2e} bdist={wall_bdist:+.2e}")
     if wall_res < 1e-9 and is_inside(wall_bdist):
         wall_res, wall_params = polish_minimum_norm_gauss_newton(
             sym_basis,
@@ -3231,6 +3302,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         )
         if solution is not None:
             if wall_bdist > 1e-6:
+                log_message("  result: PI from A")
                 return solution
             # Boundary-grazing PI (valid per Atlas convention); still try to pull
             # deeper inside for easier rigorous certification, keeping this as fallback.
@@ -3240,11 +3312,13 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
             sym_basis, orbits, wall_params, wall_bdist, verbose
         )
         if pulled_solution is not None:
+            log_message("  result: PI from A after P2/P3")
             return pulled_solution
     if boundary_pi_fallback is not None:
+        log_message("  result: PI from A with nodes on the boundary (P2/P3 did not move them inside)")
         return boundary_pi_fallback
 
-    # Stage B / Phase 1: free fold-free geodesic LM (allowed to step outside)
+    # Stage B / Phase 1: free fold-free geodesic LM from the start (allowed to step outside)
     free_res, free_bdist, _, free_params = solve_geodesic_levenberg_marquardt(
         sym_basis,
         orbits,
@@ -3258,6 +3332,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         require_interior=False,
         phase_label="P1",
         verbose=verbose,
+        weight_norm_direction=True,
     )
     if free_res < 1e-9:
         free_res, free_params = polish_minimum_norm_gauss_newton(
@@ -3265,6 +3340,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         )
         free_reps, _, _, _ = decode_orbit_representatives(orbits, free_params)
         free_bdist = sym_basis.base_basis.boundary_distance(free_reps)
+    log_message(f"  B: res={free_res:.2e} bdist={free_bdist:+.2e}")
 
     po_fallback = None
     if free_res < 1e-12:
@@ -3275,20 +3351,29 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         if solution is not None:
             if quality == "PI":
                 if free_bdist > 1e-6:
+                    log_message("  result: PI from B")
                     return solution
                 boundary_pi_fallback = solution
             else:
                 po_fallback = solution
 
-    # Stage B / Phase 2 & 3: exact face-normal hinge pull + pure interior polish
+    # Stage B / Phase 2 & 3: pull inside with the exponential penalty + pure interior polish
     if free_res < 1e-4:
         pulled_solution = _pull_and_polish_interior(
             sym_basis, orbits, free_params, free_bdist, verbose
         )
         if pulled_solution is not None:
+            log_message("  result: PI from B after P2/P3")
             return pulled_solution
 
-    return boundary_pi_fallback if boundary_pi_fallback is not None else po_fallback
+    if boundary_pi_fallback is not None:
+        log_message("  result: PI from B with nodes on the boundary")
+        return boundary_pi_fallback
+    if po_fallback is not None:
+        log_message("  result: PO from B")
+        return po_fallback
+    log_message("  result: none")
+    return None
 
 
 # ---------------------------------------------------------------------------
