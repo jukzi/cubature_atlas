@@ -66,7 +66,7 @@ For C4, C2 and no symmetry on the square the start is a lattice in the angle coo
 - spacing h = pi / sqrt(2 N), lattice points h (a, b) with a + b even (centre point, N odd) or odd (hole, N even);
 - rotation by alpha = 2 delta / pi, delta the boundary distance of the unrotated lattice; the rotation runs along concentric squares (every point slides along its L_inf shell by alpha / (2 pi) of the perimeter), so rows near a side move parallel to it and keep their boundary distance; C4 and C2 stay exact;
 - without symmetry the lattice is also shifted by a quarter point spacing in x, scaled per coordinate by the distance to the boundary (full at the centre, zero at the boundary);
-- surplus orbits are removed nearest to the corners (the centre first if the surplus is odd); missing orbits go greedily into the largest gaps, the boundary counting as a mirror (the centre first if the deficit is odd);
+- surplus orbits are removed nearest to the corners (the centre first if the surplus is odd); missing orbits (the centre first if the deficit is odd) go greedily, each to the candidate farthest from all points (the boundary counting as a mirror), but only on few lines: with C4 on the line between the outermost and the second outermost L_inf shell (all four sides), with C2 on the line through the centre parallel to a side; only when these lines are full (best distance below 0.7 h) the next line is opened (C4: the mid line one shell further in; C2: the parallel lines at +-2 h, +-4 h, ...); without symmetry the missing points go into the largest gaps of the whole square;
 - these three groups start at N = Z.
 
 ### Run time
