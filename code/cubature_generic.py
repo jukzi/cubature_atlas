@@ -3383,6 +3383,183 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
     return None
 
 
+def _raw_deformation_fields(domain, points, max_frequency):
+    """Polynomial vector fields of degree <= max_frequency, tangent to every face.
+
+    Returns shape (num_points, d, num_fields). Cube: e_i (1 - x_i^2) T_a(x) with
+    Chebyshev products T_a; in angle coordinates x = cos(theta) these are the
+    sine modes of theta_i. Simplex: replicator fields du_m = u_m (delta_mk - u_k) p_a(x)
+    on the barycentric coordinates u_0 = 1 - sum x, u_m = x_m; they keep sum u = 1
+    and vanish in the normal direction on every face.
+    """
+    num_points, dimension = points.shape
+    multi_indices = generate_multi_indices(dimension, max_frequency)
+    if domain == "cube":
+        arg = points
+    else:
+        arg = 2.0 * points - 1.0
+    # Chebyshev values T_k(arg) for k <= max_frequency, shape (K + 1, n, d)
+    cheb = np.empty((max_frequency + 1, num_points, dimension), dtype=float)
+    cheb[0] = 1.0
+    if max_frequency >= 1:
+        cheb[1] = arg
+    for k in range(2, max_frequency + 1):
+        cheb[k] = 2.0 * arg * cheb[k - 1] - cheb[k - 2]
+    poly = np.empty((num_points, len(multi_indices)), dtype=float)
+    for col, alpha in enumerate(multi_indices):
+        values = cheb[alpha[0], :, 0].copy()
+        for axis in range(1, dimension):
+            values *= cheb[alpha[axis], :, axis]
+        poly[:, col] = values
+    fields = []
+    if domain == "cube":
+        for axis in range(dimension):
+            block = np.zeros((num_points, dimension, len(multi_indices)), dtype=float)
+            block[:, axis, :] = (1.0 - points[:, axis] ** 2)[:, None] * poly
+            fields.append(block)
+    else:
+        bary = np.concatenate([1.0 - np.sum(points, axis=1)[:, None], points], axis=1)
+        for k in range(dimension + 1):
+            # du_m = u_m (delta_mk - u_k) p, cartesian components m = 1..d
+            factor = -bary[:, 1:] * bary[:, k][:, None]
+            if k >= 1:
+                factor[:, k - 1] += bary[:, k]
+            fields.append(factor[:, :, None] * poly[:, None, :])
+    return np.concatenate(fields, axis=2)
+
+
+def deformation_parameter_map(sym_basis, orbits, params, max_frequency):
+    """Columns: orthonormal spatial parameter directions of smooth symmetric fields.
+
+    Every raw field f is made equivariant by the group average
+    d(x) = 1/|G| sum_g L_g^-1 f(g x), so all nodes of an orbit move with the same
+    smooth field d; the representative of orbit j moves by U_j^T d(x_j). The
+    returned matrix has one row per parameter (weight rows zero) and orthonormal
+    columns spanning these moves.
+    """
+    representatives, _, _, _ = decode_orbit_representatives(orbits, params)
+    linears, translations = _stacked_transforms(sym_basis.group_transforms)
+    domain = sym_basis.base_basis.domain
+    num_orbits, dimension = representatives.shape
+    averaged = None
+    for linear, translation in zip(linears, translations):
+        images = representatives @ linear.T + translation[None, :]
+        raw = _raw_deformation_fields(domain, images, max_frequency)
+        pulled = np.einsum("ij,njk->nik", np.linalg.inv(linear), raw)
+        averaged = pulled if averaged is None else averaged + pulled
+    averaged /= float(len(linears))
+    layout = orbit_layout(orbits)
+    rows = np.zeros((layout.num_unknowns, averaged.shape[2]), dtype=float)
+    offset = 0
+    for idx, orbit in enumerate(orbits):
+        dof = orbit.spatial_dof
+        if dof > 0:
+            rows[offset : offset + dof] = orbit.subspace_basis.T @ averaged[idx]
+        offset += dof + 1
+    left, singular, _ = np.linalg.svd(rows, full_matrices=False)
+    if singular.size == 0 or singular[0] <= 0.0:
+        return rows[:, :0]
+    rank = int(np.sum(singular > 1e-9 * singular[0]))
+    return left[:, :rank]
+
+
+def solve_reduced_levenberg_marquardt(
+    sym_basis, orbits, params, direction_map, max_steps, penalty_weight=25.0
+):
+    """LM for params + direction_map @ c with the boundary penalty (margin 0).
+
+    The weights stay free unknowns, the positions move only along the
+    columns of direction_map. Returns (moment norm, params).
+    """
+    layout = orbit_layout(orbits)
+    weight_map = np.zeros((layout.num_unknowns, layout.num_orbits), dtype=float)
+    weight_map[layout.weight_columns, np.arange(layout.num_orbits)] = 1.0
+    full_map = np.concatenate([direction_map, weight_map], axis=1)
+
+    def evaluate(current):
+        residual, jacobian, _ = evaluate_residual_and_jacobian(sym_basis, orbits, current)
+        cost = 0.5 * float(residual @ residual)
+        gradient = jacobian.T @ residual
+        normal = lower_gram_matrix(jacobian)
+        normal = np.tril(normal) + np.tril(normal, -1).T
+        pen_cost, pen_grad, pen_blocks = evaluate_boundary_penalty(
+            sym_basis, orbits, current, 0.0, penalty_weight
+        )
+        if pen_grad is not None:
+            gradient = gradient + pen_grad
+            for blk_off, blk_dof, hess_block in pen_blocks:
+                normal[blk_off : blk_off + blk_dof, blk_off : blk_off + blk_dof] += hess_block
+        cost += pen_cost
+        reduced_normal = full_map.T @ normal @ full_map
+        reduced_gradient = full_map.T @ gradient
+        return cost, float(np.linalg.norm(residual)), reduced_gradient, reduced_normal
+
+    def total_cost(current):
+        residual = evaluate_moment_residual(sym_basis, orbits, current)
+        pen_cost, _, _ = evaluate_boundary_penalty(
+            sym_basis, orbits, current, 0.0, penalty_weight
+        )
+        return 0.5 * float(residual @ residual) + pen_cost
+
+    import os as _os
+    STAG_TOL = float(_os.environ.get("FREQ_TOL", "0.995"))
+    cost, moment_norm, gradient, normal = evaluate(params)
+    damping = 0.25
+    diag_indices = np.arange(normal.shape[0])
+    for _ in range(max_steps):
+        diag_scale = np.maximum(np.diag(normal), 0.0) + 1e-12 * (float(np.max(np.diag(normal))) + 1e-300)
+        accepted = False
+        for _ in range(12):
+            damped = normal.copy()
+            damped[diag_indices, diag_indices] += damping * diag_scale
+            try:
+                factor = cho_factor(damped, lower=True, check_finite=False)
+            except np.linalg.LinAlgError:
+                damping = min(damping * 5.0, 1e10)
+                continue
+            step = cho_solve(factor, -gradient, check_finite=False)
+            trial = params + full_map @ step
+            trial_cost = total_cost(trial)
+            if math.isfinite(trial_cost) and trial_cost < cost:
+                params = trial
+                damping = max(damping / 3.0, 1e-13)
+                accepted = True
+                break
+            damping = min(damping * 5.0, 1e10)
+        if not accepted:
+            break
+        previous_cost = cost
+        cost, moment_norm, gradient, normal = evaluate(params)
+        if cost > STAG_TOL * previous_cost and damping > 1e-6:
+            break
+    return moment_norm, params
+
+
+def frequency_continuation(sym_basis, orbits, params):
+    """Coarse-to-fine deformation of the start: smooth fields of growing degree.
+
+    Levels K = 1, 2, 4, 8, ... (env FREQ_LEVELS overrides); each level moves the
+    nodes only by symmetric polynomial fields of degree <= K (all weights free)
+    and stops when the fields span all spatial unknowns.
+    """
+    import os as _os
+    spec = _os.environ.get("FREQ_LEVELS", "1,2,4,8,16,32,64")
+    levels = [int(item) for item in spec.split(",") if item]
+    steps = int(_os.environ.get("FREQ_STEPS", "30"))
+    layout = orbit_layout(orbits)
+    spatial_unknowns = layout.num_unknowns - layout.num_orbits
+    for max_frequency in levels:
+        direction_map = deformation_parameter_map(sym_basis, orbits, params, max_frequency)
+        rank = direction_map.shape[1]
+        if rank >= spatial_unknowns:
+            break
+        res, params = solve_reduced_levenberg_marquardt(
+            sym_basis, orbits, params, direction_map, steps
+        )
+        log_message(f"  F K={max_frequency} rank={rank}/{spatial_unknowns} res={res:.2e}")
+    return params
+
+
 def solve_from_single_start(sym_basis, orbits, verbose=False):
     """Run PI-preferred / PO-fallback solve on one orbit initialization.
 
@@ -3398,12 +3575,19 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
     """
     initial_params = pack_orbit_parameters(orbits)
     boundary_pi_fallback = None
+    import os as _os
+    freq_mode = _os.environ.get("FREQ_MODE", "off")
+    stage_a_params = initial_params
+    if freq_mode != "off":
+        stage_a_params = frequency_continuation(sym_basis, orbits, initial_params)
+        if freq_mode == "both":
+            initial_params = stage_a_params
 
     # Stage A: smooth sliding-wall geodesic LM (zero penalty inside, rank-1 face wall outside)
     wall_res, wall_bdist, _, wall_params = solve_geodesic_levenberg_marquardt(
         sym_basis,
         orbits,
-        initial_params,
+        stage_a_params,
         max_steps=250,
         stagnation_window=30,
         initial_damping=0.25,
