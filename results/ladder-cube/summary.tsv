@@ -19,3 +19,5 @@ cube	22	554		demi	1315	548		python ./code/cubature_generic.py --domain cube --di
 cube	21	473	472	chiral	1455	474	yes	python ./code/cubature_generic.py --domain cube --dim 3 --degree 21 --out results/ladder-cube/cube-21
 cube	23	611	610	chiral	2320	605		python ./code/cubature_generic.py --domain cube --dim 3 --degree 23 --out results/ladder-cube/cube-23
 cube	16	244	242	mirror	5060	243		python ./code/cubature_generic.py --domain cube --dim 3 --degree 16 --out results/ladder-cube/cube-16
+cube	20				23401	440		python ./code/cubature_generic.py --domain cube --dim 3 --degree 20 --out results/ladder-cube/cube-20
+cube	24				21081	716		python ./code/cubature_generic.py --domain cube --dim 3 --degree 24 --out results/ladder-cube/cube-24
