@@ -1,0 +1,89 @@
+2026-11-28 01:43:16 | Start generic solver: domain=cube dim=2 degree=20 M=231 Z=77 symmetry=auto points=0 seed=None
+2026-11-28 01:43:16 | Point-count ladder N=66..96 (lower bound 66, symmetries full, demi, chiral, mirror, central, none)
+2026-11-28 01:43:16 | symmetry=mirror N=66: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=67: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=68: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=69: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=70: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=71: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=72: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=73: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=74: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=75: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | symmetry=mirror N=76: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:16 | Trying symmetry=full (|G|=8, M_G=36, N=77)
+2026-11-28 01:43:16 | symmetry=full ladder[0] unk=36/36 (orbits=17)
+2026-11-28 01:43:16 |   A: res=3.77e-01 bdist=+2.77e-03
+2026-11-28 01:43:16 |   B: res=3.77e-01 bdist=+3.04e-03
+2026-11-28 01:43:16 |   result: none
+2026-11-28 01:43:16 | symmetry=full ladder[1] unk=36/36 (orbits=17)
+2026-11-28 01:43:16 |   A: res=3.77e-01 bdist=+7.94e-03
+2026-11-28 01:43:16 |   B: res=3.77e-01 bdist=+1.08e-02
+2026-11-28 01:43:16 |   result: none
+2026-11-28 01:43:16 | symmetry=full ladder[2] unk=36/36 (orbits=17)
+2026-11-28 01:43:16 |   A: res=3.77e-01 bdist=+1.33e-02
+2026-11-28 01:43:16 |   B: res=3.77e-01 bdist=+1.33e-02
+2026-11-28 01:43:16 |   result: none
+2026-11-28 01:43:16 | symmetry=full ladder[3] unk=36/36 (orbits=17)
+2026-11-28 01:43:17 |   A: res=3.77e-01 bdist=+1.33e-02
+2026-11-28 01:43:17 |   B: res=3.77e-01 bdist=+1.33e-02
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=full ladder[4] unk=36/36 (orbits=17)
+2026-11-28 01:43:17 |   A: res=6.63e-01 bdist=+7.00e-03
+2026-11-28 01:43:17 |   B: res=6.63e-01 bdist=+7.26e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=full ladder[5] unk=36/36 (orbits=17)
+2026-11-28 01:43:17 |   A: res=6.63e-01 bdist=+7.94e-03
+2026-11-28 01:43:17 |   B: res=6.63e-01 bdist=+8.03e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=full ladder[7] unk=36/36 (orbits=17)
+2026-11-28 01:43:17 |   A: res=6.63e-01 bdist=+5.66e-03
+2026-11-28 01:43:17 |   B: res=6.63e-01 bdist=+5.67e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=full ladder[11] unk=36/36 (orbits=17)
+2026-11-28 01:43:17 |   A: res=6.63e-01 bdist=+7.85e-03
+2026-11-28 01:43:17 |   B: res=6.63e-01 bdist=+7.92e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | Trying symmetry=demi (|G|=4, M_G=66, N=77)
+2026-11-28 01:43:17 | symmetry=demi ladder[0] unk=66/66 (orbits=28)
+2026-11-28 01:43:17 |   A: res=2.63e-01 bdist=+1.82e-03
+2026-11-28 01:43:17 |   B: res=2.63e-01 bdist=-5.39e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=demi ladder[1] unk=66/66 (orbits=28)
+2026-11-28 01:43:17 |   A: res=2.63e-01 bdist=+6.83e-04
+2026-11-28 01:43:17 |   B: res=2.63e-01 bdist=+1.80e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=demi ladder[2] unk=66/66 (orbits=28)
+2026-11-28 01:43:17 |   A: res=2.63e-01 bdist=+1.40e-02
+2026-11-28 01:43:17 |   B: res=2.63e-01 bdist=+1.40e-02
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=demi ladder[3] unk=66/66 (orbits=28)
+2026-11-28 01:43:17 |   A: res=2.63e-01 bdist=+1.40e-02
+2026-11-28 01:43:17 |   B: res=2.63e-01 bdist=+1.40e-02
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:17 | symmetry=demi ladder[4] unk=66/66 (orbits=28)
+2026-11-28 01:43:17 |   A: res=6.04e-01 bdist=+8.54e-03
+2026-11-28 01:43:17 |   B: res=6.04e-01 bdist=+8.54e-03
+2026-11-28 01:43:17 |   result: none
+2026-11-28 01:43:18 | symmetry=demi ladder[5] unk=66/66 (orbits=28)
+2026-11-28 01:43:18 |   A: res=5.54e-01 bdist=+1.66e-02
+2026-11-28 01:43:18 |   B: res=5.54e-01 bdist=+1.67e-02
+2026-11-28 01:43:18 |   result: none
+2026-11-28 01:43:18 | symmetry=demi ladder[7] unk=66/66 (orbits=28)
+2026-11-28 01:43:18 |   A: res=5.07e-01 bdist=-7.23e-07
+2026-11-28 01:43:18 |   B: res=5.06e-01 bdist=-1.46e-01
+2026-11-28 01:43:18 |   result: none
+2026-11-28 01:43:18 | symmetry=demi ladder[11] unk=66/66 (orbits=28)
+2026-11-28 01:43:18 |   A: res=6.33e-01 bdist=+1.70e-03
+2026-11-28 01:43:18 |   B: res=6.33e-01 bdist=+1.71e-03
+2026-11-28 01:43:18 |   result: none
+2026-11-28 01:43:18 | symmetry=mirror N=77: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:18 | Trying symmetry=none (|G|=1, M_G=231, N=77)
+2026-11-28 01:43:18 | symmetry=none ladder[0] unk=231/231 (orbits=77)
+2026-11-28 01:43:18 |   A: res=7.34e-14 bdist=+4.87e-03
+2026-11-28 01:43:18 |   result: PI from A
+2026-11-28 01:43:18 | symmetry=none ladder[0] -> PI mom_res=1.76e-15 bdist=+4.868e-03
+2026-11-28 01:43:18 | Refining N=76 with start rounds 2..4
+2026-11-28 01:43:18 | symmetry=mirror N=76: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:43:18 | wrote 17 tried starts to results/ladder-square/square-20/starts-C2-20.json
+2026-11-28 01:43:18 | FOUND CA-C2-20-77-PI-MPC (PI, sym=none) N=77 mom_res=1.76e-15 monom=2.22e-16 min_w=3.406e-03 bdist=+4.868e-03 wrote=results/ladder-square/square-20/CA-C2-20-77-PI-MPC.json (2.60s)

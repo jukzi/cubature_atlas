@@ -1,0 +1,108 @@
+2026-11-28 01:42:46 | Start generic solver: domain=cube dim=2 degree=4 M=15 Z=5 symmetry=auto points=0 seed=None
+2026-11-28 01:42:46 | Point-count ladder N=6..14 (lower bound 6, symmetries full, demi, chiral, mirror, central, none)
+2026-11-28 01:42:46 | Trying symmetry=demi (|G|=4, M_G=6, N=6)
+2026-11-28 01:42:46 | symmetry=demi ladder[0] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[1] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+2.12e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+2.12e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[2] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+3.17e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+3.17e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[3] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+3.17e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+3.17e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[4] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+2.07e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+2.07e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[5] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+2.10e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+2.10e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[7] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+2.05e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+2.05e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=demi ladder[11] unk=6/6 (orbits=3)
+2026-11-28 01:42:46 |   A: res=6.24e-01 bdist=+2.20e-01
+2026-11-28 01:42:46 |   B: res=6.24e-01 bdist=+2.20e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | Trying symmetry=mirror (|G|=2, M_G=9, N=6)
+2026-11-28 01:42:46 | symmetry=mirror ladder[0] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.63e-01 bdist=+1.57e-01
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=+1.57e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[1] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.94e-01 bdist=-9.76e-04
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=-2.60e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[2] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.63e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[3] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.94e-01 bdist=-9.76e-04
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=-2.60e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[4] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.63e-01 bdist=+9.61e-02
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=-2.60e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[5] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.98e-01 bdist=+1.17e-01
+2026-11-28 01:42:46 |   B: res=3.98e-01 bdist=+1.17e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[6] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.63e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   B: res=3.63e-01 bdist=+1.56e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[7] unk=9/9 (orbits=3)
+2026-11-28 01:42:46 |   A: res=3.98e-01 bdist=+1.14e-01
+2026-11-28 01:42:46 |   B: res=3.98e-01 bdist=+1.14e-01
+2026-11-28 01:42:46 |   result: none
+2026-11-28 01:42:46 | symmetry=mirror ladder[8] unk=10/9 (orbits=4)
+2026-11-28 01:42:46 |   A: res=9.58e-02 bdist=-2.85e-03
+2026-11-28 01:42:46 |   B: res=6.75e-16 bdist=-3.39e-01
+2026-11-28 01:42:46 |   P2 pull inside: start bdist=-3.39e-01, margin=2.00e-03
+2026-11-28 01:42:46 |   P2 weight 1: bdist=-2.48e-02
+2026-11-28 01:42:46 |   P2 weight 10: bdist=-4.59e-03
+2026-11-28 01:42:46 |   P2 weight 100: bdist=+1.20e-03
+2026-11-28 01:42:47 |   P3 polish inside: res=1.02e-01 bdist=+1.00e-07
+2026-11-28 01:42:47 |   result: PO from B
+2026-11-28 01:42:47 | symmetry=mirror ladder[8] -> PO mom_res=6.75e-16 bdist=-3.385e-01
+2026-11-28 01:42:47 | symmetry=mirror ladder[9] unk=10/9 (orbits=4)
+2026-11-28 01:42:47 |   A: res=9.58e-02 bdist=-2.85e-03
+2026-11-28 01:42:47 |   B: res=7.36e-16 bdist=-6.87e-02
+2026-11-28 01:42:47 |   P2 pull inside: start bdist=-6.87e-02, margin=2.00e-03
+2026-11-28 01:42:47 |   P2 weight 1: bdist=-2.48e-02
+2026-11-28 01:42:47 |   P2 weight 10: bdist=-4.59e-03
+2026-11-28 01:42:47 |   P2 weight 100: bdist=+1.20e-03
+2026-11-28 01:42:47 |   P3 polish inside: res=1.02e-01 bdist=+1.00e-07
+2026-11-28 01:42:47 |   result: PO from B
+2026-11-28 01:42:47 | symmetry=mirror ladder[9] -> PO mom_res=7.36e-16 bdist=-6.865e-02
+2026-11-28 01:42:47 | symmetry=mirror ladder[10] unk=10/9 (orbits=4)
+2026-11-28 01:42:47 |   A: res=9.58e-02 bdist=-2.85e-03
+2026-11-28 01:42:47 |   B: res=1.49e-01 bdist=-3.50e-01
+2026-11-28 01:42:47 |   result: none
+2026-11-28 01:42:47 | symmetry=mirror ladder[11] unk=10/9 (orbits=4)
+2026-11-28 01:42:47 |   A: res=9.58e-02 bdist=-2.85e-03
+2026-11-28 01:42:47 |   B: res=5.16e-16 bdist=-1.17e-01
+2026-11-28 01:42:47 |   P2 pull inside: start bdist=-1.17e-01, margin=2.00e-03
+2026-11-28 01:42:47 |   P2 weight 1: bdist=-2.48e-02
+2026-11-28 01:42:47 |   P2 weight 10: bdist=-4.59e-03
+2026-11-28 01:42:47 |   P2 weight 100: bdist=+1.20e-03
+2026-11-28 01:42:47 |   P3 polish inside: res=1.02e-01 bdist=+1.00e-07
+2026-11-28 01:42:47 |   result: PO from B
+2026-11-28 01:42:47 | symmetry=mirror ladder[11] -> PO mom_res=5.16e-16 bdist=-1.173e-01
+2026-11-28 01:42:47 | symmetry=mirror ladder[13] unk=10/9 (orbits=4)
+2026-11-28 01:42:47 |   A: res=7.39e-16 bdist=+8.56e-02
+2026-11-28 01:42:47 |   result: PI from A
+2026-11-28 01:42:47 | symmetry=mirror ladder[13] -> PI mom_res=7.39e-16 bdist=+8.565e-02
+2026-11-28 01:42:47 | wrote 21 tried starts to results/ladder-square/square-4/starts-C2-04.json
+2026-11-28 01:42:47 | FOUND CA-C2-04-6-PI-MPC (PI, sym=mirror) N=6 mom_res=7.39e-16 monom=4.44e-16 min_w=5.084e-01 bdist=+8.565e-02 wrote=results/ladder-square/square-4/CA-C2-04-6-PI-MPC.json (0.70s)

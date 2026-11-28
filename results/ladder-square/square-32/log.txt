@@ -1,0 +1,52 @@
+2026-11-28 01:44:41 | Start generic solver: domain=cube dim=2 degree=32 M=561 Z=187 symmetry=auto points=0 seed=None
+2026-11-28 01:44:41 | Point-count ladder N=153..233 (lower bound 153, symmetries full, demi, chiral, mirror, central, none)
+2026-11-28 01:44:41 | symmetry=mirror N=153: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=154: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=155: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=156: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=157: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=158: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=159: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=160: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=161: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=162: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:41 | symmetry=mirror N=163: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=164: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=165: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=166: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=167: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=168: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=169: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=170: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=171: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=172: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=173: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=174: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=175: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=176: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=177: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=178: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=179: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=180: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=181: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:42 | symmetry=mirror N=182: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:43 | symmetry=mirror N=183: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:43 | symmetry=mirror N=184: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:43 | symmetry=mirror N=185: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:43 | symmetry=mirror N=186: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:43 | symmetry=mirror N=187: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:44:44 | Trying symmetry=none (|G|=1, M_G=561, N=187)
+2026-11-28 01:44:44 | symmetry=none ladder[0] unk=561/561 (orbits=187)
+2026-11-28 01:44:47 |   A: res=1.12e-03 bdist=-1.37e-06
+2026-11-28 01:44:53 |   B: res=5.72e-05 bdist=+1.28e-03
+2026-11-28 01:44:53 |   P2 skipped: bdist=+1.28e-03 already inside
+2026-11-28 01:44:53 |   P3 polish inside: res=5.72e-05 bdist=+1.25e-03
+2026-11-28 01:44:53 |   result: none
+2026-11-28 01:44:53 | symmetry=none ladder[1] unk=561/561 (orbits=187)
+2026-11-28 01:45:00 |   A: res=1.56e-14 bdist=+1.41e-03
+2026-11-28 01:45:00 |   result: PI from A
+2026-11-28 01:45:00 | symmetry=none ladder[1] -> PI mom_res=2.70e-15 bdist=+1.411e-03
+2026-11-28 01:45:00 | Refining N=186 with start rounds 2..4
+2026-11-28 01:45:00 | symmetry=mirror N=186: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:45:00 | wrote 2 tried starts to results/ladder-square/square-32/starts-C2-32.json
+2026-11-28 01:45:00 | FOUND CA-C2-32-187-PI-MPC (PI, sym=none) N=187 mom_res=2.70e-15 monom=5.55e-17 min_w=9.535e-04 bdist=+1.411e-03 wrote=results/ladder-square/square-32/CA-C2-32-187-PI-MPC.json (19.07s)
