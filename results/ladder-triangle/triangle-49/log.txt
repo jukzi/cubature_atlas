@@ -1,0 +1,205 @@
+2026-11-28 04:48:41 | Start generic solver: domain=simplex dim=2 degree=49 M=1275 Z=425 symmetry=auto points=0 seed=None
+2026-11-28 04:48:41 | Point-count ladder N=325..531 (lower bound 325, symmetries full, chiral, central, none)
+2026-11-28 04:48:41 | symmetry=central N=325: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:41 | symmetry=central N=326: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:41 | symmetry=central N=327: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=328: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=329: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=330: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=331: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=332: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=333: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=334: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=335: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:42 | symmetry=central N=336: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=337: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=338: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=339: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=340: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=341: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=342: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=343: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:43 | symmetry=central N=344: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=345: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=346: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=347: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=348: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=349: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=350: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=351: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:44 | symmetry=central N=352: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=353: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=354: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=355: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=356: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=357: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=358: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=359: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=360: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:45 | symmetry=central N=361: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=362: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=363: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=364: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=365: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=366: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=367: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=368: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:46 | symmetry=central N=369: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=370: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=371: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=372: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=373: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=374: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=375: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=376: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:47 | symmetry=central N=377: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=378: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=379: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=380: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=381: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=382: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=383: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:48 | symmetry=central N=384: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=385: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=386: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=387: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=388: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=389: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=390: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:49 | symmetry=central N=391: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=392: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=393: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=394: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=395: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=396: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=397: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:50 | symmetry=central N=398: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=399: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=400: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=401: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=402: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=403: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=404: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:51 | symmetry=central N=405: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=406: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=407: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=408: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=409: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=410: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:52 | symmetry=central N=411: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:53 | symmetry=central N=412: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:53 | symmetry=central N=413: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:53 | symmetry=central N=414: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:53 | symmetry=central N=415: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=416: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=417: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=418: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=419: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=420: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=full N=421: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=421: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:54 | symmetry=central N=422: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:55 | symmetry=full N=423: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:55 | symmetry=central N=423: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:55 | symmetry=full N=424: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:55 | symmetry=central N=424: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:48:55 | Trying symmetry=central (|G|=2, M_G=650, N=425)
+2026-11-28 04:48:56 | symmetry=central ladder[0] unk=650/650 (orbits=225)
+2026-11-28 04:49:08 |   A: res=6.23e-02 bdist=-4.28e-04
+2026-11-28 04:49:34 |   B: res=3.24e-02 bdist=-1.82e-02
+2026-11-28 04:49:34 |   result: none
+2026-11-28 04:49:34 | symmetry=central ladder[1] unk=650/650 (orbits=225)
+2026-11-28 04:49:56 |   A: res=5.00e-02 bdist=-3.43e-04
+2026-11-28 04:50:18 |   B: res=2.02e-02 bdist=-2.27e-02
+2026-11-28 04:50:18 |   result: none
+2026-11-28 04:50:18 | symmetry=central ladder[2] unk=650/650 (orbits=225)
+2026-11-28 04:50:44 |   A: res=6.16e-03 bdist=-8.41e-05
+2026-11-28 04:51:12 |   B: res=2.64e-03 bdist=-2.18e-02
+2026-11-28 04:51:12 |   result: none
+2026-11-28 04:51:12 | symmetry=central ladder[3] unk=650/650 (orbits=225)
+2026-11-28 04:51:19 |   A: res=9.97e-02 bdist=-6.51e-04
+2026-11-28 04:51:44 |   B: res=2.60e-02 bdist=-2.54e-02
+2026-11-28 04:51:44 |   result: none
+2026-11-28 04:51:45 | symmetry=central ladder[4] unk=650/650 (orbits=225)
+2026-11-28 04:52:09 |   A: res=2.34e-02 bdist=-2.05e-04
+2026-11-28 04:52:19 |   B: res=4.55e-02 bdist=-5.60e-03
+2026-11-28 04:52:19 |   result: none
+2026-11-28 04:52:19 | symmetry=central ladder[5] unk=650/650 (orbits=225)
+2026-11-28 04:52:28 |   A: res=8.21e-02 bdist=-5.43e-04
+2026-11-28 04:52:41 |   B: res=5.05e-02 bdist=-2.42e-02
+2026-11-28 04:52:41 |   result: none
+2026-11-28 04:52:41 | symmetry=central ladder[6] unk=650/650 (orbits=225)
+2026-11-28 04:52:47 |   A: res=6.57e-02 bdist=-3.96e-04
+2026-11-28 04:52:52 |   B: res=6.43e-02 bdist=-4.72e-03
+2026-11-28 04:52:52 |   result: none
+2026-11-28 04:52:52 | symmetry=central ladder[7] unk=650/650 (orbits=225)
+2026-11-28 04:53:11 |   A: res=3.19e-02 bdist=-4.83e-04
+2026-11-28 04:53:18 |   B: res=5.21e-02 bdist=-7.36e-03
+2026-11-28 04:53:18 |   result: none
+2026-11-28 04:53:21 | symmetry=central N=425: 8 starts skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:53:21 | Trying symmetry=none (|G|=1, M_G=1275, N=425)
+2026-11-28 04:53:22 | symmetry=none ladder[0] unk=1275/1275 (orbits=425)
+2026-11-28 04:53:58 |   A: res=3.61e-03 bdist=-1.40e-04
+2026-11-28 04:55:00 |   B: res=1.06e-03 bdist=-8.88e-02
+2026-11-28 04:55:00 |   result: none
+2026-11-28 04:55:00 | symmetry=none ladder[1] unk=1275/1275 (orbits=425)
+2026-11-28 04:56:16 |   A: res=8.68e-03 bdist=-1.69e-04
+2026-11-28 04:57:26 |   B: res=1.98e-05 bdist=-8.57e-02
+2026-11-28 04:57:26 |   P2 pull inside: start bdist=-8.57e-02, margin=1.00e-04
+2026-11-28 04:57:32 |   P2 weight 1: bdist=-7.57e-02
+2026-11-28 04:57:37 |   P2 weight 10: bdist=-6.57e-02
+2026-11-28 04:57:43 |   P2 weight 100: bdist=-5.58e-02
+2026-11-28 04:57:43 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 04:57:43 |   result: none
+2026-11-28 04:57:43 | symmetry=none ladder[2] unk=1275/1275 (orbits=425)
+2026-11-28 04:58:59 |   A: res=1.27e-03 bdist=-9.70e-06
+2026-11-28 05:00:16 |   B: res=9.79e-03 bdist=-4.59e-03
+2026-11-28 05:00:16 |   result: none
+2026-11-28 05:00:16 | symmetry=none ladder[3] unk=1275/1275 (orbits=425)
+2026-11-28 05:01:33 |   A: res=7.01e-03 bdist=-3.59e-05
+2026-11-28 05:02:50 |   B: res=2.22e-03 bdist=-1.30e-01
+2026-11-28 05:02:50 |   result: none
+2026-11-28 05:02:51 | symmetry=none ladder[4] unk=1275/1275 (orbits=425)
+2026-11-28 05:04:04 |   A: res=1.11e-02 bdist=-9.11e-05
+2026-11-28 05:05:05 |   B: res=7.26e-03 bdist=-4.81e-02
+2026-11-28 05:05:05 |   result: none
+2026-11-28 05:05:05 | symmetry=none ladder[5] unk=1275/1275 (orbits=425)
+2026-11-28 05:06:21 |   A: res=6.54e-04 bdist=-8.39e-06
+2026-11-28 05:07:36 |   B: res=2.16e-03 bdist=-6.43e-02
+2026-11-28 05:07:36 |   result: none
+2026-11-28 05:07:37 | symmetry=none ladder[6] unk=1275/1275 (orbits=425)
+2026-11-28 05:07:51 |   A: res=5.02e-02 bdist=-6.97e-04
+2026-11-28 05:09:08 |   B: res=7.63e-03 bdist=-1.98e-02
+2026-11-28 05:09:08 |   result: none
+2026-11-28 05:09:08 | symmetry=none ladder[7] unk=1275/1275 (orbits=425)
+2026-11-28 05:10:24 |   A: res=1.53e-02 bdist=-1.45e-04
+2026-11-28 05:11:39 |   B: res=5.25e-03 bdist=-8.99e-02
+2026-11-28 05:11:39 |   result: none
+2026-11-28 05:11:40 | symmetry=none ladder[8] unk=1275/1275 (orbits=425)
+2026-11-28 05:12:55 |   A: res=8.84e-04 bdist=-2.42e-06
+2026-11-28 05:14:11 |   B: res=2.72e-05 bdist=-1.44e-01
+2026-11-28 05:14:11 |   P2 pull inside: start bdist=-1.44e-01, margin=1.00e-04
+2026-11-28 05:14:17 |   P2 weight 1: bdist=-1.34e-01
+2026-11-28 05:14:22 |   P2 weight 10: bdist=-1.24e-01
+2026-11-28 05:14:28 |   P2 weight 100: bdist=-1.14e-01
+2026-11-28 05:14:28 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 05:14:28 |   result: none
+2026-11-28 05:14:28 | symmetry=none ladder[9] unk=1275/1275 (orbits=425)
+2026-11-28 05:15:32 |   A: res=9.25e-03 bdist=-1.83e-04
+2026-11-28 05:16:26 |   B: res=7.20e-03 bdist=-1.82e-02
+2026-11-28 05:16:26 |   result: none
+2026-11-28 05:16:27 | symmetry=none ladder[10] unk=1275/1275 (orbits=425)
+2026-11-28 05:17:41 |   A: res=2.37e-03 bdist=-8.26e-05
+2026-11-28 05:18:44 |   B: res=7.73e-05 bdist=-8.12e-02
+2026-11-28 05:18:44 |   P2 pull inside: start bdist=-8.12e-02, margin=1.00e-04
+2026-11-28 05:18:50 |   P2 weight 1: bdist=-7.12e-02
+2026-11-28 05:18:56 |   P2 weight 10: bdist=-6.12e-02
+2026-11-28 05:19:01 |   P2 weight 100: bdist=-5.12e-02
+2026-11-28 05:19:01 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 05:19:01 |   result: none
+2026-11-28 05:19:01 | symmetry=none ladder[11] unk=1275/1275 (orbits=425)
+2026-11-28 05:20:14 |   A: res=9.11e-03 bdist=-8.89e-05
+2026-11-28 05:21:28 |   B: res=6.10e-03 bdist=-1.25e-01
+2026-11-28 05:21:28 |   result: none
+2026-11-28 05:21:29 | symmetry=none ladder[12] unk=1275/1275 (orbits=425)
+2026-11-28 05:22:33 |   A: res=7.09e-03 bdist=-4.03e-05

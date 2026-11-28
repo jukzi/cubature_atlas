@@ -38,3 +38,7 @@ triangle	38	261	260	chiral	2570	261		python ./code/cubature_generic.py --domain 
 triangle	39	275	274	none	4075	274		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 39 --out results/ladder-triangle/triangle-39
 triangle	40	288	287	chiral	4845	287		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 40 --out results/ladder-triangle/triangle-40
 triangle	44	345		chiral	160	345		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 44 --out results/ladder-triangle/triangle-44
+triangle	43	330		chiral	2265	330		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 43 --out results/ladder-triangle/triangle-43
+triangle	41	301		chiral	5635	301		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 41 --out results/ladder-triangle/triangle-41
+triangle	45	361		chiral	4590	361		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 45 --out results/ladder-triangle/triangle-45
+triangle	42	317	316	none	8415	316		python ./code/cubature_generic.py --domain simplex --dim 2 --degree 42 --out results/ladder-triangle/triangle-42
