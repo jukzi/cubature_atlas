@@ -62,7 +62,7 @@ for _blas_env_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREAD
 
 import numpy as np
 from scipy import sparse
-from scipy.linalg import cho_factor, cho_solve
+from scipy.linalg import cho_factor, cho_solve, qr, solve_triangular
 from scipy.linalg.blas import dsyrk
 from scipy.spatial import cKDTree
 from scipy.special import betaincinv
@@ -87,6 +87,15 @@ def is_inside(boundary_distance):
 # Every start tried by solve_for_symmetry is appended here when it is a
 # list (main sets it), so that starts can later be compared with the rules.
 STARTS_RECORD = None
+
+# How stage A treats the weights: "joint" (default) = Levenberg-Marquardt on
+# nodes and square roots of the weights together; "varpro" = first a variable
+# projection stage V (weights eliminated by linear least squares, LM only on
+# the nodes), then the joint stage from its result. Set by --weights.
+WEIGHT_MODE = "joint"
+# Stage A starts from the result of stage V only if V reached this moment
+# residual; a V run that stalls further away leads A astray (tetrahedron).
+VARPRO_HANDOFF_RESIDUAL = 1e-2
 
 
 def _record_start(sym_basis, symmetry_name, num_points, step_idx, orbits):
@@ -3405,6 +3414,200 @@ def solve_geodesic_levenberg_marquardt(
     return best_moment_norm, best_boundary_dist, steps_taken, best_params
 
 
+def evaluate_variable_projection(sym_basis, orbits, param_vector):
+    """Weights by linear least squares at fixed nodes, projected residual and Jacobian.
+
+    At fixed nodes the moments are linear in the node weights: A w = b with
+    A[:, i] = size_i * phi(x_i). The weights are the basic least-squares
+    solution (QR with column pivoting, numerical rank), the residual is
+    r = A w - b = -(I - Q Q^T) b, and the Jacobian with respect to the spatial
+    unknowns is Kaufman's approximation (I - Q Q^T) dA/dx w (Golub and Pereyra,
+    1973; Kaufman, 1975). Also returns the sensitivity -A^+ dA/dx w of the
+    weights. The weight entries of param_vector are ignored.
+    """
+    layout = orbit_layout(orbits)
+    representatives, _, _, orbit_sizes = decode_orbit_representatives(
+        orbits, param_vector
+    )
+    basis_values, basis_grads = sym_basis.evaluate_values_and_gradients(
+        representatives
+    )
+    design = basis_values * orbit_sizes[None, :]
+    q_factor, r_factor, pivots = qr(
+        design, mode="economic", pivoting=True, check_finite=False
+    )
+    diag = np.abs(np.diag(r_factor))
+    rank = int(np.sum(diag > 1e-12 * (float(diag[0]) + 1e-300)))
+    q_rank = q_factor[:, :rank]
+    r_rank = r_factor[:rank, :rank]
+    coefficients = solve_triangular(
+        r_rank, q_rank.T @ sym_basis.exact_moments, lower=False, check_finite=False
+    )
+    weights = np.zeros(layout.num_orbits, dtype=float)
+    weights[pivots[:rank]] = coefficients
+    residual = design @ weights - sym_basis.exact_moments
+    full_jacobian = assemble_orbit_jacobian(
+        orbits, basis_values, basis_grads, orbit_sizes * weights, orbit_sizes
+    )
+    spatial_columns = np.setdiff1d(
+        np.arange(layout.num_unknowns), layout.weight_columns
+    )
+    spatial_jacobian = full_jacobian[:, spatial_columns]
+    projected = q_rank.T @ spatial_jacobian
+    jacobian = spatial_jacobian - q_rank @ projected
+    sensitivity = np.zeros((layout.num_orbits, len(spatial_columns)), dtype=float)
+    sensitivity[pivots[:rank]] = -solve_triangular(
+        r_rank, projected, lower=False, check_finite=False
+    )
+    return residual, jacobian, weights, sensitivity, spatial_columns, representatives
+
+
+def params_with_weights(orbits, param_vector, weights, floor):
+    """Copy of param_vector whose weight entries are sqrt(max(w, floor))."""
+    layout = orbit_layout(orbits)
+    params = param_vector.copy()
+    params[layout.weight_columns] = np.sqrt(np.maximum(weights, floor))
+    return params
+
+
+def solve_variable_projection_lm(
+    sym_basis,
+    orbits,
+    initial_params,
+    max_steps=250,
+    stagnation_window=30,
+    initial_damping=0.25,
+    penalty_margin=0.0,
+    penalty_weight=25.0,
+    negative_weight_penalty=1.0,
+    verbose=False,
+):
+    """Levenberg-Marquardt on the node coordinates only (variable projection).
+
+    The weights follow the nodes as the least-squares solution of the linear
+    moment system (see evaluate_variable_projection). The cost is
+    0.5 |r|^2 + boundary penalty + 0.5 c^2 sum min(w_i / w_ref, 0)^2 with
+    w_ref the mean node weight, so that negative weights are pushed back to 0
+    (c = negative_weight_penalty, 0 switches it off). Returns the best moment
+    residual, boundary distance, steps, and the parameter vector with the
+    weight entries set to sqrt(max(w, small floor)).
+    """
+    layout = orbit_layout(orbits)
+    total_nodes = float(np.sum(layout.sizes))
+    params = initial_params.copy()
+    full_to_spatial = np.full(layout.num_unknowns, -1, dtype=np.intp)
+
+    def _evaluate(trial):
+        residual, jacobian, weights, sensitivity, spatial_columns, reps = (
+            evaluate_variable_projection(sym_basis, orbits, trial)
+        )
+        trial_with_w = params_with_weights(orbits, trial, weights, 0.0)
+        penalty_cost, penalty_grad, penalty_blocks = evaluate_boundary_penalty(
+            sym_basis, orbits, trial_with_w, penalty_margin, penalty_weight
+        )
+        node_sum = float(np.sum(layout.sizes * weights))
+        weight_ref = abs(node_sum) / total_nodes + 1e-300
+        negative = np.minimum(weights, 0.0) / weight_ref
+        rows = residual
+        rows_jacobian = jacobian
+        if negative_weight_penalty > 0.0 and float(negative.min()) < 0.0:
+            active = negative < 0.0
+            # Every node of an orbit counts: scale by sqrt(size)
+            row_scale = negative_weight_penalty * np.sqrt(layout.sizes[active])
+            rows = np.concatenate([residual, row_scale * negative[active]])
+            rows_jacobian = np.vstack(
+                [jacobian, (row_scale / weight_ref)[:, None] * sensitivity[active]]
+            )
+        moment_norm = float(np.linalg.norm(residual))
+        cost = 0.5 * float(np.dot(rows, rows)) + penalty_cost
+        bdist = sym_basis.base_basis.boundary_distance(reps)
+        return {
+            "rows": rows,
+            "jac": rows_jacobian,
+            "weights": weights,
+            "cols": spatial_columns,
+            "pen_grad": penalty_grad,
+            "pen_blocks": penalty_blocks,
+            "moment_norm": moment_norm,
+            "cost": cost,
+            "bdist": bdist,
+            "min_weight": float(weights.min()),
+        }
+
+    state = _evaluate(params)
+    full_to_spatial[state["cols"]] = np.arange(len(state["cols"]))
+    best = (state["cost"], params.copy(), state)
+    damping = initial_damping
+    history = []
+    steps_taken = 0
+    for iteration in range(1, max_steps + 1):
+        steps_taken = iteration
+        if (
+            state["moment_norm"] < 1e-13
+            and state["bdist"] > 0.0
+            and state["min_weight"] > 0.0
+        ):
+            break
+        jac = state["jac"]
+        normal = lower_gram_matrix(jac)
+        gradient = jac.T @ state["rows"]
+        if state["pen_grad"] is not None:
+            gradient = gradient + state["pen_grad"][state["cols"]]
+            for blk_off, blk_dof, hess_block in state["pen_blocks"]:
+                start = full_to_spatial[blk_off]
+                normal[start : start + blk_dof, start : start + blk_dof] += hess_block
+        raw_diag = np.diag(normal).copy()
+        diag_scale = np.maximum(raw_diag, 0.0) + 1e-12 * (float(np.max(raw_diag)) + 1e-300)
+        accepted = False
+        for _ in range(12):
+            damped = normal.copy(order="F")
+            damped[np.diag_indices_from(damped)] += damping * diag_scale
+            try:
+                factor = cho_factor(damped, lower=True, overwrite_a=True, check_finite=False)
+            except np.linalg.LinAlgError:
+                damping = min(damping * 5.0, 1e10)
+                continue
+            step = cho_solve(factor, -gradient, check_finite=False)
+            trial = params.copy()
+            trial[state["cols"]] += step
+            trial_reps, _, _, _ = decode_orbit_representatives(orbits, trial)
+            if not np.all(np.isfinite(trial_reps)):
+                damping = min(damping * 5.0, 1e10)
+                continue
+            if sym_basis.base_basis.boundary_distance(trial_reps) < -0.35:
+                damping = min(damping * 5.0, 1e10)
+                continue
+            trial_state = _evaluate(trial)
+            if math.isfinite(trial_state["cost"]) and trial_state["cost"] < state["cost"]:
+                params = trial
+                state = trial_state
+                damping = max(damping / 3.0, 1e-13)
+                accepted = True
+                break
+            damping = min(damping * 5.0, 1e10)
+        if state["cost"] < best[0]:
+            best = (state["cost"], params.copy(), state)
+        history.append(best[2]["moment_norm"])
+        if verbose and (iteration <= 5 or iteration % 10 == 0):
+            log_message(
+                f"VP it={iteration:3d} mom_res={state['moment_norm']:.3e} "
+                f"bdist={state['bdist']:+.3e} min_w={state['min_weight']:+.2e} lam={damping:.1e}"
+            )
+        if not accepted:
+            break
+        if len(history) >= stagnation_window:
+            prev = history[-stagnation_window]
+            if history[-1] > 0.99 * prev and damping > 1e-2:
+                break
+            if history[-1] > 0.998 * prev and history[-1] > 1e-10:
+                break
+    _, best_params, best_state = best
+    weights = best_state["weights"]
+    floor = 1e-6 * float(np.sum(layout.sizes * np.abs(weights))) / total_nodes
+    out_params = params_with_weights(orbits, best_params, weights, floor)
+    return best_state["moment_norm"], best_state["bdist"], steps_taken, out_params, best_state["min_weight"]
+
+
 def _build_solution_if_positive(
     sym_basis, orbits, params, moment_residual, boundary_distance, quality
 ):
@@ -3489,27 +3692,14 @@ def _pull_and_polish_interior(sym_basis, orbits, start_params, start_bdist, verb
     return None
 
 
-def solve_from_single_start(sym_basis, orbits, verbose=False):
-    """Run PI-preferred / PO-fallback solve on one orbit initialization.
-
-    Stage A: geodesic LM from the interior start with the boundary penalty
-    (zero cost inside, exponential growth outside, see evaluate_boundary_penalty),
-    so nodes glide along faces instead of slamming into a hard wall or escaping
-    into a deep PO basin. If A ends near a rule with nodes on or just beyond the
-    boundary: pull inside with the same penalty at a small margin, then
-    penalty-free interior polish and minimum-norm Gauss-Newton.
-    Stage B (if A did not reach PI): free geodesic LM from the same start
-    without penalty (a converged PO rule is kept as fallback), then the same
-    pull and polish.
-    """
-    initial_params = pack_orbit_parameters(orbits)
+def _stage_a(sym_basis, orbits, stage_a_params, label, verbose):
+    """Stage A from stage_a_params: penalised geodesic LM, then pull and polish."""
     boundary_pi_fallback = None
-
     # Stage A: smooth sliding-wall geodesic LM (zero penalty inside, rank-1 face wall outside)
     wall_res, wall_bdist, _, wall_params = solve_geodesic_levenberg_marquardt(
         sym_basis,
         orbits,
-        initial_params,
+        stage_a_params,
         max_steps=250,
         stagnation_window=30,
         initial_damping=0.25,
@@ -3521,7 +3711,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         verbose=verbose,
         weight_norm_direction=True,
     )
-    log_message(f"  A: res={wall_res:.2e} bdist={wall_bdist:+.2e}")
+    log_message(f"  {label}: res={wall_res:.2e} bdist={wall_bdist:+.2e}")
     if wall_res < 1e-9 and is_inside(wall_bdist):
         wall_res, wall_params = polish_minimum_norm_gauss_newton(
             sym_basis,
@@ -3538,7 +3728,7 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
         )
         if solution is not None:
             if wall_bdist > 1e-6:
-                log_message("  result: PI from A")
+                log_message(f"  result: PI from {label}")
                 return solution
             # Boundary-grazing PI (valid per Atlas convention); still try to pull
             # deeper inside for easier rigorous certification, keeping this as fallback.
@@ -3548,11 +3738,51 @@ def solve_from_single_start(sym_basis, orbits, verbose=False):
             sym_basis, orbits, wall_params, wall_bdist, verbose
         )
         if pulled_solution is not None:
-            log_message("  result: PI from A after P2/P3")
+            log_message(f"  result: PI from {label} after P2/P3")
             return pulled_solution
     if boundary_pi_fallback is not None:
-        log_message("  result: PI from A with nodes on the boundary (P2/P3 did not move them inside)")
+        log_message(f"  result: PI from {label} with nodes on the boundary (P2/P3 did not move them inside)")
         return boundary_pi_fallback
+
+    return None
+
+
+def solve_from_single_start(sym_basis, orbits, verbose=False):
+    """Run PI-preferred / PO-fallback solve on one orbit initialization.
+
+    Stage A: geodesic LM from the interior start with the boundary penalty
+    (zero cost inside, exponential growth outside, see evaluate_boundary_penalty),
+    so nodes glide along faces instead of slamming into a hard wall or escaping
+    into a deep PO basin. If A ends near a rule with nodes on or just beyond the
+    boundary: pull inside with the same penalty at a small margin, then
+    penalty-free interior polish and minimum-norm Gauss-Newton.
+    With --weights varpro a stage V (solve_variable_projection_lm) runs first,
+    and A starts from its result when V reached VARPRO_HANDOFF_RESIDUAL.
+    Stage B (if A did not reach PI): free geodesic LM from the same start
+    without penalty (a converged PO rule is kept as fallback), then the same
+    pull and polish.
+    """
+    initial_params = pack_orbit_parameters(orbits)
+    boundary_pi_fallback = None
+
+    stage_a_params = initial_params
+    stage_a_label = "A"
+    if WEIGHT_MODE == "varpro":
+        # Stage V: nodes only, weights by least squares. A continues from its
+        # result if V came close to a rule, else from the start as usual.
+        vp_res, vp_bdist, vp_steps, vp_params, vp_min_w = solve_variable_projection_lm(
+            sym_basis, orbits, initial_params, verbose=verbose
+        )
+        log_message(
+            f"  V: res={vp_res:.2e} bdist={vp_bdist:+.2e} min_w={vp_min_w:+.2e} steps={vp_steps}"
+        )
+        if vp_res < VARPRO_HANDOFF_RESIDUAL:
+            stage_a_params = vp_params
+            stage_a_label = "A after V"
+    outcome = _stage_a(sym_basis, orbits, stage_a_params, stage_a_label, verbose)
+    if outcome is not None:
+        return outcome
+    boundary_pi_fallback = None
 
     # Stage B / Phase 1: free fold-free geodesic LM from the start (allowed to step outside)
     free_res, free_bdist, _, free_params = solve_geodesic_levenberg_marquardt(
@@ -4171,6 +4401,12 @@ def save_atlas_rule_json(
             f"Generic deterministic equilibrium-start solver (domain={domain}, dim={dimension}, "
             f"symmetry={symmetry_name}) with fold-free geodesic-accelerated Cholesky LM, "
             f"smooth boundary hinge pull, and minimum-norm Gauss-Newton end-stage"
+            + (
+                "; stage V first: variable projection (weights by linear least "
+                "squares, LM on the nodes only)"
+                if WEIGHT_MODE == "varpro"
+                else ""
+            )
         ),
         "author": "Antigravity (AI-assisted)",
         "reproduce": {
@@ -4403,6 +4639,7 @@ def default_starts_path(out, domain, dimension, degree):
 
 def main():
     global STARTS_RECORD
+    global WEIGHT_MODE
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--dim", type=int, default=2, help="spatial dimension d >= 1 (default: 2)"
@@ -4467,7 +4704,15 @@ def main():
         default=None,
         help="output JSON file or existing directory (default: <rule id>.json in the current directory)",
     )
+    parser.add_argument(
+        "--weights",
+        choices=("joint", "varpro"),
+        default="joint",
+        help="stage A: joint LM on nodes and weights (default), or variable "
+        "projection first (weights by least squares, LM on the nodes only)",
+    )
     args = parser.parse_args()
+    WEIGHT_MODE = args.weights
     if args.dim < 1:
         raise ValueError("dim must be >= 1")
     if args.degree < 1:
@@ -4576,6 +4821,8 @@ def write_rule_and_log(args, base_basis, best_solution, best_symmetry, elapsed):
             command_args.extend(["--max-extra-points", str(args.max_extra_points)])
         if args.single_start:
             command_args.append("--single-start")
+    if args.weights != "joint":
+        command_args.extend(["--weights", args.weights])
     if args.seed is not None:
         command_args.extend(["--seed", str(args.seed)])
     reproduce_command = "python code/cubature_generic.py " + shlex.join(command_args)
