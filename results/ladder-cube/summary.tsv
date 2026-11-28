@@ -15,3 +15,4 @@ cube	15	187	186	chiral	720	186		python ./code/cubature_generic.py --domain cube 
 cube	17	261		chiral	535	262	yes	python ./code/cubature_generic.py --domain cube --dim 3 --degree 17 --out results/ladder-cube/cube-17
 cube	18	326		demi	625	326		python ./code/cubature_generic.py --domain cube --dim 3 --degree 18 --out results/ladder-cube/cube-18
 cube	19	357		chiral	935	358	yes	python ./code/cubature_generic.py --domain cube --dim 3 --degree 19 --out results/ladder-cube/cube-19
+cube	22	554		demi	1315	548		python ./code/cubature_generic.py --domain cube --dim 3 --degree 22 --out results/ladder-cube/cube-22
