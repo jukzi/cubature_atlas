@@ -69,4 +69,8 @@ For C4, C2 and no symmetry on the square the start is a lattice in the angle coo
 - surplus orbits are removed nearest to the corners (the centre first if the surplus is odd); missing orbits go greedily into the largest gaps, the boundary counting as a mirror (the centre first if the deficit is odd);
 - these three groups start at N = Z.
 
+### Run time
+
+The solver is sensitive to rounding: a change of the evaluation order at the level of 1e-16 can turn a converging start into a failing one (and the other way round). Changes that only make it faster must therefore give bitwise identical results (same log, same rule files); check this on a few cells before and after the change. Most of the time at high degree goes into the number of LM runs of the ladder (every N, every group, 12 to 16 starts) and into the O(M_G^3) linear algebra of each step; `--single-start` needs one start per group.
+
 The rule files in `rules/` are the authoritative data. The build (`tools/build_atlas.py`) checks them independently of this code.

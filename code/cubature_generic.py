@@ -761,34 +761,17 @@ class SimplexBasis:
         # Partial derivatives wrt barycentric u_m and tail sum s_m, then chain rule:
         # du_0/dx_j = -1, du_{j+1}/dx_j = +1; ds_0/dx_j = 0, ds_m/dx_j = 1 if m <= j+1
         factor_values_by_axis = []
-        factor_grads = [[None] * self.dimension for _ in range(self.dimension)]
-
+        factor_dcoord_by_axis = []
+        factor_dtail_by_axis = []
         for axis in range(self.dimension):
             slots = self.alpha_slot_by_axis[axis]
             exponents = self.multi_index_array[:, axis]
             val_tab, dcoord_tab, dtail_tab = self._axis_jacobi_values_and_partials(
                 axis, barycentric[axis], tail_sums[axis]
             )
-            factor_val = val_tab[exponents, slots]
-            factor_dcoord = dcoord_tab[exponents, slots]
-            factor_dtail = dtail_tab[exponents, slots]
-            factor_values_by_axis.append(factor_val)
-
-            for coord_idx in range(self.dimension):
-                du_dx = (
-                    -1.0
-                    if axis == 0
-                    else (1.0 if axis == coord_idx + 1 else 0.0)
-                )
-                ds_dx = (
-                    0.0
-                    if axis == 0
-                    else (1.0 if axis <= coord_idx + 1 else 0.0)
-                )
-                if du_dx != 0.0 or ds_dx != 0.0:
-                    factor_grads[coord_idx][axis] = (
-                        du_dx * factor_dcoord + ds_dx * factor_dtail
-                    )
+            factor_values_by_axis.append(val_tab[exponents, slots])
+            factor_dcoord_by_axis.append(dcoord_tab[exponents, slots])
+            factor_dtail_by_axis.append(dtail_tab[exponents, slots])
 
         values = np.repeat(
             self.normalization_factors[:, None], num_points, axis=1
@@ -796,19 +779,59 @@ class SimplexBasis:
         for axis in range(self.dimension):
             values *= factor_values_by_axis[axis]
 
-        gradients = np.zeros(
+        # The chain-rule factors are 0 or +-1, so du * dcoord + ds * dtail is
+        # one of -dcoord, dcoord + dtail, dtail (exact, no rounding), and the
+        # product term of one (axis, du, ds) is the same for every coordinate
+        # that has it: it is computed once (-dcoord as the negated product,
+        # which rounds identically).
+        term_cache = {}
+        gradients = np.empty(
             (self.dimension, self.num_basis, num_points), dtype=float
         )
         for coord_idx in range(self.dimension):
+            # The first term is stored, not added to zero (same values; only
+            # the sign of an exact zero can differ).
+            first_term = True
             for axis in range(self.dimension):
-                axis_deriv = factor_grads[coord_idx][axis]
-                if axis_deriv is None:
+                du_dx = (
+                    -1
+                    if axis == 0
+                    else (1 if axis == coord_idx + 1 else 0)
+                )
+                ds_dx = (
+                    0
+                    if axis == 0
+                    else (1 if axis <= coord_idx + 1 else 0)
+                )
+                if du_dx == 0 and ds_dx == 0:
                     continue
-                term = self.normalization_factors[:, None] * axis_deriv
-                for other_axis in range(self.dimension):
-                    if other_axis != axis:
-                        term *= factor_values_by_axis[other_axis]
-                gradients[coord_idx] += term
+                key = (axis, abs(du_dx), ds_dx)
+                term = term_cache.get(key)
+                if term is None:
+                    if du_dx != 0 and ds_dx != 0:
+                        axis_deriv = factor_dcoord_by_axis[axis] + factor_dtail_by_axis[axis]
+                    elif du_dx != 0:
+                        axis_deriv = factor_dcoord_by_axis[axis]
+                    else:
+                        axis_deriv = factor_dtail_by_axis[axis]
+                    term = self.normalization_factors[:, None] * axis_deriv
+                    for other_axis in range(self.dimension):
+                        if other_axis != axis:
+                            term *= factor_values_by_axis[other_axis]
+                    term_cache[key] = term
+                negate = du_dx < 0 and ds_dx == 0
+                if first_term:
+                    if negate:
+                        np.negative(term, out=gradients[coord_idx])
+                    else:
+                        gradients[coord_idx] = term
+                    first_term = False
+                elif negate:
+                    gradients[coord_idx] -= term
+                else:
+                    gradients[coord_idx] += term
+            if first_term:
+                gradients[coord_idx] = 0.0
         return values, gradients
 
     def evaluate_second_order_jet(self, points, directions):
@@ -1338,17 +1361,50 @@ class CubatureSolution:
     orbits: list
 
 
+def _group_images(point, group_transforms):
+    """Images g(x) of one point under all group elements, shape (|G|, d)."""
+    linears, translations = _stacked_transforms(group_transforms)
+    return np.matmul(linears, point[None, :, None])[:, :, 0] + translations
+
+
+_STACKED_TRANSFORMS = []
+
+
+def _stacked_transforms(group_transforms):
+    """Linear parts (|G|, d, d) and translations (|G|, d) of a group, cached."""
+    for cached_group, linears, translations in _STACKED_TRANSFORMS:
+        if cached_group is group_transforms:
+            return linears, translations
+    linears = np.stack([transform.linear for transform in group_transforms])
+    translations = np.stack([transform.translation for transform in group_transforms])
+    _STACKED_TRANSFORMS.insert(0, (group_transforms, linears, translations))
+    del _STACKED_TRANSFORMS[8:]
+    return linears, translations
+
+
+def _distinct_images(all_images, tol):
+    """The images in order, each kept if it is at least tol from every kept one."""
+    differences = all_images[:, None, :] - all_images[None, :, :]
+    distances = np.linalg.norm(differences, axis=2)
+    kept = []
+    for idx in range(len(all_images)):
+        if all(float(distances[idx, prev]) >= tol for prev in kept):
+            kept.append(idx)
+    return [all_images[idx] for idx in kept]
+
+
 def compute_orbit_subspace(point, group_transforms, tol=1e-7):
     """Compute orbit size, stabilizer fixed subspace (origin, basis), and orbit images."""
     dimension = len(point)
-    images = []
-    stabilizer = []
-    for transform in group_transforms:
-        image = transform.linear @ point + transform.translation
-        if float(np.linalg.norm(image - point)) < tol:
-            stabilizer.append(transform)
-        if all(float(np.linalg.norm(image - prev)) >= tol for prev in images):
-            images.append(image)
+    all_images = _group_images(point, group_transforms)
+    stabilizer = [
+        transform
+        for transform, distance in zip(
+            group_transforms, np.linalg.norm(all_images - point[None, :], axis=1)
+        )
+        if float(distance) < tol
+    ]
+    images = _distinct_images(all_images, tol)
 
     orbit_size = len(images)
     if len(stabilizer) == 1:
@@ -1385,11 +1441,7 @@ def expand_orbits_to_nodes(orbits, group_transforms):
     for orbit in orbits:
         rep_point = orbit.representative_point()
         orbit_weight = float(orbit.weight_sqrt * orbit.weight_sqrt)
-        images = []
-        for transform in group_transforms:
-            image = transform.linear @ rep_point + transform.translation
-            if all(float(np.linalg.norm(image - prev)) >= 1e-7 for prev in images):
-                images.append(image)
+        images = _distinct_images(_group_images(rep_point, group_transforms), 1e-7)
         for image in images:
             all_nodes.append(image)
             all_weights.append(orbit_weight)
@@ -2622,32 +2674,108 @@ def unpack_orbit_parameters(orbits, param_vector):
     return unpacked
 
 
+class OrbitLayout:
+    """Position of every orbit in the flat parameter vector, as index arrays.
+
+    Orbits with the same number of spatial unknowns form one group, so that
+    decoding the representatives and assembling the Jacobian are a few array
+    operations instead of a Python loop over all orbits.
+    """
+
+    def __init__(self, orbits):
+        num_orbits = len(orbits)
+        self.num_orbits = num_orbits
+        self.origins = np.array([orbit.subspace_origin for orbit in orbits], dtype=float)
+        self.sizes = np.array([float(orbit.size) for orbit in orbits], dtype=float)
+        self.weight_columns = np.empty(num_orbits, dtype=np.intp)
+        grouped = {}
+        offset = 0
+        for idx, orbit in enumerate(orbits):
+            dof = orbit.spatial_dof
+            if dof > 0:
+                entry = grouped.setdefault(dof, ([], [], []))
+                entry[0].append(idx)
+                entry[1].append(orbit.subspace_basis)
+                entry[2].append(offset)
+            offset += dof
+            self.weight_columns[idx] = offset
+            offset += 1
+        self.num_unknowns = offset
+        # (dof, orbit indices, stacked bases (k, d, dof), columns (k, dof))
+        self.groups = []
+        for dof in sorted(grouped):
+            indices, bases, starts = grouped[dof]
+            columns = np.asarray(starts, dtype=np.intp)[:, None] + np.arange(dof, dtype=np.intp)[None, :]
+            self.groups.append(
+                (dof, np.asarray(indices, dtype=np.intp), np.stack(bases), columns)
+            )
+
+
+_ORBIT_LAYOUT_CACHE = []
+
+
+def orbit_layout(orbits):
+    """OrbitLayout of an orbit list, cached for the few lists in use.
+
+    The solver never changes an orbit list after building it; the length and
+    the first and last orbit are compared as a guard anyway.
+    """
+    for cached_orbits, first, last, cached_layout in _ORBIT_LAYOUT_CACHE:
+        if (
+            cached_orbits is orbits
+            and len(orbits) == cached_layout.num_orbits
+            and orbits[0] is first
+            and orbits[-1] is last
+        ):
+            return cached_layout
+    layout = OrbitLayout(orbits)
+    _ORBIT_LAYOUT_CACHE.insert(0, (orbits, orbits[0], orbits[-1], layout))
+    del _ORBIT_LAYOUT_CACHE[8:]
+    return layout
+
+
 def decode_orbit_representatives(orbits, param_vector):
     """Decode flat parameter vector into (representatives, weights, weight_sqrts, sizes)."""
-    num_orbits = len(orbits)
-    dimension = len(orbits[0].subspace_origin)
-    representatives = np.empty((num_orbits, dimension), dtype=float)
-    orbit_weights = np.empty(num_orbits, dtype=float)
-    weight_sqrts = np.empty(num_orbits, dtype=float)
-    orbit_sizes = np.empty(num_orbits, dtype=float)
+    layout = orbit_layout(orbits)
+    representatives = layout.origins.copy()
+    for dof, indices, bases, columns in layout.groups:
+        coords = param_vector[columns]
+        # Batched matmul rounds like the per-orbit product basis @ coords.
+        shift = np.matmul(bases, coords[:, :, None])[:, :, 0]
+        representatives[indices] += shift
+    weight_sqrts = param_vector[layout.weight_columns].astype(float)
+    orbit_weights = weight_sqrts * weight_sqrts
+    return representatives, orbit_weights, weight_sqrts, layout.sizes.copy()
 
-    offset = 0
-    for idx, orbit in enumerate(orbits):
-        dof = orbit.spatial_dof
-        if dof > 0:
-            subspace_coords = param_vector[offset : offset + dof]
-            representatives[idx] = (
-                orbit.subspace_origin + orbit.subspace_basis @ subspace_coords
-            )
-        else:
-            representatives[idx] = orbit.subspace_origin
-        offset += dof
-        weight_sqrt = param_vector[offset]
-        offset += 1
-        weight_sqrts[idx] = weight_sqrt
-        orbit_weights[idx] = weight_sqrt * weight_sqrt
-        orbit_sizes[idx] = float(orbit.size)
-    return representatives, orbit_weights, weight_sqrts, orbit_sizes
+
+def assemble_orbit_jacobian(orbits, basis_values, basis_grads, spatial_scale, weight_scale):
+    """Jacobian with the columns of pack_orbit_parameters.
+
+    The spatial columns of orbit i are spatial_scale[i] * grad^T U_i (U_i the
+    basis of its fixed subspace), its weight column is weight_scale[i] times
+    the basis values at the representative.
+    """
+    layout = orbit_layout(orbits)
+    num_rows = basis_values.shape[0]
+    jacobian = np.empty((num_rows, layout.num_unknowns), dtype=float)
+    dimension = basis_grads.shape[0]
+    for dof, indices, bases, columns in layout.groups:
+        if dof == 1:
+            # Same rounding as the per-orbit product grad^T @ basis.
+            block = basis_grads[0][:, indices] * bases[:, 0, 0][None, :]
+            for axis in range(1, dimension):
+                block += basis_grads[axis][:, indices] * bases[:, axis, 0][None, :]
+            block *= spatial_scale[indices][None, :]
+            jacobian[:, columns[:, 0]] = block
+            continue
+        # (k, rows, d) @ (k, d, dof): rounds like the per-orbit grad^T @ basis
+        grads = np.ascontiguousarray(basis_grads[:, :, indices].transpose(2, 1, 0))
+        block = np.matmul(grads, bases)
+        block *= spatial_scale[indices][:, None, None]
+        for col in range(dof):
+            jacobian[:, columns[:, col]] = block[:, :, col].T
+    jacobian[:, layout.weight_columns] = basis_values * weight_scale[None, :]
+    return jacobian
 
 
 def evaluate_moment_residual(sym_basis, orbits, param_vector):
@@ -2670,21 +2798,13 @@ def evaluate_residual_and_jacobian(sym_basis, orbits, param_vector):
     total_orbit_weights = orbit_sizes * orbit_weights
     residual = basis_values @ total_orbit_weights - sym_basis.exact_moments
 
-    num_unknowns = len(param_vector)
-    jacobian = np.empty((sym_basis.num_basis, num_unknowns), dtype=float)
-    offset = 0
-    for idx, orbit in enumerate(orbits):
-        dof = orbit.spatial_dof
-        if dof > 0:
-            # basis_grads[:, :, idx] has shape (dim, num_basis); basis has (dim, dof)
-            jacobian[:, offset : offset + dof] = total_orbit_weights[idx] * (
-                basis_grads[:, :, idx].T @ orbit.subspace_basis
-            )
-            offset += dof
-        jacobian[:, offset] = (
-            2.0 * orbit_sizes[idx] * weight_sqrts[idx]
-        ) * basis_values[:, idx]
-        offset += 1
+    jacobian = assemble_orbit_jacobian(
+        orbits,
+        basis_values,
+        basis_grads,
+        total_orbit_weights,
+        2.0 * orbit_sizes * weight_sqrts,
+    )
     return residual, jacobian, representatives
 
 
@@ -2802,20 +2922,11 @@ def polish_minimum_norm_gauss_newton(
             representatives
         )
         total_orbit_weights = orbit_sizes * orbit_weights
-        num_unknowns = len(params)
 
         # Build Jacobian wrt (subspace_coords, weight) directly so tiny weights stay well-scaled
-        jacobian = np.empty((sym_basis.num_basis, num_unknowns), dtype=float)
-        offset = 0
-        for idx, orbit in enumerate(orbits):
-            dof = orbit.spatial_dof
-            if dof > 0:
-                jacobian[:, offset : offset + dof] = total_orbit_weights[idx] * (
-                    basis_grads[:, :, idx].T @ orbit.subspace_basis
-                )
-                offset += dof
-            jacobian[:, offset] = orbit_sizes[idx] * basis_values[:, idx]
-            offset += 1
+        jacobian = assemble_orbit_jacobian(
+            orbits, basis_values, basis_grads, total_orbit_weights, orbit_sizes
+        )
 
         gram_matrix = lower_gram_matrix(jacobian.T)
         try:
