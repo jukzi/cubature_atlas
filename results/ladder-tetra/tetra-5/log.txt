@@ -1,0 +1,13 @@
+2026-11-28 01:42:13 | Start generic solver: domain=simplex dim=3 degree=5 M=56 Z=14 symmetry=auto points=0 seed=None
+2026-11-28 01:42:13 | Point-count ladder N=10..22 (lower bound 10, symmetries full, chiral, mirror, central, none)
+2026-11-28 01:42:13 | symmetry=mirror N=12: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:42:13 | symmetry=mirror N=13: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:42:13 | Trying symmetry=full (|G|=24, M_G=6, N=14)
+2026-11-28 01:42:13 | symmetry=full ladder[0] unk=6/6 (orbits=3)
+2026-11-28 01:42:13 |   A: res=9.03e-14 bdist=+4.55e-02
+2026-11-28 01:42:13 |   result: PI from A
+2026-11-28 01:42:13 | symmetry=full ladder[0] -> PI mom_res=7.10e-16 bdist=+4.550e-02
+2026-11-28 01:42:13 | Refining N=13 with start rounds 2..4
+2026-11-28 01:42:13 | symmetry=mirror N=13: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 01:42:13 | wrote 1 tried starts to results/ladder-tetra/tetra-5/starts-T3-05.json
+2026-11-28 01:42:13 | FOUND CA-T3-05-14-PI-MPC (PI, sym=full) N=14 mom_res=7.10e-16 monom=2.08e-17 min_w=7.091e-03 bdist=+4.550e-02 wrote=results/ladder-tetra/tetra-5/CA-T3-05-14-PI-MPC.json (0.16s)

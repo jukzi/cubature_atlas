@@ -1,0 +1,13 @@
+label	degree	N_PI	N_PO	symmetry_PI	seconds	atlas_PI	better	command
+tetra	5	14		full	5	14		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 5 --out results/ladder-tetra/tetra-5
+tetra	3	6		mirror	20	6		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 3 --out results/ladder-tetra/tetra-3
+tetra	4	11	10	mirror	35	11		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 4 --out results/ladder-tetra/tetra-4
+tetra	6	23	22	mirror	75	23		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 6 --out results/ladder-tetra/tetra-6
+tetra	7	31	30	central	100	31		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 7 --out results/ladder-tetra/tetra-7
+tetra	8	43	42	none	150	43		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 8 --out results/ladder-tetra/tetra-8
+tetra	9	56	55	central	245	55		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 9 --out results/ladder-tetra/tetra-9
+tetra	10	74	72	none	560	73		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 10 --out results/ladder-tetra/tetra-10
+tetra	11	92	89	none	1245	91		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 11 --out results/ladder-tetra/tetra-11
+tetra	12	116	114	none	1265	116		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 12 --out results/ladder-tetra/tetra-12
+tetra	13	141	138	none	3235	141		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 13 --out results/ladder-tetra/tetra-13
+tetra	14	172	170	none	3945	172		python ./code/cubature_generic.py --domain simplex --dim 3 --degree 14 --out results/ladder-tetra/tetra-14
