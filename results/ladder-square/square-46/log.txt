@@ -575,3 +575,453 @@
 2026-11-28 03:43:07 |   result: none
 2026-11-28 03:43:07 | symmetry=none ladder[33] unk=1131/1128 (orbits=377)
 2026-11-28 03:43:43 |   A: res=3.72e-04 bdist=-7.30e-08
+2026-11-28 03:44:20 |   B: res=6.55e-04 bdist=-7.42e-04
+2026-11-28 03:44:20 |   result: none
+2026-11-28 03:44:21 | symmetry=none ladder[34] unk=1131/1128 (orbits=377)
+2026-11-28 03:45:00 |   A: res=1.92e-05 bdist=+8.03e-04
+2026-11-28 03:45:00 |   P2 skipped: bdist=+8.03e-04 already inside
+2026-11-28 03:45:14 |   P3 polish inside: res=1.55e-05 bdist=+8.43e-04
+2026-11-28 03:45:48 |   B: res=7.72e-05 bdist=-1.82e-03
+2026-11-28 03:45:48 |   P2 pull inside: start bdist=-1.82e-03, margin=1.13e-04
+2026-11-28 03:46:02 |   P2 weight 1: bdist=+1.00e-03
+2026-11-28 03:46:16 |   P3 polish inside: res=1.36e-05 bdist=+6.63e-04
+2026-11-28 03:46:16 |   result: none
+2026-11-28 03:46:16 | symmetry=none ladder[35] unk=1131/1128 (orbits=377)
+2026-11-28 03:46:54 |   A: res=1.65e-03 bdist=+8.00e-05
+2026-11-28 03:47:30 |   B: res=5.13e-04 bdist=+1.49e-03
+2026-11-28 03:47:30 |   result: none
+2026-11-28 03:47:30 | symmetry=none ladder[36] unk=1131/1128 (orbits=377)
+2026-11-28 03:48:09 |   A: res=6.47e-05 bdist=+6.06e-07
+2026-11-28 03:48:09 |   P2 pull inside: start bdist=+6.06e-07, margin=1.13e-04
+2026-11-28 03:48:23 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 03:48:28 |   P3 polish inside: res=9.66e-06 bdist=+1.00e-07
+2026-11-28 03:49:01 |   B: res=8.90e-05 bdist=+7.38e-04
+2026-11-28 03:49:01 |   P2 skipped: bdist=+7.38e-04 already inside
+2026-11-28 03:49:15 |   P3 polish inside: res=1.22e-05 bdist=+7.54e-04
+2026-11-28 03:49:15 |   result: none
+2026-11-28 03:49:15 | symmetry=none ladder[37] unk=1131/1128 (orbits=377)
+2026-11-28 03:49:54 |   A: res=9.83e-04 bdist=+4.17e-04
+2026-11-28 03:50:29 |   B: res=4.95e-05 bdist=-9.64e-04
+2026-11-28 03:50:29 |   P2 pull inside: start bdist=-9.64e-04, margin=1.13e-04
+2026-11-28 03:50:43 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 03:50:48 |   P3 polish inside: res=1.80e-05 bdist=+1.00e-07
+2026-11-28 03:50:48 |   result: none
+2026-11-28 03:50:49 | symmetry=none ladder[38] unk=1131/1128 (orbits=377)
+2026-11-28 03:51:23 |   A: res=9.94e-05 bdist=+3.38e-04
+2026-11-28 03:51:23 |   P2 skipped: bdist=+3.38e-04 already inside
+2026-11-28 03:51:36 |   P3 polish inside: res=8.06e-06 bdist=+3.21e-04
+2026-11-28 03:52:12 |   B: res=6.07e-05 bdist=+9.17e-04
+2026-11-28 03:52:12 |   P2 skipped: bdist=+9.17e-04 already inside
+2026-11-28 03:52:22 |   P3 polish inside: res=3.37e-05 bdist=+7.39e-04
+2026-11-28 03:52:22 |   result: none
+2026-11-28 03:52:22 | symmetry=none ladder[39] unk=1131/1128 (orbits=377)
+2026-11-28 03:52:58 |   A: res=3.71e-04 bdist=+1.33e-03
+2026-11-28 03:53:32 |   B: res=1.48e-04 bdist=-4.89e-04
+2026-11-28 03:53:32 |   result: none
+2026-11-28 03:53:33 | symmetry=none ladder[40] unk=1131/1128 (orbits=377)
+2026-11-28 03:54:09 |   A: res=1.08e-05 bdist=+6.48e-04
+2026-11-28 03:54:09 |   P2 skipped: bdist=+6.48e-04 already inside
+2026-11-28 03:54:25 |   P3 polish inside: res=3.40e-06 bdist=+7.67e-04
+2026-11-28 03:55:04 |   B: res=7.15e-06 bdist=-8.33e-03
+2026-11-28 03:55:04 |   P2 pull inside: start bdist=-8.33e-03, margin=1.13e-04
+2026-11-28 03:55:20 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 03:55:23 |   P3 polish inside: res=8.34e-06 bdist=+1.00e-07
+2026-11-28 03:55:23 |   result: none
+2026-11-28 03:55:23 | symmetry=none ladder[41] unk=1131/1128 (orbits=377)
+2026-11-28 03:56:00 |   A: res=3.97e-04 bdist=-3.77e-06
+2026-11-28 03:56:36 |   B: res=2.21e-03 bdist=-2.91e-02
+2026-11-28 03:56:36 |   result: none
+2026-11-28 03:56:36 | symmetry=none ladder[42] unk=1131/1128 (orbits=377)
+2026-11-28 03:57:13 |   A: res=1.79e-04 bdist=-4.89e-08
+2026-11-28 03:57:52 |   B: res=4.61e-05 bdist=+3.25e-04
+2026-11-28 03:57:52 |   P2 skipped: bdist=+3.25e-04 already inside
+2026-11-28 03:58:07 |   P3 polish inside: res=2.53e-05 bdist=+1.00e-07
+2026-11-28 03:58:07 |   result: none
+2026-11-28 03:58:07 | symmetry=none ladder[43] unk=1131/1128 (orbits=377)
+2026-11-28 03:58:43 |   A: res=5.27e-04 bdist=+6.73e-04
+2026-11-28 03:59:22 |   B: res=8.00e-05 bdist=-7.17e-04
+2026-11-28 03:59:22 |   P2 pull inside: start bdist=-7.17e-04, margin=1.13e-04
+2026-11-28 03:59:37 |   P2 weight 1: bdist=+1.12e-04
+2026-11-28 03:59:43 |   P3 polish inside: res=2.97e-05 bdist=+1.00e-07
+2026-11-28 03:59:43 |   result: none
+2026-11-28 03:59:44 | symmetry=none ladder[44] unk=1131/1128 (orbits=377)
+2026-11-28 04:00:20 |   A: res=1.95e-05 bdist=-4.51e-10
+2026-11-28 04:00:20 |   P2 pull inside: start bdist=-4.51e-10, margin=1.13e-04
+2026-11-28 04:00:34 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:00:43 |   P3 polish inside: res=1.48e-06 bdist=+1.00e-07
+2026-11-28 04:01:19 |   B: res=7.27e-05 bdist=-5.30e-02
+2026-11-28 04:01:19 |   P2 pull inside: start bdist=-5.30e-02, margin=1.13e-04
+2026-11-28 04:01:21 |   P2 weight 1: bdist=-4.17e-02
+2026-11-28 04:01:23 |   P2 weight 10: bdist=-3.04e-02
+2026-11-28 04:01:27 |   P2 weight 100: bdist=-1.19e-02
+2026-11-28 04:01:27 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 04:01:27 |   result: none
+2026-11-28 04:01:27 | symmetry=none ladder[45] unk=1131/1128 (orbits=377)
+2026-11-28 04:02:05 |   A: res=7.89e-04 bdist=+1.07e-03
+2026-11-28 04:02:43 |   B: res=1.65e-03 bdist=+2.24e-04
+2026-11-28 04:02:43 |   result: none
+2026-11-28 04:02:44 | symmetry=none ladder[46] unk=1131/1128 (orbits=377)
+2026-11-28 04:03:24 |   A: res=1.18e-05 bdist=+1.16e-04
+2026-11-28 04:03:24 |   P2 skipped: bdist=+1.16e-04 already inside
+2026-11-28 04:03:40 |   P3 polish inside: res=7.25e-06 bdist=+6.09e-04
+2026-11-28 04:04:18 |   B: res=1.20e-05 bdist=-2.57e-03
+2026-11-28 04:04:18 |   P2 pull inside: start bdist=-2.57e-03, margin=1.13e-04
+2026-11-28 04:04:32 |   P2 weight 1: bdist=+2.06e-04
+2026-11-28 04:04:38 |   P3 polish inside: res=9.26e-06 bdist=+1.00e-07
+2026-11-28 04:04:38 |   result: none
+2026-11-28 04:04:38 | symmetry=none ladder[47] unk=1131/1128 (orbits=377)
+2026-11-28 04:05:19 |   A: res=4.07e-03 bdist=-4.11e-05
+2026-11-28 04:05:57 |   B: res=8.20e-04 bdist=+2.65e-04
+2026-11-28 04:05:57 |   result: none
+2026-11-28 04:05:58 | symmetry=none ladder[48] unk=1131/1128 (orbits=377)
+2026-11-28 04:06:36 |   A: res=8.23e-06 bdist=+5.23e-04
+2026-11-28 04:06:36 |   P2 skipped: bdist=+5.23e-04 already inside
+2026-11-28 04:06:51 |   P3 polish inside: res=2.85e-06 bdist=+1.00e-07
+2026-11-28 04:07:26 |   B: res=3.46e-05 bdist=-2.61e-02
+2026-11-28 04:07:26 |   P2 pull inside: start bdist=-2.61e-02, margin=1.13e-04
+2026-11-28 04:07:30 |   P2 weight 1: bdist=-8.92e-03
+2026-11-28 04:07:43 |   P2 weight 10: bdist=+1.13e-04
+2026-11-28 04:07:49 |   P3 polish inside: res=1.15e-05 bdist=+1.00e-07
+2026-11-28 04:07:49 |   result: none
+2026-11-28 04:07:49 | symmetry=none ladder[49] unk=1131/1128 (orbits=377)
+2026-11-28 04:08:28 |   A: res=7.30e-04 bdist=-3.33e-07
+2026-11-28 04:09:08 |   B: res=2.70e-04 bdist=+9.54e-04
+2026-11-28 04:09:08 |   result: none
+2026-11-28 04:09:09 | symmetry=none ladder[50] unk=1131/1128 (orbits=377)
+2026-11-28 04:09:48 |   A: res=3.42e-04 bdist=+8.13e-08
+2026-11-28 04:10:28 |   B: res=2.03e-05 bdist=-2.87e-04
+2026-11-28 04:10:28 |   P2 pull inside: start bdist=-2.87e-04, margin=1.13e-04
+2026-11-28 04:10:43 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:10:52 |   P3 polish inside: res=9.64e-07 bdist=+1.00e-07
+2026-11-28 04:10:52 |   result: none
+2026-11-28 04:10:52 | symmetry=none ladder[51] unk=1131/1128 (orbits=377)
+2026-11-28 04:11:34 |   A: res=1.25e-03 bdist=+4.77e-04
+2026-11-28 04:12:10 |   B: res=1.09e-03 bdist=-2.26e-04
+2026-11-28 04:12:10 |   result: none
+2026-11-28 04:12:11 | symmetry=none ladder[52] unk=1131/1128 (orbits=377)
+2026-11-28 04:12:48 |   A: res=3.62e-04 bdist=+2.38e-09
+2026-11-28 04:13:26 |   B: res=4.72e-04 bdist=+5.67e-04
+2026-11-28 04:13:26 |   result: none
+2026-11-28 04:13:26 | symmetry=none ladder[53] unk=1131/1128 (orbits=377)
+2026-11-28 04:14:06 |   A: res=7.91e-04 bdist=+2.55e-04
+2026-11-28 04:14:41 |   B: res=7.42e-04 bdist=-5.43e-04
+2026-11-28 04:14:41 |   result: none
+2026-11-28 04:14:42 | symmetry=none ladder[54] unk=1131/1128 (orbits=377)
+2026-11-28 04:15:17 |   A: res=5.83e-06 bdist=+1.34e-04
+2026-11-28 04:15:17 |   P2 skipped: bdist=+1.34e-04 already inside
+2026-11-28 04:15:24 |   P3 polish inside: res=4.11e-06 bdist=+1.00e-07
+2026-11-28 04:16:02 |   B: res=1.10e-04 bdist=-3.37e-02
+2026-11-28 04:16:02 |   result: none
+2026-11-28 04:16:02 | symmetry=none ladder[55] unk=1131/1128 (orbits=377)
+2026-11-28 04:16:34 |   A: res=1.64e-03 bdist=-4.11e-07
+2026-11-28 04:17:12 |   B: res=6.02e-04 bdist=-1.12e-02
+2026-11-28 04:17:12 |   result: none
+2026-11-28 04:17:13 | symmetry=none ladder[56] unk=1131/1128 (orbits=377)
+2026-11-28 04:17:48 |   A: res=3.00e-05 bdist=+3.66e-07
+2026-11-28 04:17:48 |   P2 pull inside: start bdist=+3.66e-07, margin=1.13e-04
+2026-11-28 04:18:02 |   P2 weight 1: bdist=+7.31e-04
+2026-11-28 04:18:14 |   P3 polish inside: res=5.35e-06 bdist=+1.00e-07
+2026-11-28 04:18:52 |   B: res=1.27e-05 bdist=+1.61e-03
+2026-11-28 04:18:52 |   P2 skipped: bdist=+1.61e-03 already inside
+2026-11-28 04:19:08 |   P3 polish inside: res=8.36e-06 bdist=+1.36e-03
+2026-11-28 04:19:08 |   result: none
+2026-11-28 04:19:08 | symmetry=none ladder[57] unk=1131/1128 (orbits=377)
+2026-11-28 04:19:45 |   A: res=2.37e-04 bdist=+5.38e-07
+2026-11-28 04:20:22 |   B: res=1.35e-04 bdist=-1.24e-01
+2026-11-28 04:20:22 |   result: none
+2026-11-28 04:20:23 | symmetry=none ladder[58] unk=1131/1128 (orbits=377)
+2026-11-28 04:20:43 |   A: res=7.70e-05 bdist=-6.65e-09
+2026-11-28 04:20:43 |   P2 pull inside: start bdist=-6.65e-09, margin=1.13e-04
+2026-11-28 04:20:56 |   P2 weight 1: bdist=+5.24e-04
+2026-11-28 04:21:11 |   P3 polish inside: res=1.14e-05 bdist=+6.20e-04
+2026-11-28 04:21:49 |   B: res=1.71e-04 bdist=-5.58e-02
+2026-11-28 04:21:49 |   result: none
+2026-11-28 04:21:49 | symmetry=none ladder[59] unk=1131/1128 (orbits=377)
+2026-11-28 04:22:27 |   A: res=1.39e-03 bdist=+6.25e-04
+2026-11-28 04:23:06 |   B: res=6.88e-04 bdist=-1.14e-02
+2026-11-28 04:23:06 |   result: none
+2026-11-28 04:23:07 | symmetry=none ladder[60] unk=1131/1128 (orbits=377)
+2026-11-28 04:23:42 |   A: res=2.75e-05 bdist=+2.67e-04
+2026-11-28 04:23:42 |   P2 skipped: bdist=+2.67e-04 already inside
+2026-11-28 04:23:56 |   P3 polish inside: res=3.69e-06 bdist=+2.24e-04
+2026-11-28 04:24:34 |   B: res=9.17e-06 bdist=+3.72e-04
+2026-11-28 04:24:34 |   P2 skipped: bdist=+3.72e-04 already inside
+2026-11-28 04:24:51 |   P3 polish inside: res=2.58e-06 bdist=+6.99e-04
+2026-11-28 04:24:51 |   result: none
+2026-11-28 04:24:51 | symmetry=none ladder[61] unk=1131/1128 (orbits=377)
+2026-11-28 04:25:34 |   A: res=1.03e-04 bdist=+1.11e-03
+2026-11-28 04:26:15 |   B: res=4.02e-05 bdist=-4.17e-03
+2026-11-28 04:26:15 |   P2 pull inside: start bdist=-4.17e-03, margin=1.13e-04
+2026-11-28 04:26:27 |   P2 weight 1: bdist=+4.40e-04
+2026-11-28 04:26:27 |   P3 polish inside: res=3.81e-15 bdist=+4.40e-04
+2026-11-28 04:26:27 |   result: PI from B after P2/P3
+2026-11-28 04:26:27 | symmetry=none ladder[61] -> PI mom_res=3.81e-15 bdist=+4.405e-04
+2026-11-28 04:26:27 | Refining N=376 with start rounds 2..4
+2026-11-28 04:26:27 | symmetry=mirror N=376: skipped (too few unknowns outside a symmetry stratum)
+2026-11-28 04:26:31 | Trying symmetry=none (|G|=1, M_G=1128, N=376)
+2026-11-28 04:26:32 | symmetry=none ladder[16] unk=1128/1128 (orbits=376)
+2026-11-28 04:27:01 |   A: res=2.45e-05 bdist=-1.91e-09
+2026-11-28 04:27:01 |   P2 pull inside: start bdist=-1.91e-09, margin=1.13e-04
+2026-11-28 04:27:16 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:27:29 |   P3 polish inside: res=1.87e-05 bdist=+1.00e-07
+2026-11-28 04:28:06 |   B: res=4.87e-06 bdist=-1.17e-01
+2026-11-28 04:28:06 |   P2 pull inside: start bdist=-1.17e-01, margin=1.13e-04
+2026-11-28 04:28:09 |   P2 weight 1: bdist=-1.06e-01
+2026-11-28 04:28:11 |   P2 weight 10: bdist=-9.42e-02
+2026-11-28 04:28:14 |   P2 weight 100: bdist=-8.29e-02
+2026-11-28 04:28:14 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 04:28:14 |   result: none
+2026-11-28 04:28:14 | symmetry=none ladder[17] unk=1128/1128 (orbits=376)
+2026-11-28 04:28:51 |   A: res=4.06e-04 bdist=+8.76e-04
+2026-11-28 04:29:24 |   B: res=8.24e-04 bdist=+1.73e-04
+2026-11-28 04:29:24 |   result: none
+2026-11-28 04:29:24 | symmetry=none ladder[18] unk=1128/1128 (orbits=376)
+2026-11-28 04:30:01 |   A: res=1.99e-04 bdist=+6.99e-04
+2026-11-28 04:30:39 |   B: res=1.09e-04 bdist=-6.09e-02
+2026-11-28 04:30:39 |   result: none
+2026-11-28 04:30:39 | symmetry=none ladder[19] unk=1128/1128 (orbits=376)
+2026-11-28 04:31:13 |   A: res=8.73e-04 bdist=-7.99e-07
+2026-11-28 04:31:51 |   B: res=3.92e-03 bdist=-2.58e-02
+2026-11-28 04:31:51 |   result: none
+2026-11-28 04:31:52 | symmetry=none ladder[20] unk=1128/1128 (orbits=376)
+2026-11-28 04:32:27 |   A: res=2.55e-04 bdist=-1.10e-07
+2026-11-28 04:32:59 |   B: res=1.49e-03 bdist=-1.04e-02
+2026-11-28 04:32:59 |   result: none
+2026-11-28 04:32:59 | symmetry=none ladder[21] unk=1128/1128 (orbits=376)
+2026-11-28 04:33:31 |   A: res=1.60e-03 bdist=+5.95e-06
+2026-11-28 04:34:04 |   B: res=6.26e-04 bdist=-1.91e-02
+2026-11-28 04:34:04 |   result: none
+2026-11-28 04:34:05 | symmetry=none ladder[22] unk=1128/1128 (orbits=376)
+2026-11-28 04:34:38 |   A: res=5.65e-06 bdist=+4.76e-04
+2026-11-28 04:34:38 |   P2 skipped: bdist=+4.76e-04 already inside
+2026-11-28 04:34:40 |   P3 polish inside: res=5.64e-06 bdist=+4.74e-04
+2026-11-28 04:35:13 |   B: res=1.29e-04 bdist=-7.56e-03
+2026-11-28 04:35:13 |   result: none
+2026-11-28 04:35:13 | symmetry=none ladder[23] unk=1128/1128 (orbits=376)
+2026-11-28 04:35:47 |   A: res=6.39e-04 bdist=-1.39e-07
+2026-11-28 04:36:21 |   B: res=2.73e-03 bdist=-1.00e-02
+2026-11-28 04:36:21 |   result: none
+2026-11-28 04:36:21 | symmetry=none ladder[24] unk=1128/1128 (orbits=376)
+2026-11-28 04:36:28 |   A: res=3.24e-01 bdist=-1.74e-03
+2026-11-28 04:36:58 |   B: res=1.01e-04 bdist=+9.77e-04
+2026-11-28 04:36:58 |   result: none
+2026-11-28 04:36:58 | symmetry=none ladder[25] unk=1128/1128 (orbits=376)
+2026-11-28 04:37:32 |   A: res=1.31e-03 bdist=+8.75e-04
+2026-11-28 04:38:07 |   B: res=1.51e-03 bdist=+1.22e-03
+2026-11-28 04:38:07 |   result: none
+2026-11-28 04:38:07 | symmetry=none ladder[26] unk=1128/1128 (orbits=376)
+2026-11-28 04:38:41 |   A: res=4.52e-05 bdist=+9.24e-04
+2026-11-28 04:38:41 |   P2 skipped: bdist=+9.24e-04 already inside
+2026-11-28 04:38:49 |   P3 polish inside: res=2.30e-05 bdist=+1.00e-07
+2026-11-28 04:39:22 |   B: res=2.85e-04 bdist=-3.16e-03
+2026-11-28 04:39:22 |   result: none
+2026-11-28 04:39:22 | symmetry=none ladder[27] unk=1128/1128 (orbits=376)
+2026-11-28 04:39:56 |   A: res=1.94e-03 bdist=+6.98e-04
+2026-11-28 04:40:28 |   B: res=1.12e-02 bdist=+4.30e-04
+2026-11-28 04:40:28 |   result: none
+2026-11-28 04:40:29 | symmetry=none ladder[28] unk=1128/1128 (orbits=376)
+2026-11-28 04:41:04 |   A: res=1.39e-03 bdist=-3.39e-05
+2026-11-28 04:41:40 |   B: res=3.74e-04 bdist=+5.98e-04
+2026-11-28 04:41:40 |   result: none
+2026-11-28 04:41:40 | symmetry=none ladder[29] unk=1128/1128 (orbits=376)
+2026-11-28 04:42:14 |   A: res=2.95e-03 bdist=+1.12e-03
+2026-11-28 04:42:48 |   B: res=1.33e-03 bdist=+5.56e-04
+2026-11-28 04:42:48 |   result: none
+2026-11-28 04:42:49 | symmetry=none ladder[30] unk=1128/1128 (orbits=376)
+2026-11-28 04:43:22 |   A: res=1.35e-04 bdist=+3.65e-04
+2026-11-28 04:43:58 |   B: res=8.23e-05 bdist=+1.01e-03
+2026-11-28 04:43:58 |   P2 skipped: bdist=+1.01e-03 already inside
+2026-11-28 04:44:13 |   P3 polish inside: res=2.27e-05 bdist=+1.04e-03
+2026-11-28 04:44:13 |   result: none
+2026-11-28 04:44:13 | symmetry=none ladder[31] unk=1128/1128 (orbits=376)
+2026-11-28 04:44:48 |   A: res=5.71e-04 bdist=+2.71e-04
+2026-11-28 04:45:21 |   B: res=1.00e-03 bdist=-1.23e-04
+2026-11-28 04:45:21 |   result: none
+2026-11-28 04:45:22 | symmetry=none ladder[32] unk=1128/1128 (orbits=376)
+2026-11-28 04:45:55 |   A: res=1.45e-04 bdist=+1.30e-07
+2026-11-28 04:46:29 |   B: res=1.21e-05 bdist=-4.72e-03
+2026-11-28 04:46:29 |   P2 pull inside: start bdist=-4.72e-03, margin=1.13e-04
+2026-11-28 04:46:43 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:46:47 |   P3 polish inside: res=6.08e-06 bdist=+1.00e-07
+2026-11-28 04:46:47 |   result: none
+2026-11-28 04:46:47 | symmetry=none ladder[33] unk=1128/1128 (orbits=376)
+2026-11-28 04:47:21 |   A: res=2.73e-04 bdist=+5.79e-04
+2026-11-28 04:47:56 |   B: res=3.22e-04 bdist=-2.53e-02
+2026-11-28 04:47:56 |   result: none
+2026-11-28 04:47:57 | symmetry=none ladder[34] unk=1128/1128 (orbits=376)
+2026-11-28 04:48:29 |   A: res=6.55e-04 bdist=-2.46e-05
+2026-11-28 04:49:03 |   B: res=4.23e-05 bdist=+1.11e-03
+2026-11-28 04:49:03 |   P2 skipped: bdist=+1.11e-03 already inside
+2026-11-28 04:49:05 |   P3 polish inside: res=4.23e-05 bdist=+1.11e-03
+2026-11-28 04:49:05 |   result: none
+2026-11-28 04:49:05 | symmetry=none ladder[35] unk=1128/1128 (orbits=376)
+2026-11-28 04:49:38 |   A: res=1.08e-03 bdist=+6.51e-04
+2026-11-28 04:50:14 |   B: res=1.65e-04 bdist=-7.64e-02
+2026-11-28 04:50:14 |   result: none
+2026-11-28 04:50:15 | symmetry=none ladder[36] unk=1128/1128 (orbits=376)
+2026-11-28 04:50:46 |   A: res=4.97e-05 bdist=-8.29e-07
+2026-11-28 04:50:46 |   P2 pull inside: start bdist=-8.29e-07, margin=1.13e-04
+2026-11-28 04:50:59 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:51:07 |   P3 polish inside: res=5.06e-06 bdist=+1.00e-07
+2026-11-28 04:51:42 |   B: res=3.75e-05 bdist=+5.86e-04
+2026-11-28 04:51:42 |   P2 skipped: bdist=+5.86e-04 already inside
+2026-11-28 04:51:57 |   P3 polish inside: res=1.29e-05 bdist=+1.00e-07
+2026-11-28 04:51:57 |   result: none
+2026-11-28 04:51:57 | symmetry=none ladder[37] unk=1128/1128 (orbits=376)
+2026-11-28 04:52:31 |   A: res=2.51e-04 bdist=-7.35e-09
+2026-11-28 04:53:07 |   B: res=1.04e-03 bdist=+6.50e-04
+2026-11-28 04:53:07 |   result: none
+2026-11-28 04:53:08 | symmetry=none ladder[38] unk=1128/1128 (orbits=376)
+2026-11-28 04:53:43 |   A: res=6.68e-05 bdist=+1.97e-04
+2026-11-28 04:53:43 |   P2 skipped: bdist=+1.97e-04 already inside
+2026-11-28 04:53:56 |   P3 polish inside: res=3.69e-05 bdist=+4.87e-04
+2026-11-28 04:54:30 |   B: res=2.64e-04 bdist=-9.87e-04
+2026-11-28 04:54:30 |   result: none
+2026-11-28 04:54:30 | symmetry=none ladder[39] unk=1128/1128 (orbits=376)
+2026-11-28 04:55:02 |   A: res=4.85e-03 bdist=+1.13e-03
+2026-11-28 04:55:34 |   B: res=6.22e-04 bdist=+6.44e-05
+2026-11-28 04:55:34 |   result: none
+2026-11-28 04:55:35 | symmetry=none ladder[40] unk=1128/1128 (orbits=376)
+2026-11-28 04:55:57 |   A: res=9.40e-05 bdist=-3.82e-09
+2026-11-28 04:55:57 |   P2 pull inside: start bdist=-3.82e-09, margin=1.13e-04
+2026-11-28 04:56:08 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:56:10 |   P3 polish inside: res=3.16e-06 bdist=+8.98e-05
+2026-11-28 04:56:41 |   B: res=1.26e-05 bdist=+4.61e-04
+2026-11-28 04:56:41 |   P2 skipped: bdist=+4.61e-04 already inside
+2026-11-28 04:56:54 |   P3 polish inside: res=9.81e-06 bdist=+4.79e-04
+2026-11-28 04:56:54 |   result: none
+2026-11-28 04:56:54 | symmetry=none ladder[41] unk=1128/1128 (orbits=376)
+2026-11-28 04:57:28 |   A: res=8.46e-04 bdist=+1.63e-03
+2026-11-28 04:58:00 |   B: res=1.38e-03 bdist=-2.80e-03
+2026-11-28 04:58:00 |   result: none
+2026-11-28 04:58:01 | symmetry=none ladder[42] unk=1128/1128 (orbits=376)
+2026-11-28 04:58:27 |   A: res=5.68e-05 bdist=-1.33e-08
+2026-11-28 04:58:27 |   P2 pull inside: start bdist=-1.33e-08, margin=1.13e-04
+2026-11-28 04:58:38 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 04:58:40 |   P3 polish inside: res=1.19e-05 bdist=+1.02e-07
+2026-11-28 04:59:15 |   B: res=1.78e-05 bdist=+8.24e-04
+2026-11-28 04:59:15 |   P2 skipped: bdist=+8.24e-04 already inside
+2026-11-28 04:59:26 |   P3 polish inside: res=1.38e-05 bdist=+1.00e-07
+2026-11-28 04:59:26 |   result: none
+2026-11-28 04:59:26 | symmetry=none ladder[43] unk=1128/1128 (orbits=376)
+2026-11-28 04:59:58 |   A: res=7.53e-04 bdist=+1.04e-03
+2026-11-28 05:00:33 |   B: res=1.09e-03 bdist=-2.06e-03
+2026-11-28 05:00:33 |   result: none
+2026-11-28 05:00:34 | symmetry=none ladder[44] unk=1128/1128 (orbits=376)
+2026-11-28 05:01:09 |   A: res=1.23e-04 bdist=+1.89e-05
+2026-11-28 05:01:45 |   B: res=9.78e-05 bdist=-1.05e-03
+2026-11-28 05:01:45 |   P2 pull inside: start bdist=-1.05e-03, margin=1.13e-04
+2026-11-28 05:01:56 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 05:01:59 |   P3 polish inside: res=4.43e-05 bdist=+1.00e-07
+2026-11-28 05:01:59 |   result: none
+2026-11-28 05:01:59 | symmetry=none ladder[45] unk=1128/1128 (orbits=376)
+2026-11-28 05:02:33 |   A: res=1.93e-03 bdist=-7.21e-07
+2026-11-28 05:03:05 |   B: res=7.61e-04 bdist=-6.93e-03
+2026-11-28 05:03:05 |   result: none
+2026-11-28 05:03:06 | symmetry=none ladder[46] unk=1128/1128 (orbits=376)
+2026-11-28 05:03:28 |   A: res=8.86e-05 bdist=-1.26e-08
+2026-11-28 05:03:28 |   P2 pull inside: start bdist=-1.26e-08, margin=1.13e-04
+2026-11-28 05:03:42 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 05:03:45 |   P3 polish inside: res=3.32e-05 bdist=+1.00e-07
+2026-11-28 05:04:18 |   B: res=1.21e-04 bdist=-3.12e-04
+2026-11-28 05:04:18 |   result: none
+2026-11-28 05:04:18 | symmetry=none ladder[47] unk=1128/1128 (orbits=376)
+2026-11-28 05:04:50 |   A: res=1.25e-03 bdist=+7.77e-04
+2026-11-28 05:05:21 |   B: res=9.29e-04 bdist=-3.54e-04
+2026-11-28 05:05:21 |   result: none
+2026-11-28 05:05:22 | symmetry=none ladder[48] unk=1128/1128 (orbits=376)
+2026-11-28 05:05:58 |   A: res=1.20e-04 bdist=+1.27e-06
+2026-11-28 05:06:37 |   B: res=3.64e-05 bdist=-2.51e-02
+2026-11-28 05:06:37 |   P2 pull inside: start bdist=-2.51e-02, margin=1.13e-04
+2026-11-28 05:06:41 |   P2 weight 1: bdist=-9.74e-03
+2026-11-28 05:06:55 |   P2 weight 10: bdist=+1.13e-04
+2026-11-28 05:06:58 |   P3 polish inside: res=3.65e-06 bdist=+1.00e-07
+2026-11-28 05:06:58 |   result: none
+2026-11-28 05:06:58 | symmetry=none ladder[49] unk=1128/1128 (orbits=376)
+2026-11-28 05:07:29 |   A: res=1.36e-03 bdist=-9.36e-07
+2026-11-28 05:07:45 |   B: res=2.36e-02 bdist=-2.78e-02
+2026-11-28 05:07:45 |   result: none
+2026-11-28 05:07:46 | symmetry=none ladder[50] unk=1128/1128 (orbits=376)
+2026-11-28 05:08:07 |   A: res=6.72e-05 bdist=-1.04e-08
+2026-11-28 05:08:07 |   P2 pull inside: start bdist=-1.04e-08, margin=1.13e-04
+2026-11-28 05:08:19 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 05:08:24 |   P3 polish inside: res=5.21e-05 bdist=+1.00e-07
+2026-11-28 05:08:56 |   B: res=1.19e-05 bdist=-9.49e-02
+2026-11-28 05:08:56 |   P2 pull inside: start bdist=-9.49e-02, margin=1.13e-04
+2026-11-28 05:08:58 |   P2 weight 1: bdist=-8.36e-02
+2026-11-28 05:09:01 |   P2 weight 10: bdist=-7.23e-02
+2026-11-28 05:09:03 |   P2 weight 100: bdist=-6.10e-02
+2026-11-28 05:09:03 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 05:09:03 |   result: none
+2026-11-28 05:09:03 | symmetry=none ladder[51] unk=1128/1128 (orbits=376)
+2026-11-28 05:09:42 |   A: res=2.58e-04 bdist=+8.09e-04
+2026-11-28 05:10:17 |   B: res=1.90e-03 bdist=-3.11e-02
+2026-11-28 05:10:17 |   result: none
+2026-11-28 05:10:18 | symmetry=none ladder[52] unk=1128/1128 (orbits=376)
+2026-11-28 05:10:31 |   A: res=2.87e-01 bdist=-7.49e-04
+2026-11-28 05:11:08 |   B: res=1.40e-05 bdist=+9.55e-04
+2026-11-28 05:11:08 |   P2 skipped: bdist=+9.55e-04 already inside
+2026-11-28 05:11:15 |   P3 polish inside: res=1.28e-05 bdist=+1.00e-07
+2026-11-28 05:11:15 |   result: none
+2026-11-28 05:11:15 | symmetry=none ladder[53] unk=1128/1128 (orbits=376)
+2026-11-28 05:11:52 |   A: res=1.23e-03 bdist=-2.35e-07
+2026-11-28 05:12:31 |   B: res=1.28e-03 bdist=+9.90e-04
+2026-11-28 05:12:31 |   result: none
+2026-11-28 05:12:32 | symmetry=none ladder[54] unk=1128/1128 (orbits=376)
+2026-11-28 05:12:49 |   A: res=1.99e-04 bdist=-5.90e-08
+2026-11-28 05:13:26 |   B: res=5.15e-05 bdist=+2.15e-04
+2026-11-28 05:13:26 |   P2 skipped: bdist=+2.15e-04 already inside
+2026-11-28 05:13:42 |   P3 polish inside: res=2.39e-05 bdist=+1.24e-04
+2026-11-28 05:13:42 |   result: none
+2026-11-28 05:13:42 | symmetry=none ladder[55] unk=1128/1128 (orbits=376)
+2026-11-28 05:14:20 |   A: res=5.88e-04 bdist=-3.00e-07
+2026-11-28 05:14:59 |   B: res=8.68e-04 bdist=+4.54e-04
+2026-11-28 05:14:59 |   result: none
+2026-11-28 05:15:00 | symmetry=none ladder[56] unk=1128/1128 (orbits=376)
+2026-11-28 05:15:36 |   A: res=5.50e-05 bdist=+8.48e-04
+2026-11-28 05:15:36 |   P2 skipped: bdist=+8.48e-04 already inside
+2026-11-28 05:15:49 |   P3 polish inside: res=2.58e-05 bdist=+5.79e-04
+2026-11-28 05:16:23 |   B: res=2.21e-04 bdist=-1.72e-02
+2026-11-28 05:16:23 |   result: none
+2026-11-28 05:16:23 | symmetry=none ladder[57] unk=1128/1128 (orbits=376)
+2026-11-28 05:16:58 |   A: res=3.86e-03 bdist=+7.37e-04
+2026-11-28 05:17:35 |   B: res=6.60e-04 bdist=-5.49e-04
+2026-11-28 05:17:35 |   result: none
+2026-11-28 05:17:35 | symmetry=none ladder[58] unk=1128/1128 (orbits=376)
+2026-11-28 05:18:18 |   A: res=9.62e-06 bdist=+2.26e-05
+2026-11-28 05:18:18 |   P2 skipped: bdist=+2.26e-05 already inside
+2026-11-28 05:18:34 |   P3 polish inside: res=2.36e-06 bdist=+3.51e-04
+2026-11-28 05:19:11 |   B: res=2.03e-05 bdist=-2.12e-01
+2026-11-28 05:19:11 |   P2 pull inside: start bdist=-2.12e-01, margin=1.13e-04
+2026-11-28 05:19:13 |   P2 weight 1: bdist=-2.01e-01
+2026-11-28 05:19:16 |   P2 weight 10: bdist=-1.90e-01
+2026-11-28 05:19:18 |   P2 weight 100: bdist=-1.78e-01
+2026-11-28 05:19:18 |   P2 failed: nodes stay on or outside the boundary
+2026-11-28 05:19:18 |   result: none
+2026-11-28 05:19:18 | symmetry=none ladder[59] unk=1128/1128 (orbits=376)
+2026-11-28 05:19:57 |   A: res=7.80e-04 bdist=+3.09e-07
+2026-11-28 05:20:34 |   B: res=1.43e-03 bdist=+8.83e-04
+2026-11-28 05:20:34 |   result: none
+2026-11-28 05:20:34 | symmetry=none ladder[60] unk=1128/1128 (orbits=376)
+2026-11-28 05:21:13 |   A: res=1.39e-03 bdist=-2.31e-05
+2026-11-28 05:21:52 |   B: res=2.63e-05 bdist=-1.67e-02
+2026-11-28 05:21:52 |   P2 pull inside: start bdist=-1.67e-02, margin=1.13e-04
+2026-11-28 05:22:06 |   P2 weight 1: bdist=+1.13e-04
+2026-11-28 05:22:09 |   P3 polish inside: res=1.63e-05 bdist=+1.00e-07
+2026-11-28 05:22:09 |   result: none
+2026-11-28 05:22:09 | symmetry=none ladder[61] unk=1128/1128 (orbits=376)
+2026-11-28 05:22:44 |   A: res=4.93e-04 bdist=+1.47e-04
+2026-11-28 05:23:20 |   B: res=1.55e-04 bdist=+3.93e-04
+2026-11-28 05:23:20 |   result: none
+2026-11-28 05:23:21 | symmetry=none ladder[62] unk=1128/1128 (orbits=376)
+2026-11-28 05:23:39 |   A: res=3.35e-04 bdist=-8.05e-08
+2026-11-28 05:24:12 |   B: res=2.35e-05 bdist=+8.09e-04
+2026-11-28 05:24:12 |   P2 skipped: bdist=+8.09e-04 already inside
+2026-11-28 05:24:14 |   P3 polish inside: res=7.74e-06 bdist=+8.09e-04
+2026-11-28 05:24:14 |   result: none
+2026-11-28 05:24:14 | symmetry=none ladder[63] unk=1128/1128 (orbits=376)
+2026-11-28 05:24:49 |   A: res=1.84e-03 bdist=+8.08e-04
+2026-11-28 05:25:22 |   B: res=1.86e-03 bdist=-2.92e-03
+2026-11-28 05:25:22 |   result: none
+2026-11-28 05:25:23 | wrote 171 tried starts to results/ladder-square/square-46/starts-C2-46.json
+2026-11-28 05:25:23 | FOUND CA-C2-46-377-PI-MPC (PI, sym=none) N=377 mom_res=3.81e-15 monom=1.11e-16 min_w=1.293e-04 bdist=+4.405e-04 wrote=results/ladder-square/square-46/CA-C2-46-377-PI-MPC.json (11066.51s)
